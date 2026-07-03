@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -74,7 +74,7 @@ describe('resumingSuspendedTree', () => {
   const testCases = [
     ['Is resuming when the route is login, the suspend param is present and a tree param is present', 'login', 'suspendedId=1&authIndexValue=bob', true],
     ['Is not resuming when the route is not login, the suspend param is present and a tree param is present', 'log', 'suspendedId=1&authIndexValue=bob', false],
-    ['Is not resuming when the route is login, the suspend param is present and a tree param is absent', 'login', 'suspendedId=1', false],
+    ['Is resuming when the route is login, the suspend param is present and a tree param is absent (magic link)', 'login', 'suspendedId=1', true],
     ['Is not resuming when the route is login, the suspend param is absent and a tree param is present', 'login', 'authIndexValue=1', false],
   ];
   it.each(testCases)('%s', (name, routeName, paramString, expectedValue) => {

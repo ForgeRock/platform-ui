@@ -28,6 +28,9 @@
       "or": "or",
       "signInWith": "Sign in with {buttonDisplayName}"
     },
+    "pingOneProtect": {
+      "clientNotInitialized": "Protect client not initialized"
+    },
     "webAuthn": {
       "authenticate": "Verifying your identity...",
       "authenticateInfo": "Use your device to verify your identity.",
@@ -35,7 +38,10 @@
       "failedInfo": "Don't worry - you can still access your account using a recovery code.",
       "register": "Registering your device...",
       "registerInfo": "Your device will be used to verify your identity.",
-      "usePasskey": "Sign in with a passkey"
+      "usePasskey": "Sign in with a passkey",
+      "errorParseScript": "Unable to verify your identity. Please try again.",
+      "errorNotSupported": "Your browser does not support passkey authentication.",
+      "errorCallbacksNotFound": "Unable to verify your identity. Please try again."
     }
   },
   "pages": {

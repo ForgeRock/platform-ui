@@ -13,17 +13,136 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
 import { createTestingPinia } from '@pinia/testing';
-import {
-  FRStep,
-  FRAuth,
-} from '@forgerock/javascript-sdk';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import { createJourneyStep as rehydrateStep } from '@forgerock/journey-client/_utils';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { stringify } from '@forgerock/sdk-utilities';
+import { WebAuthn, WebAuthnStepType } from '@forgerock/journey-client/webauthn';
 import i18n from '@/i18n';
 import * as urlUtil from '../../utils/urlUtil';
 import { getAlternateFieldType } from '../../utils/loginUtils';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
+import * as asScriptParserModule from '../../components/display/WebAuthn/asScriptParser';
 import Login from './index';
+
+// The SDK is mocked at two surfaces: (a) the shared `journeyClient` store
+// (the path every consumer reads via `useJourneyClientStore().client`) and (b)
+// the `@forgerock/journey-client` root + subpath imports consumed transitively
+// by `LoginMixin` and `Login/index.vue`. Variable names are `mock`-prefixed so
+// Jest's hoisted `jest.mock` factories can reference them safely.
+const mockNext = jest.fn();
+const mockStart = jest.fn();
+const mockResume = jest.fn();
+const mockRedirect = jest.fn();
+const mockTerminate = jest.fn(() => Promise.resolve());
+
+// `mockStoreInstance` is the writable store object returned by
+// `useJourneyClientStore()`. Tests that need the null-client path set
+// `mockStoreInstance.client = null` directly and restore it in afterEach.
+const mockStoreInstance = {
+  client: {
+    next: mockNext,
+    start: mockStart,
+    resume: mockResume,
+    redirect: mockRedirect,
+    terminate: mockTerminate,
+  },
+};
+
+jest.mock('@forgerock/platform-shared/src/stores/journeyClient', () => ({
+  useJourneyClientStore: jest.fn(() => mockStoreInstance),
+}));
+
+jest.mock('@forgerock/platform-shared/src/utils/amUrlUtils', () => ({
+  buildWellknownUrl: jest.fn(() => 'https://example.com/am/oauth2/realms/root/.well-known/openid-configuration'),
+}));
+
+// Mirror the `callbackType` keys consumed by `Login/index.vue` (via
+// `this.FrCallbackType.X`, which spreads `callbackType` in `LoginMixin`)
+// and the test fixtures below.
+jest.mock('@forgerock/journey-client', () => ({
+  callbackType: {
+    NameCallback: 'NameCallback',
+    PasswordCallback: 'PasswordCallback',
+    ValidatedCreatePasswordCallback: 'ValidatedCreatePasswordCallback',
+    ConfirmationCallback: 'ConfirmationCallback',
+    DeviceProfileCallback: 'DeviceProfileCallback',
+    HiddenValueCallback: 'HiddenValueCallback',
+    MetadataCallback: 'MetadataCallback',
+    PingOneProtectInitializeCallback: 'PingOneProtectInitializeCallback',
+    PingOneProtectEvaluationCallback: 'PingOneProtectEvaluationCallback',
+    PollingWaitCallback: 'PollingWaitCallback',
+    SelectIdPCallback: 'SelectIdPCallback',
+    TextOutputCallback: 'TextOutputCallback',
+  },
+  // Shim that attaches the SDK-shape methods consumed by Login/index.vue and
+  // LoginMixin onto a raw callback plain-object. Pre-existing methods on the
+  // input object win (via the spread order { ...defaults, ...cb }), so tests
+  // can pass a callback that already defines a method (e.g. a MetadataCallback
+  // with its own `getOutputByName`) without having it overwritten by this shim.
+  createCallback: jest.fn((cb) => {
+    const output = Array.isArray(cb.output) ? cb.output : [];
+    const input = Array.isArray(cb.input) ? cb.input : [];
+    const defaults = {
+      getType: () => cb.type,
+      getOutputByName: (name, defaultValue) => {
+        const found = output.find((o) => o.name === name);
+        return found ? found.value : defaultValue;
+      },
+      getOutputValue: (selector = 0) => {
+        if (typeof selector === 'string') {
+          const found = output.find((o) => o.name === selector);
+          return found ? found.value : undefined;
+        }
+        return output[selector]?.value;
+      },
+      getInputValue: (index = 0) => input[index]?.value,
+      setInputValue: (value, index = 0) => {
+        if (!input[index]) {
+          input[index] = { name: `IDToken${index + 1}`, value };
+        } else {
+          input[index].value = value;
+        }
+      },
+      getPrompt: () => {
+        const found = output.find((o) => o.name === 'prompt');
+        return found ? found.value : undefined;
+      },
+      getFailedPolicies: () => {
+        const found = output.find((o) => o.name === 'failedPolicies');
+        return found ? found.value : [];
+      },
+      getMessageType: () => {
+        const found = output.find((o) => o.name === 'messageType');
+        return found ? found.value : undefined;
+      },
+    };
+    return { ...defaults, ...cb };
+  }),
+}));
+
+jest.mock('@forgerock/journey-client/webauthn', () => ({
+  WebAuthn: {
+    register: jest.fn(),
+    authenticate: jest.fn(),
+    getWebAuthnStepType: jest.fn(() => 0), // None
+  },
+  WebAuthnStepType: { None: 0, Authentication: 1, Registration: 2 },
+}));
+
+jest.mock('../../components/display/WebAuthn/asScriptParser', () => ({
+  authenticateWithAsScript: jest.fn(() => Promise.resolve('asScript-outcome')),
+  registerWithAsScript: jest.fn(() => Promise.resolve('asScript-outcome')),
+}));
+
+jest.mock('@forgerock/journey-client/recovery-codes', () => ({
+  RecoveryCodes: {
+    isDisplayStep: jest.fn(() => false),
+    getCodes: jest.fn(() => []),
+    getDeviceName: jest.fn(() => ''),
+  },
+}));
 
 defineRule('required', (value) => required(value) || 'required');
 defineRule('email', (value) => email(value) || 'email should be valid');
@@ -36,6 +155,25 @@ describe('Login.vue', () => {
     },
   };
   beforeEach(() => {
+    // Reset call history on the SDK doubles between tests so per-test
+    // assertions don't bleed across cases. The store's client is a live
+    // double by default; tests that need the null-guard path set
+    // `mockStoreInstance.client = null` directly (see the
+    // 'bootstrap-failed gating' and 'client null guard' suites).
+    // Restore the live client double in case a previous test set it to null.
+    mockStoreInstance.client = {
+      next: mockNext,
+      start: mockStart,
+      resume: mockResume,
+      redirect: mockRedirect,
+      terminate: mockTerminate,
+    };
+    mockNext.mockReset();
+    mockStart.mockReset();
+    mockResume.mockReset();
+    mockRedirect.mockReset();
+    mockTerminate.mockReset();
+    mockTerminate.mockImplementation(() => Promise.resolve());
     const pinia = createTestingPinia();
     jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
     wrapper = shallowMount(Login, {
@@ -219,30 +357,563 @@ describe('Login.vue', () => {
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
   });
 
-  it('keeps params like noSession when is a redirect from a callback ', () => {
-    jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('noSession=true&param1=test');
+  it('leaves treeId undefined when resuming a magic-link (suspendedId only, no authIndexValue)', () => {
+    // Magic-link URLs carry only suspendedId — no authIndexType/authIndexValue, so treeId
+    // must stay undefined. The theme resolver then skips the journey-theme lookup and falls
+    // back to the default tenant theme, rather than incorrectly applying the Login journey's theme.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('suspendedId=abc123');
+    const replaceUrlParamsSpy = jest.spyOn(urlUtil, 'replaceUrlParams').mockImplementation(() => {});
+    jest.spyOn(authResumptionUtil, 'resumingSuspendedTree').mockReturnValue(true);
+    jest.spyOn(wrapper.vm, 'setPageTitle').mockImplementation(() => {});
+
+    wrapper.vm.evaluateUrlParams();
+
+    expect(wrapper.vm.treeId).toBeUndefined();
+    expect(wrapper.vm).not.toHaveProperty('themeTreeId');
+
+    authResumptionUtil.resumingSuspendedTree.mockRestore();
+    replaceUrlParamsSpy.mockRestore();
+    queryStringSpy.mockRestore();
+    wrapper.setData({ realm: '/', treeId: undefined, suspendedId: undefined });
+  });
+
+  it('captures suspendedStartContext when suspended URL carries non-service authIndex', () => {
+    // A suspended URL with authIndexType=module must preserve the original auth-index as
+    // suspendedStartContext so Start Over can reconstruct the correct URL on session expiry.
+    // It must NOT set treeId or authIndex, which would cause the values to be forwarded to
+    // the SDK alongside suspendedId.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue(
+      'authIndexType=module&authIndexValue=LdapModule&suspendedId=abc123',
+    );
+    const replaceUrlParamsSpy = jest.spyOn(urlUtil, 'replaceUrlParams').mockImplementation(() => {});
+    jest.spyOn(authResumptionUtil, 'resumingSuspendedTree').mockReturnValue(true);
+    jest.spyOn(wrapper.vm, 'setPageTitle').mockImplementation(() => {});
+
+    wrapper.vm.evaluateUrlParams();
+
+    expect(wrapper.vm.treeId).toBeUndefined();
+    expect(wrapper.vm.authIndex).toBeUndefined();
+    expect(wrapper.vm.suspendedStartContext).toEqual({ type: 'module', value: 'LdapModule' });
+    expect(wrapper.vm.suspendedId).toBe('abc123');
+
+    authResumptionUtil.resumingSuspendedTree.mockRestore();
+    replaceUrlParamsSpy.mockRestore();
+    queryStringSpy.mockRestore();
+    wrapper.setData({
+      realm: '/',
+      treeId: undefined,
+      suspendedId: undefined,
+      suspendedStartContext: undefined,
+    });
+  });
+
+  it('builds a Start Over link from suspendedStartContext when a non-service suspended session expires', async () => {
+    // When a suspended session (non-service authIndex) expires, Start Over must reconstruct
+    // the original journey URL, not fall back to the realm root.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    mockStart.mockImplementation(() => Promise.resolve({
+      type: 'LoginFailure',
+      payload: {
+        code: 401,
+        message: 'Session expired',
+        reason: 'Unauthorized',
+      },
+      callbacks: [],
+    }));
+
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: undefined,
+      suspendedId: 'expired-suspend-id',
+      suspendedStartContext: { type: 'module', value: 'LdapModule' },
+      step: null,
+      retry: false,
+    });
+
+    wrapper.vm.nextStep();
+    await flushPromises();
+
+    expect(wrapper.vm.linkToTreeStart).toBe(
+      '/am/XUI/?realm=alpha&authIndexType=module&authIndexValue=LdapModule',
+    );
+    queryStringSpy.mockRestore();
+    wrapper.setData({
+      realm: '/',
+      suspendedId: undefined,
+      suspendedStartContext: undefined,
+    });
+  });
+
+  it('builds a service-type Start Over link from suspendedStartContext when an expired service journey resumes', async () => {
+    // A service-type suspended URL (?authIndexType=service&authIndexValue=ResetPassword&suspendedId=x)
+    // must produce a journey-scoped Start Over URL via suspendedStartContext, not getLinkToTreeStart,
+    // because treeId is no longer set during resume (point 2 fix).
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    mockStart.mockImplementation(() => Promise.resolve({
+      type: 'LoginFailure',
+      payload: {
+        code: 401,
+        message: 'Session expired',
+        reason: 'Unauthorized',
+      },
+      callbacks: [],
+    }));
+
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: undefined,
+      suspendedId: 'expired-suspend-id',
+      suspendedStartContext: { type: 'service', value: 'ResetPassword' },
+      step: null,
+      retry: false,
+    });
+
+    wrapper.vm.nextStep();
+    await flushPromises();
+
+    expect(wrapper.vm.linkToTreeStart).toBe(
+      '/am/XUI/?realm=alpha&authIndexType=service&authIndexValue=ResetPassword',
+    );
+    queryStringSpy.mockRestore();
+    wrapper.setData({
+      realm: '/',
+      suspendedId: undefined,
+      suspendedStartContext: undefined,
+    });
+  });
+
+  it('normal non-suspended Login URL still sets treeId from URL and injects it into getStepParams()', () => {
+    // Sanity check: the isSuspendedResume guard must not affect normal (non-suspended) journeys.
+    // A URL with authIndexType=service and no suspendedId sets treeId via evaluateUrlParams,
+    // and getStepParams injects it into the query.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: 'Login',
+      suspendedId: undefined,
+    });
+
+    const stepParams = wrapper.vm.getStepParams();
+
+    expect(stepParams.tree).toBe('Login');
+    expect(stepParams.query.authIndexType).toBe('service');
+    expect(stepParams.query.authIndexValue).toBe('Login');
+    queryStringSpy.mockRestore();
+    wrapper.setData({ realm: '/', treeId: undefined });
+  });
+
+  it('injects authIndex from treeId (not from URL) so stale URL values cannot reach the SDK (IAM-11758)', () => {
+    // Guards the internal-state contract: authIndex is derived from treeId, never copied from
+    // the URL. Any stale URL value is discarded before it can trigger an AM journey restart.
+    // Setting `step` forces the SDK call down the `.next()` branch, which is the path the
+    // internal-state model is designed to protect (journey-client re-derives on `.start()`,
+    // but not on `.next()`).
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue(
+      'realm=/alpha&authIndexType=service&authIndexValue=Login&goto=https%3A%2F%2Ftenant%2Fplatform',
+    );
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: 'ForgottenUsername',
+      suspendedId: undefined,
+      step: { payload: { authId: 'fake' } },
+    });
+
+    const stepParams = wrapper.vm.getStepParams();
+
+    expect(stepParams.query.authIndexType).toBe('service');
+    expect(stepParams.query.authIndexValue).toBe('ForgottenUsername');
+    expect(stepParams.tree).toBe('ForgottenUsername');
+    queryStringSpy.mockRestore();
+    wrapper.setData({ realm: '/', treeId: undefined });
+  });
+
+  it('suppresses authIndex and tree during a suspended resume so AM cannot restart the journey (IAM-11758)', () => {
+    // When suspendedId is set, isSuspendedResume=true suppresses both tree and authIndex injection.
+    // The resume SDK call must contain only suspendedId — AM rehydrates full context from that.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('suspendedId=abc123');
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: 'Login',
+      suspendedId: 'abc123',
+      authIndex: { type: 'module', value: 'LdapModule' },
+    });
+
+    const stepParams = wrapper.vm.getStepParams();
+
+    expect(stepParams).not.toHaveProperty('tree');
+    expect(stepParams.query.authIndexType).toBeUndefined();
+    expect(stepParams.query.authIndexValue).toBeUndefined();
+    expect(stepParams.query.suspendedId).toBe('abc123');
+    queryStringSpy.mockRestore();
+    wrapper.setData({
+      realm: '/',
+      treeId: undefined,
+      suspendedId: undefined,
+      authIndex: undefined,
+    });
+  });
+
+  it('forwards non-service authIndex pairs from state (module/level/user/resource)', () => {
+    // Non-service auth-index types are captured in this.authIndex by evaluateUrlParams and
+    // forwarded on outgoing SDK calls even when treeId is undefined (treeId is service-only).
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: undefined,
+      authIndex: { type: 'module', value: 'DataStore' },
+    });
+
+    const stepParams = wrapper.vm.getStepParams();
+
+    expect(stepParams.query.authIndexType).toBe('module');
+    expect(stepParams.query.authIndexValue).toBe('DataStore');
+    queryStringSpy.mockRestore();
+    wrapper.setData({ realm: '/', authIndex: undefined });
+  });
+
+  describe('composite_advice encoding round-trip (SAML policy-driven auth)', () => {
+    // AM's policy engine redirects the browser to XUI with authIndexType=composite_advice and
+    // authIndexValue=<percent-encoded XML> when a SAML SP-initiated flow requires step-up auth.
+    // The XML is a TransactionConditionAdvice document (e.g. carrying a TxId or spEntityID).
+    //
+    // The encoding contract this UI must honour:
+    //   evaluateUrlParams() calls URLSearchParams.get(), which decodes exactly one percent-encoding
+    //   layer. Raw XML lands in this.authIndex.value. getStepParams() copies it verbatim into
+    //   stepParams.query. journey-client's stringify() (= encodeURIComponent per value) re-encodes
+    //   it for the HTTP request. AM receives single-encoded XML — what it originally sent.
+    //
+    // Two fixtures exercise the critical encoding boundary:
+    //
+    //   Fixture A — AM canonical (single-encoded, %3D/%2F):
+    //     AM sends encodeURIComponent(rawXml). URLSearchParams.get() decodes to rawXml.
+    //     stringify() re-encodes to the same single-encoded string. AM receives rawXml. ✓
+    //
+    //   Fixture B — real IAM-7834 failure path (mixed encoding, %3C outer / %253D %252F inner):
+    //     This reproduces the original bug: AM emits XML where outer angle-brackets are %3C/%3E
+    //     but attribute = and path / were pre-encoded to %3D/%2F BEFORE the outer encodeURIComponent
+    //     was applied, producing %253D/%252F in the URL. URLSearchParams.get() peels one layer,
+    //     leaving %3D/%2F inside the XML string. stringify() then re-encodes % → %25, yielding
+    //     %253D/%252F in the outgoing request. AM receives malformed XML and rejects the advice.
+    //     This fixture documents the broken behavior as a canary — it must fail if someone later
+    //     fixes the decoding (the expectations should be updated to assert rawXml at that point).
+    //
+    // Both fixtures also exercise the two-request scenario (client.start() then client.next()) to
+    // confirm authIndexType never flips from composite_advice to service across requests.
+    //
+    // Boundary: these tests stop at the client.start()/client.next() call arguments. The real
+    // HTTP URL is reconstructed from those args via stringify() — the same function journey-client's
+    // constructUrl() uses — to show what AM receives on the wire. A live AM/SAML transaction test
+    // is not possible in this unit environment and belongs in e2e Cypress.
+
+    // Real TransactionConditionAdvice XML shape used in SAML SP-initiated flows.
+    // The attribute name contains = and the closing tag contains / — these are the characters
+    // that mixed-encoding corrupts into %253D and %252F.
+    const TX_ADVICE_XML = '<Advices><AttributeValuePair>'
+      + '<Attribute name="TransactionConditionAdvice"/>'
+      + '<Value>TxId=saml-abc-123</Value>'
+      + '</AttributeValuePair></Advices>';
+
+    // Mixed-encoded URL value: outer XML brackets are single-encoded (%3C/%3E) but the
+    // attribute = and tag-closing / are double-encoded (%253D/%252F). This is the IAM-7834
+    // failure shape — pre-encode only = and / then run encodeURIComponent over the whole string.
+    const mixedEncodedAdvice = encodeURIComponent(
+      TX_ADVICE_XML.replace(/=/g, '%3D').replace(/\//g, '%2F'),
+    );
+
+    let replaceUrlParamsSpy;
+    let setPageTitleSpy;
+
+    beforeEach(() => {
+      replaceUrlParamsSpy = jest.spyOn(urlUtil, 'replaceUrlParams').mockImplementation(() => {});
+      setPageTitleSpy = jest.spyOn(wrapper.vm, 'setPageTitle').mockImplementation(() => {});
+      mockStart.mockReset();
+      mockNext.mockReset();
+    });
+
+    afterEach(() => {
+      replaceUrlParamsSpy.mockRestore();
+      setPageTitleSpy.mockRestore();
+      wrapper.setData({
+        realm: '/', treeId: undefined, authIndex: undefined, step: null,
+      });
+    });
+
+    it('Fixture A — canonical single-encoded (%3D/%2F): decodes to raw XML, client.start() and client.next() both carry composite_advice, wire value round-trips to original XML', async () => {
+      // Sanity: AM canonical output — encodeURIComponent produces %3D for = and %2F for /
+      const singleEncodedAdvice = encodeURIComponent(TX_ADVICE_XML);
+      expect(singleEncodedAdvice).toContain('%3D');
+      expect(singleEncodedAdvice).toContain('%2F');
+      expect(singleEncodedAdvice).not.toContain('%253D');
+
+      const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue(
+        `authIndexType=composite_advice&authIndexValue=${singleEncodedAdvice}`,
+      );
+
+      wrapper.setData({
+        realm: 'alpha', treeId: undefined, authIndex: undefined, step: null,
+      });
+      wrapper.vm.evaluateUrlParams();
+
+      // evaluateUrlParams() decoded exactly one layer → raw XML in state
+      expect(wrapper.vm.authIndex).toEqual({ type: 'composite_advice', value: TX_ADVICE_XML });
+      expect(wrapper.vm.treeId).toBeUndefined();
+
+      // --- Request 1: client.start() (this.step is null) ---
+      const step1Response = rehydrateStep({ callbacks: [] });
+      mockStart.mockResolvedValueOnce(step1Response);
+      wrapper.vm.nextStep();
+      await flushPromises();
+
+      expect(mockStart).toHaveBeenCalledTimes(1);
+      const startArgs = mockStart.mock.calls[0][0];
+      // authIndexType must stay composite_advice — never 'service'
+      expect(startArgs.query.authIndexType).toBe('composite_advice');
+      expect(startArgs.query.authIndexValue).toBe(TX_ADVICE_XML);
+      expect(startArgs).not.toHaveProperty('journey');
+
+      // Reconstruct the wire URL using the same stringify() journey-client uses in constructUrl()
+      const wireQs1 = stringify(startArgs.query);
+      expect(wireQs1).toContain('authIndexType=composite_advice');
+      expect(wireQs1).toContain(`authIndexValue=${singleEncodedAdvice}`);
+      // No double-encoding: %25 would mean a bare % was re-encoded
+      expect(wireQs1).not.toContain('%25');
+      // AM decodes the wire value back to the original XML
+      expect(new URLSearchParams(wireQs1).get('authIndexValue')).toBe(TX_ADVICE_XML);
+
+      // --- Request 2: client.next() (this.step is now set from step1Response) ---
+      const step2Response = rehydrateStep({ callbacks: [] });
+      mockNext.mockResolvedValueOnce(step2Response);
+      wrapper.vm.nextStep();
+      await flushPromises();
+
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      const [, nextOptions] = mockNext.mock.calls[0];
+      // authIndexType must still be composite_advice on the second request
+      expect(nextOptions.query.authIndexType).toBe('composite_advice');
+      expect(nextOptions.query.authIndexValue).toBe(TX_ADVICE_XML);
+
+      const wireQs2 = stringify(nextOptions.query);
+      expect(wireQs2).toContain(`authIndexValue=${singleEncodedAdvice}`);
+      expect(wireQs2).not.toContain('%25');
+      expect(new URLSearchParams(wireQs2).get('authIndexValue')).toBe(TX_ADVICE_XML);
+
+      queryStringSpy.mockRestore();
+    });
+
+    it('Fixture B — IAM-7834 mixed encoding (%3C outer / %253D %252F inner): documents broken behavior where AM receives malformed XML', async () => {
+      // Verify this is the real mixed-encoding shape: outer %3C but inner %253D/%252F
+      expect(mixedEncodedAdvice).toContain('%3C');
+      expect(mixedEncodedAdvice).toContain('%253D');
+      expect(mixedEncodedAdvice).toContain('%252F');
+
+      // What URLSearchParams.get() produces after peeling one layer:
+      // outer %3C → <, but %253D → %3D (still percent-encoded =) and %252F → %2F (still encoded /)
+      const afterOneDecode = decodeURIComponent(mixedEncodedAdvice);
+      expect(afterOneDecode).toContain('%3D'); // inner = still encoded
+      expect(afterOneDecode).toContain('%2F'); // inner / still encoded
+      expect(afterOneDecode).not.toBe(TX_ADVICE_XML); // NOT the original clean XML
+
+      const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue(
+        `authIndexType=composite_advice&authIndexValue=${mixedEncodedAdvice}`,
+      );
+
+      wrapper.setData({
+        realm: 'alpha', treeId: undefined, authIndex: undefined, step: null,
+      });
+      wrapper.vm.evaluateUrlParams();
+
+      // evaluateUrlParams() peels one layer — this.authIndex.value still has %3D/%2F inside
+      expect(wrapper.vm.authIndex.type).toBe('composite_advice');
+      expect(wrapper.vm.authIndex.value).toBe(afterOneDecode); // not rawXml
+      expect(wrapper.vm.authIndex.value).not.toBe(TX_ADVICE_XML);
+      expect(wrapper.vm.treeId).toBeUndefined();
+
+      // --- Request 1: client.start() ---
+      const step1Response = rehydrateStep({ callbacks: [] });
+      mockStart.mockResolvedValueOnce(step1Response);
+      wrapper.vm.nextStep();
+      await flushPromises();
+
+      expect(mockStart).toHaveBeenCalledTimes(1);
+      const startArgs = mockStart.mock.calls[0][0];
+      // authIndexType stays composite_advice even on broken input — it must never flip to service
+      expect(startArgs.query.authIndexType).toBe('composite_advice');
+      // authIndexValue carries the partially-decoded (still-malformed) string
+      expect(startArgs.query.authIndexValue).toBe(afterOneDecode);
+
+      // The outgoing wire URL re-encodes the remaining %3D/%2F → %253D/%252F (double-encoding)
+      const wireQs1 = stringify(startArgs.query);
+      expect(wireQs1).toContain('%25'); // double-encoding marker — the bug
+      // AM decodes the wire value and receives the partially-decoded string, not rawXml
+      const wireValue1 = new URLSearchParams(wireQs1).get('authIndexValue');
+      expect(wireValue1).toBe(afterOneDecode);
+      expect(wireValue1).not.toBe(TX_ADVICE_XML); // AM will reject this
+
+      // --- Request 2: client.next() ---
+      const step2Response = rehydrateStep({ callbacks: [] });
+      mockNext.mockResolvedValueOnce(step2Response);
+      wrapper.vm.nextStep();
+      await flushPromises();
+
+      expect(mockNext).toHaveBeenCalledTimes(1);
+      const [, nextOptions] = mockNext.mock.calls[0];
+      expect(nextOptions.query.authIndexType).toBe('composite_advice');
+      const wireQs2 = stringify(nextOptions.query);
+      expect(wireQs2).toContain('%25'); // double-encoding persists on second request too
+      expect(new URLSearchParams(wireQs2).get('authIndexValue')).not.toBe(TX_ADVICE_XML);
+
+      queryStringSpy.mockRestore();
+    });
+  });
+
+  it('IAM-7834 regression: stale treeId + sunamcompositeadvice — composite_advice is not overwritten and legacy param is not double-encoded', async () => {
+    // Reproduces the exact XUI/resume scenario from IAM-7834:
+    //
+    // 1. The user first loads a service journey (e.g. Login). treeId = 'Login' is set.
+    // 2. A SAML SP-initiated policy requires step-up auth. AM redirects back to the XUI with:
+    //      authIndexType=composite_advice
+    //      authIndexValue=<percent-encoded TransactionConditionAdvice XML>
+    //      sunamcompositeadvice=<same percent-encoded XML>  (legacy AM parameter)
+    //    The URL still carries the previous service journey's state; this.treeId is stale.
+    // 3. evaluateUrlParams() must set this.authIndex, and must clear this.treeId so that
+    //    getStepParams() does not inject authIndexType=service using the stale journey name.
+    // 4. sunamcompositeadvice passes through parseParameters() percent-encoded as-is.
+    //    stringify() must not re-encode it (that would triple-encode it). It should be
+    //    decoded once before being passed through, matching what URLSearchParams gives.
+    //
+    // Fix contract (the documented IAM-7834 fix — not setting treeId for non-service types):
+    //   - this.treeId must be undefined after evaluateUrlParams() on a composite_advice URL
+    //   - this.authIndex must hold { type: 'composite_advice', value: rawXml }
+    //   - client.start() query must carry authIndexType=composite_advice, not 'service'
+    //   - sunamcompositeadvice in the outgoing wire URL must not contain %25 (no double-encoding)
+    //   - AM decodes sunamcompositeadvice wire value back to the original XML
+
+    const rawXml = '<Advices><AttributeValuePair>'
+      + '<Attribute name="TransactionConditionAdvice"/>'
+      + '<Value>TxId=saml-abc-123</Value>'
+      + '</AttributeValuePair></Advices>';
+    const encodedXml = encodeURIComponent(rawXml);
+
+    // Stale state: a prior service journey set treeId
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue(
+      `authIndexType=composite_advice&authIndexValue=${encodedXml}&sunamcompositeadvice=${encodedXml}`,
+    );
+    const replaceUrlParamsSpy = jest.spyOn(urlUtil, 'replaceUrlParams').mockImplementation(() => {});
+    jest.spyOn(wrapper.vm, 'setPageTitle').mockImplementation(() => {});
+
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: 'Login', // stale service journey — must be cleared by evaluateUrlParams()
+      authIndex: undefined,
+      step: null,
+    });
+    wrapper.vm.evaluateUrlParams();
+
+    // treeId must be cleared — the IAM-7834 fix
+    expect(wrapper.vm.treeId).toBeUndefined();
+    expect(wrapper.vm.authIndex).toEqual({ type: 'composite_advice', value: rawXml });
+
+    // Drive nextStep() → client.start()
+    const step1Response = rehydrateStep({ callbacks: [] });
+    mockStart.mockReset();
+    mockStart.mockResolvedValueOnce(step1Response);
+    wrapper.vm.nextStep();
+    await flushPromises();
+
+    expect(mockStart).toHaveBeenCalledTimes(1);
+    const startArgs = mockStart.mock.calls[0][0];
+
+    // authIndexType must be composite_advice, not the stale 'service'/'Login' pair
+    expect(startArgs.query.authIndexType).toBe('composite_advice');
+    expect(startArgs.query.authIndexValue).toBe(rawXml);
+    expect(startArgs).not.toHaveProperty('journey');
+
+    // Reconstruct the wire URL via stringify() (same as journey-client's constructUrl)
+    const wireQs = stringify(startArgs.query);
+
+    // sunamcompositeadvice must be present and must not be double-encoded
+    expect(wireQs).toContain('sunamcompositeadvice=');
+    expect(wireQs).not.toContain('%25'); // %25 = re-encoded %, the double-encoding marker
+
+    // AM decodes the sunamcompositeadvice wire value back to the original XML
+    const wireAdvice = new URLSearchParams(wireQs).get('sunamcompositeadvice');
+    expect(wireAdvice).toBe(rawXml);
+
+    replaceUrlParamsSpy.mockRestore();
+    queryStringSpy.mockRestore();
+    wrapper.setData({
+      realm: '/', treeId: undefined, authIndex: undefined, step: null,
+    });
+  });
+
+  it('treeId wins over non-service authIndex when both are set', () => {
+    // If both are populated, the service journey takes precedence — non-service is only used
+    // when treeId is absent.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: 'Login',
+      authIndex: { type: 'module', value: 'DataStore' },
+    });
+
+    const stepParams = wrapper.vm.getStepParams();
+
+    expect(stepParams.query.authIndexType).toBe('service');
+    expect(stepParams.query.authIndexValue).toBe('Login');
+    queryStringSpy.mockRestore();
+    wrapper.setData({ realm: '/', treeId: undefined, authIndex: undefined });
+  });
+
+  it('falls back to a realm-root Start over link on expired-suspend when treeId is undefined (IAM-11758)', async () => {
+    // The expired-suspend branch falls back to the realm root when treeId is unavailable, so
+    // the Start Over button always renders even without a journey context.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    mockStart.mockImplementation(() => Promise.resolve({
+      type: 'LoginFailure',
+      payload: {
+        code: 401,
+        message: 'Login failure',
+        reason: 'Unauthorized',
+      },
+      callbacks: [],
+    }));
+
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: undefined,
+      suspendedId: 'expired-suspend-id',
+      step: null,
+      retry: false,
+    });
+
+    wrapper.vm.nextStep();
+    await flushPromises();
+
+    expect(wrapper.vm.linkToTreeStart).toBe('/am/XUI/?realm=alpha');
+    queryStringSpy.mockRestore();
+    wrapper.setData({ realm: '/', suspendedId: undefined });
+  });
+
+  it('keeps params like noSession after returning from a redirect', () => {
+    // Redirect resumption params (code/state/scope) are forwarded via treeResumptionParameters
+    // and only appear in stepParams.query when set. Non-resumption params (e.g. noSession) always appear.
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('noSession=true&param1=test');
 
     const expectedStepParams = {
       query: {
+        goto: undefined,
+        gotoOnFail: undefined,
         noSession: 'true',
         param1: 'test',
-        code: 'test',
-        state: 'test',
-        scope: 'test',
       },
       realmPath: 'test',
     };
-    // test undefined tree
     wrapper.setData({
       realm: 'test',
     });
-    wrapper.vm.treeResumptionParameters = {
-      code: 'test',
-      state: 'test',
-      scope: 'test',
-    };
 
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
+    queryStringSpy.mockRestore();
   });
 
   it('Sets the correct field data type based on policyRequirements', () => {
@@ -258,7 +929,7 @@ describe('Login.vue', () => {
 
       const data = {
         loading: true,
-        step: new FRStep({
+        step: rehydrateStep({
           callbacks: [
             {
               type: 'MetadataCallback',
@@ -283,7 +954,7 @@ describe('Login.vue', () => {
     });
 
     it('sets ariaLabelledbyId on ConfirmationCallback when preceded by TextOutputCallback', () => {
-      const step = new FRStep({
+      const step = rehydrateStep({
         callbacks: [
           {
             type: 'TextOutputCallback',
@@ -317,7 +988,7 @@ describe('Login.vue', () => {
     });
 
     it('does not set ariaLabelledbyId on ConfirmationCallback when preceding TextOutputCallback is SCRIPT', () => {
-      const step = new FRStep({
+      const step = rehydrateStep({
         callbacks: [
           {
             type: 'TextOutputCallback',
@@ -348,7 +1019,7 @@ describe('Login.vue', () => {
     });
 
     it('does not set ariaLabelledbyId when preceding TextOutputCallback is not INFORMATION type', () => {
-      const step = new FRStep({
+      const step = rehydrateStep({
         callbacks: [
           {
             type: 'TextOutputCallback',
@@ -380,7 +1051,7 @@ describe('Login.vue', () => {
 
     describe('extractWebAuthnComponents', () => {
       it('extracts WebAuthn components into webAuthnComponentGroup and updates nextButtonVisible', () => {
-        const step = new FRStep({
+        const step = rehydrateStep({
           callbacks: [
             {
               type: 'WebAuthnComponent',
@@ -412,7 +1083,7 @@ describe('Login.vue', () => {
       });
 
       it('sets nextButtonVisible to false if all components are extracted', () => {
-        const step = new FRStep({
+        const step = rehydrateStep({
           callbacks: [
             {
               type: 'WebAuthnComponent',
@@ -429,6 +1100,105 @@ describe('Login.vue', () => {
         expect(wrapper.vm.nextButtonVisible).toBe(false);
       });
     });
+
+    describe('getComponentPropsAndEvents asScript detection', () => {
+      beforeEach(() => {
+        asScriptParserModule.authenticateWithAsScript.mockClear();
+        asScriptParserModule.registerWithAsScript.mockClear();
+      });
+
+      afterEach(() => {
+        // Restore the factory default (None) so per-test step-type stubs
+        // don't bleed into other suites in this file.
+        WebAuthn.getWebAuthnStepType.mockImplementation(() => WebAuthnStepType.None);
+      });
+
+      function makeAsScriptStep(message = 'webAuthnOutcome::somedata') {
+        return {
+          getCallbacksOfType: jest.fn((type) => {
+            if (type === 'TextOutputCallback') {
+              return [{ getMessage: () => message, getOutputValue: () => message }];
+            }
+            if (type === 'MetadataCallback') return [];
+            return [];
+          }),
+        };
+      }
+
+      function makeModernStep() {
+        return {
+          getCallbacksOfType: jest.fn((type) => {
+            if (type === 'TextOutputCallback') return [];
+            if (type === 'MetadataCallback') {
+              return [{ getOutputValue: () => ({ pubKeyCredParams: [] }) }];
+            }
+            return [];
+          }),
+        };
+      }
+
+      it('injects authenticateWithAsScript as webAuthnPromiseFunction for asScript steps', () => {
+        const step = makeAsScriptStep();
+        const result = wrapper.vm.getComponentPropsAndEvents('WebAuthnComponent', 0, [], null, step, 'root');
+        expect(result.callbackSpecificProps.webAuthnPromiseFunction).toBeDefined();
+        result.callbackSpecificProps.webAuthnPromiseFunction();
+        expect(asScriptParserModule.authenticateWithAsScript).toHaveBeenCalledWith(step);
+      });
+
+      it('injects registerWithAsScript as webAuthnPromiseFunction for registration asScript steps', () => {
+        // Real registration scripts carry the creation options inline, so the
+        // message includes pubKeyCredParams — the same signal journey-client's
+        // getWebAuthnStepType keys on (mocked here via mockReturnValue).
+        const step = makeAsScriptStep('webAuthnOutcome::registration::script pubKeyCredParams [ {"type": "public-key", "alg": -7} ]');
+        WebAuthn.getWebAuthnStepType.mockReturnValue(WebAuthnStepType.Registration);
+        const result = wrapper.vm.getComponentPropsAndEvents('WebAuthnComponent', 0, [], null, step, 'root');
+        expect(result.callbackSpecificProps.webAuthnPromiseFunction).toBeDefined();
+        result.callbackSpecificProps.webAuthnPromiseFunction();
+        expect(asScriptParserModule.registerWithAsScript).toHaveBeenCalledTimes(1);
+        expect(asScriptParserModule.registerWithAsScript).toHaveBeenCalledWith(step);
+        expect(asScriptParserModule.authenticateWithAsScript).not.toHaveBeenCalled();
+      });
+
+      it('injects authenticateWithAsScript as webAuthnPromiseFunction for authentication asScript steps', () => {
+        const step = makeAsScriptStep();
+        WebAuthn.getWebAuthnStepType.mockReturnValue(WebAuthnStepType.Authentication);
+        const result = wrapper.vm.getComponentPropsAndEvents('WebAuthnComponent', 0, [], null, step, 'root');
+        expect(result.callbackSpecificProps.webAuthnPromiseFunction).toBeDefined();
+        result.callbackSpecificProps.webAuthnPromiseFunction();
+        expect(asScriptParserModule.authenticateWithAsScript).toHaveBeenCalledWith(step);
+        expect(asScriptParserModule.registerWithAsScript).not.toHaveBeenCalled();
+      });
+
+      it('injects authenticateWithAsScript as webAuthnPromiseFunction for asScript steps that resolve to no step type', () => {
+        // Default (None): the hidden callback is missing, so no ceremony can
+        // run — the pre-existing authentication injection produces the
+        // correct errorCallbacksNotFound error, so it must stay.
+        const step = makeAsScriptStep();
+        WebAuthn.getWebAuthnStepType.mockReturnValue(WebAuthnStepType.None);
+        const result = wrapper.vm.getComponentPropsAndEvents('WebAuthnComponent', 0, [], null, step, 'root');
+        expect(result.callbackSpecificProps.webAuthnPromiseFunction).toBeDefined();
+        result.callbackSpecificProps.webAuthnPromiseFunction();
+        expect(asScriptParserModule.authenticateWithAsScript).toHaveBeenCalledWith(step);
+        expect(asScriptParserModule.registerWithAsScript).not.toHaveBeenCalled();
+      });
+
+      it('does not inject authenticateWithAsScript for modern MetadataCallback-based WebAuthn steps', () => {
+        const step = makeModernStep();
+        const result = wrapper.vm.getComponentPropsAndEvents('WebAuthnComponent', 0, [], null, step, 'root');
+        expect(asScriptParserModule.authenticateWithAsScript).not.toHaveBeenCalled();
+        // Modern steps keep the shared webAuthnPromiseFunction from LoginMixin,
+        // not the asScript override — confirm it exists but is a different function.
+        expect(result.callbackSpecificProps?.webAuthnPromiseFunction).toBeDefined();
+        result.callbackSpecificProps.webAuthnPromiseFunction();
+        expect(asScriptParserModule.authenticateWithAsScript).not.toHaveBeenCalled();
+      });
+
+      it('does not inject authenticateWithAsScript for non-WebAuthn component types', () => {
+        const step = makeAsScriptStep();
+        wrapper.vm.getComponentPropsAndEvents('NameCallback', 0, [], null, step, 'root');
+        expect(asScriptParserModule.authenticateWithAsScript).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('IAM-10071 - error state across auto-submitting and user-initiated nextStep calls', () => {
@@ -436,7 +1206,11 @@ describe('Login.vue', () => {
     const trustedEvent = { isTrusted: true, preventDefault: jest.fn() };
 
     beforeEach(() => {
-      jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep({ callbacks: [] })));
+      // When `this.step` is undefined (default), `nextStep()` invokes
+      // `start()` rather than `next()`. Mock both so the production path
+      // resolves regardless.
+      mockNext.mockImplementation(() => Promise.resolve(rehydrateStep({ callbacks: [] })));
+      mockStart.mockImplementation(() => Promise.resolve(rehydrateStep({ callbacks: [] })));
     });
 
     it('preserves error when called without an event (auto-submitting callback)', () => {
@@ -544,7 +1318,7 @@ describe('Login.vue', () => {
     let localStorageSetSpy;
     let localStorageRemoveSpy;
 
-    const stepWithNameCallback = new FRStep({
+    const stepWithNameCallback = rehydrateStep({
       callbacks: [{
         type: 'NameCallback',
         output: [{ name: 'prompt', value: 'Username' }],
@@ -627,6 +1401,467 @@ describe('Login.vue', () => {
       await wrapper.setProps({ journeyRememberMeEnabled: true });
       wrapper.vm.setRememberedUsername();
       expect(component.callbackSpecificProps.value).toBe('');
+    });
+  });
+
+  // When startup fails (e.g. wrong AM server address), the login form still
+  // shows. The error only appears when the user tries to log in.
+  describe('bootstrap-failed — login form still shows', () => {
+    it('Login component renders the main content even when startup failed', () => {
+      expect(wrapper.find('#mainContent').exists()).toBe(true);
+    });
+  });
+
+  // If journey-client bootstrap failed in main.js (e.g. the wellknown fetch could
+  // not reach AM), useJourneyClientStore().client is never set. Login must surface
+  // the same "trouble connecting" error nextStep() shows for a missing client,
+  // and must not go on to call checkNewSession()/nextStep() — checkNewSession()
+  // would otherwise throw calling client.terminate() with no client when
+  // ?arg=newsession is present.
+  describe('bootstrap-failed — client never set', () => {
+    afterEach(() => {
+      // Put the working client back so other tests are not affected.
+      mockStoreInstance.client = {
+        next: mockNext,
+        start: mockStart,
+        resume: mockResume,
+        redirect: mockRedirect,
+        terminate: mockTerminate,
+      };
+    });
+
+    it('shows the issueConnecting error and does not call checkNewSession()/nextStep() when the client failed to bootstrap', async () => {
+      mockStoreInstance.client = null;
+      const pinia = createTestingPinia();
+      const failedBootstrapWrapper = shallowMount(Login, {
+        global: {
+          plugins: [pinia],
+          stubs: {
+            'router-link': true,
+          },
+          mocks: {
+            $route,
+            $sanitize: (message, config) => sanitize(message, config),
+            $t: (key) => key,
+            $store: {
+              state: {
+                SharedStore: {
+                  webStorageAvailable: true,
+                },
+              },
+            },
+          },
+          mixins: [LoginMixin],
+        },
+      });
+      const checkNewSessionSpy = jest.spyOn(failedBootstrapWrapper.vm, 'checkNewSession');
+      const nextStepSpy = jest.spyOn(failedBootstrapWrapper.vm, 'nextStep');
+
+      await flushPromises();
+
+      expect(checkNewSessionSpy).not.toHaveBeenCalled();
+      expect(nextStepSpy).not.toHaveBeenCalled();
+      expect(failedBootstrapWrapper.vm.errorMessage).toBe('login.issueConnecting');
+      expect(failedBootstrapWrapper.vm.loginFailure).toBe(true);
+      expect(failedBootstrapWrapper.vm.loading).toBe(false);
+
+      failedBootstrapWrapper.unmount();
+    });
+  });
+
+  describe('loading guard in nextStep', () => {
+    it('does nothing when a trusted user event fires while an SDK call is already in flight (double-submit race prevention)', () => {
+      // Let the first call set this.submitting = true and hang on the SDK call.
+      mockStart.mockReturnValue(new Promise(() => {}));
+      const trustedEvent = { isTrusted: true, preventDefault: jest.fn() };
+      wrapper.vm.nextStep(trustedEvent);
+      expect(mockStart).toHaveBeenCalledTimes(1);
+      // Second click while the first SDK call is still in flight — must be swallowed.
+      wrapper.vm.nextStep(trustedEvent);
+      expect(mockStart).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // When the startup failed (client is null) and the user clicks submit,
+  // they should see a "trouble connecting" error — not a silent nothing.
+  describe('client null guard', () => {
+    afterEach(() => {
+      // Put the working client back so other tests are not affected.
+      mockStoreInstance.client = {
+        next: mockNext,
+        start: mockStart,
+        resume: mockResume,
+        redirect: mockRedirect,
+        terminate: mockTerminate,
+      };
+    });
+
+    it('nextStep sets an error message and does not call start/next when startup failed', async () => {
+      mockStoreInstance.client = null;
+
+      // errorMessage starts empty; after nextStep it should be set to something
+      // (the $t mock in this suite returns undefined, so we just check it changed)
+      wrapper.vm.errorMessage = '';
+      wrapper.vm.nextStep(undefined, false);
+
+      expect(mockNext).not.toHaveBeenCalled();
+      expect(mockStart).not.toHaveBeenCalled();
+      // errorMessage was assigned (not left as empty string)
+      expect(wrapper.vm.errorMessage).not.toBe('');
+      expect(wrapper.vm.loading).toBe(false);
+    });
+
+    it('getNewAuthId calls client.start() with journey/query and resolves with the authId from the step payload', async () => {
+      mockStart.mockResolvedValueOnce({ payload: { authId: 'new-auth-id-123' } });
+
+      const authId = await wrapper.vm.getNewAuthId({ tree: 'Login', query: { ForceAuth: 'true' } });
+
+      expect(mockStart).toHaveBeenCalledWith({ journey: 'Login', query: { ForceAuth: 'true' } });
+      expect(authId).toBe('new-auth-id-123');
+    });
+  });
+
+  describe('handleRedirectCallback — outbound redirect', () => {
+    const makeRedirectCallback = ({
+      redirectUrl = 'https://idp.example.com/authorize',
+      redirectMethod = 'GET',
+      trackingCookie = true,
+      redirectData = {},
+    } = {}) => ({
+      getOutputByName: (name) => {
+        if (name === 'redirectUrl') return redirectUrl;
+        if (name === 'redirectMethod') return redirectMethod;
+        if (name === 'trackingCookie') return trackingCookie;
+        if (name === 'redirectData') return redirectData;
+        return undefined;
+      },
+    });
+
+    it('saves step to localStorage and redirects via window.location.href when expectToReturnFromRedirect is true', () => {
+      const fakeStep = { type: 'Step', payload: { authId: 'test-auth-id', callbacks: [] } };
+      wrapper.vm.step = fakeStep;
+
+      const addStorageSpy = jest.spyOn(authResumptionUtil, 'addTreeResumeDataToStorage').mockImplementation(() => {});
+      const originalLocation = window.location;
+      delete window.location;
+      window.location = { href: '' };
+
+      const callback = makeRedirectCallback({ trackingCookie: true, redirectMethod: 'GET', redirectUrl: 'https://idp.example.com/authorize' });
+      wrapper.vm.handleRedirectCallback(callback);
+
+      expect(addStorageSpy).toHaveBeenCalledWith(fakeStep, wrapper.vm.realm);
+      expect(window.location.href).toBe('https://idp.example.com/authorize');
+
+      window.location = originalLocation;
+      addStorageSpy.mockRestore();
+    });
+
+    it('does not save to localStorage when trackingCookie is false', () => {
+      const addStorageSpy = jest.spyOn(authResumptionUtil, 'addTreeResumeDataToStorage').mockImplementation(() => {});
+      const originalLocation = window.location;
+      delete window.location;
+      window.location = { href: '' };
+
+      const callback = makeRedirectCallback({ trackingCookie: false, redirectMethod: 'GET' });
+      wrapper.vm.handleRedirectCallback(callback);
+
+      expect(addStorageSpy).not.toHaveBeenCalled();
+
+      window.location = originalLocation;
+      addStorageSpy.mockRestore();
+    });
+  });
+
+  // After the IAM-10906 SDK migration, client.next()/client.start() resolves
+  // (not rejects) with a GenericError object on transport failures. The guard
+  // inserted before the sessionStorage write and this.step assignment must
+  // detect this shape and route it to the error-display path without calling
+  // buildTreeForm() or writing to sessionStorage.
+  describe('GenericError guard in nextStep .then() handler', () => {
+    const genericError = {
+      error: 'request_failed',
+      message: 'Request failed: fetch error',
+      type: 'unknown_error',
+    };
+
+    let guardWrapper;
+
+    beforeEach(() => {
+      // Use $t: (key) => key so errorMessage assertions can check the i18n key string.
+      // The top-level beforeEach uses $t: () => {} (returns undefined), which would
+      // make the errorMessage assertion trivially pass undefined === undefined.
+      const pinia = createTestingPinia();
+      guardWrapper = shallowMount(Login, {
+        global: {
+          plugins: [pinia],
+          stubs: { 'router-link': true },
+          mocks: {
+            $route,
+            $sanitize: (message, config) => sanitize(message, config),
+            $t: (key) => key,
+            $store: {
+              state: {
+                SharedStore: {
+                  webStorageAvailable: true,
+                },
+              },
+            },
+          },
+          mixins: [LoginMixin],
+        },
+      });
+
+      mockNext.mockImplementation(() => Promise.resolve(genericError));
+      mockStart.mockImplementation(() => Promise.resolve(genericError));
+    });
+
+    it('on step 1 (no previousStep): sets issueConnecting error, clears loading, does not overwrite this.step, sets loginFailure so the banner renders, does not call buildTreeForm, does not write initialStep to sessionStorage', async () => {
+      const buildTreeFormSpy = jest.spyOn(guardWrapper.vm, 'buildTreeForm');
+      const sessionStorageSetSpy = jest.spyOn(Storage.prototype, 'setItem');
+      // Leave guardWrapper.vm.step as undefined (default) so previousStep is falsy (step 1).
+      // The guard must return before this.step = step runs, so this.step stays undefined.
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(guardWrapper.vm.errorMessage).toBe('login.issueConnecting');
+      expect(guardWrapper.vm.loading).toBe(false);
+      // Guard returned early — this.step must not have been set to the error object
+      expect(guardWrapper.vm.step).toBeUndefined();
+      // Banner renders only when loginFailure && errorMessage are both set — the card
+      // must not be empty (IAM-11941: CDN 403 with HTML body arrives as unknown_error).
+      expect(guardWrapper.vm.loginFailure).toBe(true);
+      expect(buildTreeFormSpy).not.toHaveBeenCalled();
+      expect(sessionStorageSetSpy).not.toHaveBeenCalledWith('initialStep', expect.anything());
+
+      sessionStorageSetSpy.mockRestore();
+    });
+
+    it('on step 2+ (previousStep exists) with initialStep in sessionStorage: restores initial step, shows loginFailure banner, sets loginFailure and isFirstStep', async () => {
+      const fakeInitialCallbacks = [{ getType: () => 'NameCallback' }];
+      const fakeInitialPayload = { authId: 'initial-auth-id', callbacks: [] };
+      const fakeInitialStep = { type: 'Step', payload: fakeInitialPayload, callbacks: fakeInitialCallbacks };
+      const fakePreviousStep = { type: 'Step', payload: { authId: 'step2-auth-id' }, callbacks: [] };
+      const buildTreeFormSpy = jest.spyOn(guardWrapper.vm, 'buildTreeForm');
+      // allowListingsEnabled calls decodeJwt which throws on non-JWT strings. Stub it to return
+      // false (non-whitelist-state journey) so the else branch runs synchronously.
+      jest.spyOn(guardWrapper.vm, 'allowListingsEnabled').mockReturnValue(false);
+
+      // Stub getStepParams so the realmAndTreeKey is deterministic, then seed sessionStorage.
+      const fakeStepParams = { realmPath: 'alpha', tree: 'Login', query: {} };
+      jest.spyOn(guardWrapper.vm, 'getStepParams').mockReturnValue(fakeStepParams);
+      sessionStorage.setItem('initialStep', JSON.stringify({
+        key: 'alpha/Login',
+        step: fakeInitialStep,
+      }));
+
+      // Seed the component with a previous step so previousStep is truthy.
+      guardWrapper.vm.step = fakePreviousStep;
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(guardWrapper.vm.errorMessage).toBe('login.loginFailure');
+      expect(guardWrapper.vm.loginFailure).toBe(true);
+      expect(guardWrapper.vm.loading).toBe(false);
+      expect(guardWrapper.vm.isFirstStep).toBe(true);
+      expect(guardWrapper.vm.retry).toBe(true);
+      expect(buildTreeFormSpy).toHaveBeenCalled();
+
+      sessionStorage.clear();
+    });
+
+    it('on step 2+ of a whitelist-state journey: restores initialStep and rearms the authId on the restored step (matches LoginLegacy LoginFailure branch)', async () => {
+      const fakeInitialCallbacks = [{ getType: () => 'NameCallback' }];
+      const fakeInitialPayload = { authId: 'initial-whitelist-authid', callbacks: [] };
+      const fakeInitialStep = { type: 'Step', payload: fakeInitialPayload, callbacks: fakeInitialCallbacks };
+      const fakePreviousStep = { type: 'Step', payload: { authId: 'burned-whitelist-authid' }, callbacks: [] };
+      const buildTreeFormSpy = jest.spyOn(guardWrapper.vm, 'buildTreeForm');
+      // allowListingsEnabled decodes a JWT via window.atob (not available in jsdom), so spy on
+      // it directly rather than constructing a real whitelist-state JWT.
+      jest.spyOn(guardWrapper.vm, 'allowListingsEnabled').mockReturnValue(true);
+
+      // Deterministic realmAndTreeKey so the seeded initialStep is picked up on the .then.
+      const fakeStepParams = { realmPath: 'alpha', tree: 'Login', query: {} };
+      jest.spyOn(guardWrapper.vm, 'getStepParams').mockReturnValue(fakeStepParams);
+      sessionStorage.setItem('initialStep', JSON.stringify({
+        key: 'alpha/Login',
+        step: fakeInitialStep,
+      }));
+
+      // finaliseLoginFailure calls getNewAuthId, which calls client.start under the hood.
+      // Return a step with a fresh authId so the rearm assignment can be verified.
+      const rearmedStep = { type: 'Step', payload: { authId: 'fresh-authid' }, callbacks: [] };
+      mockStart.mockResolvedValueOnce(rearmedStep);
+
+      guardWrapper.vm.step = fakePreviousStep;
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(guardWrapper.vm.errorMessage).toBe('login.loginFailure');
+      expect(guardWrapper.vm.loginFailure).toBe(true);
+      expect(guardWrapper.vm.loading).toBe(false);
+      expect(guardWrapper.vm.isFirstStep).toBe(true);
+      expect(guardWrapper.vm.retry).toBe(true);
+      // Form is rebuilt for the restored initialStep — user sees the start of the journey.
+      expect(buildTreeFormSpy).toHaveBeenCalled();
+      // authId is rearmed IN-PLACE on the restored initialStep by finaliseLoginFailure.
+      expect(guardWrapper.vm.step.payload.authId).toBe('fresh-authid');
+
+      sessionStorage.clear();
+    });
+
+    it('on step 2+ of a whitelist-state journey: clears loading if getNewAuthId fails so the spinner does not get stuck', async () => {
+      // The .catch inside finaliseLoginFailure must clear loading even if the rearm call
+      // (client.start via getNewAuthId) rejects — otherwise the user sees a stuck spinner.
+      const fakeInitialPayload = { authId: 'initial-whitelist-authid', callbacks: [] };
+      const fakeInitialStep = { type: 'Step', payload: fakeInitialPayload, callbacks: [] };
+      const fakePreviousStep = { type: 'Step', payload: { authId: 'burned-whitelist-authid' }, callbacks: [] };
+      jest.spyOn(guardWrapper.vm, 'allowListingsEnabled').mockReturnValue(true);
+
+      const fakeStepParams = { realmPath: 'alpha', tree: 'Login', query: {} };
+      jest.spyOn(guardWrapper.vm, 'getStepParams').mockReturnValue(fakeStepParams);
+      sessionStorage.setItem('initialStep', JSON.stringify({
+        key: 'alpha/Login',
+        step: fakeInitialStep,
+      }));
+
+      // Simulate a transport failure in the rearm call.
+      mockStart.mockRejectedValueOnce(new Error('network'));
+
+      guardWrapper.vm.step = fakePreviousStep;
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(guardWrapper.vm.loading).toBe(false);
+
+      sessionStorage.clear();
+    });
+
+    it('on step 2+ of a whitelist-state journey: rearm failure still shows the failure banner so the card is not empty (IAM-11941)', async () => {
+      // When the rearm call (client.start via getNewAuthId) rejects — e.g. a 403 Forbidden
+      // from /am/json/authenticate — the .catch inside finaliseLoginFailure must not only
+      // clear loading but also set loginFailure and the fallback errorMessage. Otherwise the
+      // restored initialStep renders with no banner: an empty card (IAM-11941).
+      const fakeInitialPayload = { authId: 'initial-whitelist-authid', callbacks: [] };
+      const fakeInitialStep = { type: 'Step', payload: fakeInitialPayload, callbacks: [] };
+      const fakePreviousStep = { type: 'Step', payload: { authId: 'burned-whitelist-authid' }, callbacks: [] };
+      jest.spyOn(guardWrapper.vm, 'allowListingsEnabled').mockReturnValue(true);
+
+      const fakeStepParams = { realmPath: 'alpha', tree: 'Login', query: {} };
+      jest.spyOn(guardWrapper.vm, 'getStepParams').mockReturnValue(fakeStepParams);
+      sessionStorage.setItem('initialStep', JSON.stringify({
+        key: 'alpha/Login',
+        step: fakeInitialStep,
+      }));
+
+      // Simulate the rearm call failing with 403 Forbidden on the fresh journey start.
+      mockStart.mockRejectedValueOnce(new Error('403'));
+
+      guardWrapper.vm.step = fakePreviousStep;
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(guardWrapper.vm.loading).toBe(false);
+      expect(guardWrapper.vm.loginFailure).toBe(true);
+      expect(guardWrapper.vm.errorMessage).toBe('login.loginFailure');
+
+      sessionStorage.clear();
+    });
+
+    it('on step 2+ with ?gotoOnFail= in the URL: redirects the browser to the gotoOnFail URL (matches LoginLegacy LoginFailure branch)', async () => {
+      // Old SDK LoginFailure branch wrapped the recovery in redirectToFailure(step).then(...).
+      // redirectToFailure honours a ?gotoOnFail= URL param by navigating the browser there
+      // before doing any restore-to-start work. New SDK step-2+ unknown_error branch must
+      // preserve this so a customer who set ?gotoOnFail=<url> keeps the same failure UX.
+      const originalLocation = window.location;
+      const gotoOnFailUrl = 'https://mycompany.example/login-failed';
+      Object.defineProperty(window, 'location', {
+        value: {
+          search: `?gotoOnFail=${encodeURIComponent(gotoOnFailUrl)}`,
+          href: '',
+        },
+        writable: true,
+      });
+
+      const verifySpy = jest.spyOn(guardWrapper.vm, 'verifyGotoUrlAndRedirect').mockResolvedValue(gotoOnFailUrl);
+      const fakePreviousStep = { type: 'Step', payload: { authId: 'step2-auth-id' }, callbacks: [] };
+      guardWrapper.vm.step = fakePreviousStep;
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(verifySpy).toHaveBeenCalledWith(gotoOnFailUrl, '/', false, true);
+      expect(window.location.href).toBe(gotoOnFailUrl);
+
+      Object.defineProperty(window, 'location', { value: originalLocation, writable: true });
+    });
+
+    it('on step 2+ with no initialStep in sessionStorage: shows loginFailure banner but step becomes undefined and buildTreeForm is NOT called (IAM-11759)', async () => {
+      const fakePreviousStep = { type: 'Step', payload: { authId: 'step2-auth-id' }, callbacks: [] };
+      const buildTreeFormSpy = jest.spyOn(guardWrapper.vm, 'buildTreeForm');
+      // Non-whitelist journey — stub so the guard falls through to the IAM-11759 restore-initialStep branch.
+      jest.spyOn(guardWrapper.vm, 'allowListingsEnabled').mockReturnValue(false);
+      sessionStorage.clear();
+
+      guardWrapper.vm.step = fakePreviousStep;
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(guardWrapper.vm.errorMessage).toBe('login.loginFailure');
+      expect(guardWrapper.vm.loginFailure).toBe(true);
+      expect(guardWrapper.vm.loading).toBe(false);
+      expect(guardWrapper.vm.step).toBeUndefined();
+      expect(buildTreeFormSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('checkNewSession()', () => {
+    beforeEach(() => {
+      sessionStorage.clear();
+      localStorage.clear();
+    });
+
+    it('resolves immediately when arg=newsession is not present', async () => {
+      jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('realm=alpha');
+      await expect(wrapper.vm.checkNewSession()).resolves.toBeUndefined();
+      expect(mockTerminate).not.toHaveBeenCalled();
+    });
+
+    it('calls terminate() and resolves when arg=newsession is present and terminate succeeds', async () => {
+      jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('arg=newsession&realm=alpha');
+      mockTerminate.mockResolvedValueOnce(undefined);
+
+      await expect(wrapper.vm.checkNewSession()).resolves.toBeUndefined();
+      expect(mockTerminate).toHaveBeenCalledTimes(1);
+    });
+
+    it('resolves and continues when terminate returns a GenericError no active session is harmless)', async () => {
+      jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('arg=newsession');
+      mockTerminate.mockResolvedValueOnce({ error: 'terminate_failed', message: 'Failed to terminate session: 503', type: 'unknown_error' });
+      mockTerminate.mockClear();
+
+      await expect(wrapper.vm.checkNewSession()).resolves.toBeUndefined();
+      expect(mockTerminate).toHaveBeenCalledTimes(1);
+      // No blocking error state is set — the journey always loads.
+      expect(wrapper.vm.errorMessage).toBeFalsy();
+      expect(wrapper.vm.loginFailure).toBe(false);
+    });
+
+    it('resolves and continues when terminate rejects (fail-open)', async () => {
+      jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('arg=newsession');
+      mockTerminate.mockRejectedValueOnce(new Error('Server configuration is missing.'));
+      mockTerminate.mockClear();
+
+      await expect(wrapper.vm.checkNewSession()).resolves.toBeUndefined();
+      expect(mockTerminate).toHaveBeenCalledTimes(1);
+      // No blocking error state is set — the journey always loads.
+      expect(wrapper.vm.errorMessage).toBeFalsy();
+      expect(wrapper.vm.loginFailure).toBe(false);
     });
   });
 });
@@ -772,40 +2007,67 @@ describe('Component Test', () => {
       window = originalWindow;
     });
 
-    it('Removes tree resumption query parameters when returning from a redirect', async () => { // TODO this scenario may no longer be relevant given the other changes made here
+    it('Removes tree resumption query parameters when returning from a redirect', async () => {
       setUrl('https://forgerock.io/login/?realm=/&code=aCode');
 
-      // indicate that the tree is being resumed following a redirect
-      const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
-      const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ urlAtRedirect: 'blah', step: { payload: {} } });
+      // Simulate the pre-redirect step having been saved to localStorage by addTreeResumeDataToStorage
+      // (done by handleRedirectCallback on the outbound leg). resumingTreeFollowingRedirect checks
+      // for this key to detect that we're returning from an OAuth redirect.
+      const resumeStep = rehydrateStep({ callbacks: [] });
+      jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
+      const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ realmAtRedirect: '/', step: resumeStep });
+      mockNext.mockImplementation(() => Promise.resolve(rehydrateStep({ callbacks: [] })));
 
       const wrapper = await mountLogin();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/');
       expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
 
-      resumingSpy.mockRestore();
       getStepSpy.mockRestore();
+      authResumptionUtil.resumingTreeFollowingRedirect.mockRestore();
+    });
+
+    it('calls client.next() with the pre-redirect step and OAuth params in query when resuming after redirect', async () => {
+      setUrl('https://forgerock.io/login/?realm=/&code=aCode&state=aState');
+
+      const resumeStep = rehydrateStep({ callbacks: [] });
+      jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
+      const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ realmAtRedirect: '/', step: resumeStep });
+      mockNext.mockImplementation(() => Promise.resolve(rehydrateStep({ callbacks: [] })));
+      mockStart.mockReset();
+
+      await mountLogin();
+
+      // client.next() is called with the rehydrated step and the OAuth params forwarded in query
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({ payload: resumeStep.payload }),
+        expect.objectContaining({ query: expect.objectContaining({ code: 'aCode', state: 'aState' }) }),
+      );
+      expect(mockStart).not.toHaveBeenCalled();
+
+      getStepSpy.mockRestore();
+      authResumptionUtil.resumingTreeFollowingRedirect.mockRestore();
     });
 
     it('Leaves tree resumption query parameters in place when not returning from a redirect', async () => {
       setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
 
-      // indicate that the tree is being resumed following a redirect
-      const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(false);
+      // resumingTreeFollowingRedirect returns false (no treeResumeData in localStorage),
+      // so the component falls through to the normal branch, leaving code/other params in the URL.
+      jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(false);
 
       const wrapper = await mountLogin();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/&code=aCode&notRemoved=here');
       expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
 
-      resumingSpy.mockRestore();
+      authResumptionUtil.resumingTreeFollowingRedirect.mockRestore();
     });
 
     it('add validation immediate to component if it has failed policies', async () => {
       const data = {
         loading: true,
-        step: new FRStep(stepPayload),
+        step: rehydrateStep(stepPayload),
       };
 
       const wrapper = await mountLogin(data);
@@ -820,7 +2082,7 @@ describe('Component Test', () => {
     it('sets isRequired to true for NameCallback and PasswordCallback', async () => {
       const data = {
         loading: true,
-        step: new FRStep(stepPayload),
+        step: rehydrateStep(stepPayload),
       };
 
       const wrapper = await mountLogin(data);
@@ -836,7 +2098,7 @@ describe('Component Test', () => {
     });
 
     it('does not set isRequired for other callback types without a required output', async () => {
-      const step = new FRStep({
+      const step = rehydrateStep({
         authId: 'eyxQ',
         callbacks: [
           {
@@ -903,7 +2165,7 @@ describe('Component Test', () => {
 
     it('derives asterisk display props when the setting is already true during navigation', async () => {
       const wrapper = await mountLogin(
-        { loading: true, step: new FRStep(mixedStepPayload) },
+        { loading: true, step: rehydrateStep(mixedStepPayload) },
         { journeyShowAsteriskForRequiredFields: true },
       );
 
@@ -924,7 +2186,7 @@ describe('Component Test', () => {
 
     it('derives props without mutating the source or duplicating the indicator', async () => {
       const wrapper = await mountLogin(
-        { loading: true, step: new FRStep(mixedStepPayload) },
+        { loading: true, step: rehydrateStep(mixedStepPayload) },
         { journeyShowAsteriskForRequiredFields: true },
       );
 
@@ -946,7 +2208,7 @@ describe('Component Test', () => {
 
     it('reflects theme changes without resetting existing HTML state', async () => {
       const wrapper = await mountLogin(
-        { loading: true, step: new FRStep(mixedStepPayload) },
+        { loading: true, step: rehydrateStep(mixedStepPayload) },
         { journeyShowAsteriskForRequiredFields: true },
       );
 
@@ -967,7 +2229,7 @@ describe('Component Test', () => {
 
     it('translates the raw label before adding the required indicator', async () => {
       const wrapper = await mountLogin(
-        { loading: true, step: new FRStep(mixedStepPayload) },
+        { loading: true, step: rehydrateStep(mixedStepPayload) },
         { journeyShowAsteriskForRequiredFields: true },
       );
 
@@ -1029,7 +2291,10 @@ describe('Component Test', () => {
     beforeEach(() => {
       jest.useRealTimers();
       jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
-      jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authData)));
+      // Mock `start` and `next` together so journey-start (`this.step`
+      // undefined) and journey-advance both resolve.
+      mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authData)));
+      mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authData)));
     });
 
     describe('@renders', () => {
@@ -1169,7 +2434,8 @@ describe('Component Test', () => {
           header: 'Sign In',
           description: '',
         };
-        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataWithDefaultText)));
+        mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authDataWithDefaultText)));
+        mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authDataWithDefaultText)));
 
         callbacksWrapper = setup();
         jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
@@ -1198,8 +2464,9 @@ describe('Component Test', () => {
           description: '',
         };
 
-        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(stepValidationPayload)));
-        const data = { loading: true, step: new FRStep(stepValidationPayload) };
+        mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(stepValidationPayload)));
+        mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(stepValidationPayload)));
+        const data = { loading: true, step: rehydrateStep(stepValidationPayload) };
         callbacksWrapper = setup(data);
 
         await flushPromises();
@@ -1225,7 +2492,8 @@ describe('Component Test', () => {
           header: 'Sign In',
           description: '',
         };
-        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataWithAutocomplete)));
+        mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authDataWithAutocomplete)));
+        mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authDataWithAutocomplete)));
 
         callbacksWrapper = setup();
         jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
@@ -1249,7 +2517,8 @@ describe('Component Test', () => {
           header: 'Sign In',
           description: '',
         };
-        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataMissingAutocomplete)));
+        mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authDataMissingAutocomplete)));
+        mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authDataMissingAutocomplete)));
 
         callbacksWrapper = setup();
         jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
@@ -1274,7 +2543,8 @@ describe('Component Test', () => {
           header: 'Sign In',
           description: '',
         };
-        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataEmptyAutocomplete)));
+        mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authDataEmptyAutocomplete)));
+        mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authDataEmptyAutocomplete)));
 
         callbacksWrapper = setup();
         jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));

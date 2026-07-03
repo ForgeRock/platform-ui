@@ -10,6 +10,8 @@ import {
   decodeJwt,
   getAlternateFieldType,
   getFieldValidation,
+  getLinkToAuthIndexStart,
+  getLinkToRealmRoot,
   getLinkToTreeStart,
   isSessionTimedOut,
 } from './loginUtils';
@@ -145,6 +147,46 @@ describe('loginUtils', () => {
       const url = getLinkToTreeStart(params);
       expect(url).toContain('goto=a%20b');
       expect(url).toContain('gotoOnFail=c%26d');
+    });
+  });
+
+  describe('getLinkToAuthIndexStart', () => {
+    it('builds a module URL with type and value', () => {
+      const url = getLinkToAuthIndexStart(
+        { type: 'module', value: 'LdapModule' },
+        { realmPath: 'alpha', query: {} },
+      );
+      expect(url).toBe('/am/XUI/?realm=alpha&authIndexType=module&authIndexValue=LdapModule');
+    });
+    it('encodes special characters in the authIndexValue', () => {
+      const url = getLinkToAuthIndexStart(
+        { type: 'composite_advice', value: '<Advice xmlns="urn:am"/>' },
+        { realmPath: 'alpha', query: {} },
+      );
+      expect(url).toContain('authIndexType=composite_advice');
+      expect(url).toContain('authIndexValue=%3CAdvice%20xmlns%3D%22urn%3Aam%22%2F%3E');
+    });
+    it('appends encoded goto and gotoOnFail when present', () => {
+      const url = getLinkToAuthIndexStart(
+        { type: 'module', value: 'LdapModule' },
+        { realmPath: 'alpha', query: { goto: '/dashboard', gotoOnFail: '/error' } },
+      );
+      expect(url).toBe('/am/XUI/?realm=alpha&authIndexType=module&authIndexValue=LdapModule&goto=%2Fdashboard&gotoOnFail=%2Ferror');
+    });
+  });
+
+  describe('getLinkToRealmRoot', () => {
+    it('should return realm-only URL when no goto params are provided', () => {
+      const url = getLinkToRealmRoot({ realmPath: 'alpha', query: {} });
+      expect(url).toBe('/am/XUI/?realm=alpha');
+    });
+    it('should return realm-only URL for root realm path', () => {
+      const url = getLinkToRealmRoot({ realmPath: '/', query: {} });
+      expect(url).toBe('/am/XUI/?realm=/');
+    });
+    it('should append encoded goto and gotoOnFail when present', () => {
+      const url = getLinkToRealmRoot({ realmPath: 'alpha', query: { goto: '/dashboard', gotoOnFail: '/error' } });
+      expect(url).toBe('/am/XUI/?realm=alpha&goto=%2Fdashboard&gotoOnFail=%2Ferror');
     });
   });
 

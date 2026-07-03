@@ -241,6 +241,19 @@ describe('ConfirmationCallback', () => {
         expect(wrapper.emitted('next-step')).toBeTruthy();
       });
     });
+
+    // The Login view's nextStep double-submit guard reads event.isTrusted, so the click
+    // event must reach the emit — not swallowed by setValue. See IAM-11767.
+    it('forwards the click event to the next-step emit so the parent double-submit guard can inspect isTrusted', async () => {
+      const wrapper = setup({ stage: { showOnlyPositiveAnswer: false } });
+      await wrapper.vm.$nextTick();
+
+      await findByTestId(wrapper, 'btn-stub-option-1').trigger('click');
+
+      const [emittedEvent] = wrapper.emitted('next-step')[0];
+      expect(emittedEvent).toBeInstanceOf(Event);
+      expect(emittedEvent.type).toBe('click');
+    });
   });
 
   it('displays journey button position', async () => {

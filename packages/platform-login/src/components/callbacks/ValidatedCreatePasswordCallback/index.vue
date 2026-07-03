@@ -43,12 +43,13 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { FRAuth, CallbackType } from '@forgerock/javascript-sdk';
+import { callbackType } from '@forgerock/journey-client';
+import { createJourneyStep } from '@forgerock/journey-client/_utils';
+import { useJourneyClientStore } from '@forgerock/platform-shared/src/stores/journeyClient';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import {
-  cloneDeep,
   debounce,
   isEqual,
   uniqWith,
@@ -212,11 +213,11 @@ export default {
      * @param {String} value value to validate with
      */
     testInputValue(step, value) {
-      const sampleStep = cloneDeep(step);
-      const sampleCallback = sampleStep.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
+      const sampleStep = createJourneyStep(step.payload);
+      const sampleCallback = sampleStep.getCallbackOfType(callbackType.ValidatedCreatePasswordCallback);
       sampleCallback.setInputValue(value);
-
-      return FRAuth.next(sampleStep, { realmPath: this.realm });
+      const { client } = useJourneyClientStore();
+      return client.next(sampleStep);
     },
     /**
      * Sends two sample strings which combined will fail all ds policy
@@ -231,10 +232,12 @@ export default {
       const testString2 = 'aaa';
 
       this.testInputValue(step, testString1).then((step1) => {
-        const failures1 = step1.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
+        if (!step1) return; // upstream bailed
+        const failures1 = step1.getCallbackOfType(callbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
 
         this.testInputValue(step1, testString2).then((step2) => {
-          const failures2 = step2.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
+          if (!step2) return; // upstream bailed
+          const failures2 = step2.getCallbackOfType(callbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
 
           let failures = [...failures1, ...failures2];
           failures = uniqWith(failures, isEqual);
@@ -327,9 +330,10 @@ export default {
         this.lastPass = password;
 
         // call tree without advancing to next node
-        FRAuth.next(this.step, { realmPath: this.realm })
+        const { client } = useJourneyClientStore();
+        client.next(this.step)
           .then((step) => {
-            const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
+            const callback = step.getCallbackOfType(callbackType.ValidatedCreatePasswordCallback);
             const failingPolicies = callback.getFailedPolicies();
             const normalizedFailures = this.normalizePolicies(failingPolicies);
             this.setFailingPolicies(normalizedFailures);

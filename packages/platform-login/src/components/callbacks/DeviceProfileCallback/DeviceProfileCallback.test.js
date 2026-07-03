@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,8 +9,8 @@ import { shallowMount } from '@vue/test-utils';
 import DeviceProfileCallback from '@/components/callbacks/DeviceProfileCallback';
 import i18n from '@/i18n';
 
-jest.mock('@forgerock/javascript-sdk', () => ({
-  FRDevice: function FRDevice() {
+jest.mock('@forgerock/journey-client/device', () => ({
+  Device: function Device() {
     return {
       getProfile() {
         return Promise.resolve({ identifier: 'hi' });

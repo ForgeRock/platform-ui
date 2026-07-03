@@ -37,7 +37,7 @@ module.exports = {
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(babel-jest|domelementtype|domhandler|domutils|dom-serializer|entities|htmlparser2|jest-vue-preprocessor|vee-validate/dist|vue-multiselect|@forgerock/ping-protect|uuid)/)',
+    'node_modules/(?!(babel-jest|domelementtype|domhandler|domutils|dom-serializer|entities|htmlparser2|jest-vue-preprocessor|vee-validate/dist|vue-multiselect|@forgerock/journey-client|@forgerock/protect|@forgerock/sdk-logger|@forgerock/sdk-oidc|@forgerock/sdk-request-middleware|@forgerock/sdk-types|@forgerock/sdk-utilities|@forgerock/storage|uuid)/)',
   ],
   moduleNameMapper: {
     axios: '<rootDir>/../../__mocks__/axios.js',
@@ -49,6 +49,7 @@ module.exports = {
     'echarts/components': '<rootDir>/../../__mocks__/echarts.js',
     'echarts/core': '<rootDir>/../../__mocks__/echarts.js',
     'echarts/charts': '<rootDir>/../../__mocks__/echarts.js',
+    '@forgerock/journey-client/_utils': '<rootDir>/../../node_modules/@forgerock/journey-client/dist/src/_utils.js',
     '^vue$': '@vue/compat',
   },
   testMatch: [

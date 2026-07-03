@@ -6,14 +6,13 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   last, has, noop,
 } from 'lodash';
-import {
-  CallbackType, FRWebAuthn, WebAuthnStepType,
-} from '@forgerock/javascript-sdk';
+import { callbackType } from '@forgerock/journey-client';
+import { WebAuthn, WebAuthnStepType } from '@forgerock/journey-client/webauthn';
 import createRealmPath from '../../utils/createRealmPath';
 import NotificationMixin from '../NotificationMixin';
 
 export const FrCallbackType = {
-  ...CallbackType,
+  ...callbackType,
   RecoveryCodesComponent: 'RecoveryCodesComponent',
   RedirectCallback: 'RedirectCallback',
   SelectIdPCallback: 'SelectIdPCallback',
@@ -163,10 +162,10 @@ export function getTranslatedPolicyFailures(callback) {
  * @returns {Object} field props needed for Field component
  */
 export function getField(callback, index) {
-  const callbackType = callback.getType();
+  const callbackTypeValue = callback.getType();
   let fieldType;
 
-  switch (callbackType) {
+  switch (callbackTypeValue) {
     case FrCallbackType.PasswordCallback:
     case FrCallbackType.ValidatedCreatePasswordCallback:
       fieldType = 'password';
@@ -214,14 +213,14 @@ export function backendScriptsIdsContains(matcher, step) {
  * @description  Invokes WebAuthn registration or authentication
  * @param {Number} type enum number that represents WebAuthn type WebAuthnStepType.Authentication or WebAuthnStepType.Registration
  * @param {Object} step the current SDK step
- * @param {Function} [optionsTransformer] augments the derived options with custom behaviour
+ * @param {AbortSignal} [signal] optional signal to abort the WebAuthn operation
  * @returns {Promise} SDK WebAuthn promise resolved when WebAuthn is completed
  */
-export function createWebAuthnCallbackPromise(type, step, optionsTransformer) {
+export function createWebAuthnCallbackPromise(type, step, signal) {
   if (type === WebAuthnStepType.Authentication) {
-    return FRWebAuthn.authenticate(step, optionsTransformer);
+    return WebAuthn.authenticate(step, signal);
   }
-  return FRWebAuthn.register(step);
+  return WebAuthn.register(step);
 }
 
 /**
@@ -259,6 +258,7 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       };
       return {
         callbackSpecificProps,
+        listeners: ['next-step'],
       };
     },
     ConsentMappingCallback: () => ({
@@ -286,6 +286,7 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       };
       return {
         callbackSpecificProps,
+        listeners: ['next-step'],
       };
     },
     ReCaptchaCallback: () => ({
@@ -293,13 +294,13 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
     }),
     SelectIdPCallback: () => ({
       callbackSpecificProps: { isOnlyCallback: currentStep.callbacks.length === 1 },
-      listeners: ['hide-next-button', 'disable-next-button'],
+      listeners: ['next-step', 'hide-next-button', 'disable-next-button'],
     }),
     TextOutputCallback: () => {
       const isMfaRegistrationStep = currentStep.getCallbacksOfType(FrCallbackType.HiddenValueCallback)?.[0]?.getInputValue() === 'mfaDeviceRegistration';
       return {
         callbackSpecificProps: { isFirstRenderedCallback: componentList.length === 0, isMfaRegistrationStep },
-        listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback', 'update-screen-reader-message'],
+        listeners: ['next-step', 'disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback', 'update-screen-reader-message'],
       };
     },
     ValidatedCreatePasswordCallback: () => {
@@ -317,11 +318,21 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
         listeners: ['disable-next-button', 'next-step-callback', 'update-auth-id'],
       };
     },
+    DeviceProfileCallback: () => ({
+      listeners: ['next-step'],
+    }),
+    PingOneProtectCallback: () => ({
+      listeners: ['next-step'],
+    }),
+    RecoveryCodesComponent: () => ({
+      listeners: ['next-step'],
+    }),
     WebAuthnComponent: () => {
-      const webAuthnType = FRWebAuthn.getWebAuthnStepType(currentStep);
-      const webAuthnPromiseFunction = (optionsTransformer) => createWebAuthnCallbackPromise(webAuthnType, currentStep, optionsTransformer);
+      const webAuthnType = WebAuthn.getWebAuthnStepType(currentStep);
+      const webAuthnPromiseFunction = (signal) => createWebAuthnCallbackPromise(webAuthnType, currentStep, signal);
       return {
         callbackSpecificProps: { webAuthnType, webAuthnPromiseFunction },
+        listeners: ['next-step'],
       };
     },
   };

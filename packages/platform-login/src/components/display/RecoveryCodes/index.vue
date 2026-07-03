@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -79,7 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { FRRecoveryCodes } from '@forgerock/javascript-sdk';
+import { RecoveryCodes } from '@forgerock/journey-client/recovery-codes';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import * as clipboard from 'clipboard-polyfill/text';
 import {
@@ -114,7 +114,7 @@ export default {
     };
   },
   mounted() {
-    this.recoveryCodes = FRRecoveryCodes.getCodes(this.step);
+    this.recoveryCodes = RecoveryCodes.getCodes(this.step);
   },
   methods: {
     copyRecoveryCodesToClipboard() {

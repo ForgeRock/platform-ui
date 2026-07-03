@@ -116,6 +116,29 @@ export function getLinkToTreeStart({ tree, realmPath, query: { goto, gotoOnFail 
 }
 
 /**
+ * @description Builds a Start Over URL from any authIndexType/authIndexValue pair and stepParams.
+ * Used when a suspended session expires and the original auth-index context must be restored
+ * (e.g. module, level, composite_advice) rather than defaulting to a service-tree URL.
+ * @param {Object} authIndex the original { type, value } captured at suspend time
+ * @param {Object} stepParams destructured object containing realmPath and query
+ * @returns {string} returns string url
+ */
+export function getLinkToAuthIndexStart({ type, value }, { realmPath, query: { goto, gotoOnFail } }) {
+  const gotosString = `${goto ? `&goto=${encodeURIComponent(goto)}` : ''}${gotoOnFail ? `&gotoOnFail=${encodeURIComponent(gotoOnFail)}` : ''}`;
+  return `/am/XUI/?realm=${realmPath}&authIndexType=${encodeURIComponent(type)}&authIndexValue=${encodeURIComponent(value)}${gotosString}`;
+}
+
+/**
+ * @description Used to get link to realm root from stepParams (used as fallback when tree is unknown)
+ * @param {Object} stepParams destructured object containing realmPath string and query object
+ * @returns {string} returns string url
+ */
+export function getLinkToRealmRoot({ realmPath, query: { goto, gotoOnFail } }) {
+  const gotosString = `${goto ? `&goto=${encodeURIComponent(goto)}` : ''}${gotoOnFail ? `&gotoOnFail=${encodeURIComponent(gotoOnFail)}` : ''}`;
+  return `/am/XUI/?realm=${realmPath}${gotosString}`;
+}
+
+/**
  * @description Returns boolean true if payload has session timeout error code
  * @param {Object} payload - step payload data
  * @param {Boolean} suspendedIdWasSet - Whether suspendId was set upon navigation to this step

@@ -141,6 +141,10 @@ module.exports = {
         // can find it when exportsFields is disabled (the nanoid/IE11 workaround above).
         alias: {
           uuid: path.resolve(__dirname, '../../node_modules/uuid/dist/index.js'),
+          '@forgerock/journey-client/webauthn': path.resolve(__dirname, '../../node_modules/@forgerock/journey-client/dist/src/lib/webauthn/webauthn.js'),
+          '@forgerock/journey-client/device': path.resolve(__dirname, '../../node_modules/@forgerock/journey-client/dist/src/lib/device/device-profile.js'),
+          '@forgerock/journey-client/recovery-codes': path.resolve(__dirname, '../../node_modules/@forgerock/journey-client/dist/src/lib/recovery-codes/recovery-codes.js'),
+          '@forgerock/journey-client/_utils': path.resolve(__dirname, '../../node_modules/@forgerock/journey-client/dist/src/_utils.js'),
         },
       };
     }
@@ -196,8 +200,14 @@ module.exports = {
     'vue-i18n',
     'vue-router',
     '@vueuse',
-    '@forgerock/javascript-sdk',
-    '@forgerock/ping-protect',
+    '@forgerock/',
+    'effect',
+    'redux',
+    'redux-thunk',
+    '@reduxjs/toolkit',
+    'immer',
+    '@standard-schema/utils',
+    '@standard-schema/spec',
     'echarts',
     'vue-echarts',
     'zrender',

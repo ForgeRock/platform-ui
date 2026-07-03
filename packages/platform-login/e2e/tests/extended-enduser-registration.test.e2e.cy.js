@@ -30,7 +30,7 @@ describe('Extended Enduser Registration', { tags: '@cloud' }, () => {
 
   // TODO: Add a test that will check for the proper password validation after https://pingidentity.atlassian.net/browse/IAM-8550 gets fixed
   describe('Enduser extended registration journey without suspend node and with all nodes options on', () => {
-    const realmUrl = Cypress.env('IS_FRAAS') ? '/realms/alpha' : '';
+    const authenticatePath = Cypress.env('IS_FRAAS') ? '/am/json/alpha/authenticate' : '/am/json/realms/root/authenticate';
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=alpha&authIndexType=service&authIndexValue=QA%20-%20Extended%20Registration`;
     const validFieldData = [
       {
@@ -90,7 +90,7 @@ describe('Extended Enduser Registration', { tags: '@cloud' }, () => {
     function openExtendedRegistrationJourneyPage() {
       // Set up intercepts
       cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
-      cy.intercept('POST', `/am/json/realms/root${realmUrl}/authenticate`).as('authenticate');
+      cy.intercept('POST', authenticatePath).as('authenticate');
 
       // Redirect to the Extended Registration Journey page
       cy.visit(locationUrl);

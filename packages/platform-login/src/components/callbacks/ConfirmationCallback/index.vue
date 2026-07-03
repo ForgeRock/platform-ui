@@ -11,9 +11,10 @@ of the MIT license. See the LICENSE file for details. -->
     <div :class="[{ 'btn-block mt-3': variant === 'link' },'d-flex',positionButton]">
       <BButton
         class="mt-1"
+        type="button"
         :disabled="buttonDisabled"
         :variant="variant"
-        @click="setValue(0)"
+        @click="setValue($event, 0)"
         :aria-label="firstOption"
         :data-testid="`btn-${firstOption.toLowerCase().replace(/\s/g, '')}`">
         {{ firstOption }}
@@ -32,9 +33,10 @@ of the MIT license. See the LICENSE file for details. -->
       :data-testid="`option-${option.toLowerCase().replace(/\s/g, '')}`">
       <BButton
         :class="setButtonClasses(index)"
+        type="button"
         :disabled="buttonDisabled"
         :variant="variant"
-        @click="setValue(index)"
+        @click="setValue($event, index)"
         :aria-label="option"
         :data-testid="`btn-${option.toLowerCase().replace(/\s/g, '')}`">
         {{ option }}
@@ -106,9 +108,9 @@ export default {
     },
   },
   methods: {
-    setValue(value) {
+    setValue(event, value) {
       this.callback.setInputValue(value);
-      this.$emit('next-step');
+      this.$emit('next-step', event);
     },
     setButtonClasses(index) {
       let classes = 'mt-1';

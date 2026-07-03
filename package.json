@@ -18,16 +18,18 @@
   "dependencies": {
     "@badeball/cypress-cucumber-preprocessor": "24.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
-    "@forgerock/javascript-sdk": "4.9.1",
-    "@forgerock/ping-protect": "4.7.1",
+    "@forgerock/journey-client": "2.2.0",
     "@forgerock/platform-shared": "1.0.0",
+    "@forgerock/protect": "2.2.0",
     "@neuralegion/cypress-har-generator": "5.16.4",
     "@testing-library/cypress": "10.0.1",
+    "abort-controller": "3.0.0",
     "cypress-file-upload": "5.0.8",
     "got": "11.8.5",
     "imap": "^0.8.19",
     "lodash": "4.18.1",
-    "nodemailer": "8.0.5"
+    "nodemailer": "8.0.5",
+    "text-encoding-polyfill": "0.6.7"
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.9",

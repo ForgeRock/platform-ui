@@ -6,12 +6,21 @@
  */
 
 import { mount } from '@vue/test-utils';
-import * as SDK from '@forgerock/javascript-sdk';
 import ValidatedCreatePasswordCallback from './index';
 
-jest.mock('@forgerock/javascript-sdk', () => ({
-  FRAuth: { next: jest.fn() },
-  CallbackType: { ValidatedCreatePasswordCallback: 'ValidatedCreatePasswordCallback' },
+const mockNext = jest.fn();
+
+// Module-scope store instance — tests can set .client = null to simulate bootstrap failure.
+const mockStoreInstance = {
+  client: { next: mockNext },
+};
+
+jest.mock('@forgerock/platform-shared/src/stores/journeyClient', () => ({
+  useJourneyClientStore: jest.fn(() => mockStoreInstance),
+}));
+
+jest.mock('@forgerock/journey-client', () => ({
+  callbackType: { ValidatedCreatePasswordCallback: 'ValidatedCreatePasswordCallback' },
 }));
 
 describe('ValidatedCreatePasswordCallback', () => {
@@ -28,31 +37,69 @@ describe('ValidatedCreatePasswordCallback', () => {
     });
   }
 
+  /**
+   * Returns a step prop with a real AM-shaped payload so that testInputValue can
+   * call createJourneyStep(step.payload) without error. The payload structure
+   * mirrors what AM sends for a ValidatedCreatePasswordCallback node.
+   */
+  function buildStepProp() {
+    return {
+      payload: {
+        authId: 'test-auth-id',
+        callbacks: [
+          {
+            type: 'ValidatedCreatePasswordCallback',
+            input: [
+              { name: 'IDToken1', value: '' },
+              { name: 'IDToken1validateOnly', value: true },
+            ],
+            output: [
+              { name: 'echoOn', value: false },
+              { name: 'policies', value: {} },
+              { name: 'failedPolicies', value: [] },
+              { name: 'prompt', value: 'Password' },
+              { name: 'required', value: true },
+            ],
+          },
+        ],
+      },
+    };
+  }
+
+  /**
+   * Returns a mock client.next() response with both a getCallbackOfType mock (for
+   * getPoliciesFromFailures to read getFailedPolicies from) AND a real-shaped payload
+   * (for the chained testInputValue probe to call createJourneyStep on).
+   */
+  function buildProbeResponse(getFailedPoliciesFn) {
+    return {
+      ...buildStepProp(),
+      getCallbackOfType: () => ({
+        getFailedPolicies: getFailedPoliciesFn,
+        setInputValue: () => {},
+      }),
+    };
+  }
+
   afterEach(() => {
     jest.clearAllMocks();
+    // Restore client in case a test nulled it for the null-guard path.
+    mockStoreInstance.client = { next: mockNext };
   });
 
   it('aria-invalid undefined if there is errors and the password field is not touched', async () => {
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
-      getCallbackOfType: () => ({
-        getFailedPolicies: () => ([
-          '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
-          "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
-        ]),
-        setInputValue: () => {},
-      }),
-    }));
+    const failedPolicies = [
+      '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+      '{ "policyRequirement": "CHARACTER_SET", "params": { "allow-unclassified-characters": true, "character-set-ranges": [], "character-sets": ["1:0123456789"], "min-character-sets": 0 } }',
+    ];
+    mockNext.mockImplementation(() => Promise.resolve(buildProbeResponse(() => failedPolicies)));
     wrapper = mountComponent({
       callback: {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
         getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
-      step: {
-        getCallbackOfType: () => ({
-          setInputValue: () => true,
-        }),
-      },
+      step: buildStepProp(),
       overrideInitialPolicies: true,
     });
 
@@ -62,26 +109,18 @@ describe('ValidatedCreatePasswordCallback', () => {
   });
 
   it('aria-invalid true if there is errors and the password field is touched', async () => {
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
-      getCallbackOfType: () => ({
-        getFailedPolicies: () => ([
-          '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
-          "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
-        ]),
-        setInputValue: () => {},
-      }),
-    }));
+    const failedPolicies = [
+      '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+      '{ "policyRequirement": "CHARACTER_SET", "params": { "allow-unclassified-characters": true, "character-set-ranges": [], "character-sets": ["1:0123456789"], "min-character-sets": 0 } }',
+    ];
+    mockNext.mockImplementation(() => Promise.resolve(buildProbeResponse(() => failedPolicies)));
     wrapper = mountComponent({
       callback: {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
         getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
-      step: {
-        getCallbackOfType: () => ({
-          setInputValue: () => true,
-        }),
-      },
+      step: buildStepProp(),
       overrideInitialPolicies: true,
     });
 
@@ -94,15 +133,11 @@ describe('ValidatedCreatePasswordCallback', () => {
   it('aria-invalid false if there is no errors and the password field is touched', async () => {
     // Checking for initial validation error by returning a failed policy and
     // ensuring the aria-invalid attribute is set correctly.
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
-      getCallbackOfType: () => ({
-        getFailedPolicies: () => ([
-          '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
-          "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
-        ]),
-        setInputValue: () => {},
-      }),
-    }));
+    const failedPolicies = [
+      '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+      '{ "policyRequirement": "CHARACTER_SET", "params": { "allow-unclassified-characters": true, "character-set-ranges": [], "character-sets": ["1:0123456789"], "min-character-sets": 0 } }',
+    ];
+    mockNext.mockImplementation(() => Promise.resolve(buildProbeResponse(() => failedPolicies)));
     wrapper = mountComponent({
       callback: {
         getPrompt: () => 'Password',
@@ -110,11 +145,7 @@ describe('ValidatedCreatePasswordCallback', () => {
         setPassword: (value) => value,
         getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
-      step: {
-        getCallbackOfType: () => ({
-          setInputValue: () => true,
-        }),
-      },
+      step: buildStepProp(),
       overrideInitialPolicies: true,
     });
 
@@ -125,7 +156,7 @@ describe('ValidatedCreatePasswordCallback', () => {
 
     // Checking that the validation has been cleared by returning an empty array of failed policies
     // and setting a value on the password field.
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
+    mockNext.mockImplementation(() => Promise.resolve({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([]),
         setInputValue: () => {},
@@ -143,7 +174,7 @@ describe('ValidatedCreatePasswordCallback', () => {
 
     // Clears the password field and returns the same failed policies and
     // ensures that the aria-invalid attribute is set to true.
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
+    mockNext.mockImplementation(() => Promise.resolve({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([
           '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
@@ -159,7 +190,7 @@ describe('ValidatedCreatePasswordCallback', () => {
 
     // We want to check that when setting the password value to the same previous value,
     // that the validation runs again and sets the aria-invalid attribute back to false.
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
+    mockNext.mockImplementation(() => Promise.resolve({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([]),
         setInputValue: () => {},
@@ -175,15 +206,11 @@ describe('ValidatedCreatePasswordCallback', () => {
   });
 
   it('aria-invalid false for confirm password field if it is not touched', async () => {
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
-      getCallbackOfType: () => ({
-        getFailedPolicies: () => ([
-          '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
-          "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
-        ]),
-        setInputValue: () => {},
-      }),
-    }));
+    const failedPolicies = [
+      '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+      '{ "policyRequirement": "CHARACTER_SET", "params": { "allow-unclassified-characters": true, "character-set-ranges": [], "character-sets": ["1:0123456789"], "min-character-sets": 0 } }',
+    ];
+    mockNext.mockImplementation(() => Promise.resolve(buildProbeResponse(() => failedPolicies)));
     wrapper = mountComponent({
       callback: {
         getPrompt: () => 'Password',
@@ -191,11 +218,7 @@ describe('ValidatedCreatePasswordCallback', () => {
         setPassword: (value) => value,
         getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
-      step: {
-        getCallbackOfType: () => ({
-          setInputValue: () => true,
-        }),
-      },
+      step: buildStepProp(),
       overrideInitialPolicies: true,
       stage: {
         confirmPassword: true,
@@ -208,15 +231,11 @@ describe('ValidatedCreatePasswordCallback', () => {
   });
 
   it('aria-invalid true for confirm password field if it is touched and the validation fails', async () => {
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
-      getCallbackOfType: () => ({
-        getFailedPolicies: () => ([
-          '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
-          "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
-        ]),
-        setInputValue: () => {},
-      }),
-    }));
+    const failedPolicies = [
+      '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+      '{ "policyRequirement": "CHARACTER_SET", "params": { "allow-unclassified-characters": true, "character-set-ranges": [], "character-sets": ["1:0123456789"], "min-character-sets": 0 } }',
+    ];
+    mockNext.mockImplementation(() => Promise.resolve(buildProbeResponse(() => failedPolicies)));
     wrapper = mountComponent({
       callback: {
         getPrompt: () => 'Password',
@@ -224,18 +243,14 @@ describe('ValidatedCreatePasswordCallback', () => {
         setPassword: (value) => value,
         getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
-      step: {
-        getCallbackOfType: () => ({
-          setInputValue: () => true,
-        }),
-      },
+      step: buildStepProp(),
       overrideInitialPolicies: true,
       stage: {
         confirmPassword: true,
       },
     });
 
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
+    mockNext.mockImplementation(() => Promise.resolve({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([]),
         setInputValue: () => {},
@@ -258,15 +273,11 @@ describe('ValidatedCreatePasswordCallback', () => {
   });
 
   it('aria-invalid false for confirm password field if it is touched and value is correct', async () => {
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
-      getCallbackOfType: () => ({
-        getFailedPolicies: () => ([
-          '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
-          "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
-        ]),
-        setInputValue: () => {},
-      }),
-    }));
+    const failedPolicies = [
+      '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+      '{ "policyRequirement": "CHARACTER_SET", "params": { "allow-unclassified-characters": true, "character-set-ranges": [], "character-sets": ["1:0123456789"], "min-character-sets": 0 } }',
+    ];
+    mockNext.mockImplementation(() => Promise.resolve(buildProbeResponse(() => failedPolicies)));
     wrapper = mountComponent({
       callback: {
         getPrompt: () => 'Password',
@@ -274,18 +285,14 @@ describe('ValidatedCreatePasswordCallback', () => {
         setPassword: (value) => value,
         getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
-      step: {
-        getCallbackOfType: () => ({
-          setInputValue: () => true,
-        }),
-      },
+      step: buildStepProp(),
       overrideInitialPolicies: true,
       stage: {
         confirmPassword: true,
       },
     });
 
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
+    mockNext.mockImplementation(() => Promise.resolve({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([]),
         setInputValue: () => {},
@@ -359,7 +366,7 @@ describe('ValidatedCreatePasswordCallback', () => {
       const w = mountNoPolicy({ stage: { confirmPassword: true } });
       const input = w.find('input[name="Password"]');
       await input.setValue('anyPassword');
-      expect(SDK.FRAuth.next).not.toHaveBeenCalled();
+      expect(mockNext).not.toHaveBeenCalled();
     });
 
     it('disables next button until passwords match when confirmPassword is true and no policies', async () => {
@@ -447,6 +454,92 @@ describe('ValidatedCreatePasswordCallback', () => {
     });
   });
 
+  describe('testInputValue', () => {
+    /**
+     * Build a real journey-client step from a raw AM payload so the closure
+     * behaviour of createJourneyStep is in play — this is what exposes the
+     * cloneDeep-closure bug.  The callback payload shape mirrors what AM sends.
+     */
+    function buildRealStep(passwordValue = '') {
+      const { createJourneyStep } = jest.requireActual('@forgerock/journey-client/_utils');
+      return createJourneyStep({
+        authId: 'test-auth-id',
+        callbacks: [
+          {
+            type: 'ValidatedCreatePasswordCallback',
+            input: [
+              { name: 'IDToken1', value: passwordValue },
+              { name: 'IDToken1validateOnly', value: true },
+            ],
+            output: [
+              { name: 'echoOn', value: false },
+              { name: 'policies', value: {} },
+              { name: 'failedPolicies', value: [] },
+              { name: 'prompt', value: 'Password' },
+              { name: 'required', value: true },
+            ],
+          },
+        ],
+      });
+    }
+
+    it('sends the test value to AM — clone payload carries the value, live step is not mutated', async () => {
+      mockNext.mockResolvedValueOnce({
+        getCallbackOfType: () => ({ getFailedPolicies: () => [], setInputValue: () => {} }),
+        payload: { authId: 'new-auth-id' },
+      });
+
+      wrapper = mountComponent({
+        callback: {
+          getPrompt: () => 'Password',
+          setValidateOnly: () => {},
+          getPolicies: () => ({ policies: [] }),
+          getFailedPolicies: () => [],
+        },
+        step: {
+          getCallbackOfType: () => ({ setInputValue: () => {} }),
+        },
+      });
+
+      const liveStep = buildRealStep('');
+
+      await wrapper.vm.testInputValue(liveStep, 'aaa');
+
+      // The step passed to client.next must carry the test value in the payload
+      const stepSentToAm = mockNext.mock.calls[0][0];
+      expect(stepSentToAm.payload.callbacks[0].input[0].value).toBe('aaa');
+
+      // The live step must be untouched — setInputValue must not have mutated it
+      expect(liveStep.payload.callbacks[0].input[0].value).toBe('');
+    });
+
+    it('calls client.next when client is available', async () => {
+      mockNext.mockResolvedValueOnce({
+        getCallbackOfType: () => ({ getFailedPolicies: () => [], setInputValue: () => {} }),
+        payload: { authId: 'new-auth-id' },
+      });
+
+      wrapper = mountComponent({
+        callback: {
+          getPrompt: () => 'Password',
+          setValidateOnly: () => {},
+          getPolicies: () => ({ policies: [] }),
+          getFailedPolicies: () => [],
+        },
+        step: {
+          getCallbackOfType: () => ({ setInputValue: () => {} }),
+        },
+      });
+
+      const { createJourneyStep } = jest.requireActual('@forgerock/journey-client/_utils');
+      const probeStep = createJourneyStep(buildStepProp().payload);
+
+      await wrapper.vm.testInputValue(probeStep, 'whatever');
+
+      expect(mockNext).toHaveBeenCalled();
+    });
+  });
+
   it('next-step-callback promise should resolve only after validation is fully complete with updated authId', async () => {
     jest.useFakeTimers();
     // Setup a controlled promise for the SDK call so we can decide when it "finishes"
@@ -467,7 +560,7 @@ describe('ValidatedCreatePasswordCallback', () => {
     };
 
     // Mock the SDK to return our controlled promise
-    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => nextPromise.then(() => ({
+    mockNext.mockImplementation(() => nextPromise.then(() => ({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([]),
         setInputValue: () => ({}),

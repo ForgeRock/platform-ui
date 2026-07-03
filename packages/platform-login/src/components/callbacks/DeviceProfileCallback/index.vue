@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="row justify-content-center">
@@ -19,7 +16,7 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import Spinner from '@forgerock/platform-shared/src/components/Spinner/';
-import { FRDevice } from '@forgerock/javascript-sdk';
+import { Device } from '@forgerock/journey-client/device';
 
 export default {
   name: 'DeviceProfileCallback',
@@ -43,7 +40,7 @@ export default {
   },
   methods: {
     deviceProfileCallback() {
-      const device = new FRDevice();
+      const device = new Device();
       device.getProfile({
         location: this.callback.isLocationRequired(),
         metadata: this.callback.isMetadataRequired(),

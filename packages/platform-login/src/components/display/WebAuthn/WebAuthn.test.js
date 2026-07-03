@@ -6,31 +6,42 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import { FRWebAuthn, WebAuthnStepType } from '@forgerock/javascript-sdk';
+import { WebAuthnStepType } from '@forgerock/journey-client/webauthn';
 import WebAuthn from './index';
 
-jest.mock('@forgerock/javascript-sdk', () => ({
-  CallbackType: {
+jest.mock('@forgerock/journey-client', () => ({
+  callbackType: {
     MetadataCallback: 'MetadataCallback',
     ConfirmationCallback: 'ConfirmationCallback',
     HiddenValueCallback: 'HiddenValueCallback',
   },
+}));
+
+jest.mock('@forgerock/journey-client/webauthn', () => ({
   WebAuthnStepType: {
-    Authentication: 0,
-    Registration: 1,
-    None: 2,
+    None: 0,
+    Authentication: 1,
+    Registration: 2,
   },
-  WebAuthnOutcomeType: {
-    NotSupportedError: 'NotSupportedError',
+  WebAuthn: {
+    register: jest.fn(),
+    authenticate: jest.fn(),
+    getWebAuthnStepType: jest.fn(),
+    getMetadataCallback: jest.fn(),
+    getOutcomeCallback: jest.fn(),
+    createAuthenticationPublicKey: jest.fn().mockReturnValue({}),
+    getAuthenticationCredential: jest.fn().mockResolvedValue({
+      id: 'mock-credential-id',
+      authenticatorAttachment: 'platform',
+      response: {},
+    }),
+    getAuthenticationOutcome: jest.fn().mockReturnValue('outcome::data::sig::id'),
   },
-  FRWebAuthn: {
-    isWebAuthnSupported: jest.fn(),
-  },
-  FRStep: jest.fn(),
 }));
 
 describe('WebAuthn.vue', () => {
   let wrapper;
+  const { WebAuthn: WebAuthnMock } = jest.requireMock('@forgerock/journey-client/webauthn');
   const mockStep = {
     getCallbacksOfType: jest.fn().mockReturnValue([]),
   };
@@ -88,7 +99,12 @@ describe('WebAuthn.vue', () => {
         }),
       }]),
     };
-    FRWebAuthn.isWebAuthnSupported.mockReturnValue(true);
+    // Production code performs an inline browser-feature check
+    // (`!!window.PublicKeyCredential`), so stub the global directly.
+    Object.defineProperty(window, 'PublicKeyCredential', {
+      configurable: true,
+      value: function PublicKeyCredentialStub() {},
+    });
     setup({ step: manualButtonStep });
 
     const manualButton = wrapper.find('.fr-button-with-spinner-stub');
@@ -97,30 +113,67 @@ describe('WebAuthn.vue', () => {
     expect(wrapper.findComponent({ name: 'FrButtonWithSpinner' }).props('buttonText')).toBe('login.webAuthn.usePasskey');
   });
 
-  it('triggers invokeWebAuthnManual when manual button is clicked', async () => {
+  it('uses lower-level WebAuthn methods with mediation required when manual button is clicked', async () => {
+    const mockMetadata = {
+      _action: 'webauthn_authentication',
+      mediation: 'conditional',
+      manualButtonEnabled: true,
+      supportsJsonResponse: false,
+    };
+    const mockSetInputValue = jest.fn();
+    WebAuthnMock.getMetadataCallback.mockReturnValue({
+      getOutputValue: () => mockMetadata,
+    });
+    WebAuthnMock.getOutcomeCallback.mockReturnValue({ setInputValue: mockSetInputValue });
+
     const manualButtonStep = {
       getCallbacksOfType: jest.fn().mockReturnValue([{
-        getOutputValue: () => ({
-          _action: 'webauthn_authentication',
-          mediation: 'conditional',
-          manualButtonEnabled: true,
-        }),
+        getOutputValue: () => mockMetadata,
       }]),
     };
-    const webAuthnPromiseFunction = jest.fn().mockReturnValue(Promise.resolve());
-    setup({ step: manualButtonStep, webAuthnPromiseFunction });
+    setup({ step: manualButtonStep });
 
     const manualButton = wrapper.find('.fr-button-with-spinner-stub');
-    // Mock the preventDefault method on the event
-    await manualButton.trigger('click', {
-      preventDefault: jest.fn(),
-    });
+    await manualButton.trigger('click', { preventDefault: jest.fn() });
+    await Promise.resolve();
+    await Promise.resolve();
 
-    // First call is from mounted(), second call is from manual button click
-    expect(webAuthnPromiseFunction).toHaveBeenCalledTimes(2);
-    const optionsTransformer = webAuthnPromiseFunction.mock.calls[1][0];
-    const transformedOptions = optionsTransformer({ mediation: 'conditional' });
-    expect(transformedOptions.mediation).toBe('required');
+    expect(WebAuthnMock.createAuthenticationPublicKey).toHaveBeenCalledWith(mockMetadata);
+    expect(WebAuthnMock.getAuthenticationCredential).toHaveBeenCalledWith({}, 'required');
+    expect(mockSetInputValue).toHaveBeenCalledWith('outcome::data::sig::id');
+    expect(wrapper.emitted('next-step')).toBeTruthy();
+  });
+
+  it('uses JSON outcome format when supportsJsonResponse is true', async () => {
+    const mockMetadata = {
+      _action: 'webauthn_authentication',
+      mediation: 'conditional',
+      manualButtonEnabled: true,
+      supportsJsonResponse: true,
+    };
+    const mockSetInputValue = jest.fn();
+    WebAuthnMock.getMetadataCallback.mockReturnValue({
+      getOutputValue: () => mockMetadata,
+    });
+    WebAuthnMock.getOutcomeCallback.mockReturnValue({ setInputValue: mockSetInputValue });
+
+    const manualButtonStep = {
+      getCallbacksOfType: jest.fn().mockReturnValue([{
+        getOutputValue: () => mockMetadata,
+      }]),
+    };
+    setup({ step: manualButtonStep });
+
+    const manualButton = wrapper.find('.fr-button-with-spinner-stub');
+    await manualButton.trigger('click', { preventDefault: jest.fn() });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(mockSetInputValue).toHaveBeenCalledWith(JSON.stringify({
+      authenticatorAttachment: 'platform',
+      legacyData: 'outcome::data::sig::id',
+    }));
+    expect(wrapper.emitted('next-step')).toBeTruthy();
   });
 
   it('renders divider when hasDivider is true and manual button is shown', () => {
@@ -135,5 +188,42 @@ describe('WebAuthn.vue', () => {
     };
     setup({ step: manualButtonStep, hasDivider: true });
     expect(wrapper.find('fr-horizontal-rule-stub').exists()).toBe(true);
+  });
+
+  it('emits next-step after asScript webAuthnPromiseFunction resolves', async () => {
+    // Simulate an asScript step: a webAuthnPromiseFunction that resolves
+    // (as authenticateWithAsScript would).
+    const asScriptPromiseFunction = jest.fn().mockReturnValue(Promise.resolve());
+    setup({
+      step: mockStep,
+      webAuthnPromiseFunction: asScriptPromiseFunction,
+      webAuthnType: WebAuthnStepType.Authentication,
+    });
+
+    await wrapper.vm.$nextTick();
+    await Promise.resolve();
+
+    expect(asScriptPromiseFunction).toHaveBeenCalledTimes(1);
+    expect(wrapper.emitted('next-step')).toBeTruthy();
+    expect(wrapper.emitted('next-step')).toHaveLength(1);
+  });
+
+  it('emits next-step when asScript webAuthnPromiseFunction rejects with no ConfirmationCallback', async () => {
+    // Simulate an asScript credential failure: promise rejects.
+    // mockStep.getCallbacksOfType returns [] by default (no ConfirmationCallback),
+    // so the catch block should emit next-step.
+    const asScriptErrorFunction = jest.fn().mockReturnValue(Promise.reject(new Error('NotAllowedError: operation failed')));
+    setup({
+      step: mockStep,
+      webAuthnPromiseFunction: asScriptErrorFunction,
+      webAuthnType: WebAuthnStepType.Authentication,
+    });
+
+    await wrapper.vm.$nextTick();
+    await Promise.resolve();
+
+    expect(asScriptErrorFunction).toHaveBeenCalledTimes(1);
+    expect(wrapper.emitted('next-step')).toBeTruthy();
+    expect(wrapper.emitted('next-step')).toHaveLength(1);
   });
 });

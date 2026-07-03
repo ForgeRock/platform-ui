@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BButton } from 'bootstrap-vue';
 import QRCodeGenerator from 'qrcode-generator';
 import addAttributesToDomNodeString from '@forgerock/platform-shared/src/utils/stringDomNodeUtils';
-import { CallbackType } from '@forgerock/javascript-sdk';
+import { callbackType } from '@forgerock/journey-client';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { hasInteractiveContent } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
@@ -284,7 +284,7 @@ export default {
       const el = document.getElementById(name);
       if (el) el.value = value;
       this.step
-        .getCallbacksOfType(CallbackType.HiddenValueCallback)
+        .getCallbacksOfType(callbackType.HiddenValueCallback)
         .find((x) => x.getOutputByName('id', '') === name)
         .setInputValue(value);
     },

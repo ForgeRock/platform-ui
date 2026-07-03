@@ -41,7 +41,7 @@ When('user clicks on the password reset link in the email', () => {
 
     cy.intercept(
       {
-        url: '**/am/json/realms/root/**/authenticate*authIndexValue=ResetPassword',
+        url: '**/am/json/**/authenticate?suspendedId=*',
         method: 'POST',
         times: 1,
       },
@@ -49,7 +49,7 @@ When('user clicks on the password reset link in the email', () => {
 
     cy.intercept(
       {
-        url: '**/am/json/realms/root/**/authenticate',
+        url: '**/am/json/**/authenticate',
         method: 'POST',
         times: 2,
       },

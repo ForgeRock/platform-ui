@@ -66,7 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
                     id="callbacksPanel"
                     data-testid="callbacks_panel">
                     <!-- Intentional duplicate id: only one layout variant is rendered at a time;
-                         loginFailureAlert is the stable aria-describedby target for the first input. -->
+                       loginFailureAlert is the stable aria-describedby target for the first input. -->
                     <FrAlert
                       id="loginFailureAlert"
                       :show="loginFailure && errorMessage !== ''"
@@ -119,11 +119,7 @@ of the MIT license. See the LICENSE file for details. -->
                               :floating-label="journeyFloatingLabels"
                               aria-describedby="idp-legend"
                               v-bind="{...idpComponent.callbackSpecificProps}"
-                              v-on="{
-                                'next-step': (event, preventClear) => {
-                                  nextStep(event, preventClear);
-                                },
-                                ...idpComponent.listeners}" />
+                              v-on="idpComponent.listeners" />
                           </fieldset>
                         </template>
                         <Component
@@ -140,11 +136,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :aria-label="component?.callbackSpecificProps?.name || undefined"
                           :button-disabled="nextButtonDisabled || !isFormValid"
                           v-bind="buildCallbackDisplayProps(component)"
-                          v-on="{
-                            'next-step': (event, preventClear) => {
-                              nextStep(event, preventClear);
-                            },
-                            ...component.listeners}" />
+                          v-on="component.listeners" />
                         <div
                           v-if="nextButtonVisible"
                           :class="['d-flex mt-3', journeySignInButtonPosition]">
@@ -176,11 +168,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :is-required-aria="component.isRequired"
                           :position-button="journeySignInButtonPosition"
                           v-bind="{...buildCallbackDisplayProps(component), hasDivider: componentList.length > 0}"
-                          v-on="{
-                            'next-step': (event, preventClear) => {
-                              nextStep(event, preventClear);
-                            },
-                            ...component.listeners}" />
+                          v-on="component.listeners" />
                         <input
                           v-if="showScriptElms"
                           :aria-label="$t('login.displayElementsByScripts')"
@@ -293,7 +281,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="m-0">
               <BCol xl="9">
                 <!-- Intentional duplicate id: only one layout variant is rendered at a time;
-                     loginFailureAlert is the stable aria-describedby target for the first input. -->
+                   loginFailureAlert is the stable aria-describedby target for the first input. -->
                 <FrAlert
                   id="loginFailureAlert"
                   :show="loginFailure && errorMessage !== ''"
@@ -346,11 +334,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :floating-label="journeyFloatingLabels"
                           aria-describedby="idp-legend"
                           v-bind="{...idpComponent.callbackSpecificProps}"
-                          v-on="{
-                            'next-step': (event, preventClear) => {
-                              nextStep(event, preventClear);
-                            },
-                            ...idpComponent.listeners}" />
+                          v-on="idpComponent.listeners" />
                       </fieldset>
                     </template>
                     <Component
@@ -367,11 +351,7 @@ of the MIT license. See the LICENSE file for details. -->
                       :aria-label="component?.callbackSpecificProps?.name || undefined"
                       :button-disabled="nextButtonDisabled || !isFormValid"
                       v-bind="buildCallbackDisplayProps(component)"
-                      v-on="{
-                        'next-step': (event, preventClear) => {
-                          nextStep(event, preventClear);
-                        },
-                        ...component.listeners}" />
+                      v-on="component.listeners" />
                     <div
                       v-if="nextButtonVisible"
                       :class="['d-flex mt-3', journeySignInButtonPosition]">
@@ -402,11 +382,7 @@ of the MIT license. See the LICENSE file for details. -->
                       :is-required-aria="component.isRequired"
                       :position-button="journeySignInButtonPosition"
                       v-bind="{...buildCallbackDisplayProps(component), hasDivider: componentList.length > 0}"
-                      v-on="{
-                        'next-step': (event, preventClear) => {
-                          nextStep(event, preventClear);
-                        },
-                        ...component.listeners}" />
+                      v-on="component.listeners" />
                     <input
                       v-if="showScriptElms"
                       :aria-label="$t('login.displayElementsByScripts')"
@@ -476,25 +452,21 @@ import {
   BContainer,
   BRow,
 } from 'bootstrap-vue';
-import {
-  FRAuth,
-  FRRecoveryCodes,
-  FRStep,
-  FRWebAuthn,
-  SessionManager,
-  WebAuthnStepType,
-} from '@forgerock/javascript-sdk';
+import { WebAuthn, WebAuthnStepType } from '@forgerock/journey-client/webauthn';
+import { RecoveryCodes } from '@forgerock/journey-client/recovery-codes';
+import { useJourneyClientStore } from '@forgerock/platform-shared/src/stores/journeyClient';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import LoginMixin, { getComponentPropsAndEvents as sharedGetComponentPropsAndEvents } from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { useForm } from 'vee-validate';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
+import { createJourneyStep } from '@forgerock/journey-client/_utils';
 import i18n from '@/i18n';
 import {
   resumingTreeFollowingRedirect,
@@ -507,11 +479,14 @@ import {
   getAlternateFieldType,
   getAutocompleteValue,
   getFieldValidation,
+  getLinkToAuthIndexStart,
+  getLinkToRealmRoot,
   getLinkToTreeStart,
   isSessionTimedOut,
 } from '../../utils/loginUtils';
 import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
 import doNewNodesContainRecaptchaV2 from '../../utils/recaptchaUtil';
+import { authenticateWithAsScript, registerWithAsScript } from '../../components/display/WebAuthn/asScriptParser';
 
 const REQUIRED_ASTERISK = '<span class="text-danger" aria-hidden="true">*</span>';
 
@@ -667,6 +642,7 @@ export default {
       linkToTreeStart: '',
       loading: true,
       loginFailure: false,
+      submitting: false,
       mutationObserver: undefined,
       nextButtonDisabledArray: [],
       nextButtonVisible: false,
@@ -682,6 +658,13 @@ export default {
       rememberMeValue: false,
       treeResumptionParameters: undefined,
       treeId: undefined,
+      // Captures authIndexType/authIndexValue for non-`service` types (module, level,
+      // user, resource, composite_advice). `service` is tracked via treeId.
+      authIndex: undefined,
+      // Recovery-only: original authIndex from the suspended-resume URL. Used solely to
+      // reconstruct a journey-specific Start Over link when the suspend session expires.
+      // Never forwarded to the SDK — getStepParams() does not read this field.
+      suspendedStartContext: undefined,
       svgShapesSanitizerConfig,
       screenReaderMessageType: '',
       screenReaderMessage: '',
@@ -761,15 +744,28 @@ export default {
         this.setRealm(config);
         this.redirectIfInactive();
       })
-      .then(this.checkNewSession)
       .then(() => {
-        this.evaluateUrlParams();
-        this.nextStep();
+        // If journey-client bootstrap failed in main.js the store never gets a client.
+        const { client } = useJourneyClientStore();
+        if (!client) {
+          this.$emit('component-ready', 'error');
+          this.errorMessage = this.$t('login.issueConnecting');
+          this.loginFailure = true;
+          this.redirectToFailure(this.step);
+          this.loading = false;
+          return undefined;
+        }
+        return this.checkNewSession().then(() => {
+          this.evaluateUrlParams();
+          this.nextStep();
+        });
       })
       .catch(() => {
-        this.errorMessage = this.$t('login.invalidRealm');
-        this.redirectToFailure(this.step);
-        this.loading = false;
+        if (!this.loginFailure) {
+          this.errorMessage = this.$t('login.invalidRealm');
+          this.redirectToFailure(this.step);
+          this.loading = false;
+        }
       });
   },
   beforeUnmount() {
@@ -788,6 +784,59 @@ export default {
     },
   },
   methods: {
+    /**
+     * Overrides LoginMixin's getComponentPropsAndEvents to inject an asScript-aware
+     * webAuthnPromiseFunction for WebAuthnComponent steps.
+     *
+     * For asScript steps (TextOutputCallback with 'webAuthnOutcome' message but no
+     * MetadataCallback), the webAuthnPromiseFunction is injected directly instead of
+     * delegating to WebAuthn.authenticate()/register() via the SDK: registerWithAsScript()
+     * for registration steps (script contains pubKeyCredParams), authenticateWithAsScript()
+     * for every other asScript step type.
+     *
+     * All other component types are delegated faithfully to the shared implementation.
+     *
+     * @param {string} componentType - the callback component type
+     * @param {number} callBackIndex - index of the callback in the step
+     * @param {Array} componentList - current list of rendered components
+     * @param {Object} currentStage - cloned stage object for this step
+     * @param {Object} currentStep - the current SDK step
+     * @param {string} realm - the current realm
+     * @returns {{ callbackSpecificProps?: Object, listeners?: Array }}
+     */
+    getComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm) {
+      const result = sharedGetComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm);
+
+      if (componentType === this.FrCallbackType.WebAuthnComponent) {
+        const textCallbacks = currentStep.getCallbacksOfType(this.FrCallbackType.TextOutputCallback);
+        const metadataCallbacks = currentStep.getCallbacksOfType(this.FrCallbackType.MetadataCallback);
+
+        const isAsScript = textCallbacks.some((cb) => {
+          const msg = cb.getOutputValue?.('message') || cb.getMessage?.() || '';
+          return msg.includes('webAuthnOutcome');
+        }) && metadataCallbacks.length === 0;
+
+        if (isAsScript) {
+          // Route the asScript ceremony by step type: only a registration
+          // script (contains `pubKeyCredParams`) runs navigator.credentials.create();
+          // every other type (Authentication, None, anything else) keeps the
+          // pre-existing authentication injection.
+          const stepType = WebAuthn.getWebAuthnStepType(currentStep);
+          const asScriptWebAuthnPromiseFunction = stepType === WebAuthnStepType.Registration
+            ? () => registerWithAsScript(currentStep)
+            : () => authenticateWithAsScript(currentStep);
+          return {
+            ...result,
+            callbackSpecificProps: {
+              ...result.callbackSpecificProps,
+              webAuthnPromiseFunction: asScriptWebAuthnPromiseFunction,
+            },
+          };
+        }
+      }
+
+      return result;
+    },
     /**
      * Sets focus after the current journey step renders.
      *
@@ -986,8 +1035,8 @@ export default {
         // Use SDK to handle backend scripts that SDK can parse
         // Reassign type to use specific component
         if (type === this.FrCallbackType.TextOutputCallback || type === this.FrCallbackType.MetadataCallback) {
-          const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
-          const isRecoveryCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
+          const isWebAuthnStep = WebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
+          const isRecoveryCodeStep = RecoveryCodes.isDisplayStep(this.step);
           if (isWebAuthnStep) {
             // dont call the sdk twice on the same webAuthn step
             const onlyOneWebAuthn = !existsInComponentList(this.FrCallbackType.WebAuthnComponent);
@@ -1168,13 +1217,12 @@ export default {
     checkNewSession() {
       return new Promise((resolve) => {
         // need to logout if query param is present and equal to newsession
-        if (new URLSearchParams(getCurrentQueryString()).get('arg') === 'newsession') {
-          SessionManager.logout().then(() => {
-            resolve();
-          });
-        } else {
+        if (new URLSearchParams(getCurrentQueryString()).get('arg') !== 'newsession') {
           resolve();
+          return;
         }
+        const { client } = useJourneyClientStore();
+        client.terminate().then(() => {}, () => {}).finally(() => resolve());
       });
     },
     checkNodeForThemeOverride(stage) {
@@ -1201,22 +1249,32 @@ export default {
       // arg query parameter handled in checkNewSession method
       if (params.get('arg') === 'newsession') params.delete('arg');
       if (resumingSuspendedTree(this.$route.name, params)) {
-        // setting params in vue data then deleting to remove redundant params from URL
-        // only set treeId if the authIndexType is 'service'
-        this.treeId = params.get('authIndexType') === 'service' ? params.get('authIndexValue') : undefined;
+        // populate treeId from the URL's authIndexValue (service-type only) so the
+        // theme resolver in App.vue can look up the journey-linked "Override theme". The SDK
+        // payload is protected by the isSuspendedResume guard inside getStepParams(), which
+        // forces tree:undefined and skips authIndex injection — treeId here never reaches client.next().
+        const recoveryType = params.get('authIndexType');
+        const recoveryValue = params.get('authIndexValue');
+        this.treeId = recoveryType === 'service' ? recoveryValue : undefined;
+        // Preserve original auth-index as recovery-only context so that if the suspended
+        // session expires, Start Over can reconstruct the original journey URL.
+        // Never read by getStepParams().
+        if (recoveryType && recoveryValue) {
+          this.suspendedStartContext = { type: recoveryType, value: recoveryValue };
+        }
         params.delete('authIndexValue');
         params.delete('authIndexType');
         this.suspendedId = params.get('suspendedId');
         params.delete('suspendedId');
       } else if (resumingTreeFollowingRedirect(params)) {
-        // We can assume the tree id in the URL is always valid
+        // LEGACY path: step was stored in localStorage by addTreeResumeDataToStorage()
         // only set treeId if the authIndexType is 'service'
         this.treeId = params.get('authIndexType') === 'service' ? params.get('authIndexValue') : undefined;
 
         // Load tree data to resume the journey, clearing down resumption data
         const { realmAtRedirect, step } = getResumeDataFromStorageAndClear();
 
-        this.step = new FRStep(step.payload);
+        this.step = createJourneyStep(step.payload);
         this.realm = realmAtRedirect || realm; // IAM-4533 - use the realm from before the redirect
         // Tree resumption parameters should generally only be supplied once, so we remove them from the query string after storing them in memory (see IAM-492)
         this.treeResumptionParameters = {
@@ -1256,6 +1314,14 @@ export default {
           this.treeId = this.$route.params.tree;
         } else if (params.get('authIndexValue') && params.get('authIndexType') === 'service') {
           this.treeId = params.get('authIndexValue');
+        } else if (params.get('authIndexValue') && params.get('authIndexType')) {
+          // Non-service types (module/level/user/resource/composite_advice) — kept out of treeId
+          // so the theme resolver falls through to the tenant default.
+          // treeId must also be cleared: a stale service-journey treeId would otherwise cause
+          // getStepParams() to inject authIndexType=service, overwriting the correct non-service
+          // type (IAM-7834 regression).
+          this.treeId = undefined;
+          this.authIndex = { type: params.get('authIndexType'), value: params.get('authIndexValue') };
         }
       }
 
@@ -1270,6 +1336,9 @@ export default {
      */
     getListeners({ callback, index }, listenerArray = []) {
       const listeners = {
+        'next-step': (event, preventClear) => {
+          this.nextStep(event, preventClear);
+        },
         'did-consent': (consent) => {
           this.step.callbacks.forEach((callbackItem) => { callbackItem.setInputValue(consent); });
         },
@@ -1337,48 +1406,84 @@ export default {
       }
     },
     getStepParams() {
+      // Managed keys are rebuilt from component state; everything else on the
+      // URL passes through as an opaque escape hatch for AM-honoured params this
+      // component does not own (e.g. sunamcompositeadvice, ForceAuth, noSession).
+      // URLSearchParams.get() is used so pass-through values are decoded strings —
+      // stringify() in journey-client then encodes them exactly once on the wire.
       const paramString = getCurrentQueryString();
       const paramsObj = parseParameters(paramString);
-      if (paramsObj.authIndexValue) {
-        paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
-      }
+      const urlParams = new URLSearchParams(paramString);
+
+      // During a suspended resume the first SDK call must contain only suspendedId.
+      // Suppressing tree and authIndex prevents journey-client from injecting
+      // authIndexType/authIndexValue, which AM would interpret as a journey restart.
+      const isSuspendedResume = Boolean(this.suspendedId);
+
       const stepParams = {
-        query: paramsObj, // add all params in the route to step query params by default e.g. "noSession"
-        tree: this.treeId || this.$route.params.tree || undefined,
+        query: {},
+        tree: isSuspendedResume ? undefined : this.treeId || this.$route.params.tree || undefined,
         realmPath: this.realm,
       };
 
-      // Set the SDK tree property from the URL if a tree is being accessed and none of the other local variables have defined one
-      if (paramsObj.authIndexType === 'service' && paramsObj.authIndexValue && typeof stepParams.tree === 'undefined') {
-        stepParams.tree = paramsObj.authIndexValue;
-      }
-
-      // remove tree from stepParams when undefined
       if (stepParams.tree === undefined || stepParams.tree === 'undefined') {
         delete stepParams.tree;
       }
 
-      // decode goTo and goToOnFail params and add ti step query params in any case
-      stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
-      stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
-      // add the "suspendId" for email redirects or "code", "state" and "scope" in other case to step query params
+      const MANAGED_QUERY_KEYS = new Set([
+        'authIndexType',
+        'authIndexValue',
+        'suspendedId',
+        'goto',
+        'gotoOnFail',
+        'realm',
+        'state',
+        'code',
+        'scope',
+        'form_post_entry',
+        'responsekey',
+      ]);
+      // Use the decoded value from URLSearchParams so that percent-encoded pass-through
+      // params (e.g. sunamcompositeadvice) are not double-encoded by stringify().
+      Object.keys(paramsObj).forEach((key) => {
+        if (!MANAGED_QUERY_KEYS.has(key)) {
+          stepParams.query[key] = urlParams.get(key);
+        }
+      });
+
+      // authIndex is derived from state; the URL is never trusted for it.
+      // journey-client re-derives these on start(); on next() the SDK does
+      // not, so this is where they reach AM.
+      // Suppressed during suspended resume — AM rehydrates full context from suspendedId.
+      if (!isSuspendedResume) {
+        if (stepParams.tree) {
+          stepParams.query.authIndexType = 'service';
+          stepParams.query.authIndexValue = stepParams.tree;
+        } else if (this.authIndex) {
+          stepParams.query.authIndexType = this.authIndex.type;
+          stepParams.query.authIndexValue = this.authIndex.value;
+        }
+      }
+
+      stepParams.query.goto = paramsObj.goto ? decodeURIComponent(paramsObj.goto) : undefined;
+      stepParams.query.gotoOnFail = paramsObj.gotoOnFail ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
+
+      // Session resumption tokens come from state, captured once in
+      // evaluateUrlParams() and then removed from the URL to prevent replay.
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
       } else if (this.treeResumptionParameters) {
-        stepParams.query = { ...stepParams.query, ...this.treeResumptionParameters };
+        Object.entries(this.treeResumptionParameters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            stepParams.query[key] = value;
+          }
+        });
       }
-
-      // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
-      // sdk uses to build the authenticate url ('/am/json/realms/root/realms/alpha/authenticate').
-      // When realm is included ('/am/json/realms/root/realms/alpha/authenticate?realm=/alpha') this can confuse
-      // some parts of am like SAML (see FRAAS-6573).
-      delete stepParams.query.realm;
 
       return stepParams;
     },
     /**
      * @description Performs DOM and URL actions necessary to execute a redirect based on the passed callback.
-     * Stores step information for resuming the tree if needed.
      * @param {Object} redirectCallback the redirect callback that informs how and where to redirect the user
      */
     handleRedirectCallback(redirectCallback) {
@@ -1410,7 +1515,6 @@ export default {
         document.body.appendChild(form);
         form.submit();
       } else {
-        // Plain redirect
         window.location.href = redirectUrl;
       }
     },
@@ -1422,6 +1526,7 @@ export default {
      * used for when no change is expected between steps (stops a flash of white from rerender)
      */
     nextStep(event, preventClear) {
+      if (event?.isTrusted && this.submitting) return;
       if (event) {
         event.preventDefault();
       }
@@ -1467,20 +1572,51 @@ export default {
 
       const stepParams = this.getStepParams();
 
-      FRAuth.next(this.step, stepParams)
+      const { client } = useJourneyClientStore();
+
+      if (!client) {
+        this.$emit('component-ready', 'error');
+        this.errorMessage = this.$t('login.issueConnecting');
+        this.redirectToFailure(this.step);
+        this.loading = false;
+        return;
+      }
+
+      // `stepParams.tree` is remapped to `journey:` here; it is not passed as
+      // `tree` because the new SDK does not recognise that field.
+      // `stepParams.realmPath` is intentionally not passed to the SDK — the
+      // realm is fixed by the wellknown URL chosen at bootstrap. Both fields
+      // are still present on the struct because other consumers use them:
+      // `realmPath` and `tree` build the session-storage cache key and the
+      // `getLinkToTreeStart()` redirect URL.
+      // Known limitation (IAM-10763): this approach only supports single-realm
+      // journeys. Cross-realm flows — e.g. starting a journey in realm A and
+      // resuming after a social IDP redirect via realm B — are not yet handled
+      // because the journey-client is bootstrapped to a single wellknown URL at
+      // startup and cannot switch realm mid-journey.
+      this.submitting = true;
+      const startNext = this.step
+        ? client.next(this.step, stepParams.query ? { query: stepParams.query } : undefined)
+        : client.start({
+          ...(stepParams.tree ? { journey: stepParams.tree } : {}),
+          ...(stepParams.query ? { query: stepParams.query } : {}),
+        });
+
+      startNext
         .then((step) => {
           let initialStep;
           const previousStep = this.step;
           this.isFirstStep = !previousStep;
 
           // Check if web storage exists before trying to use it - see IAM-1873
+          // Hoisted above the unknown_error guard so the step-2+ recovery branch can use initialStep.
           if (this.$store.state.SharedStore.webStorageAvailable) {
             const realmAndTreeInitialStep = JSON.parse(sessionStorage.getItem('initialStep')) || '';
             const realmAndTreeKey = `${stepParams.realmPath}/${stepParams.tree || ''}`;
             if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
-              initialStep = new FRStep(realmAndTreeInitialStep.step.payload);
+              initialStep = createJourneyStep(realmAndTreeInitialStep.step.payload);
             }
-            if (this.isFirstStep && step.type !== 'LoginFailure') {
+            if (this.isFirstStep && step?.type !== 'LoginFailure' && step?.type !== 'unknown_error') {
               sessionStorage.setItem('initialStep', JSON.stringify(
                 {
                   key: realmAndTreeKey,
@@ -1488,6 +1624,38 @@ export default {
                 },
               ));
             }
+          }
+
+          // Guard against GenericError objects resolved by journey-client on transport failures.
+          // Step 2+ (previousStep exists): AM rejected the step (wrong answer, unconnected
+          //   Choice Collector outcome, MessageNode wrong-branch, etc.) — mirror the
+          //   LoginFailure recovery: redirectToFailure first (honours ?gotoOnFail= URL param),
+          //   then restore initialStep and rebuild the form.
+          //   finaliseLoginFailure rearms the authId on the restored step for whitelist-state
+          //   journeys, matching the LoginFailure branch's inline rearm above.
+          // Step 1 (no previousStep): the network may genuinely be unreachable — show the
+          //   generic connectivity error.
+          if (step?.type === 'unknown_error') {
+            if (previousStep) {
+              this.redirectToFailure(this.step).then(() => {
+                this.errorMessage = this.$t('login.loginFailure');
+                this.step = initialStep;
+                this.retry = true;
+                if (this.step && this.step.callbacks) {
+                  this.componentList = [];
+                  this.buildTreeForm();
+                }
+                this.finaliseLoginFailure(stepParams);
+              });
+              this.isFirstStep = true;
+              return;
+            }
+            this.$emit('component-ready', 'error');
+            this.errorMessage = this.$t('login.issueConnecting');
+            this.loginFailure = true;
+            this.redirectToFailure(this.step);
+            this.loading = false;
+            return;
           }
           this.step = step;
 
@@ -1541,7 +1709,17 @@ export default {
                 this.retryWithNewAuthId(previousStep, stepParams);
               } else if (suspendedIdWasSet && isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
-                this.linkToTreeStart = getLinkToTreeStart(stepParams);
+                // Start Over reconstructs the original journey URL using the auth-index context
+                // captured at suspend time (covers service, module, composite_advice, etc.).
+                // Falls back to getLinkToTreeStart when no suspend context exists (e.g. a
+                // non-suspended LoginFailure timeout), and to realm root as a last resort.
+                if (this.suspendedStartContext) {
+                  this.linkToTreeStart = getLinkToAuthIndexStart(this.suspendedStartContext, stepParams);
+                } else if (stepParams.tree) {
+                  this.linkToTreeStart = getLinkToTreeStart(stepParams);
+                } else {
+                  this.linkToTreeStart = getLinkToRealmRoot(stepParams);
+                }
                 this.loading = false;
                 this.loginFailure = true;
               } else {
@@ -1553,18 +1731,7 @@ export default {
                     this.componentList = [];
                     this.buildTreeForm();
                   }
-                  if (this.step?.payload && this.allowListingsEnabled(this.step.payload.authId)) {
-                    this.getNewAuthId(stepParams).then((authId) => {
-                      this.step.payload.authId = authId;
-                      this.loading = false;
-                      this.loginFailure = true;
-                      this.$nextTick(() => this.handleFocus());
-                    });
-                  } else {
-                    this.loading = false;
-                    this.loginFailure = true;
-                    this.$nextTick(() => this.handleFocus());
-                  }
+                  this.finaliseLoginFailure(stepParams);
                 });
               }
               this.isFirstStep = true;
@@ -1597,11 +1764,38 @@ export default {
         () => {
           this.$emit('component-ready', 'error');
           this.errorMessage = this.$t('login.issueConnecting');
+          this.loginFailure = true;
           this.redirectToFailure(this.step);
           this.loading = false;
         }).finally(() => {
+          this.submitting = false;
           this.$emit('set-theme', this.realm, this.treeId, this.nodeThemeId);
         });
+    },
+    /**
+     * Set loading/loginFailure state after restoring initialStep on a LoginFailure or unknown_error
+     * recovery. Rearms the authId if the restored step uses AM's whitelist-state feature.
+     *
+     * @param {Object} stepParams - current step params, forwarded to getNewAuthId if needed
+     */
+    finaliseLoginFailure(stepParams) {
+      if (this.step?.payload && this.allowListingsEnabled(this.step.payload.authId)) {
+        this.getNewAuthId(stepParams).then((authId) => {
+          this.step.payload.authId = authId;
+          this.loading = false;
+          this.loginFailure = true;
+          this.$nextTick(() => this.handleFocus());
+        }).catch(() => {
+          this.loading = false;
+          this.loginFailure = true;
+          this.errorMessage = this.$t('login.loginFailure');
+          this.$nextTick(() => this.handleFocus());
+        });
+      } else {
+        this.loading = false;
+        this.loginFailure = true;
+        this.$nextTick(() => this.handleFocus());
+      }
     },
     /**
      * Determine if there is a gotoOnFail parameter. If it exists, verify and redirect to that url or hash
@@ -1649,13 +1843,17 @@ export default {
       return !!decodeJwt(authId)['whitelist-state'];
     },
     /**
-    * Get a new authId by calling the SDK's FRAuth.next function with no step.
-    * @param {Object} stepParams - step params
-    * @returns {String} the new auth id
+    * Get a new authId by starting a fresh journey via the SDK's start() call.
+    * @param {Object} stepParams - step params (`tree`, `query`); `realmPath` is
+    *   ignored — the realm is fixed at bootstrap by the wellknown URL.
+    * @returns {Promise<String>} the new auth id
     */
     getNewAuthId(stepParams) {
-      return FRAuth.next(undefined, stepParams)
-        .then((step) => step.payload.authId);
+      const { client } = useJourneyClientStore();
+      return client.start({
+        ...(stepParams.tree ? { journey: stepParams.tree } : {}),
+        ...(stepParams.query ? { query: stepParams.query } : {}),
+      }).then((step) => step.payload.authId);
     },
     /**
      * Retry a previously failed step with a new authId. this.nextStep is

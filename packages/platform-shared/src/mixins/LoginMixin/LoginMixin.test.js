@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -123,7 +123,7 @@ describe('LoginMixin', () => {
         const realm = null;
 
         const PollingWaitCallbackProps = await wrapper.vm.getComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm);
-        expect(PollingWaitCallbackProps).toEqual({ callbackSpecificProps: { hideSpinnerAndMessage: true } });
+        expect(PollingWaitCallbackProps).toEqual({ callbackSpecificProps: { hideSpinnerAndMessage: true }, listeners: ['next-step'] });
       });
       it('does not set callbackSpecificProps to hide the callback content when the current stage is not showing pushChallengeNumber', async () => {
         const componentType = 'PollingWaitCallback';
@@ -144,6 +144,7 @@ describe('LoginMixin', () => {
           callbackSpecificProps: {
             hideSpinnerAndMessage: false,
           },
+          listeners: ['next-step'],
         });
       });
     });
@@ -168,6 +169,7 @@ describe('LoginMixin', () => {
             stage: {},
             variant: 'link',
           },
+          listeners: ['next-step'],
         });
       });
       it('sets ConfirmationCallback callbackSpecificProps to display primary variant when the current stage is not showing pushChallengeNumber', async () => {
@@ -190,6 +192,7 @@ describe('LoginMixin', () => {
             stage: {},
             variant: 'primary',
           },
+          listeners: ['next-step'],
         });
       });
     });

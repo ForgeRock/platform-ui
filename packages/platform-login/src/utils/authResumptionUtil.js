@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -62,7 +62,7 @@ function resumingTreeFollowingRedirect(urlParams) {
  * @param {URLSearchParams} urlParams the query parameters for the current login session
  */
 function resumingSuspendedTree(routeName, urlParams) {
-  return routeName === 'login' && urlParams.has('suspendedId') && urlParams.has('authIndexValue');
+  return routeName === 'login' && urlParams.has('suspendedId');
 }
 
 /**
@@ -83,10 +83,11 @@ function addTreeResumeDataToStorage(step, realmAtRedirect) {
  */
 function getResumeDataFromStorageAndClear() {
   const resumeData = localStorage.getItem(resumeDataKey);
+  const parsed = resumeData ? JSON.parse(resumeData) : null;
   localStorage.removeItem(resumeDataKey);
   clearReentryToken();
 
-  return JSON.parse(resumeData);
+  return parsed;
 }
 
 export {

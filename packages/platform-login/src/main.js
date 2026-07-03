@@ -7,18 +7,15 @@
 
 import 'whatwg-fetch';
 import 'core-js/stable';
+import 'abort-controller/polyfill.js';
+import 'text-encoding-polyfill';
 import '@forgerock/platform-shared/src/utils/domCollectionsForEach';
 import 'regenerator-runtime/runtime';
-import 'abort-controller/polyfill.js';
 
-import { createApp } from 'vue';
+import { createApp, markRaw } from 'vue';
 import Notifications from '@kyvg/vue3-notification';
 import PromisePoly from 'es6-promise';
-import {
-  Config,
-  SessionManager,
-} from '@forgerock/javascript-sdk';
-import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
+import { journey } from '@forgerock/journey-client';
 import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStorageTest';
 import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import Vue3Sanitize from 'vue-3-sanitize';
@@ -30,8 +27,18 @@ import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import { getDefaultLocale } from '@forgerock/platform-shared/src/api/UilocaleApi';
 import { filterActiveLocales } from '@forgerock/platform-shared/src/utils/uilocaleUtil';
+import {
+  buildAmBaseUrl,
+  buildWellknownUrl,
+  normalizeRealm,
+} from '@forgerock/platform-shared/src/utils/amUrlUtils';
+import { sdkTimeoutMiddleware } from '@forgerock/platform-shared/src/utils/sdkTimeoutMiddleware';
+import { useJourneyClientStore } from '@forgerock/platform-shared/src/stores/journeyClient';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
-import { JAVASCRIPT_SDK_TIMEOUT } from '@forgerock/platform-shared/src/utils/constants';
+import {
+  doURLParamsContainAnyResumptionParameter,
+  hasReentryToken,
+} from './utils/authResumptionUtil';
 import store from '@/store';
 import i18n from './i18n';
 import router from './router';
@@ -59,38 +66,51 @@ function getRootTransactionId() {
 const rootTransactionId = getRootTransactionId();
 let authRequestNumber = 0;
 
-// set the serverConfig with a timeout of 60 seconds this is required because the default timeout is 5 seconds and some trees can take longer to load
-// @see IAM-6840
-Config.set({
-  serverConfig: {
-    baseUrl: getFQDN(`${process.env.VUE_APP_AM_URL}/`),
-    timeout: JAVASCRIPT_SDK_TIMEOUT,
-  },
-  middleware: [
-    (req, action, next) => {
-      // increment the request number
-      authRequestNumber += 1;
+/**
+ * Stamps a per-request transactionId header for journey-client traffic.
+ * Increments `authRequestNumber` so each request in this auth session is unique.
+ */
+const transactionIdMiddleware = (req, _action, next) => {
+  authRequestNumber += 1;
+  req.headers.append('x-forgerock-transactionid', `${rootTransactionId}-request-${authRequestNumber}`);
+  next();
+};
 
-      // Set a transaction ID that should identify this request of this auth session of this tree in logs
-      req.init.headers.append('x-forgerock-transactionid', `${rootTransactionId}-request-${authRequestNumber}`);
-      next();
-    },
-  ],
-});
-
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   if (to.name === 'logout') {
     const urlParams = new URLSearchParams(window.location.search);
     const goto = urlParams.get('goto') || '';
-    const logout = (realm, validatedGoto) => {
-      const logoutParams = { realmPath: realm || localStorage.getItem('originalLoginRealm') || 'root' };
-      SessionManager.logout(logoutParams).then(() => {
+    const logout = async (realm, validatedGoto) => {
+      const realmPath = normalizeRealm(realm || localStorage.getItem('originalLoginRealm'));
+      const redirect = () => {
         if (validatedGoto) {
           window.location.href = validatedGoto;
         } else {
           next('/');
         }
-      });
+      };
+      try {
+        let logoutClient = useJourneyClientStore(pinia).client;
+        // If bootstrap failed (wellknown unreachable at startup) the store
+        // has no client. Create a one-shot client here so terminate() can
+        // still invalidate the AM session before redirecting.
+        if (!logoutClient) {
+          logoutClient = await journey({
+            config: {
+              ...(store.state.SharedStore.isFraas
+                ? { serverConfig: { wellknown: buildWellknownUrl(realmPath) } }
+                : { serverConfig: { baseUrl: buildAmBaseUrl() }, realmPath }),
+            },
+            requestMiddleware: [sdkTimeoutMiddleware, transactionIdMiddleware],
+          });
+        }
+        await logoutClient.terminate();
+        // terminate() returns errors as `GenericError` rather than throwing —
+        // either way, still redirect so the user isn't stranded.
+      } catch {
+        // Terminate failure is deliberately fail-open: the redirect proceeds.
+      }
+      redirect();
     };
     const routeUrlParams = new URLSearchParams(to.query);
     let realm = routeUrlParams.get('realm');
@@ -99,36 +119,34 @@ router.beforeEach((to, _from, next) => {
     }
 
     if (goto) {
-      // validate the goto param before logging out
-      const validateGotoAndLogout = () => {
-        let realmPath = realm;
+      const validateGotoAndLogout = async (resolvedRealm) => {
+        let realmPath = resolvedRealm;
         if (!realmPath.startsWith('/')) {
           realmPath = `/${realmPath}`;
         }
-        generateAmApi({
-          apiVersion: 'protocol=2.1,resource=3.0',
-          path: `realms/root/realms${realmPath}`,
-        }).post('users?_action=validateGoto', { goto: decodeURIComponent(goto) }, { withCredentials: true }).then((res) => {
-          logout(realm, res.data.successURL);
-        }).catch(() => {
-          logout(realm);
-        });
+        try {
+          const res = await generateAmApi({
+            apiVersion: 'protocol=2.1,resource=3.0',
+            path: `realms/root/realms${realmPath}`,
+          }).post('users?_action=validateGoto', { goto: decodeURIComponent(goto) }, { withCredentials: true });
+          await logout(resolvedRealm, res.data.successURL);
+        } catch {
+          await logout(resolvedRealm);
+        }
       };
 
       if (!realm) {
-        // If no realm defined get it from am server info
-        getAmServerInfo().then((res) => {
+        // No realm in URL — fetch it from AM server info before validating goto
+        try {
+          const res = await getAmServerInfo();
           realm = res.data?.realm === '/' ? 'root' : res.data.realm;
-          validateGotoAndLogout();
-        }).catch(() => {
+        } catch {
           realm = 'root';
-          validateGotoAndLogout();
-        });
-      } else {
-        validateGotoAndLogout();
+        }
       }
+      await validateGotoAndLogout(realm);
     } else {
-      logout(realm);
+      await logout(realm);
     }
   } else {
     next();
@@ -156,7 +174,13 @@ const loadApp = () => {
 /**
  * Attempts to get browser language from IDM
  * and translation overrides from IDM config
- * We will load the application regardless
+ * We will load the application regardless.
+ *
+ * The journey-client bootstrap lives here (rather than at module top) because
+ * it is async and must compose the locale-aware `accept-language` middleware
+ * alongside the transactionId middleware in a single `requestMiddleware: [...]`
+ * array (the new SDK does not support a second `Config.set` to add middleware
+ * later — README §"Request Middleware").
  */
 const startApp = () => {
   Promise.all([getUiConfig(), getDefaultLocale().catch(() => null)])
@@ -169,21 +193,59 @@ const startApp = () => {
       setLocales(i18n, activeLocales);
       document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 
-      if (localeQueryString) {
-        // set request header for requests made by sdk
-        const languageMiddleware = (req, _action, next) => {
-          req.init.headers.append('accept-language', localeQueryString);
-          next();
-        };
-
-        // add middleware to existing sdk config
-        Config.set(Config.get({
-          middleware: [languageMiddleware],
-        }));
-      }
-
       if (uiConfig?.platformSettings?.hostedJourneyPages === false) {
         store.commit('setHostedJourneyPagesState', false);
+      }
+
+      // Locale-aware request middleware — only added when the resolved locale
+      // produces a non-empty query string.
+      const languageMiddleware = (req, _action, next) => {
+        req.headers.append('accept-language', localeQueryString);
+        next();
+      };
+
+      // Bootstrap realm choice
+      const hashQuery = window.location.hash.split('?')[1] || '';
+      const search = new URLSearchParams(window.location.search);
+      const searchRealm = search.get('realm');
+      const hashRealm = new URLSearchParams(hashQuery).get('realm');
+      // Same signal the Login view uses to detect a return from an external
+      // redirect: known resumption query params, or the reentry cookie AM set
+      // on the outbound hop (covers returns whose params are not in the list).
+      const isOAuthReturn = doURLParamsContainAnyResumptionParameter(search) || hasReentryToken();
+      let idpResumeRealm = null;
+      if (isOAuthReturn && !searchRealm && !hashRealm) {
+        try {
+          const raw = localStorage.getItem('treeResumeData');
+          if (raw) {
+            idpResumeRealm = JSON.parse(raw)?.realmAtRedirect || null;
+          }
+        } catch {
+          // ignore storage / parse errors — fall back to 'root'
+        }
+      }
+      const realmParam = searchRealm || hashRealm || idpResumeRealm || 'root';
+      const bootstrapRealm = normalizeRealm(realmParam);
+      const journeyConfig = store.state.SharedStore.isFraas
+        ? { serverConfig: { wellknown: buildWellknownUrl(bootstrapRealm) } }
+        : { serverConfig: { baseUrl: buildAmBaseUrl() }, realmPath: bootstrapRealm };
+      // journey-client ignores `serverConfig.timeout` — the 60s request
+      // timeout is applied per-request by sdkTimeoutMiddleware instead.
+      const requestMiddleware = [
+        sdkTimeoutMiddleware,
+        transactionIdMiddleware,
+        ...(localeQueryString ? [languageMiddleware] : []),
+      ];
+
+      try {
+        const client = await journey({
+          config: journeyConfig,
+          requestMiddleware,
+        });
+        useJourneyClientStore(pinia).client = markRaw(client);
+      } catch {
+        // No client is stored on failure; Login's null-client guard surfaces
+        // the issueConnecting error.
       }
     })
     .then(() => overrideTranslations(i18n, 'login'))

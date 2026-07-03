@@ -2849,22 +2849,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/javascript-sdk@npm:4.9.1, @forgerock/javascript-sdk@npm:^4.9.1":
-  version: 4.9.1
-  resolution: "@forgerock/javascript-sdk@npm:4.9.1"
+"@forgerock/journey-client@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/journey-client@npm:2.2.0"
   dependencies:
-    "@reduxjs/toolkit": ^2.2.5
-    immer: ^10.1.1
-  checksum: 9043eb9ec2bacc76ddda6da92e1027170c624a47b0f5a2987ea5991692b1a9491c8214b1ade96d15bc91d521300a366e13e3129af4a612dc5b954f8dbe4680f2
-  languageName: node
-  linkType: hard
-
-"@forgerock/ping-protect@npm:4.7.1":
-  version: 4.7.1
-  resolution: "@forgerock/ping-protect@npm:4.7.1"
-  dependencies:
-    "@forgerock/javascript-sdk": ^4.9.1
-  checksum: b0f5dcd7336c6dfb9a8d2ee0f2de0791cf7ca3efa8b28d620885782f79c0c9894b13c89fe75d38a9aad0b537621cc395178c6670281c63b887d44434d6254758
+    "@forgerock/sdk-logger": 2.2.0
+    "@forgerock/sdk-oidc": 2.2.0
+    "@forgerock/sdk-request-middleware": 2.2.0
+    "@forgerock/sdk-types": 2.2.0
+    "@forgerock/sdk-utilities": 2.2.0
+    "@forgerock/storage": 2.2.0
+    "@reduxjs/toolkit": ^2.8.2
+    effect: ^3.20.0
+    tslib: ^2.5.0
+  checksum: afc4a870da11c7b81a18e4e28c54963002a5d3ac00c713e94d0ad9d48ef7b16f6e29d2c367213e26dd75e9f229e80a064e71f2cded388a0d86c5bae426a23d26
   languageName: node
   linkType: hard
 
@@ -3232,6 +3230,67 @@ __metadata:
     vuex: 4.0.2
   languageName: unknown
   linkType: soft
+
+"@forgerock/protect@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/protect@npm:2.2.0"
+  checksum: ef5174f0a70a199e56cde8ae6955e09f22205ae94ba54a77ee3b828611800e3d492fd6e68d596a8ca0121ce2aad07400ceb73925558fa2a56f630bc416299c44
+  languageName: node
+  linkType: hard
+
+"@forgerock/sdk-logger@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/sdk-logger@npm:2.2.0"
+  dependencies:
+    "@forgerock/sdk-types": 2.2.0
+  checksum: 67d695fa74575762c02308f48d8e0e4d77c93e06f3da0ecff3f9b1330cedc62e96b42b3c30a824236986bcb96e63a24ce6d04fa16045ea0ab9ca95ec5184854d
+  languageName: node
+  linkType: hard
+
+"@forgerock/sdk-oidc@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/sdk-oidc@npm:2.2.0"
+  dependencies:
+    "@forgerock/sdk-types": 2.2.0
+    "@forgerock/sdk-utilities": 2.2.0
+  checksum: a4b3570d864c0a4d51ef3212feef00cb505729ebb64a0c3b2a6e3f49ba17337fe065f9f1412144e111c85b2d53c4e1b1ba1472e57467a0cc84aec1e002a1625a
+  languageName: node
+  linkType: hard
+
+"@forgerock/sdk-request-middleware@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/sdk-request-middleware@npm:2.2.0"
+  dependencies:
+    "@reduxjs/toolkit": ^2.8.2
+  checksum: 2017811784c7a46f5a0cb2dd25d0ecd6e0aae3bf40e1355ca112565af0eb5ed5541ead9d9ee499f482c1ee917f3d142be2f72254f89a1a12e36ab0eab5502a3f
+  languageName: node
+  linkType: hard
+
+"@forgerock/sdk-types@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/sdk-types@npm:2.2.0"
+  checksum: aefd9f7eb065039ff21c282ed063b7f7d725f23a01a89ff476589ce680a7fa8425cf5e76ac9e85c64c255ca72d9753112e08562f37947e4e0d624dc875520c9a
+  languageName: node
+  linkType: hard
+
+"@forgerock/sdk-utilities@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/sdk-utilities@npm:2.2.0"
+  dependencies:
+    "@forgerock/sdk-types": 2.2.0
+    effect: ^3.20.0
+  checksum: 9f5899b30b0641176a06f55ddbfb817386b36e8b35626b2f17aece587d7ac82ce10c603169d096af9dc89af3b9ba3f4b7ffb2611c9622f8dd97f7071a32019a8
+  languageName: node
+  linkType: hard
+
+"@forgerock/storage@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@forgerock/storage@npm:2.2.0"
+  dependencies:
+    "@forgerock/sdk-types": 2.2.0
+  checksum: af7e0f89099e352f75b1c5ec0c35fd5aa8dc51e33008b1851fcd2c9435e713dce0f03cfffe6a35ed91e74bada11d5ed6ab87b530ee0ef3a32d58af7153298263
+  languageName: node
+  linkType: hard
 
 "@googlemaps/js-api-loader@npm:1.16.2":
   version: 1.16.2
@@ -4308,13 +4367,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reduxjs/toolkit@npm:^2.2.5":
-  version: 2.9.0
-  resolution: "@reduxjs/toolkit@npm:2.9.0"
+"@reduxjs/toolkit@npm:^2.8.2":
+  version: 2.12.0
+  resolution: "@reduxjs/toolkit@npm:2.12.0"
   dependencies:
     "@standard-schema/spec": ^1.0.0
     "@standard-schema/utils": ^0.3.0
-    immer: ^10.0.3
+    immer: ^11.0.0
     redux: ^5.0.1
     redux-thunk: ^3.1.0
     reselect: ^5.1.0
@@ -4326,7 +4385,7 @@ __metadata:
       optional: true
     react-redux:
       optional: true
-  checksum: 3c7458a1ba254e9b59e05cdbb5b25c2328108aa5f98f9f0173e90fe03b8f6fb698ad6829de998a6567786ff59748e2d2e1c158ef9764fa4007aeb7dba59c5c3d
+  checksum: 0fc6188b37399c1a40f8d5d7a30d8ddaef8c1bfc63b029fcee69f75d6b10a8000a4e7eedeefccfcd9f77170991b9d52855235b0ec7f8e95d55da2639d0e274a6
   languageName: node
   linkType: hard
 
@@ -4525,9 +4584,9 @@ __metadata:
   linkType: hard
 
 "@standard-schema/spec@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@standard-schema/spec@npm:1.0.0"
-  checksum: 2d7d73a1c9706622750ab06fc40ef7c1d320b52d5e795f8a1c7a77d0d6a9f978705092bc4149327b3cff4c9a14e5b3800d3b00dc945489175a2d3031ded8332a
+  version: 1.1.0
+  resolution: "@standard-schema/spec@npm:1.1.0"
+  checksum: 6245ebef5e698bb04752a22e996a7cc40406a404d9f68a9d4e1a7a10f2422da287247508e7b495a2f32bb38f3d57b4daf2c9ab4bf22d9bca13e20a3dc5ec575e
   languageName: node
   linkType: hard
 
@@ -10774,6 +10833,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"effect@npm:^3.20.0":
+  version: 3.21.3
+  resolution: "effect@npm:3.21.3"
+  dependencies:
+    "@standard-schema/spec": ^1.0.0
+    fast-check: ^3.23.1
+  checksum: 1681566cdcb00f28cf20745da62057d9c81a80881867815e94335c4bfe428579e7b9b0bceb43c75fa6e12470f765dc383b60289f67bedcc4c40b442c8f8092ef
+  languageName: node
+  linkType: hard
+
 "electron-to-chromium@npm:^1.3.571":
   version: 1.3.582
   resolution: "electron-to-chromium@npm:1.3.582"
@@ -11862,6 +11931,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-check@npm:^3.23.1":
+  version: 3.23.2
+  resolution: "fast-check@npm:3.23.2"
+  dependencies:
+    pure-rand: ^6.1.0
+  checksum: b815bd1a2bda33b8e1927a732368f94c3919d5c3b626065479e2389739dfbc6de885fdf48b7a576505edff4f8931798dc737c7bc7039a58b3412746f0d2e9b86
+  languageName: node
+  linkType: hard
+
 "fast-csv@npm:^4.3.1":
   version: 4.3.6
   resolution: "fast-csv@npm:4.3.6"
@@ -12345,9 +12423,9 @@ __metadata:
     "@badeball/cypress-cucumber-preprocessor": 24.0.1
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@faker-js/faker": 9.8.0
-    "@forgerock/javascript-sdk": 4.9.1
-    "@forgerock/ping-protect": 4.7.1
+    "@forgerock/journey-client": 2.2.0
     "@forgerock/platform-shared": 1.0.0
+    "@forgerock/protect": 2.2.0
     "@neuralegion/cypress-har-generator": 5.16.4
     "@percy/cli": 1.31.7
     "@percy/cypress": 3.1.6
@@ -12360,6 +12438,7 @@ __metadata:
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
+    abort-controller: 3.0.0
     babel-jest: 29.6.3
     babel-plugin-require-context-hook: 1.0.0
     babel-plugin-transform-import-meta: 2.3.2
@@ -12404,6 +12483,7 @@ __metadata:
     style-resources-loader: 1.2.1
     stylelint: 14.1.0
     stylelint-config-html: 1.0.0
+    text-encoding-polyfill: 0.6.7
     uuid: 14.0.0
     vue: 3.3.4
     vue-demi: 0.14.5
@@ -13786,10 +13866,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^10.0.3, immer@npm:^10.1.1":
-  version: 10.1.3
-  resolution: "immer@npm:10.1.3"
-  checksum: 1829457274084c14e32397f80132037cc758afb05e1fa36c92c8c2eea53fdca47cfa3509f7b8f7aaac1787434bbf1a2f2e7f8cbe40de969221188c0fcfe9d196
+"immer@npm:^11.0.0":
+  version: 11.1.8
+  resolution: "immer@npm:11.1.8"
+  checksum: 4bd514314facc63b0dded754ab16e51e742784ce3e9e27cca63e05c38a59b454fffea5ed3a4fbedae44bf2d9d4d6441feca2209ec291a088ab6f9e7cb6c37620
   languageName: node
   linkType: hard
 
@@ -19739,6 +19819,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pure-rand@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "pure-rand@npm:6.1.0"
+  checksum: 8d53bc02bed99eca0b65b505090152ee7e9bd67dd74f8ff32ba1c883b87234067c5bf68d2614759fb217d82594d7a92919e6df80f97885e7b12b42af4bd3316a
+  languageName: node
+  linkType: hard
+
 "qrcode-generator@npm:1.4.4":
   version: 1.4.4
   resolution: "qrcode-generator@npm:1.4.4"
@@ -20360,9 +20447,9 @@ __metadata:
   linkType: hard
 
 "reselect@npm:^5.1.0":
-  version: 5.1.1
-  resolution: "reselect@npm:5.1.1"
-  checksum: 5d32d48be29071ddda21a775945c2210cf4ca3fccde1c4a0e1582ac3bf99c431c6c2330ef7ca34eae4c06feea617e7cb2c275c4b33ccf9a930836dfc98b49b13
+  version: 5.2.0
+  resolution: "reselect@npm:5.2.0"
+  checksum: b274c69ba657cfe3531ae32ba332a6bae62050bb5addd7d42a66625fa85db0d82a93d69f0b6df1db345717fbcb8e9d311e843b09051afebd2b06da539f3510bb
   languageName: node
   linkType: hard
 
@@ -22279,6 +22366,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-encoding-polyfill@npm:0.6.7":
+  version: 0.6.7
+  resolution: "text-encoding-polyfill@npm:0.6.7"
+  checksum: 8e5b45154f3394cd29af01760ec2f728caba7cfc57fbcab60c073dc9c6db479d923efda3e074ae467379c4a0710c45e6427c6917a70da3059876924c190e03ed
+  languageName: node
+  linkType: hard
+
 "text-segmentation@npm:^1.0.3":
   version: 1.0.3
   resolution: "text-segmentation@npm:1.0.3"
@@ -22607,7 +22701,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.1, tslib@npm:^2.8.1":
+"tslib@npm:^2.0.1, tslib@npm:^2.5.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: e4aba30e632b8c8902b47587fd13345e2827fa639e7c3121074d5ee0880723282411a8838f830b55100cbe4517672f84a2472667d355b81e8af165a55dc6203a
