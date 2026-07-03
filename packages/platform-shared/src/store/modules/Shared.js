@@ -124,7 +124,7 @@ const mutations = {
       }
 
       if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
-        state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
+        state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION || '1.0';
 
         if (env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
           state.aiDevEnabled = true;

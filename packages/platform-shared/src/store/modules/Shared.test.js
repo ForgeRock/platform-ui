@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -78,5 +78,29 @@ describe('should handle relative paths for FRaaS urls', () => {
     expect(state.igaOrchestrationApiUrl).toBe('https://my.fancy.domain.com/auto');
     expect(state.fraasFederationUrl).toBe('https://my.fancy.domain.com/environment/federation/enforcement');
     expect(state.pingFederateUrl).toBe('https://my.fancy.domain.com/ws/admin');
+  });
+});
+
+describe('setBaseURLs journeyAIAgentVersion', () => {
+  it('should default journeyAIAgentVersion to 1.0 when no version is configured', () => {
+    const state = {};
+    const testEnv = {
+      VUE_APP_FRAAS: 'true',
+      VUE_APP_ENABLE_JOURNEY_AI: 'true',
+      VUE_APP_HELIX_JOURNEY_AGENT_VERSION: '',
+    };
+    shared.mutations.setBaseURLs(state, testEnv);
+    expect(state.journeyAIAgentVersion).toBe('1.0');
+  });
+
+  it('should use the configured journeyAIAgentVersion when one is set', () => {
+    const state = {};
+    const testEnv = {
+      VUE_APP_FRAAS: 'true',
+      VUE_APP_ENABLE_JOURNEY_AI: 'true',
+      VUE_APP_HELIX_JOURNEY_AGENT_VERSION: 'draft',
+    };
+    shared.mutations.setBaseURLs(state, testEnv);
+    expect(state.journeyAIAgentVersion).toBe('draft');
   });
 });
