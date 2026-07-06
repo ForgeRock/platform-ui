@@ -111,6 +111,8 @@ function createResizableColumn(colIndex, columnProps, table) {
   if (col.querySelector(`.${RESIZER_CLASS}`) || !isResizableColumn(col.classList)) return;
   const resizer = createResizer(colIndex, columnProps);
   const columnName = getColumnName(columnProps, colIndex);
+  if (!col.hasAttribute('aria-label')) col.setAttribute('aria-label', columnName);
+  resizer.setAttribute('aria-valuetext', i18n.global.t('common.columnResizerInstructions', { columnName }));
   const handlers = getEventHandlers(resizer);
   let startX = 0;
   let startWidth = 0;
@@ -235,9 +237,7 @@ function createResizableColumn(colIndex, columnProps, table) {
   };
 
   handlers.onFocus = () => {
-    resizer.removeAttribute('aria-hidden');
     const instructions = i18n.global.t('common.columnResizerInstructions', { columnName });
-    resizer.setAttribute('aria-description', instructions);
     const tooltip = table.__resizerTooltip;
     if (!tooltip) return;
     tooltip.textContent = instructions;
@@ -248,8 +248,6 @@ function createResizableColumn(colIndex, columnProps, table) {
     tooltip.classList.add(RESIZER_TOOLTIP_VISIBLE_CLASS);
   };
   handlers.onBlur = () => {
-    resizer.removeAttribute('aria-description');
-    resizer.setAttribute('aria-hidden', 'true');
     const tooltip = table.__resizerTooltip;
     if (tooltip) tooltip.classList.remove(RESIZER_TOOLTIP_VISIBLE_CLASS);
   };
