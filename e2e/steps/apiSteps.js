@@ -8,6 +8,7 @@
 
 import AdminsApiSteps from './api/AdminsApiSteps';
 import ApplicationApiSteps from './api/ApplicationApiSteps';
+import ManagedObjectApiSteps from './api/ManagedObjectApiSteps';
 import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import CspApiSteps from './api/CspApiSteps';
 import CustomDomainApiSteps from './api/CustomDomainApiSteps';
@@ -35,6 +36,7 @@ export default {
   jobs: JobsApiSteps,
   journey: JourneyApiSteps,
   journeys: JourneyApiSteps,
+  managedObject: ManagedObjectApiSteps,
   oauth2Clients: Oauth2ClientApiSteps,
   realm: RealmApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
