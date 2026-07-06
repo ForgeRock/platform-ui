@@ -110,11 +110,10 @@ function persistCurrentWidths(columnProps) {
 function createResizer(colIndex, columnProps) {
   const resizer = document.createElement('span');
   resizer.classList.add(RESIZER_CLASS);
-  resizer.setAttribute('role', 'separator');
-  resizer.setAttribute('aria-orientation', 'vertical');
+  resizer.setAttribute('role', 'slider');
+  resizer.setAttribute('aria-orientation', 'horizontal');
   resizer.setAttribute('tabindex', '0');
   resizer.setAttribute('aria-label', `Resize column ${colIndex + 1}`);
-  resizer.setAttribute('aria-hidden', 'true');
   if (columnProps.tableId) resizer.setAttribute('aria-controls', columnProps.tableId);
   return resizer;
 }
