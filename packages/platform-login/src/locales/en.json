@@ -40,7 +40,10 @@
   },
   "pages": {
     "selfservice": {
-      "captchaError": "Error loading reCaptcha"
+      "captchaError": "Error loading reCaptcha",
+      "friendlyCaptchaLabel": "Captcha challenge",
+      "friendlyCaptchaComplete": "Captcha challenge completed",
+      "friendlyCaptchaError": "Error loading captcha"
     }
   }
 }
