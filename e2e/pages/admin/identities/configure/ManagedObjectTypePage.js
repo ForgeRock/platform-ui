@@ -53,4 +53,22 @@ export default class ManagedObjectTypePage extends BaseAdminPage {
   static get displayLabelInput() {
     return ManagedObjectTypePage.detailsTabPanel.findByLabelText('Display Label');
   }
+
+  /**
+   * "Show advanced settings" link-button that expands the advanced settings collapse panel.
+   * Only present when the panel is collapsed; absent when already expanded.
+   */
+  static get showAdvancedSettingsButton() {
+    return cy.findByRole('button', { name: 'Show advanced settings' });
+  }
+
+  /** "Require UI Search Filter" checkbox inside the advanced settings panel. */
+  static get requireUISearchFilterCheckbox() {
+    return cy.findByLabelText('Require UI Search Filter');
+  }
+
+  /** "Minimum Characters" number input inside the advanced settings panel. */
+  static get minimumCharactersInput() {
+    return cy.findByLabelText('Minimum Characters');
+  }
 }
