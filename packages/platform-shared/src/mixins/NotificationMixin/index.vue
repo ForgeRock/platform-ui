@@ -1,8 +1,9 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
+import sanitizeHtml from 'sanitize-html';
 import { has } from 'lodash';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { notify } from '@kyvg/vue3-notification';
@@ -35,10 +36,8 @@ export default {
       let errorMessage = defaultMessage;
 
       if (has(error, 'response.data.message') && error.response.data.message.length > 0) {
-        // error message may have html encoding for example &#39; aka single quote
-        const errorTextElement = document.createElement('div');
-        errorTextElement.innerHTML = error.response.data.message;
-        errorMessage = errorTextElement.innerText;
+        // decode html entities in the error message to prevent displaying encoded characters
+        errorMessage = sanitizeHtml(error.response.data.message, { allowedTags: [], allowedAttributes: {} });
       }
 
       this.displayNotification('danger', this.getTranslation(errorMessage));
