@@ -600,6 +600,27 @@ describe('GovResourceTable', () => {
     expect(extendAction.exists()).toBe(true);
   });
 
+  it('should not crash and not show extend action when item.item is undefined (e.g. notification rows)', async () => {
+    const { wrapper, domWrapper } = await mountComponent({ showViewDetails: true });
+    wrapper.setProps({
+      items: [
+        {
+          assignment: 'DIRECT',
+          user: {
+            accountStatus: 'active',
+          },
+        },
+      ],
+    });
+    await flushPromises();
+    const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    await actionOptionsMenu.find('button').trigger('click');
+    await flushPromises();
+
+    const extendAction = domWrapper.find('[test-id="extend-grant-action"]');
+    expect(extendAction.exists()).toBe(false);
+  });
+
   it('should not show extend action only if grantEndDate is absent in the table row', async () => {
     const { wrapper, domWrapper } = await mountComponent({ showViewDetails: true });
     wrapper.setProps({
