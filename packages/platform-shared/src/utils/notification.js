@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import sanitizeHtml from 'sanitize-html';
 import { notify } from '@kyvg/vue3-notification';
 import { has } from 'lodash';
 import { getTranslation } from './translations';
@@ -45,10 +46,8 @@ export function showErrorMessage(error, defaultMessage) {
   let errorMessage = defaultMessage;
 
   if (has(error, 'response.data.message') && error.response.data.message.length > 0) {
-    // error message may have html encoding for example &#39; aka single quote
-    const errorTextElement = document.createElement('div');
-    errorTextElement.innerHTML = error.response.data.message;
-    errorMessage = errorTextElement.innerText;
+    // decode html entities in the error message to prevent displaying encoded characters
+    errorMessage = sanitizeHtml(error.response.data.message, { allowedTags: [], allowedAttributes: {} });
   }
 
   displayNotification('danger', getTranslation(errorMessage));
