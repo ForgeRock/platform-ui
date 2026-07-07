@@ -261,7 +261,7 @@ of the MIT license. See the LICENSE file for details. -->
                 </FrIcon>
               </BDropdownItem>
               <BDropdownItem
-                v-if="item.item.decision?.accessRequest?.grantEndDate"
+                v-if="item.item?.decision?.accessRequest?.grantEndDate"
                 test-id="extend-grant-action"
                 @click="showExtendRequestModal(item)">
                 <FrIcon
