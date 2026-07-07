@@ -359,7 +359,7 @@ import {
   BFormRadio,
   BFormRadioGroup,
 } from 'bootstrap-vue';
-import { cloneDeep, find } from 'lodash';
+import { cloneDeep } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import { types } from '../../templateTypes';
@@ -509,7 +509,7 @@ export default {
       this.formFields[field] = cloneDeep(this.value[field]);
     });
     if (!this.formFields.escalationEmail) {
-      this.formFields.escalationEmail = find(this.emailTemplateOptions, { value: 'emailTemplate/certificationEscalated' });
+      this.formFields.escalationEmail = 'emailTemplate/certificationEscalated';
     }
   },
   computed: {
