@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import Agents from './Agents';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
@@ -244,6 +245,81 @@ describe('Agents Unit', () => {
       queryFilter: '(application.id eq \'271fbe6672-780c-4226-af35-01a2546723c1\') and (glossary.idx./account.accountType eq "agent")',
     });
     expect(wrapper.vm.tableLoading).toBe(false);
+  });
+
+  async function mountWithCounts(recentlyDiscovered = 1, noCustodians = 9, unreviewed = 25, total = 100) {
+    const wrapper = mountComponent();
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(createData({}, total))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 10))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 5))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 3))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 1))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 7))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 6))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 8))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 0))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, recentlyDiscovered))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, noCustodians))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, unreviewed));
+    await flushPromises();
+    return wrapper;
+  }
+
+  describe('chart cards', () => {
+    it('renders exactly two circle progress bars', async () => {
+      const wrapper = await mountWithCounts();
+      expect(wrapper.findAllComponents(FrCircleProgressBar)).toHaveLength(2);
+    });
+
+    it('all four summary card headings are present', async () => {
+      const wrapper = await mountWithCounts();
+      const text = wrapper.text();
+      expect(text).toContain('governance.agents.recentlyDiscovered');
+      expect(text).toContain('governance.agents.reviewPending');
+      expect(text).toContain('governance.agents.actionRequired');
+      expect(text).toContain('governance.agents.provisioned');
+    });
+
+    it('provisioned card has no circle chart and does not show review pending content', async () => {
+      // Regression: IAM-9953 accidentally replaced the provisioned card with a copy of
+      // the unreviewed circle chart, leaving provisioned text dangling inside it.
+      const wrapper = await mountWithCounts();
+      const cards = wrapper.findAll('.card');
+      const provisionedCard = cards.find((c) => c.text().includes('governance.agents.provisioned'));
+      expect(provisionedCard.exists()).toBe(true);
+      expect(provisionedCard.text()).not.toContain('governance.agents.reviewPending');
+      expect(provisionedCard.findAllComponents(FrCircleProgressBar)).toHaveLength(0);
+    });
+
+    it('unreviewed circle chart uses yellow color and reflects unreviewed percentage', async () => {
+      const wrapper = await mountWithCounts(1, 9, 25, 100);
+      const charts = wrapper.findAllComponents(FrCircleProgressBar);
+      expect(charts[0].props('color')).toBe('#ffb946');
+      expect(charts[0].props('progress')).toBe(25);
+    });
+
+    it('no-custodians circle chart uses red color and reflects no-custodians percentage', async () => {
+      const wrapper = await mountWithCounts(1, 40, 25, 100);
+      const charts = wrapper.findAllComponents(FrCircleProgressBar);
+      expect(charts[1].props('color')).toBe('#da3a2b');
+      expect(charts[1].props('progress')).toBe(40);
+    });
+
+    it('unreviewedPercentage returns 0 when total agents is 0', async () => {
+      const wrapper = await mountWithCounts(0, 0, 0, 0);
+      expect(wrapper.vm.unreviewedPercentage).toBe(0);
+    });
+
+    it('unreviewedPercentage calculates correctly as a rounded percentage of total', async () => {
+      const wrapper = await mountWithCounts(1, 9, 33, 100);
+      expect(wrapper.vm.unreviewedPercentage).toBe(33);
+    });
+
+    it('noCustodiansPercentage calculates correctly as a rounded percentage of total', async () => {
+      const wrapper = await mountWithCounts(1, 33, 25, 100);
+      expect(wrapper.vm.noCustodiansPercentage).toBe(33);
+    });
   });
 
   it('Click on row loads details page', async () => {
