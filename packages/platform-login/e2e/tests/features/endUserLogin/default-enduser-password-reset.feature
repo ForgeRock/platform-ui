@@ -38,7 +38,7 @@ Feature: Default enduser password reset
     When user types "NewP@ssw0rd!" in the field "Password"
     Then "Next" button is enabled
     When user clicks on "Next" button
-    Then "Dashboard" link is visible
+    Then enduser dashboard is loaded with enduser data
 
   @C26631
   @cloud @forgeops
@@ -49,7 +49,7 @@ Feature: Default enduser password reset
     And user clicks on the password reset link in the email
     When user types "AnotherP@ssw0rd!" in the field "Password"
     And user clicks on "Next" button
-    Then "Dashboard" link is visible
+    Then enduser dashboard is loaded with enduser data
     When user clicks on the password reset link in the email
     Then page title is "Error"
     And the message "Unable to resume session. It may have expired." should be present
@@ -63,7 +63,7 @@ Feature: Default enduser password reset
     And user clicks on the password reset link in the email
     When user types "AnotherP@ssw0rd!" in the field "Password"
     And user clicks on "Next" button
-    Then "Dashboard" link is visible
+    Then enduser dashboard is loaded with enduser data
     When enduser logs out
     And user reloads the page
     And user types the stored value of "endUserName" in "User Name" field

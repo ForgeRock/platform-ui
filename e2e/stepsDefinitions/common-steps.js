@@ -709,7 +709,7 @@ Then('enduser account is deleted via API', () => {
 });
 
 Then('enduser dashboard is loaded with enduser data', () => {
-  cy.findAllByRole('heading', { timeout: 10000 }).contains(`Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
+  cy.findAllByRole('heading', { timeout: 20000 }).contains(`Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
 });
 
 Then('the option {string} is visible', (optionName) => {

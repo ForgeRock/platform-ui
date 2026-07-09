@@ -15,7 +15,12 @@ module.exports = defineConfig({
   experimentalWebKitSupport: true,
   experimentalMemoryManagement: true,
   video: true,
-  retries: 2,
+  retries: {
+    // Retry tests twice when running in CI (cypress run)
+    runMode: 2,
+    // No retries when running interactively (cypress open)
+    openMode: 0,
+  },
   reporter: '../../node_modules/mochawesome',
   reporterOptions: {
     overwrite: false,
