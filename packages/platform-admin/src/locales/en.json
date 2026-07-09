@@ -2629,6 +2629,7 @@
       "accountsTab": {
         "accountAssigned": "Account successfully assigned",
         "accountType": "Account Type",
+        "accountTypeAlreadyAssigned": "This application is already assigned with this account type. Choose a different account type.",
         "accountTypeDescription": "Type of account to assign these users.",
         "accountModalTitle": "{appName} Account Details",
         "accountUpdated": "Account successfully updated",

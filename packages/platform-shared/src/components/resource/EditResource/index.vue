@@ -178,7 +178,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :relationship-array-property="relationshipProperty"
                 :revision="revision"
                 @refresh-data="refreshData"
-                @revision-update="revision = $event" />
+                @revision-update="onRevisionUpdate" />
             </BTab>
           </template>
           <FrSettingsTab
@@ -197,6 +197,7 @@ of the MIT license. See the LICENSE file for details. -->
                 name="wfApplications"
                 :resource-details="resourceDetails"
                 :relationship-properties="relationshipProperties"
+                :on-revision-update="onRevisionUpdate"
                 :id="encodedResourceId" />
             </BTab>
             <FrLinkedApplicationsTab :linked-applications="linkedApplications" />
@@ -745,6 +746,16 @@ export default {
       this.settingsProperties = {};
       this.jsonString = '';
       this.loadData();
+    },
+    /**
+     * Updates the tracked revision so subsequent writes from any tab (built-in
+     * or slot-provided) use the latest _rev, and re-emits set-revision so
+     * parent views keep their own copy in sync.
+     * @param {String} rev updated _rev returned from a write
+     */
+    onRevisionUpdate(rev) {
+      this.revision = rev;
+      this.$emit('set-revision', rev);
     },
     /**
      * Triggers clearing sessions for the resource, shows a notification based on the result,
