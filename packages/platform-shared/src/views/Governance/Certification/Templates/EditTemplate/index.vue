@@ -291,6 +291,7 @@ export default {
         },
         FrCustomization: {
           columnConfig: {},
+          sortableColumnConfig: {},
         },
         FrSummaryStep: {},
       },

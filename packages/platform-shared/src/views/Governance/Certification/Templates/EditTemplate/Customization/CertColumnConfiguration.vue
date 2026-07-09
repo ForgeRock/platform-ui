@@ -1,15 +1,15 @@
-<!-- Copyright 2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrColumnConfiguration
       class="my-4"
       :select-inputs="selectFields"
       :model-value="selectedColumnsList"
-      @update:model-value="handleUpdate" />
+      @update:model-value="handleUpdate"
+      @update:sortable-columns="emit('update:sortableColumns', $event)" />
   </div>
 </template>
 
@@ -24,12 +24,16 @@ import { startCase } from 'lodash';
 import FrColumnConfiguration from '@forgerock/platform-shared/src/components/ColumnConfiguration/ColumnConfiguration';
 import { OOTBColumns } from './baseColumnConfig';
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:sortableColumns']);
 
 const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
+  },
+  sortableColumns: {
+    type: Array,
+    default: () => [],
   },
   grantFilterProperties: {
     type: Object,
@@ -156,6 +160,7 @@ const selectedColumnsList = computed(() => {
     selectLabel: getColumnLabel(field),
     listLabel: getColumnLabel(field),
     value: field,
+    sortable: props.sortableColumns.includes(field),
   }));
 });
 

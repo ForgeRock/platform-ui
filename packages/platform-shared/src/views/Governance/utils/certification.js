@@ -383,18 +383,29 @@ export function buildSavePayload(type, forms, eventBased) {
     : null;
 
   // Customization
-  const customization = forms.FrCustomization;
+  const customization = forms.FrCustomization || {};
   const columnConfig = {};
-  if (what.enableAccountGrant) columnConfig.accounts = customization.columnConfig.accounts;
-  if (what.enableEntitlementGrant) columnConfig.entitlements = customization.columnConfig.entitlements;
-  if (what.enableRoleGrant) columnConfig.roles = customization.columnConfig.roles;
+  const columnSortConfig = {};
+  if (what.enableAccountGrant) {
+    columnConfig.accounts = customization.columnConfig.accounts;
+    columnSortConfig.accounts = customization.sortableColumnConfig?.accounts || [];
+  }
+  if (what.enableEntitlementGrant) {
+    columnConfig.entitlements = customization.columnConfig.entitlements;
+    columnSortConfig.entitlements = customization.sortableColumnConfig?.entitlements || [];
+  }
+  if (what.enableRoleGrant) {
+    columnConfig.roles = customization.columnConfig.roles;
+    columnSortConfig.roles = customization.sortableColumnConfig?.roles || [];
+  }
   if (what.enableEntitlementCompositionGrant) {
-    columnConfig.entitlements = (customization.columnConfig.entitlements || []).filter(
-      (col) => !col.startsWith('user.') && !col.startsWith('account.'),
-    );
+    columnConfig.entitlementComposition = customization.columnConfig.entitlementComposition;
+    columnSortConfig.entitlementComposition = (customization.sortableColumnConfig?.entitlementComposition || [])
+      .filter((val) => !val.startsWith('user.') && !val.startsWith('account.'));
   }
   saveObj.uiConfig = {
     columnConfig,
+    columnSortConfig,
   };
 
   return saveObj;
@@ -698,6 +709,12 @@ export function getFormValuesFromTemplate(template, eventBased) {
       accounts: template.uiConfig?.columnConfig?.accounts || [],
       entitlements: template.uiConfig?.columnConfig?.entitlements || [],
       roles: template.uiConfig?.columnConfig?.roles || [],
+    },
+    sortableColumnConfig: {
+      accounts: template.uiConfig?.columnSortConfig?.accounts || [],
+      entitlements: template.uiConfig?.columnSortConfig?.entitlements || [],
+      roles: template.uiConfig?.columnSortConfig?.roles || [],
+      entitlementComposition: template.uiConfig?.columnSortConfig?.entitlementComposition || [],
     },
   };
   return forms;

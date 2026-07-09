@@ -274,6 +274,31 @@ describe('getInitialColumns', () => {
     const result = getInitialColumns('accounts', null, false, { accounts: [] }, null);
     expect(result.map((c) => c.key)).toEqual(['user', 'application', 'account', 'flags', 'comments', 'actions']);
   });
+
+  it('marks columns as sortable when their value is in columnSortConfig for the grantType', () => {
+    const customColumnConfig = { accounts: ['user.user', 'application.application', 'review.flags'] };
+    const columnSortConfig = { accounts: ['user.user', 'application.application'] };
+    const result = getInitialColumns('accounts', null, false, customColumnConfig, [], undefined, columnSortConfig);
+    const sortableKeys = result.filter((c) => c.sortable).map((c) => c.value);
+    expect(sortableKeys).toEqual(['user.user', 'application.application']);
+    expect(result.find((c) => c.value === 'review.flags').sortable).toBe(false);
+  });
+
+  it('marks no columns as sortable when columnSortConfig for the grantType is empty', () => {
+    const customColumnConfig = { accounts: ['user.user', 'application.application'] };
+    const columnSortConfig = { accounts: [] };
+    const result = getInitialColumns('accounts', null, false, customColumnConfig, [], undefined, columnSortConfig);
+    const nonActionColumns = result.filter((c) => c.key !== 'actions');
+    nonActionColumns.forEach((col) => expect(col.sortable).toBe(false));
+  });
+
+  it('falls back to OOTB sortable defaults when columnSortConfig is not provided', () => {
+    const customColumnConfig = { accounts: ['user.user', 'application.application', 'review.flags'] };
+    const result = getInitialColumns('accounts', null, false, customColumnConfig, [], undefined, undefined);
+    expect(result.find((c) => c.value === 'user.user').sortable).toBe(true);
+    expect(result.find((c) => c.value === 'application.application').sortable).toBe(true);
+    expect(result.find((c) => c.value === 'review.flags').sortable).toBe(false);
+  });
 });
 
 describe('getAllColumnCategories', () => {
