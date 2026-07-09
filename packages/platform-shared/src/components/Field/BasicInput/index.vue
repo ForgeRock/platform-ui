@@ -546,8 +546,8 @@ export default {
   :deep(.btn.clear-btn):active,
   :deep(.btn.clear-btn):focus {
     border-left: none !important;
-    background-color: $gray-100 !important;
-    color: $gray-800 !important;
+    background-color: var(--input-bg-disabled) !important;
+    color: var(--input-color) !important;
   }
 
   /* Styles used to ensure Chrome's password save still triggers label move */
