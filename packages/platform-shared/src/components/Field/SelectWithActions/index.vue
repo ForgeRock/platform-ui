@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
             :title="editLabelOrFallback"
             size="sm"
             variant="light"
+            class="text-dark"
             data-testid="labelEditItemButton">
             <FrIcon name="edit" />
           </BButton>
@@ -66,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
           :title="addLabelOrFallback"
           size="sm"
           variant="light"
+          class="text-dark"
           data-testid="beforeListAddButton">
           <FrIcon name="add" />
         </BButton>
@@ -103,6 +105,7 @@ of the MIT license. See the LICENSE file for details. -->
             :title="editLabelOrFallback"
             size="sm"
             variant="light"
+            class="text-dark"
             data-testid="editItemButton">
             <FrIcon name="edit" />
           </BButton>
