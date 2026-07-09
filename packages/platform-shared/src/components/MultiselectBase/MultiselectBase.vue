@@ -39,6 +39,9 @@ of the MIT license. See the LICENSE file for details. -->
       ref="tags"
       @keydown.left="navigateTags($event)"
       @keydown.right="navigateTags($event)"
+      @keydown.delete="navigateTags($event)"
+      @keydown.backspace="navigateTags($event)"
+      @keydown.enter="navigateTags($event)"
       class="multiselect__tags">
       <slot
         name="selection"
@@ -61,12 +64,13 @@ of the MIT license. See the LICENSE file for details. -->
                 class="multiselect__tag"
                 tabindex="-1"
                 :data-testid="`multi-select-tag-contents-${testid}`"
-                @keypress.enter.prevent="navigateTags($event, option)"
-                @keydown.delete.prevent="navigateTags($event, option)"
                 :key="index">
                 <span v-text="getOptionLabel(option)" />
                 <i
-                  @mousedown.prevent="removeElement(option)"
+                  role="button"
+                  tabindex="-1"
+                  :aria-label="$t('common.remove')"
+                  @mousedown.prevent.stop="removeElement(option)"
                   :data-testid="`multi-select-tag-close-icon-${testid}`"
                   class="multiselect__tag-icon" />
               </span>
@@ -81,13 +85,6 @@ of the MIT license. See the LICENSE file for details. -->
           </slot>
         </template>
       </slot>
-      <transition name="multiselect__loading">
-        <slot name="loading">
-          <div
-            v-show="loading"
-            class="multiselect__spinner" />
-        </slot>
-      </transition>
       <input
         ref="searchRef"
         v-if="inputIsCombobox"
@@ -96,7 +93,7 @@ of the MIT license. See the LICENSE file for details. -->
           {
             'multiselect__input': isOpen || !hasSingleLabelSlot,
             'multiselect__single': !isOpen && !hasSingleLabelSlot,
-            'sr-only': hasSingleLabelSlot,
+            'sr-only': hasSingleLabelSlot && !isOpen,
           }]"
         :name="name"
         type="search"
@@ -357,7 +354,7 @@ const props = defineProps({
     default: (count) => i18n.global.t('multiselectBase.limitText', { count }),
   },
   /**
-     * Set true to trigger the loading spinner.
+     * Set true while async options are loading. Suppresses the "no results" and "no options" messages.
      * @default False
      * @type {Boolean}
      */
@@ -565,6 +562,10 @@ const {
   wholeGroupSelected,
 } = useMultiselect(props, emit, rootRef, searchRef);
 
+const hasSingleLabelSlot = !!slots?.singleLabel;
+const hasOptionGroup = computed(() => props.groupValues && props.groupLabel && props.groupSelect);
+const visibleValues = computed(() => (props.multiple ? internalValue.value.slice(0, props.limit) : []));
+
 const {
   addPointerElement,
   groupHighlight,
@@ -578,11 +579,8 @@ const {
   // eslint-disable-next-line no-unused-vars
   pointerReset,
   pointerSet,
-} = usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement);
+} = usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, visibleValues);
 
-const hasSingleLabelSlot = !!slots?.singleLabel;
-const hasOptionGroup = computed(() => props.groupValues && props.groupLabel && props.groupSelect);
-const visibleValues = computed(() => (props.multiple ? internalValue.value.slice(0, props.limit) : []));
 const singleValue = computed(() => internalValue.value[0]);
 const isSingleLabelVisible = computed(() => (
   (singleValue.value || singleValue.value === 0)

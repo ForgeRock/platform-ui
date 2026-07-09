@@ -44,7 +44,6 @@ const pinia = createPinia();
 store.commit('SharedStore/setEnvironment', process.env);
 store.commit('SharedStore/setBaseURLs', process.env);
 store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
-store.commit('SharedStore/setNewMultiselectEnabled', process.env);
 
 /**
  * Gets the root part of the transactionId to use in auth requests for this session.

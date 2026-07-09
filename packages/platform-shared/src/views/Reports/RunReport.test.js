@@ -258,7 +258,7 @@ describe('Run Report component', () => {
         } else if (schema.type === 'string') {
           await findByTestId(wrapper, `input-fr-field-${parameter}`).setValue(valueStringInput);
         } else if (schema.type === 'array') {
-          const multivalueInput = parameterElement.find('input[type="text"]');
+          const multivalueInput = parameterElement.find('input[type="search"]');
           await multivalueInput.setValue(valueStringInput);
           await parameterElement.find('.multiselect__element').find('span').trigger('click');
         } else if (schema.type === 'boolean') {

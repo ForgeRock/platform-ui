@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,7 +41,9 @@ of the MIT license. See the LICENSE file for details. -->
           </BMedia>
         </template>
         <template #tag="{ option, remove }">
-          <span class="multiselect__tag">
+          <span
+            class="multiselect__tag"
+            tabindex="-1">
             <BMedia no-body>
               <BMediaAside
                 class="mr-2"
@@ -61,11 +63,11 @@ of the MIT license. See the LICENSE file for details. -->
               </BMediaBody>
             </BMedia>
             <span
+              role="button"
               class="multiselect__tag-icon"
-              tabindex="0"
+              tabindex="-1"
               :aria-label="$t('common.remove')"
-              @click.prevent="remove(option)"
-              @keydown.enter="remove(option)" />
+              @click.prevent.stop="remove(option)" />
           </span>
         </template>
       </FrField>

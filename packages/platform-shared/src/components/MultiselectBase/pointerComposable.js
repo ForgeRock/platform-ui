@@ -7,7 +7,7 @@
 
 import { ref, computed, watch } from 'vue';
 
-export default function usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement) {
+export default function usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, visibleValues) {
   const pointer = ref(0);
   const currentEl = computed(() => listRef?.value?.querySelector(`#${props.id}-${pointer.value}`));
 
@@ -113,15 +113,24 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     pointer.value = index;
   }
 
-  function navigateTags(e, option) {
-    let tagList;
-    let activeIndex;
-
-    if (['ArrowLeft', 'ArrowRight', 'Enter', 'Delete', 'Backspace'].indexOf(e.key) !== -1) {
-      tagList = [...(rootRef.value.querySelectorAll('.multiselect__tag'))];
-      // .filter(e => e !== tags.value)
-      activeIndex = tagList.findIndex((el) => el === document.activeElement);
+  /**
+   * Handles keyboard navigation within the multiselect tag list.(Bound to the multiselect__tags container)
+   * ArrowLeft/Right: move focus between close icons (roving tabindex pattern).
+   *   ArrowLeft from the search input focuses the last tag's close icon.
+   *   ArrowRight past the last tag returns focus to the search input.
+   * Enter/Delete/Backspace: remove the currently focused tag and move focus to the adjacent tag's close icon, or back to the search input if the list is now empty.
+   * No-ops when: search input has text, the field is not multiple, or
+   *   Enter/Delete/Backspace is fired with no tag focused (activeIndex === -1).
+   *
+   * @param {KeyboardEvent} e
+   */
+  function navigateTags(e) {
+    if (['ArrowLeft', 'ArrowRight', 'Enter', 'Delete', 'Backspace'].indexOf(e.key) === -1) {
+      return;
     }
+
+    const tagList = [...(rootRef.value.querySelectorAll('.multiselect__tag'))];
+    const activeIndex = tagList.findIndex((el) => el.contains(document.activeElement));
 
     // eslint-disable-next-line default-case
     switch (e.key) {
@@ -132,9 +141,11 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
 
         e.preventDefault();
         if (activeIndex === -1 && tagList.length > 0) {
-          tagList[tagList.length - 1].focus();
+          const icon = tagList[tagList.length - 1].querySelector('.multiselect__tag-icon');
+          if (icon) icon.focus();
         } else if (activeIndex > 0) {
-          tagList[activeIndex - 1].focus();
+          const icon = tagList[activeIndex - 1].querySelector('.multiselect__tag-icon');
+          if (icon) icon.focus();
         }
         break;
 
@@ -146,25 +157,32 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
         e.preventDefault();
 
         if (tagList.length > activeIndex + 1) {
-          tagList[activeIndex + 1].focus();
+          const icon = tagList[activeIndex + 1].querySelector('.multiselect__tag-icon');
+          if (icon) icon.focus();
+        } else if (activeIndex === tagList.length - 1) {
+          searchRef.value.focus();
         }
 
         break;
       case 'Enter':
       case 'Delete':
       case 'Backspace':
-        if (search.value !== '' || !props.multiple) {
+        if (search.value !== '' || !props.multiple || activeIndex === -1) {
           return;
         }
 
         e.preventDefault();
 
-        removeElement(option);
+        removeElement(visibleValues.value[activeIndex]);
 
-        if (activeIndex === tagList.length - 1 && tagList.length !== 1) {
-          tagList[tagList.length - 2].focus();
-        } else if (tagList.length === 1) {
+        if (tagList.length === 1) {
           searchRef.value.focus();
+        } else if (activeIndex === tagList.length - 1) {
+          const icon = tagList[tagList.length - 2].querySelector('.multiselect__tag-icon');
+          if (icon) icon.focus();
+        } else {
+          const icon = tagList[activeIndex].querySelector('.multiselect__tag-icon');
+          if (icon) icon.focus();
         }
         break;
     }

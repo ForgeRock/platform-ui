@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,7 +10,6 @@ import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/moc
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import i18n from '@/i18n';
-import store from '../../../store';
 
 mockValidation(['required', 'unique']);
 
@@ -26,7 +25,6 @@ describe('KbaCreateCallback.vue (shallowMount)', () => {
   const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
 
   function setup(overrideProps = {}, piniaState = {}) {
-    store.state.SharedStore.newMultiselectEnabled = true;
     setupTestPinia(piniaState, false);
     wrapper = shallowMount(KbaCreateCallback, {
       global: {
@@ -143,7 +141,6 @@ describe('KbaCreateCallback.vue (mount)', () => {
   };
 
   beforeEach(() => {
-    store.state.SharedStore.newMultiselectEnabled = true;
     setupTestPinia({}, false);
     wrapper = mount(KbaCreateCallback, {
       global: {

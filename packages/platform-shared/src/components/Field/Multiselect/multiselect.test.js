@@ -47,6 +47,19 @@ describe('Multiselect', () => {
       await multiselect.trigger('click');
       expect(multiselectInput.attributes('aria-expanded')).toBe('true');
     });
+
+    it('emits "close" when the dropdown closes', async () => {
+      const wrapper = setup();
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+
+      await multiselect.trigger('click');
+      await flushPromises();
+      wrapper.vm.closeHandler();
+      await flushPromises();
+
+      expect(wrapper.emitted('close')).toBeTruthy();
+      expect(wrapper.emitted('closed')).toBeFalsy();
+    });
   });
 
   it('MultiSelect input adds tags', () => {
@@ -58,7 +71,7 @@ describe('Multiselect', () => {
     wrapper.vm.addTag();
     expect(wrapper.vm.inputValue).toStrictEqual([
       {
-        multiselectId: 1,
+        multiselectId: 0,
         text: 'test',
         value: 'test',
       },
@@ -79,6 +92,20 @@ describe('Multiselect', () => {
     wrapper.vm.addTag();
     expect(wrapper.vm.tagOptions).toStrictEqual([]);
     expect(wrapper.vm.inputValue).toStrictEqual([]);
+  });
+
+  it('MultiSelect input component translates i18n-key-shaped string options via getEnumTranslation', () => {
+    const wrapper = setup({
+      options: ['governance.editTemplate.allRoles'],
+    });
+
+    const expected = [
+      {
+        multiselectId: 0, text: 'All roles', value: 'governance.editTemplate.allRoles',
+      },
+    ];
+
+    expect(wrapper.vm.selectOptions).toEqual(expected);
   });
 
   it('MultiSelect input component process options prop from array', () => {

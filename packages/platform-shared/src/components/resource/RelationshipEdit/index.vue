@@ -10,21 +10,19 @@ of the MIT license. See the LICENSE file for details. -->
       :label="$t('common.placeholders.relationshipLabel', {relationshipTitle: relationshipProperty.title})"
       :label-for="'editResourceType' + index"
       horizontal>
-      <Component
-        :is="multiselectComponent"
+      <FrMultiselectBase
         open-direction="below"
         label="label"
-        options-label-key="label"
         track-by="label"
         :disabled="disabled"
-        :value="resourceCollection"
+        :model-value="resourceCollection"
         :options="rescourceCollectionTypes"
         :show-labels="false"
         @select="setResourceCollectionType">
         <template #option="{ option }">
           {{ option.text }}
         </template>
-      </Component>
+      </FrMultiselectBase>
     </BFormGroup>
 
     <FrField
@@ -74,11 +72,12 @@ of the MIT license. See the LICENSE file for details. -->
       <template #tag="{ option, remove }">
         <div
           v-if="option"
+          tabindex="-1"
           class="multiselect__tag">
           <BMedia class="py-1">
             <BMediaBody>
               <div :class="{'mb-1': option.displayFields?.length > 1}">
-                <span tabindex="0">
+                <span>
                   <span
                     v-for="(displayField, idx) in option.displayFields"
                     :key="`displayField_${displayField}_${idx}`"
@@ -88,11 +87,11 @@ of the MIT license. See the LICENSE file for details. -->
                   </span>
                 </span>
                 <span
+                  role="button"
                   class="multiselect__tag-icon"
-                  tabindex="0"
+                  tabindex="-1"
                   :aria-label="$t('common.remove')"
-                  @click.prevent="remove(option)"
-                  @keydown.enter="remove(option)" />
+                  @click.prevent.stop="remove(option)" />
               </div>
               <small class="text-muted">
                 {{ option.resource[option.displayFields[0]] }}
@@ -155,14 +154,10 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import FrMultiselectBase from '@forgerock/platform-shared/src/components/MultiselectBase/MultiselectBase';
 import i18n from '@/i18n';
-// import vue-multiselect from src because dist min/uglified package gets removed in build
-import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
-import store from '@/store';
 
 export default {
   name: 'RelationshipEdit',
   components: {
-    VueMultiSelect,
     FrMultiselectBase,
     BFormGroup,
     BMedia,
@@ -228,7 +223,6 @@ export default {
     },
   },
   data() {
-    const multiselectComponent = store.state?.SharedStore?.newMultiselectEnabled ? FrMultiselectBase : VueMultiSelect;
     return {
       fieldDescription: this.relationshipProperty.description !== this.relationshipProperty.title
         ? this.relationshipProperty.description
@@ -253,7 +247,6 @@ export default {
       },
       debouncedSetOptions: debounce(this.setOptions, 1000),
       searchPlaceholder: '',
-      multiselectComponent,
     };
   },
   mounted() {

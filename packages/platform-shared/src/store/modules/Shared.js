@@ -52,7 +52,6 @@ const defaultState = {
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
   maxSessionExpirationTime: null,
-  newMultiselectEnabled: false,
   proxyConnectEnabled: false,
   mtlsEnabled: false,
   fraasMtlsFqdn: null,
@@ -289,10 +288,6 @@ const mutations = {
     if (env.VUE_APP_ENABLE_SERVICES_MIGRATION?.toString() === 'true') {
       state.servicesMigrationEnabled = true;
     }
-  },
-  // Needed for Login since setFeatureFlags isn't called there
-  setNewMultiselectEnabled(state, env) {
-    state.newMultiselectEnabled = env.VUE_APP_ENABLE_NEW_MULTISELECT?.toString() === 'true';
   },
   setIdmWorkflowEnabled(state, val) {
     state.idmWorkflowEnabled = val;

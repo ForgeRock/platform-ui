@@ -111,7 +111,9 @@ of the MIT license. See the LICENSE file for details. -->
                   </BMedia>
                 </template>
                 <template #tag="{ option, remove }">
-                  <span class="multiselect__tag">
+                  <span
+                    class="multiselect__tag"
+                    tabindex="-1">
                     <BMedia
                       no-body
                       class="py-1">
@@ -133,11 +135,11 @@ of the MIT license. See the LICENSE file for details. -->
                       </BMediaBody>
                     </BMedia>
                     <span
+                      role="button"
                       class="multiselect__tag-icon"
-                      tabindex="0"
+                      tabindex="-1"
                       :aria-label="$t('common.remove')"
-                      @click.prevent="remove(option)"
-                      @keydown.enter="remove(option)" />
+                      @click.prevent.stop="remove(option)" />
                   </span>
                 </template>
               </FrResourceSelect>

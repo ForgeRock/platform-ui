@@ -231,7 +231,7 @@ export default {
     input:not(.multiselect__input):not(.fr-tag-input),
     textarea,
     button:not(.btn-sm),
-    .multiselect,
+    .multiselect .multiselect__tags,
     .b-form-tags {
       border-color: $danger !important;
       border: 1px solid $danger;

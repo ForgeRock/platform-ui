@@ -60,7 +60,7 @@ import FrDateTimeInput from '@forgerock/platform-shared/src/components/Field/Dat
 import FrDurationInput from '@forgerock/platform-shared/src/components/Field/DurationInput';
 import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyValueList';
-import FrMultiselectDeprecated from '@forgerock/platform-shared/src/components/Field/MultiselectDeprecated';
+import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
 import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinButton';
@@ -86,7 +86,7 @@ export default {
     FrDurationInput,
     FrJsonInput,
     FrKeyValueList,
-    FrMultiselectDeprecated,
+    FrMultiselect,
     FrSelectInput,
     FrSelectWithActions,
     FrSpinButton,

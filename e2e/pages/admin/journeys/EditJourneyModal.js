@@ -12,7 +12,7 @@ export default class EditJourneyModal {
   }
 
   static get tagsInput() {
-    return EditJourneyModal.dialog.findByRole('textbox', { name: 'Tags (optional)' });
+    return EditJourneyModal.dialog.findByRole('combobox', { name: 'Tags (optional)' });
   }
 
   static get tagRemoveIcons() {

@@ -333,18 +333,30 @@ When('user selects {string} option on dropdown {string}', (option, dropdown) => 
 });
 
 When('user types and selects {string} option on dropdown {string}', (option, dropdown) => {
-  cy.findByRole('combobox', { name: dropdown }).click().type(option);
+  cy.findByRole('combobox', { name: dropdown })
+    .closest('.multiselect')
+    .click()
+    .find('input')
+    .type(option);
   selectDropdownOption(option);
 });
 
 When('user types and selects the stored value of {string} option on dropdown {string}', (storedDataName, dropdown) => {
   const storedValue = Cypress.env(storedDataName);
-  cy.findByRole('combobox', { name: dropdown }).click().type(storedValue);
+  cy.findByRole('combobox', { name: dropdown })
+    .closest('.multiselect')
+    .click()
+    .find('input')
+    .type(storedValue);
   selectDropdownOption(storedValue);
 });
 
 When('user closes the {string} dropdown', (dropdown) => {
-  cy.findByRole('combobox', { name: dropdown }).click({ force: true });
+  cy.findByRole('combobox', { name: dropdown })
+    .closest('.multiselect')
+    .click()
+    .find('input')
+    .type('{esc}');
 });
 
 When('user reloads the page', () => {
@@ -1047,6 +1059,7 @@ Then('{string} tab is selected', (tabName) => {
 Then('{string} dropdown has {string} option selected', (dropdown, option) => {
   cy.findByRole('combobox', { name: dropdown })
     .should('exist')
+    .closest('.multiselect')
     .within(() => {
       cy.get('.multiselect__tag, .multiselect__single')
         .contains(new RegExp(option, 'i'))
@@ -1069,7 +1082,7 @@ Then('the page favicon url contains {string}', (filename) => {
 });
 
 Then('the {string} dropdown is visible', (fieldName) => {
-  cy.findByRole('combobox', { name: fieldName }).should('be.visible');
+  cy.findByRole('combobox', { name: fieldName }).closest('.multiselect').should('be.visible');
 });
 
 Then('the {string} tag input is visible', (fieldName) => {

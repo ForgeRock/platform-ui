@@ -52,7 +52,9 @@ of the MIT license. See the LICENSE file for details. -->
                 @search-change="debouncedApplicationSearch"
                 @open="!applicationFilterOptions.length ? filterByApplicationSearch('') : null">
                 <template #tag="{ option, remove }">
-                  <span class="multiselect__tag">
+                  <span
+                    class="multiselect__tag"
+                    tabindex="-1">
                     <BMedia no-body>
                       <img
                         :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.value })"
@@ -62,9 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
                         :onerror="onImageError"
                         :src="option.icon">
                       <BMediaBody class="pl-1">
-                        <div
-                          class="mb-1 text-dark"
-                          tabindex="0">
+                        <div class="mb-1 text-dark">
                           {{ option.title }}
                         </div>
                         <div class="text-muted">
@@ -73,11 +73,11 @@ of the MIT license. See the LICENSE file for details. -->
                       </BMediaBody>
                     </BMedia>
                     <span
+                      role="button"
                       class="multiselect__tag-icon"
-                      tabindex="0"
+                      tabindex="-1"
                       :aria-label="$t('common.remove')"
-                      @click.prevent="remove(option)"
-                      @keydown.enter="remove(option)" />
+                      @click.prevent.stop="remove(option)" />
                   </span>
                 </template>
                 <template #option="{ option }">

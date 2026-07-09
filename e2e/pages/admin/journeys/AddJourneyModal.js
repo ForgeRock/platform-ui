@@ -40,7 +40,7 @@ export default class AddJourneyModal {
   }
 
   static get tagsInput() {
-    return AddJourneyModal.createDialog.findByRole('textbox', { name: 'Tags (optional)' });
+    return AddJourneyModal.createDialog.findByRole('combobox', { name: 'Tags (optional)' });
   }
 
   static tagOption(tagName) {

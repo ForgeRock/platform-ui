@@ -1379,7 +1379,7 @@ a.text-light-on-dark,
 .form-label-group.fr-field-errorinput:not(.multiselect__input):not(.fr-tag-input),
 .form-label-group.fr-field-error textarea,
 .form-label-group.fr-field-error button:not(.btn-sm),
-.form-label-group.fr-field-error .multiselect,
+.form-label-group.fr-field-error .multiselect .multiselect__tags,
 .form-label-group.fr-field-error .b-form-tags {
 	border-color: var(--form-feedback-invalid-color) !important;
 	border: 1px solid var(--form-feedback-invalid-color) !important;
@@ -1645,7 +1645,18 @@ a.text-light-on-dark,
       background-color: var(--input-bg-disabled)!important;
     }
   }
-} 
+}
+
+/* Multiselect focus ring — matches normal input behaviour */
+.form-label-group:not(.fr-field-error) .form-label-group-input .multiselect:focus-within .multiselect__tags {
+  border-color: var(--input-focus-border-color) !important;
+  box-shadow: 0 0 0 0.0625rem var(--input-focus-border-color) !important;
+}
+
+/* Multiselect error focus ring — matches normal input error behaviour */
+.form-label-group.fr-field-error .form-label-group-input .multiselect:focus-within .multiselect__tags {
+  box-shadow: 0 0 0 0.0625rem var(--form-feedback-invalid-color) !important;
+}
 
 /* Password Input */
 .form-label-group {

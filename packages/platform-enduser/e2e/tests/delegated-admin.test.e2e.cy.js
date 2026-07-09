@@ -423,6 +423,7 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
           .first()
           .type('{enter}');
         cy.contains('.multiselect__tag', internalRoleName);
+        cy.findByRole('dialog').findAllByLabelText('Authorization Roles').first().type('{esc}');
         cy.findByRole('button', { name: 'Cancel' }).click();
         cy.intercept('GET', '**/openidm/managed/**').as('search');
         cy.findByRole('searchbox', { name: 'Search' })

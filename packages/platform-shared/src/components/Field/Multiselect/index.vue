@@ -77,6 +77,7 @@ import {
 } from 'lodash';
 import { useField } from 'vee-validate';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import { getEnumTranslation } from '@forgerock/platform-shared/src/utils/translations';
 import {
   toRef, ref, computed, watch,
 } from 'vue';
@@ -295,14 +296,14 @@ export default {
       if (props.options.length) {
         if (has(props.options[0], 'value')) {
           mapOptions = map(props.options, (option) => ({
-            text: option.text,
             value: option.value,
             multiselectId: option.multiselectId !== undefined ? option.multiselectId : generateTagId(),
             ...option,
+            text: getEnumTranslation(option.text, props.name),
           }));
         } else {
           mapOptions = map(props.options, (option) => ({
-            text: option,
+            text: getEnumTranslation(option, props.name),
             value: option,
             multiselectId: generateTagId(),
           }));
@@ -311,16 +312,18 @@ export default {
       return [...mapOptions, ...tagOptions.value];
     });
     /**
-     * Process value prop to match with existing values
-     * Checks for the option in the select options and to see if new value is actually new
+     * Converts a raw value array into the internal option-object format used by the multiselect.
+     * Each entry is looked up first in selectOptions, then in currentValue as a fallback(required for external-search mode).
      *
-     * @param {Object} newVal new input value
-     * @returns {Object} input value
+     * @param {Array} value - Raw values to process (either already option objects or plain values)
+     * @param {Array} [currentValue=[]] - Currently selected option objects, used as fallback lookup
+     * @returns {Array} Resolved option objects matching the provided values
      */
-    function processValue(value) {
+    function processValue(value, currentValue = []) {
       let newInputValue = [...value];
       if (!has(newInputValue[0], 'value')) {
-        newInputValue = map(value, (val) => find(selectOptions.value, { value: val }));
+        newInputValue = map(value, (val) => find(selectOptions.value, { value: val })
+          || find(currentValue, { value: val })).filter(Boolean);
       }
       return newInputValue;
     }
@@ -360,7 +363,7 @@ export default {
     }
 
     function closeHandler() {
-      context.emit('closed');
+      context.emit('close');
       isOpen.value = false;
       floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
     }
@@ -379,21 +382,27 @@ export default {
       context.emit('search-change', value);
     }
 
+    /**
+     * Adds one or more tags from the current search input (comma-separated).
+     * Replaces the inputValue ref rather than mutating it in-place so that
+     * vee-validate's proxy setter fires and re-validates the field (e.g. `required`).
+     */
     function addTag() {
       if (props.taggable && searchValue.value.trim().length > 0) {
+        const newTags = [];
         searchValue.value.split(',').forEach((untrimmedVal) => {
           const newVal = untrimmedVal.trim();
           const existsInCurrentValues = find(inputValue.value, { value: newVal });
           if (newVal && !existsInCurrentValues) {
-            tagOptions.value.push({
-              multiselectId: generateTagId(), text: newVal, value: newVal,
-            });
-            inputValue.value.push({
-              multiselectId: generateTagId(), text: newVal, value: newVal,
-            });
-            context.emit('input', map(inputValue.value, 'value'));
+            const tag = { multiselectId: generateTagId(), text: newVal, value: newVal };
+            tagOptions.value = [...tagOptions.value, tag];
+            newTags.push(tag);
           }
         });
+        if (newTags.length) {
+          inputValue.value = [...inputValue.value, ...newTags];
+          context.emit('input', map(inputValue.value, 'value'));
+        }
       }
     }
 
@@ -407,7 +416,7 @@ export default {
     });
 
     watch(() => props.value, (value) => {
-      const newValues = processValue(value);
+      const newValues = processValue(value, inputValue.value);
       if (!isEqual(inputValue.value, newValues)) {
         inputValue.value = newValues;
       }
@@ -433,11 +442,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-:deep .polyfill-placeholder {
-  .multiselect__tags {
-    padding: 1.1rem 50px 0.1rem 0.75rem;
-    }
-}
-</style>

@@ -16,7 +16,7 @@ export default class DuplicateJourneyModal {
   }
 
   static get tagsInput() {
-    return DuplicateJourneyModal.dialog.findByRole('textbox', { name: 'Tags (optional)' });
+    return DuplicateJourneyModal.dialog.findByRole('combobox', { name: 'Tags (optional)' });
   }
 
   static tagOption(tagName) {

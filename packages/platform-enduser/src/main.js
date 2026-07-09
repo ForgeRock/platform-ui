@@ -388,7 +388,6 @@ store.commit('SharedStore/setEnvironment', process.env);
 store.commit('SharedStore/setBaseURLs', process.env);
 store.commit('SharedStore/setCurrentPackage', 'enduser');
 store.commit('SharedStore/setFeatureFlags', process.env);
-store.commit('SharedStore/setNewMultiselectEnabled', process.env);
 
 async function getRealm() {
   const urlParams = new URLSearchParams(window.location.search);

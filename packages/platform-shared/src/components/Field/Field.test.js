@@ -136,7 +136,7 @@ describe('Field Component', () => {
     });
     await flushPromises();
 
-    expect(multiselect.vm.value).toEqual([{ multiselectId: 1, text: 'option2', value: 'enum2' }]);
+    expect(multiselect.props('modelValue')).toEqual([{ multiselectId: 1, text: 'option2', value: 'enum2' }]);
     expect(wrapper.vm.$attrs.value).toStrictEqual(['enum2']);
 
     // Ensure we get a success when trying to select two values that are in options
@@ -145,7 +145,7 @@ describe('Field Component', () => {
     });
     await flushPromises();
 
-    expect(multiselect.vm.value).toEqual([{ multiselectId: 0, text: 'option1', value: 'enum1' }, { multiselectId: 1, text: 'option2', value: 'enum2' }]);
+    expect(multiselect.props('modelValue')).toEqual([{ multiselectId: 0, text: 'option1', value: 'enum1' }, { multiselectId: 1, text: 'option2', value: 'enum2' }]);
     expect(wrapper.vm.$attrs.value).toStrictEqual(['enum1', 'enum2']);
   });
 
