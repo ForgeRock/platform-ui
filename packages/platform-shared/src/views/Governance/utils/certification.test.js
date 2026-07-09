@@ -769,13 +769,14 @@ describe('certification', () => {
           accounts: ['prop1', 'prop2', 'prop3'],
           roles: ['prop1'],
           entitlements: ['prop1', 'prop2'],
+          entitlementComposition: ['application.application', 'entitlement.entitlement'],
         },
       };
       forms.FrWhat.enableEntitlementCompositionGrant = true;
       const savePayload = buildSavePayload('entitlementComposition', forms);
 
       expect(savePayload.uiConfig.columnConfig).toEqual({
-        entitlements: ['prop1', 'prop2'],
+        entitlementComposition: ['application.application', 'entitlement.entitlement'],
       });
     });
 

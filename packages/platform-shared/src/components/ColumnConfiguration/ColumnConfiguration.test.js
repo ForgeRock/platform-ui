@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -82,7 +82,9 @@ describe('ColumnConfiguration', () => {
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     const lastEmitted = wrapper.emitted('update:modelValue').pop()[0];
     expect(lastEmitted).toEqual([
-      { selectLabel: 'Account ID', listLabel: 'Account ID', value: 'account.id' },
+      {
+        selectLabel: 'Account ID', listLabel: 'Account ID', value: 'account.id', sortable: false,
+      },
     ]);
   });
 
@@ -98,8 +100,12 @@ describe('ColumnConfiguration', () => {
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();
     const lastEmitted = wrapper.emitted('update:modelValue').pop()[0];
     expect(lastEmitted).toEqual([
-      { selectLabel: 'User Name', listLabel: 'User Name', value: 'user.name' },
-      { selectLabel: 'Account ID', listLabel: 'Account ID', value: 'account.id' },
+      {
+        selectLabel: 'User Name', listLabel: 'User Name', value: 'user.name', sortable: false,
+      },
+      {
+        selectLabel: 'Account ID', listLabel: 'Account ID', value: 'account.id', sortable: false,
+      },
     ]);
   });
 

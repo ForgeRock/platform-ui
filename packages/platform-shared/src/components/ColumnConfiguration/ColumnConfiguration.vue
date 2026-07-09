@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -37,12 +37,21 @@ of the MIT license. See the LICENSE file for details. -->
                   </span>
                 </FrIcon>
               </div>
-              <BButton
-                variant="link"
-                class="text-dark py-0 px-4"
-                @click="handleRemoveFromList(element)">
-                <FrIcon name="delete" />
-              </BButton>
+              <div class="d-flex align-items-center">
+                <FrField
+                  class="mr-2"
+                  type="boolean"
+                  size="sm"
+                  :label="$t('common.sortable')"
+                  :value="element.sortable"
+                  @input="handleSortableChange(element, $event)" />
+                <BButton
+                  variant="link"
+                  class="text-dark py-0 px-2"
+                  @click="handleRemoveFromList(element)">
+                  <FrIcon name="delete" />
+                </BButton>
+              </div>
             </BListGroupItem>
           </template>
         </Draggable>
@@ -69,7 +78,7 @@ import Draggable from 'vuedraggable';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update:sortableColumns']);
 
 const props = defineProps({
   selectInputs: {
@@ -100,6 +109,12 @@ function getSelectOptions(options) {
 const selectedColumnsList = ref([]);
 const selectedFields = ref({});
 
+function emitUpdates() {
+  const sortableColumnsList = selectedColumnsList.value.filter((col) => col.sortable);
+  emit('update:modelValue', selectedColumnsList.value);
+  emit('update:sortableColumns', sortableColumnsList);
+}
+
 /**
  * Triggered when removing an item from the list of columns.
  * Removes the items from the select input values to keep them in sync
@@ -110,7 +125,7 @@ function handleRemoveFromList(element) {
   selectedColumnsList.value = selectedColumnsList.value.filter((field) => (field.value !== element.value));
   const [category] = element.value.split('.');
   selectedFields.value[category] = selectedFields.value[category].filter((field) => (field !== element.value));
-  emit('update:modelValue', selectedColumnsList.value);
+  emitUpdates();
 }
 
 /**
@@ -121,7 +136,7 @@ function handleRemoveFromList(element) {
  */
 function handleRemove(element) {
   selectedColumnsList.value = selectedColumnsList.value.filter((field) => (field.value !== element.value));
-  emit('update:modelValue', selectedColumnsList.value);
+  emitUpdates();
 }
 
 /**
@@ -131,15 +146,27 @@ function handleRemove(element) {
  * @param {Object} element - The event object associated with the remove action.
  */
 function handleSelect(element) {
-  selectedColumnsList.value.push(element);
-  emit('update:modelValue', selectedColumnsList.value);
+  selectedColumnsList.value.push({ ...element, sortable: false });
+  emitUpdates();
+}
+
+/**
+ * Triggered when a sortable switch is toggled.
+ *
+ * @param {Object} element - The column item whose sortable state changed.
+ * @param {boolean} value - The new sortable value.
+ */
+function handleSortableChange(element, value) {
+  const col = selectedColumnsList.value.find((c) => c.value === element.value);
+  if (col) col.sortable = value;
+  emitUpdates();
 }
 
 /**
  * Triggered when an item changes position in the list.
  */
 function handleListUpdate() {
-  emit('update:modelValue', selectedColumnsList.value);
+  emitUpdates();
 }
 
 /**
@@ -148,8 +175,8 @@ function handleListUpdate() {
  * @param {Array} columns - An array of column objects representing the selected columns.
  */
 function setFieldValues(columns) {
-  // set the columns list
-  selectedColumnsList.value = columns;
+  // set the columns list, ensuring every item has sortable initialized for reactivity
+  selectedColumnsList.value = columns.map((col) => ({ sortable: false, ...col }));
 
   columns.forEach((column) => {
     const [category] = column.value.split('.');

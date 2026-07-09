@@ -231,9 +231,11 @@ function getFilterPropertyColumn(columnCategories, category, key) {
  *
  * @param {string[]} columns - Array of column identifiers in the format "category.key".
  * @param {Object} columnCategories - Object containing column category definitions.
+ * @param {string[]} [sortableColumns] - Optional array of column value strings that should be sortable.
+ *   When provided, overrides each column's default sortable setting.
  * @returns {Object[]} Array of column definition objects, each with properties such as key, label, sortable, class, category, and show.
  */
-function getCustomColumns(columns, columnCategories) {
+function getCustomColumns(columns, columnCategories, sortableColumns) {
   const customColumns = columns.map((column) => {
     const parsedString = column.split('.');
     const category = parsedString[0];
@@ -242,7 +244,7 @@ function getCustomColumns(columns, columnCategories) {
     // Get column if it is an OOTB column or Filter Property column
     const colData = getOOTBColumn(category, key) || getFilterPropertyColumn(columnCategories, category, key);
     // If the column is not found in OOTB or custom columns, return a default column
-    return colData || {
+    const columnDef = colData || {
       key,
       label: key,
       sortable: false,
@@ -251,6 +253,9 @@ function getCustomColumns(columns, columnCategories) {
       show: true,
       value: column,
     };
+
+    if (sortableColumns) columnDef.sortable = sortableColumns.includes(column);
+    return columnDef;
   });
 
   // This column is always shown
@@ -274,13 +279,15 @@ function getCustomColumns(columns, columnCategories) {
  * @param {Object} customColumnConfig - Custom column configuration object keyed by grant type.
  * @param {Object} columnCategories - Categories of columns used for custom column filtering.
  * @param {Object} autoIdSettings - IGA Config for auto id recommendations
+ * @param {Object} [columnSortConfig] - Optional sort config object keyed by grant type; each value is an
+ *   array of column value strings (e.g. ['user.user', 'application.application']) that should be sortable.
  * @returns {Array<Object>} An array of field objects representing the initial columns for the certification table.
  */
-export function getInitialColumns(grantType, entitlementUserId, showAccountDrilldown, customColumnConfig, columnCategories, autoIdSettings) {
+export function getInitialColumns(grantType, entitlementUserId, showAccountDrilldown, customColumnConfig, columnCategories, autoIdSettings, columnSortConfig) {
   const accountEntitlement = !!entitlementUserId;
 
   if (!showAccountDrilldown && !accountEntitlement && customColumnConfig?.[grantType]?.length) {
-    return getCustomColumns(customColumnConfig[grantType], columnCategories);
+    return getCustomColumns(customColumnConfig[grantType], columnCategories, columnSortConfig?.[grantType]);
   }
 
   const fields = [

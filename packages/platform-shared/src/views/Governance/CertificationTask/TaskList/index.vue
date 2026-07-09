@@ -985,7 +985,7 @@ export default {
     }
 
     const allColumnCategories = getAllColumnCategories(this.certificationGrantType || 'accounts', filterProperties, this.autoIdSettings);
-    this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings);
+    this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings, this.campaignDetails?.uiConfig?.columnSortConfig);
     this.columnCategories = allColumnCategories;
 
     resetFilterTypes();

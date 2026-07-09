@@ -1,8 +1,7 @@
-<!-- Copyright 2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-4 flex-grow-1 overflow-auto h-100">
     <BContainer class="my-4">
@@ -22,10 +21,12 @@ to such license between the licensee and ForgeRock AS. -->
           <CertColumnConfiguration
             class="my-4"
             :model-value="updatedColumnConfig[grantType.value]"
+            :sortable-columns="sortableColumnConfig[grantType.value] || []"
             :grant-filter-properties="grantFilterProperties"
             :grant-type="grantType.value"
             :auto-id-enabled="autoIdEnabled"
-            @update:model-value="updatedColumnConfig[grantType.value] = $event" />
+            @update:model-value="updatedColumnConfig[grantType.value] = $event"
+            @update:sortable-columns="sortableColumnConfig[grantType.value] = $event.map((col) => col.value)" />
         </BTab>
       </BTabs>
     </BContainer>
@@ -64,6 +65,7 @@ const props = defineProps({
 });
 
 const updatedColumnConfig = ref({});
+const sortableColumnConfig = ref({});
 const selectedTab = ref(0);
 
 const availableGrantTypes = [
@@ -107,14 +109,22 @@ function init() {
     if (templateConfig.roles?.length) columnConfig.roles = [...templateConfig.roles];
   }
   updatedColumnConfig.value = columnConfig;
+
+  const savedSortable = props.value?.sortableColumnConfig || {};
+  sortableColumnConfig.value = {
+    accounts: savedSortable.accounts || [],
+    entitlements: savedSortable.entitlements || [],
+    entitlementComposition: savedSortable.entitlementComposition || [],
+    roles: savedSortable.roles || [],
+  };
 }
 
 init();
 
 watch(
-  () => updatedColumnConfig.value,
-  (newValue) => {
-    emit('input', { columnConfig: newValue });
+  [() => updatedColumnConfig.value, () => sortableColumnConfig.value],
+  ([columnConfig, sortableConfig]) => {
+    emit('input', { columnConfig, sortableColumnConfig: sortableConfig });
   },
   { deep: true, immediate: true },
 );
