@@ -1,3 +1,5 @@
+# Disabled due to [IAM-9793] The enduser security questions don't always update immediately - Jira
+
 # @cloud
 # Feature: Enduser Security Questions
 
@@ -193,10 +195,10 @@
   #   When user navigates to "Password reset by KBA" journey
   #   And user types the stored value of "endUserName" in "User Name" field
   #   And user clicks on "Next" button
-  #   And user waits for themerealm request
+  #   And user waits for themerealm request # intercept should be created before clicking Next
   #   And user types "answer" in the field "What's your favorite color?"
   #   And user clicks on "Next" button
-  #   And user waits for themerealm request
+  #   And user waits for themerealm request # intercept should be created before clicking Next
   #   Then the message "Please type your new password" should be present
   #   When user types "Passw0rd!" in the field "Password"
   #   And user types "Passw0rd!" in the field "Confirm Password"
@@ -243,7 +245,7 @@
   #   And user types "newQuestion" in the field "Question"
   #   And user types "newAnswer" in the field "Answer for: newQuestion"
   #   And user clicks on "Next" button
-  #   And user waits for themerealm request
+  #   And user waits for themerealm request # intercept should be created before clicking Next
   #   Then fields are visible
   #   | fieldName             |
   #   | newQuestion           |
