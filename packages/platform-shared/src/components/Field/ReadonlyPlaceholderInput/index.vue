@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -82,7 +82,8 @@ export default {
 <style lang="scss" scoped>
   .clear-btn {
     border-left: none;
-    background-color: $gray-100 !important;
+    background-color: var(--input-bg-disabled) !important;
+    color: var(--input-color) !important;
   }
 
   .form-label-group:focus-within:not(.fr-field-error) {
