@@ -21,7 +21,6 @@ const defaultState = {
   autoReportsEnabled: false,
   currentPackage: '',
   deploymentType: '',
-  aicConnectionUisEnabled: false,
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
   fraasLoggingKeyURL: null,
@@ -219,10 +218,6 @@ const mutations = {
 
       if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
         state.journeyAIEnabled = true;
-      }
-
-      if (env.VUE_APP_ENABLE_AIC_CONNECTION_UIS?.toString() === 'true') {
-        state.aicConnectionUisEnabled = true;
       }
 
       if (env.VUE_APP_ENABLE_MONITORING_UI?.toString() === 'true') {

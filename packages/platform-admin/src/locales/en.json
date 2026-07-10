@@ -4178,6 +4178,7 @@
       "confirmUpdateModal": {
         "confirmUpdateModalTitle": "Confirm Update",
         "confirmationWarning": "These updates represent the desired mTLS configuration but do not take effect straight away. The update will be applied immediately but can take some time to propagate to all network resources.",
+        "hostInformation": "When prepared the mTLS domain will be available at <code>{domain}</code>",
         "updateConfigText": "Confirm",
         "spinnerTextConfigButton": "Updating..."
       },
