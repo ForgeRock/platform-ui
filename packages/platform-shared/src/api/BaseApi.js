@@ -138,11 +138,13 @@ export function generateHelixApi(requestOverride = {}) {
 
 /**
  * Returns the CDN base URL for application templates.
- * Uses the development template CDN when `devAppTemplatesEnabled` is true,
- * otherwise defaults to the production template CDN.
+ * When air-gapped, returns a relative path for local serving.
+ * Otherwise uses the development template CDN when `devAppTemplatesEnabled` is true,
+ * or defaults to the production template CDN.
  * @returns {string} CDN base URL ending with a trailing slash.
  */
 export function getCdnBaseURL() {
+  if (store.state.SharedStore.isAirGapped) return `${process.env.BASE_URL}app-templates/`;
   return store.state.SharedStore.devAppTemplatesEnabled
     ? 'https://cdn.forgerock.com/platform/app-templates-development/'
     : 'https://cdn.forgerock.com/platform/app-templates/';

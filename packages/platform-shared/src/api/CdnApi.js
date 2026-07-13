@@ -8,8 +8,6 @@
 import { generateCdnApi, getCdnBaseURL } from '@forgerock/platform-shared/src/api/BaseApi';
 import i18n from '@/i18n';
 
-const TEMPLATE_SOURCE = getCdnBaseURL();
-
 /**
  * Obtains the index file for the application templates, which can be used
  * to find exact templates that exist within cdn.
@@ -37,7 +35,8 @@ export function getApplicationTemplate(templatePath) {
  */
 export async function getApplicationTemplateList() {
   try {
-    const response = await fetch(`${TEMPLATE_SOURCE}appTemplates.json.gz`);
+    const response = await fetch(`${getCdnBaseURL()}appTemplates.json.gz`);
+    if (!response.ok) throw new Error(response.statusText);
     // eslint-disable-next-line no-undef
     const decompressionStream = new DecompressionStream('gzip');
     const decompressedStream = response.body.pipeThrough(decompressionStream);
@@ -46,6 +45,7 @@ export async function getApplicationTemplateList() {
 
     return parsedTemplates;
   } catch (error) {
-    throw Error(i18n.global.t('applications.errorRetrievingApplicationTemplates'));
+    const detail = error?.message ? `: ${error.message}` : '';
+    throw Error(`${i18n.global.t('applications.errorRetrievingApplicationTemplates')}${detail}`);
   }
 }
