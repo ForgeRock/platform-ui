@@ -45,7 +45,6 @@ const defaultState = {
   igaOrchestrationApiUrl: null,
   isAirGapped: false,
   isFraas: false,
-  analyticsReportsAiAgentVersion: null,
   journeyAIAgentVersion: null,
   journeyAIBuildAgentVersion: null,
   journeyAIEnabled: false,
@@ -126,10 +125,6 @@ const mutations = {
           state.aiDevEnabled = true;
           state.journeyAIBuildAgentVersion = env.VUE_APP_HELIX_JOURNEY_BUILD_AGENT_VERSION;
         }
-      }
-
-      if (env.VUE_APP_ENABLE_ANALYTICS_REPORT_AI_ASSISTANT?.toString() === 'true') {
-        state.analyticsReportsAiAgentVersion = env.VUE_APP_HELIX_ANALYTICS_AGENT_VERSION || 'draft';
       }
 
       if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {

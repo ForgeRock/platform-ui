@@ -316,7 +316,8 @@
       "pageOf": "Page {current} of {total}",
       "previous": "Previous",
       "next": "Next",
-      "unableToDownloadChart": "Unable to download chart image"
+      "unableToDownloadChart": "Unable to download chart image",
+      "unableToDownloadTable": "Unable to download report data"
     }
   },
   "aiAgents": {
