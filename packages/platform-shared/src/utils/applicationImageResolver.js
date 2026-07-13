@@ -1,18 +1,23 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
-const IMAGES_SOURCE = 'https://cdn.forgerock.com/platform/app-templates/images/';
+
+import store from '@/store';
 
 /**
- * Attempts to return the image at the provided path for
- * applications, returning the default image if not (if cdn enabled, just returns the cdn path)
- * @param {string} image
+ * Returns the URL for an application template image.
+ * When air-gapped, resolves against the local app-templates directory.
+ * Otherwise returns the CDN URL.
+ * @param {string} image filename of the image (e.g. 'salesforce.svg')
  */
 export function resolveImage(image) {
-  return `${IMAGES_SOURCE}${image}`;
+  if (!store.state.SharedStore.isAirGapped) {
+    return `https://cdn.forgerock.com/platform/app-templates/images/${image}`;
+  }
+  return `${process.env.BASE_URL}app-templates/images/${image}`;
 }
 
 /**

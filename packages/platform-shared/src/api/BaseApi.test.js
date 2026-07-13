@@ -12,6 +12,7 @@ import {
   generateHelixApi,
   generateIgaApi,
   generateIdmApi,
+  getCdnBaseURL,
 } from './BaseApi';
 
 jest.mock('axios');
@@ -166,6 +167,41 @@ describe('BaseApi', () => {
     generateIdmApi();
     await flushPromises();
     expect(errorRejected).toBe(false);
+  });
+
+  describe('getCdnBaseURL', () => {
+    beforeAll(() => {
+      process.env.BASE_URL = '/';
+    });
+
+    afterEach(() => {
+      store.state.SharedStore.isAirGapped = false;
+      store.state.SharedStore.devAppTemplatesEnabled = false;
+    });
+
+    it('should return local path when air-gapped', () => {
+      store.state.SharedStore.isAirGapped = true;
+      expect(getCdnBaseURL()).toBe('/app-templates/');
+    });
+
+    it('should return development CDN URL when devAppTemplatesEnabled is true', () => {
+      store.state.SharedStore.devAppTemplatesEnabled = true;
+      expect(getCdnBaseURL()).toBe('https://cdn.forgerock.com/platform/app-templates-development/');
+    });
+
+    it('should return production CDN URL by default', () => {
+      expect(getCdnBaseURL()).toBe('https://cdn.forgerock.com/platform/app-templates/');
+    });
+
+    it('should return local path when air-gapped even if devAppTemplatesEnabled is true', () => {
+      store.state.SharedStore.isAirGapped = true;
+      store.state.SharedStore.devAppTemplatesEnabled = true;
+      expect(getCdnBaseURL()).toBe('/app-templates/');
+    });
+
+    afterAll(() => {
+      delete process.env.BASE_URL;
+    });
   });
 
   describe('generateHelixApi', () => {
