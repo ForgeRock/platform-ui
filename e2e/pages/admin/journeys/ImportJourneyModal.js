@@ -30,6 +30,26 @@ export default class ImportJourneyModal {
     return ImportJourneyModal.skipBackupDialog.findByRole('button', { name: 'Skip Backup' });
   }
 
+  // Collapsible "Show/Hide backup summary" toggle button
+  static get showHideBackupSummaryButton() {
+    return ImportJourneyModal.importJourneyDialog.findByRole('button', { name: /(Show|Hide) backup summary/i });
+  }
+
+  // The warning/info alert block on the Backup Trees step
+  static get backupInfoText() {
+    return ImportJourneyModal.importJourneyDialog.find('.alert-warning');
+  }
+
+  // Themes checkbox inside the Optional Dependencies section of the backup summary
+  static get themesCheckbox() {
+    return ImportJourneyModal.importJourneyDialog.findByRole('checkbox', { name: /Themes/i });
+  }
+
+  // The export-details collapse region (the summary body)
+  static get backupSummaryCollapse() {
+    return ImportJourneyModal.importJourneyDialog.find('#download-config-collapse');
+  }
+
   // Upload File step elements
   static get fileInput() {
     return ImportJourneyModal.importJourneyDialog.find('input[type="file"]');
