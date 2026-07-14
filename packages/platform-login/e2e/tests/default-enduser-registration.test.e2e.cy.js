@@ -320,7 +320,7 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
 
     it('[C19754] Terms and Conditions modal is displayed', () => {
       cy.visit(locationUrl);
-      cy.findByRole('link', { name: 'Terms & Conditions' }).click();
+      cy.findByRole('button', { name: 'Terms & Conditions' }).click();
       cy.findByRole('heading', { name: 'Terms & Conditions' }).should('be.visible');
     });
   });
