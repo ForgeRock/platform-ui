@@ -83,6 +83,7 @@
     "hostedPagesSettings": "Hosted Pages Settings",
     "IpAddresses": "IP Addresses",
     "NetworkSecurity": "Network Security",
+    "NavigationProfileList": "Navigation Profiles",
     "Jobs": "Jobs",
     "JourneyAIBuildNew": "Build Journey with AI",
     "JourneyAIBuildPreview": "AI Journey Preview",
@@ -176,6 +177,7 @@
     "entitlements": "Entitlements",
     "extensions": "Extensions",
     "externalIdentityProviders": "Identity Providers",
+    "NavigationProfileList": "Navigation Profiles",
     "forms": "Forms",
     "gatewayCommunication": "Gateway Communication",
     "glossary": "Glossary",
@@ -748,6 +750,10 @@
           "labelDescription": "Name as it should appear in the navigation.",
           "iconCode": "Icon Code",
           "iconCodeDescription": "Choose a <a href='{url}' rel='noopener' target='_blank'>Google Material Icon</a> to use for this navigation item.",
+          "groupNavItemDescription": "A top-level menu that expands to show the items you choose.",
+          "groupItems": "Items in this sub-menu",
+          "groupItemsDescription": "Select which navigation items should appear inside this sub-menu.",
+          "customLinkPlaceholder": "Custom link (click edit to configure)",
           "navItemDescription": "Link to {pageName} page.",
           "navItemWithSubItemDescription": "Links to {subPageNames}.",
           "navigationSelectionDescription": "Choose the type of navigation item to add."
@@ -6428,6 +6434,28 @@
     "loadError": "Failed to load Self-service journeys settings.",
     "statusUpdateSuccess": "Self-service journeys status updated successfully.",
     "statusUpdateError": "Failed to update Self-service journeys status."
+  },
+  "navigationProfiles": {
+    "deleteConfirm": "Are you sure you want to delete the {name} navigation profile?",
+    "errorDeleting": "There was an error deleting this navigation profile.",
+    "errorSaving": "There was an error saving this navigation profile.",
+    "navigationProfileList": {
+      "columnGroups": "Groups",
+      "columnOrder": "Order",
+      "columnProfile": "Profile",
+      "description": "Manage reusable account-page navigation profiles that can be applied across themes and end-user experiences.",
+      "duplicateName": "A navigation profile with this name already exists.",
+      "errorLoading": "There was an error loading the navigation profiles.",
+      "noProfiles": "No navigation profiles yet.",
+      "priorityHint": "Drag the handle to reorder. When a user belongs to multiple groups, the profile in position 1 applies.",
+      "profileNamePlaceholder": "Enter a name",
+      "successCreate": "Navigation profile created.",
+      "successOrderSaved": "Navigation profile order saved."
+    },
+    "newProfile": "New Navigation Profile",
+    "noGroups": "No groups assigned",
+    "successDelete": "Navigation profile deleted.",
+    "title": "Navigation Profiles"
   },
   "workflowTasks": {
     "columnAssignee": "Assignee",
