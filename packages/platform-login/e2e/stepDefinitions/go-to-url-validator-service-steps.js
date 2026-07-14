@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { Given } from '@badeball/cypress-cucumber-preprocessor';
+import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
 import { deleteIDMUser } from '@e2e/api/managedApi.e2e';
 import { getValidTogoDestinations, putValidTogoDestinations } from '@e2e/api/amConsoleServicesApi.e2e';
 
@@ -48,4 +48,11 @@ after(() => {
         Cypress.env('endUserId', '');
       });
   }
+});
+
+When('the browser navigation to {string} is stubbed with a static response', (url) => {
+  // Consent interstitials from external sites (e.g. consent.google.com for datacenter
+  // IPs) would otherwise change the final URL and fail the redirect assertion for
+  // reasons unrelated to the validator
+  cy.intercept('GET', `${url}/**`, '<html><body>goto destination</body></html>');
 });
