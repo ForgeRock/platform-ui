@@ -25,7 +25,7 @@ describe('Registration Page - Visual Tests', { tags: '@forgeops' }, () => {
 
     cy.percySnapshot('Login - Registration Form Complete');
 
-    cy.findByRole('link', { name: 'Terms & Conditions' }).click();
+    cy.findByRole('button', { name: 'Terms & Conditions' }).click();
 
     cy.percySnapshot('Login - Terms Modal');
   });
