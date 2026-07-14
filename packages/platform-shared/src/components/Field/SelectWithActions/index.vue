@@ -243,7 +243,7 @@ export default {
   top: 0;
   padding-right: 12px;
   z-index: 10;
-  background: $white;
+  background: var(--dropdown-bg);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
 }
 
