@@ -233,7 +233,7 @@ describe(
       cy.findByRole('radio', { name: 'Go back :/' }).should('be.checked');
     });
 
-    xit('[C20732] Page Node with Select Choice Collector - Happy path works correctly', () => {
+    it('[C20732] Page Node with Select Choice Collector - Happy path works correctly', () => {
       const nodeToLoad = 'Select Choice Collector!';
 
       // Login as Enduser
@@ -244,10 +244,11 @@ describe(
 
       // Proceed to the next Journey page
       cy.findByRole('heading', { name: nodeToLoad }).should('be.visible');
-      cy.findAllByRole('combobox').should('have.value', 'Return back :/');
+      cy.get('.multiselect').should('contain.text', 'Return back :/');
 
       // Pick Happy path
-      cy.findAllByRole('combobox').type('Proceed!{enter}');
+      cy.get('.multiselect__select').click();
+      cy.get('.multiselect__option').contains('Proceed!').click();
 
       // Proceed to the next step
       cy.findByRole('button', { name: 'Next' }).click();
@@ -269,7 +270,7 @@ describe(
 
       // Proceed to the next Journey page
       cy.findByRole('heading', { name: nodeToLoad }).should('be.visible');
-      cy.findAllByRole('combobox').should('have.value', 'Return back :/');
+      cy.get('.multiselect').should('contain.text', 'Return back :/');
 
       // Proceed to the next step
       cy.findByRole('button', { name: 'Next' }).click();
