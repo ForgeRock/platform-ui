@@ -1,5 +1,5 @@
 /**
- * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2024-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -15,6 +15,11 @@ export function navigateToHostedPagesViaSidebar() {
   // Set up intercept
   cy.intercept('GET', '/openidm/ui/theme/**').as('getThemes');
 
+  cy.findByRole('button', { name: 'User Experience' }).scrollIntoView().then(($button) => {
+    if ($button.attr('aria-expanded') !== 'true') {
+      cy.wrap($button).click();
+    }
+  });
   cy.findByRole('link', { name: 'Hosted Pages' }).scrollIntoView().click();
 
   // Wait for Journey list to be fetched

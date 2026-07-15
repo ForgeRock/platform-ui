@@ -21,6 +21,13 @@ export default class NavigationSteps {
   }
 
   static navigateToApplications() {
+    DashboardAdminPage.sidebar
+      .findByRole('button', { name: /^applications$/i })
+      .then(($btn) => {
+        if ($btn.attr('aria-expanded') !== 'true') {
+          cy.wrap($btn).click();
+        }
+      });
     DashboardAdminPage.sidebar.findByRole('link', { name: /^applications$/i }).click();
   }
 }
