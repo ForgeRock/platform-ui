@@ -11,13 +11,15 @@ jest.mock('vue-router');
 
 export function mockRouter(routeOptions, routerOptions = {}) {
   const routerPush = routerOptions.push || jest.fn();
+  const routerReplace = routerOptions.replace || jest.fn();
   const routerResolve = routerOptions.resolve || jest.fn();
 
   useRoute.mockImplementation(() => (routeOptions));
   useRouter.mockImplementation(() => ({
     push: routerPush,
+    replace: routerReplace,
     resolve: routerResolve,
     options: routerOptions.options || {},
   }));
-  return { routerPush, routerResolve };
+  return { routerPush, routerReplace, routerResolve };
 }

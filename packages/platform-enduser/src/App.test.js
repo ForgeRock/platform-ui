@@ -18,6 +18,7 @@ import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedR
 import * as ThemeApi from '@forgerock/platform-shared/src/api/ThemeApi';
 import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as menuItemTranslations from '@forgerock/platform-shared/src/utils/endUserMenu/menuItemTranslations';
+import * as PoliciesApi from '@forgerock/platform-shared/src/api/PoliciesApi';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import * as ViolationsApi from '@/api/governance/ViolationsApi';
 import * as TasksApi from '@/api/governance/TasksApi';
@@ -26,6 +27,7 @@ import App from '@/App';
 
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 jest.mock('@forgerock/platform-shared/src/utils/endUserMenu/menuItemTranslations');
+jest.mock('@forgerock/platform-shared/src/api/PoliciesApi');
 jest.mock('axios');
 
 const store = {
@@ -104,6 +106,7 @@ describe('App.vue', () => {
     ThemeApi.getThemerealm = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [] } } }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
     menuItemTranslations.updateMenuItemsWithTranslations.mockImplementation(() => Promise.resolve());
+    PoliciesApi.evaluateAuthorizationPolicy = jest.fn().mockRejectedValue({ response: { status: 403 } });
   });
 
   afterAll(() => {
@@ -273,6 +276,88 @@ describe('App.vue', () => {
       await shallowMountComponent(roleMiningEnabled);
       const accessModelingMenuItem = wrapper.vm.menuItems.find((item) => item.id === 'accessModeling');
       expect(accessModelingMenuItem).toBeTruthy();
+    });
+  });
+
+  describe('policy-based navigation (loadMenuItems)', () => {
+    const encodedProfile = encodeURIComponent(JSON.stringify({
+      id: 'test-profile-uuid',
+      name: 'Test',
+      menuItems: [{
+        id: 'profile', icon: 'person', label: { en: 'Profile' }, labelKey: 'sideMenu.endUser.profile',
+      }],
+    }));
+
+    it('uses policy nav items when evaluateAuthorizationPolicy returns a matching result', async () => {
+      PoliciesApi.evaluateAuthorizationPolicy = jest.fn().mockResolvedValue({
+        data: [{
+          resource: 'endUserMenuItems:/',
+          attributes: { navigationProfile: [encodedProfile] },
+        }],
+      });
+      await shallowMountComponent(governanceEnabledStore);
+      expect(PoliciesApi.evaluateAuthorizationPolicy).toHaveBeenCalledWith(
+        expect.any(String),
+        { resource: 'endUserMenuItems:/', application: 'platformUIPolicySet' },
+        false,
+      );
+      const profileItem = wrapper.vm.menuItems.find((item) => item.id === 'profile');
+      expect(profileItem).toBeTruthy();
+    });
+
+    it('falls back to theme menu items when evaluateAuthorizationPolicy rejects with 403', async () => {
+      PoliciesApi.evaluateAuthorizationPolicy = jest.fn().mockRejectedValue({ response: { status: 403 } });
+      await shallowMountComponent(governanceEnabledStore);
+      // Should not throw; menu items should still be populated from theme/default path
+      expect(wrapper.vm.menuItems).toBeInstanceOf(Array);
+    });
+
+    it('falls back to theme menu items when evaluateAuthorizationPolicy returns no matching resource', async () => {
+      PoliciesApi.evaluateAuthorizationPolicy = jest.fn().mockResolvedValue({
+        data: [{ resource: 'otherResource:/', attributes: {} }],
+      });
+      await shallowMountComponent(governanceEnabledStore);
+      expect(wrapper.vm.menuItems).toBeInstanceOf(Array);
+    });
+
+    it('redirects to first routable item when dashboard is absent and on default route', async () => {
+      PoliciesApi.evaluateAuthorizationPolicy = jest.fn().mockResolvedValue({
+        data: [{
+          resource: 'endUserMenuItems:/',
+          attributes: {
+            navigationProfile: [encodeURIComponent(JSON.stringify({
+              id: 'test-profile-uuid',
+              name: 'Test',
+              menuItems: [{
+                id: 'profile', icon: 'person', label: { en: 'Profile' }, labelKey: 'sideMenu.endUser.profile', routeTo: { name: 'Profile' },
+              }],
+            }))],
+          },
+        }],
+      });
+      storePlugin = createStore(governanceEnabledStore);
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [
+          { path: '/', component: { template: '<div/>' } },
+          { name: 'Profile', path: '/profile', component: { template: '<div/>' } },
+        ],
+      });
+      await router.push('/');
+      await router.isReady();
+      const routerReplace = jest.spyOn(router, 'replace');
+      wrapper = shallowMount(App, {
+        mixins: [NotificationMixin],
+        global: {
+          plugins: [i18n, storePlugin, router],
+          stubs: ['RouterLink', 'RouterView'],
+          mocks: {
+            $route: { meta: { hideSideMenu: true }, path: '/' },
+          },
+        },
+      });
+      await flushPromises();
+      expect(routerReplace).toHaveBeenCalledWith(expect.objectContaining({ name: 'Profile' }));
     });
   });
 });

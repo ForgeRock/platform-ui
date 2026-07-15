@@ -53,6 +53,8 @@ import {
   generateEndUserMenuItems,
   getAllEndUserMenuItems,
 } from '@forgerock/platform-shared/src/utils/endUserMenu/endUserMenu';
+import { evaluateAuthorizationPolicy } from '@forgerock/platform-shared/src/api/PoliciesApi';
+import resolveNavigationProfileMenuItems from '@forgerock/platform-shared/src/utils/endUserMenu/navigationProfilePolicy';
 import { mapState } from 'pinia';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
@@ -198,10 +200,24 @@ export default {
      */
     async loadMenuItems() {
       let configuredMenuItems;
+      let policyNavItems = null;
       try {
         const allEndUserMenuItems = await getAllEndUserMenuItems({ store: this.$store, getTranslations: true });
-        if (!('endUserMenuItems' in this.theme)) {
-          // If the theme does not have endUserMenuItems, use allEndUserMenuItems
+
+        // Check if the user's group has a nav policy in platformUIPolicySet
+        try {
+          const { data: policyResults } = await evaluateAuthorizationPolicy(this.$store.state.realm, {
+            resource: 'endUserMenuItems:/',
+            application: 'platformUIPolicySet',
+          }, false);
+          policyNavItems = resolveNavigationProfileMenuItems(policyResults);
+        } catch {
+          // policy evaluation unavailable — fall through to theme
+        }
+
+        if (policyNavItems) {
+          configuredMenuItems = buildMenuItemsFromTheme(policyNavItems, allEndUserMenuItems, true);
+        } else if (!('endUserMenuItems' in this.theme)) {
           configuredMenuItems = allEndUserMenuItems;
         } else {
           // If the theme has endUserMenuItems, build menu items from the theme intersecting with allEndUserMenuItems
@@ -217,6 +233,7 @@ export default {
       const hideAlphaRolesMenuItem = this.$store.state.govLcmRole;
       const endUserMenuItems = generateEndUserMenuItems({
         configuredMenuItems,
+        exactList: !!policyNavItems,
         hideAlphaUsersMenuItem,
         hideAlphaRolesMenuItem,
         isEndUserUI: true,
@@ -224,6 +241,22 @@ export default {
         store: this.$store,
       });
       this.menuItems = endUserMenuItems;
+
+      // If dashboard is not in the menu and the user is on the default route, redirect to the first routable item
+      const hasDashboard = endUserMenuItems.some((item) => item.id === 'dashboard');
+      const onDefaultRoute = this.$route.path === '/' || this.$route.path === '/dashboard';
+      if (!hasDashboard && onDefaultRoute) {
+        const findFirstRoutable = (items) => items
+          .filter((item) => !item.isDivider && item.id !== 'custom')
+          .reduce((found, item) => found
+            || (item.routeTo ? item : null)
+            || (item.isGroup ? findFirstRoutable(item.subItems || []) : null),
+          null);
+        const firstRoutable = findFirstRoutable(endUserMenuItems);
+        if (firstRoutable) {
+          this.$router.replace(firstRoutable.routeTo);
+        }
+      }
     },
     /**
      * Retrieves the count of pending approvals and commits the count to the Vuex store.

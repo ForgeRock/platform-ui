@@ -44,10 +44,14 @@
     background: $gray-500;
   }
 
-  tr:not(:focus-visible) .sticky-left,
-  tr:not(:focus-visible) .sticky-right {
+  tr .sticky-left,
+  tr .sticky-right {
     position: sticky !important;
     z-index: 100;
+  }
+
+  tr:not(:focus-visible) .sticky-left,
+  tr:not(:focus-visible) .sticky-right {
     background-color: $card-bg;
   }
 
