@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import {
   generateMinimalMenuItemForTheme,
   normalizeMenuItems,
@@ -41,6 +48,59 @@ describe('normalizeMenuItems', () => {
     const result = normalizeMenuItems(items);
     expect(result[0].icon).toBe('dashboard');
   });
+
+  it('normalizes GROUP item and preserves routeTo/isManagedObject/url on sub-items', () => {
+    const items = [{
+      id: 'group',
+      isGroup: true,
+      icon: 'folder',
+      label: { en: 'Sub-menu' },
+      subItems: [
+        {
+          id: 'home',
+          icon: 'home',
+          label: { en: 'Home' },
+          routeTo: { name: 'Home' },
+        },
+        {
+          id: 'alpha_user',
+          icon: 'person',
+          label: { en: 'Users' },
+          isManagedObject: true,
+        },
+        {
+          id: 'custom-link',
+          icon: 'link',
+          label: { en: 'Custom' },
+          url: 'https://example.com',
+        },
+      ],
+    }];
+    const result = normalizeMenuItems(items);
+    const groupItem = result[0];
+    // GROUP items do not get selectedSubItems
+    expect(groupItem.selectedSubItems).toBeUndefined();
+    // sub-items with routeTo preserve it
+    expect(groupItem.subItems[0].routeTo).toEqual({ name: 'Home' });
+    // sub-items with isManagedObject preserve it
+    expect(groupItem.subItems[1].isManagedObject).toBe(true);
+    // sub-items with url preserve it
+    expect(groupItem.subItems[2].url).toBe('https://example.com');
+  });
+
+  it('passes divider sub-items through unchanged inside a non-GROUP parent', () => {
+    const items = [{
+      id: 'inbox',
+      icon: 'inbox',
+      subItems: [
+        { id: 'approvals', label: { en: 'Approvals' } },
+        { id: 'divider', icon: 'horizontal_rule', isDivider: true },
+      ],
+    }];
+    const result = normalizeMenuItems(items);
+    const dividerSubItem = result[0].subItems[1];
+    expect(dividerSubItem).toMatchObject({ id: 'divider', isDivider: true });
+  });
 });
 
 describe('getUniqueMenuItems', () => {
@@ -63,6 +123,19 @@ describe('getUniqueMenuItems', () => {
     ]);
   });
 
+  it('allows duplicate group items', () => {
+    const items = [
+      { id: 'group', isGroup: true, subItems: [] },
+      { id: 'group', isGroup: true, subItems: [{ id: 'home' }] },
+      { id: 'a' },
+    ];
+    const result = getUniqueMenuItems(items);
+    expect(result).toHaveLength(3);
+    expect(result[0].id).toBe('group');
+    expect(result[1].id).toBe('group');
+    expect(result[2].id).toBe('a');
+  });
+
   it('returns empty array for undefined', () => {
     expect(getUniqueMenuItems(undefined)).toEqual([]);
   });
@@ -72,6 +145,56 @@ describe('generateMinimalMenuItemForTheme', () => {
   it('returns divider as is', () => {
     const item = { id: 'divider', icon: 'horizontal_rule', isDivider: true };
     expect(generateMinimalMenuItemForTheme(item)).toEqual(item);
+  });
+
+  it('returns minimal GROUP item with id, isGroup, icon, label, labelKey, and subItems', () => {
+    const item = {
+      id: 'group',
+      isGroup: true,
+      icon: 'folder',
+      label: { en: 'Sub-menu' },
+      labelKey: 'sideMenu.endUser.group',
+      subItems: [
+        {
+          id: 'home',
+          icon: 'home',
+          labelKey: 'sideMenu.endUser.home',
+          label: { en: 'Home' },
+          routeTo: { name: 'Home' },
+        },
+        {
+          id: 'alpha_user',
+          icon: 'person',
+          labelKey: 'sideMenu.endUser.alpha_user',
+          label: { en: 'Users' },
+          isManagedObject: true,
+        },
+      ],
+    };
+    const result = generateMinimalMenuItemForTheme(item);
+    expect(result).toMatchObject({
+      id: 'group',
+      isGroup: true,
+      icon: 'folder',
+      label: { en: 'Sub-menu' },
+      labelKey: 'sideMenu.endUser.group',
+    });
+    expect(result.subItems).toHaveLength(2);
+    expect(result.subItems[0]).toMatchObject({ id: 'home', routeTo: { name: 'Home' } });
+    expect(result.subItems[1]).toMatchObject({ id: 'alpha_user', isManagedObject: true });
+    // GROUP items must not carry selectedSubItems
+    expect(result.selectedSubItems).toBeUndefined();
+  });
+
+  it('returns GROUP item with empty subItems array when subItems is absent', () => {
+    const item = {
+      id: 'group',
+      isGroup: true,
+      icon: 'folder',
+      labelKey: 'sideMenu.endUser.group',
+    };
+    const result = generateMinimalMenuItemForTheme(item);
+    expect(result.subItems).toEqual([]);
   });
 
   it('extracts properties and computes label', () => {

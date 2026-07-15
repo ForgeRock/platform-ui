@@ -10,6 +10,7 @@ const END_USER_MENU_CONSTANTS = Object.freeze({
   ADMIN_CERTIFICATIONS: 'adminCertifications',
   CUSTOM: 'custom',
   DIVIDER: 'divider',
+  GROUP: 'group',
   INTERNAL_ROLE: 'internal/role',
   LCM_USERS: 'lcmUsers',
   LCM_ENTITLEMENTS: 'lcmEntitlements',
@@ -28,6 +29,13 @@ export const DIVIDER_MENU_ITEM = {
   id: 'divider',
   icon: 'horizontal_rule',
   isDivider: true,
+};
+
+export const GROUP_MENU_ITEM = {
+  id: 'group',
+  icon: 'folder',
+  isGroup: true,
+  subItems: [],
 };
 
 /** Enduser hosted default menu items, any new menu item should be added here.

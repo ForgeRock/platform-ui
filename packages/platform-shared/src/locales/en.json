@@ -1307,6 +1307,7 @@
       "directory": "My Directory",
       "directReports": "Direct Reports",
       "divider": "Divider",
+      "group": "Sub-menu",
       "errorRetrievingManagedObjects": "There was an error retrieving the list of managed objects.",
       "inbox": "My Inbox",
       "lcm": "Administer",

@@ -1,23 +1,29 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { END_USER_MENU_CONSTANTS } from '@forgerock/platform-shared/src/constants/endUserMenuConstants';
+import { END_USER_MENU_CONSTANTS, GROUP_MENU_ITEM } from '@forgerock/platform-shared/src/constants/endUserMenuConstants';
 import i18n from '@/i18n';
 import { getMenuItemTranslationKey } from './menuItemTranslations';
 import { getTranslation } from '../translations';
 
 /**
- * Populates the `subItems` property of a menu item with additional fields such as `icon`, `labelKey`, and `label`.
- * Also initializes the `selectedSubItems` property if it is not already set.
+ * Populates the `subItems` property of a menu item.
+ * Enriches each sub-item with `icon`, `labelKey`, and `label`.
+ * For GROUP items, routing fields (`routeTo`, `isManagedObject`, `url`) are
+ * preserved on sub-items so navigation works in the end-user UI.
+ * Divider sub-items pass through unchanged.
+ * `selectedSubItems` is initialized for non-group items only (group items use
+ * the sub-item order directly).
  *
- * @param {Object} menuItem - The menu item object to populate.
- * @param {Array<Object>} [menuItem.subItems] - The sub-items of the menu item.
- * @param {Array<string>} [menuItem.selectedSubItems] - The IDs of selected sub-items.
- * @returns {Object} The updated menu item with populated sub-items and selected sub-items.
+ * @param {Object} menuItem - The menu item whose sub-items should be populated.
+ * @param {Array<Object>} [menuItem.subItems] - Raw sub-items to enrich.
+ * @param {Array<string>} [menuItem.selectedSubItems] - Pre-selected sub-item IDs (non-group).
+ * @param {boolean} [menuItem.isGroup] - When true, skips selectedSubItems initialization.
+ * @returns {Object} The updated menu item.
  */
 function populateSubItems(menuItem) {
   if (!menuItem.subItems || !menuItem.subItems.length) {
@@ -25,17 +31,34 @@ function populateSubItems(menuItem) {
   }
 
   menuItem.subItems = menuItem.subItems.map((subItem) => {
+    // Divider sub-items pass through unchanged
+    if (subItem.id === END_USER_MENU_CONSTANTS.DIVIDER) {
+      return { ...subItem };
+    }
+
     const subItemLabelKey = getMenuItemTranslationKey(subItem);
-    return {
+    const populatedSubItem = {
       id: subItem.id,
       icon: subItem.icon || subItem.id, // Fallback to id if no icon
       labelKey: subItemLabelKey,
       label: subItem.label,
     };
+
+    // For GROUP items, preserve routing and managed-object properties on sub-items
+    if (menuItem.isGroup) {
+      if (subItem.routeTo) populatedSubItem.routeTo = subItem.routeTo;
+      if (subItem.isManagedObject) populatedSubItem.isManagedObject = subItem.isManagedObject;
+      if (subItem.url) populatedSubItem.url = subItem.url;
+    }
+
+    return populatedSubItem;
   });
 
-  // Initialize selectedSubItems if not already set. Defaults to all subItem IDs.
-  menuItem.selectedSubItems = menuItem.selectedSubItems || menuItem.subItems.map((subItem) => subItem.id);
+  // GROUP items don't use selectedSubItems (they contain managed objects directly)
+  if (!menuItem.isGroup) {
+    // Initialize selectedSubItems if not already set. Defaults to all subItem IDs.
+    menuItem.selectedSubItems = menuItem.selectedSubItems || menuItem.subItems.map((subItem) => subItem.id);
+  }
   return menuItem;
 }
 
@@ -73,8 +96,8 @@ export function getUniqueMenuItems(menuItems = []) {
   const seenMenuIds = new Set();
 
   menuItems.forEach((menuItem) => {
-    if (menuItem.id === END_USER_MENU_CONSTANTS.DIVIDER || menuItem.id === END_USER_MENU_CONSTANTS.CUSTOM) {
-      // Allow duplicates for 'divider' and 'custom' menu items
+    if ([END_USER_MENU_CONSTANTS.DIVIDER, END_USER_MENU_CONSTANTS.CUSTOM, END_USER_MENU_CONSTANTS.GROUP].includes(menuItem.id)) {
+      // Allow duplicates for 'divider', 'custom', and 'group' menu items
       uniqueMenuItems.push(menuItem);
       return;
     }
@@ -100,6 +123,8 @@ export function getUniqueMenuItems(menuItems = []) {
  *   - selectedSubItems: (optional) Array of selected sub-item IDs, if subItems exist.
  *   - isManagedObject: (optional) Indicates if the item is a managed object.
  *   - url: (optional) The URL associated with the menu item.
+ *   For GROUP items, sub-items carry `routeTo`, `isManagedObject`, and `url` to enable
+ *   navigation in the end-user UI.
  *
  * @param {Object} item - The menu item object to process.
  * @returns {Object} The minimal menu item object to add in the theme.
@@ -117,6 +142,29 @@ export function generateMinimalMenuItemForTheme(item) {
     label: menuItem.label || i18n.global.t(menuItem.labelKey),
     ...(menuItem.disabled ? { disabled: true } : {}),
   });
+
+  if (item.id === END_USER_MENU_CONSTANTS.GROUP) {
+    // GROUP items get a minimal serialization that preserves sub-item routing/managed-object info
+    return {
+      id: END_USER_MENU_CONSTANTS.GROUP,
+      isGroup: true,
+      icon: item.icon || GROUP_MENU_ITEM.icon,
+      label: item.label || {},
+      labelKey: item.labelKey || '',
+      subItems: (item.subItems || []).map((subItem) => {
+        if (subItem.id === END_USER_MENU_CONSTANTS.DIVIDER) {
+          return { ...subItem };
+        }
+        return {
+          ...menuFactory(subItem),
+          ...(subItem.isDivider ? { isDivider: true } : {}),
+          ...(subItem.routeTo ? { routeTo: subItem.routeTo } : {}),
+          ...(subItem.isManagedObject ? { isManagedObject: true } : {}),
+          ...(subItem.url ? { url: subItem.url } : {}),
+        };
+      }),
+    };
+  }
 
   const menuObject = menuFactory(item);
   if (item.subItems?.length) {
@@ -213,7 +261,7 @@ export function getMenuBadgeInfo(menuItem) {
  * @param {Array<string>} notAllowedNames - List of not-allowed names (e.g., ['custom', 'divider']).
  * @param {string} [prefix='managed-'] - Prefix to add if the id is not allowed.
  */
-export function getValidManagedObjectMenuId(idValue = '', notAllowedNames = [END_USER_MENU_CONSTANTS.CUSTOM, END_USER_MENU_CONSTANTS.DIVIDER], prefix = 'managed-') {
+export function getValidManagedObjectMenuId(idValue = '', notAllowedNames = [END_USER_MENU_CONSTANTS.CUSTOM, END_USER_MENU_CONSTANTS.DIVIDER, END_USER_MENU_CONSTANTS.GROUP], prefix = 'managed-') {
   if (notAllowedNames.includes(idValue)) {
     return `${prefix}${idValue}`;
   }

@@ -6439,6 +6439,18 @@
     "deleteConfirm": "Are you sure you want to delete the {name} navigation profile?",
     "errorDeleting": "There was an error deleting this navigation profile.",
     "errorSaving": "There was an error saving this navigation profile.",
+    "navigationProfileEdit": {
+      "addGroup": "Add Group",
+      "itemsTab": "Items",
+      "errorLoadingProfile": "There was an error loading this navigation profile.",
+      "groupsPrivilegeNote": "Adding a group enables policy evaluation for its members.",
+      "groupsTab": "Groups",
+      "title": "Navigation Profile",
+      "groupsSearchPlaceholder": "Search groups",
+      "noItems": "No navigation items yet.",
+      "removeGroupConfirm": "Are you sure you want to remove {group} from this navigation profile?",
+      "successSave": "Navigation profile saved."
+    },
     "navigationProfileList": {
       "columnGroups": "Groups",
       "columnOrder": "Order",

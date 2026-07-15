@@ -27,21 +27,20 @@ function amGroupApiConfig(realm) {
 }
 
 /**
- * Lists AM policies
+ * Returns a list of AM policies for a realm matching the given query filter
  * @param {String} realm Realm name
- * @param {String} queryFilter Query filter string
+ * @param {String} queryFilter AM query filter string
  * @returns {Promise} Resolves with a list of policy objects
  */
 export function listAuthorizationPolicies(realm, queryFilter = 'true') {
   return generateAmApi(authorizationPolicyApiConfig(realm)).get(
     '/',
     {
-      withCredentials: true,
       params: {
         _queryFilter: queryFilter,
         _fields: 'name,description,subject,resourceAttributes',
-        withCredentials: true,
       },
+      withCredentials: true,
     },
   );
 }
@@ -99,11 +98,13 @@ export function updateAuthorizationPolicy(realm, appName, payload) {
 }
 
 /**
- * Evaluates a policy tree
+ * Evaluates a policy tree against the AM policy evaluation endpoint.
  * @param {String} realm Realm name
- * @param {*} payload Policy tree to evaluate
- * @param {Boolean} routeToForbidden Whether to redirect to forbidden page on 403
- * @returns {Promise} Resolves with an array of policy objects
+ * @param {Object} payload Policy evaluation payload (resource, application, environment, etc.)
+ * @param {Boolean} routeToForbidden When false, a 403 response is propagated as a
+ *   rejected promise instead of redirecting to the forbidden page. Pass false for background
+ *   evaluations (e.g. end-user menu policy lookups) where a 403 is an expected no-policy state.
+ * @returns {Promise} Resolves with an array of policy evaluation result objects
  */
 export function evaluateAuthorizationPolicy(realm, payload, routeToForbidden = true) {
   return generateAmApi(authorizationPolicyApiConfig(realm), {}, routeToForbidden).post(
@@ -114,20 +115,20 @@ export function evaluateAuthorizationPolicy(realm, payload, routeToForbidden = t
 }
 
 /**
- * Lists AM groups
+ * Returns a list of AM groups for a realm matching the given query filter
  * @param {String} realm Realm name
- * @param {String} queryFilter Query filter string
- * @param {Number} pageSize Number of results per page
+ * @param {String} queryFilter AM query filter string
+ * @param {Number} pageSize Maximum number of results per page
  * @returns {Promise} Resolves with a list of group objects
  */
-export function listAmGroups(realm, queryFilter = 'true', pageSize = 20) {
+export function listAmGroups(realm, _queryFilter = 'true', _pageSize = 20) {
   return generateAmApi(amGroupApiConfig(realm)).get(
     '/',
     {
       withCredentials: true,
       params: {
-        _queryFilter: queryFilter,
-        _pageSize: pageSize,
+        _queryFilter,
+        _pageSize,
       },
     },
   );
@@ -136,8 +137,8 @@ export function listAmGroups(realm, queryFilter = 'true', pageSize = 20) {
 /**
  * Returns an AM group by name
  * @param {String} realm Realm name
- * @param {String} groupName Group name
- * @returns {Promise} Resolves with a group object
+ * @param {String} groupName AM group name
+ * @returns {Promise} Resolves with the AM group object
  */
 export function getAmGroup(realm, groupName) {
   return generateAmApi(amGroupApiConfig(realm)).get(
@@ -149,9 +150,9 @@ export function getAmGroup(realm, groupName) {
 /**
  * Updates an existing AM group
  * @param {String} realm Realm name
- * @param {String} groupName Group name
- * @param {*} payload Group object to update
- * @returns {Promise} Resolves with the updated group object
+ * @param {String} groupName AM group name
+ * @param {Object} payload AM group object to update
+ * @returns {Promise} Resolves with the updated AM group object
  */
 export function updateAmGroup(realm, groupName, payload) {
   return generateAmApi(amGroupApiConfig(realm)).put(

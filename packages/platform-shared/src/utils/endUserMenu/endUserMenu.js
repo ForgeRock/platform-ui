@@ -69,14 +69,18 @@ export async function getAllEndUserMenuItems({ store = {}, getTranslations = fal
  *
  * @param {Object} params - The parameters object.
  * @param {Array<Object>} [params.configuredMenuItems=[]] - The array of configured menu item objects.
+ * @param {boolean} [params.exactList=false] - When true, treat configuredMenuItems as the complete
+ *   set and do not append privileged managed objects that are absent from the list. Use when menu
+ *   items come from a Navigation Profile policy rather than a theme (which is additive by default).
  * @param {boolean} [params.hideAlphaUsersMenuItem=false] - Flag to hide the alpha users menu item.
  * @param {boolean} [params.isEndUserUI=false] - Flag indicating if the menu is for the end user UI or admin UI.
  * @param {Array<Object>} [params.privileges=[]] - An array of user privilege objects.
- * @param {Object} [options.store={}] - The store context used to load menu items.
+ * @param {Object} [params.store={}] - The store context used to load menu items.
  * @returns {Array<Object>} The processed array of menu items, ready for rendering in the UI.
  */
 export function generateEndUserMenuItems({
   configuredMenuItems = [],
+  exactList = false,
   hideAlphaUsersMenuItem = false,
   hideAlphaRolesMenuItem = false,
   isEndUserUI = false,
@@ -101,20 +105,29 @@ export function generateEndUserMenuItems({
   let allEndUserMenuItemsMap;
   const flags = generateFeatureFlags(store);
 
-  // Include those privileged menu items which are not part of configuredMenuItems
-  const configuredMenuIdMap = new Map(configuredMenuItems.map((item) => [item.id, item]));
-  const privilegedMenuItems = privileges
-    ?.sort((p1, p2) => p1.title.localeCompare(p2.title)) // sort privileges by title
-    .map((privilege) => {
-      const privilegeMenuId = createPrivilegeMenuId(privilege);
-      if (!configuredMenuIdMap.has(privilegeMenuId)) {
-        return createManagedObjectMenuItem(privilege, hideAlphaUsersMenuItem);
+  // When exactList is true the nav profile defines the complete set — do not append
+  // managed objects the user has privileges for but didn't explicitly configure.
+  if (!exactList) {
+    const configuredMenuIdMap = new Map(configuredMenuItems.map((item) => [item.id, item]));
+    // Register group sub-item IDs so managed objects consumed inside a group
+    // are not also appended at the top level by the privilege-append logic.
+    configuredMenuItems.forEach((item) => {
+      if (item.id === END_USER_MENU_CONSTANTS.GROUP && item.subItems?.length) {
+        item.subItems.forEach((sub) => configuredMenuIdMap.set(sub.id, sub));
       }
-      return undefined; // Already consumed or not valid
-    })?.filter(Boolean) || []; // Filter out undefined
+    });
+    const privilegedMenuItems = privileges
+      ?.sort((p1, p2) => p1.title.localeCompare(p2.title))
+      .map((privilege) => {
+        const privilegeMenuId = createPrivilegeMenuId(privilege);
+        if (!configuredMenuIdMap.has(privilegeMenuId)) {
+          return createManagedObjectMenuItem(privilege, hideAlphaUsersMenuItem);
+        }
+        return undefined;
+      })?.filter(Boolean) || [];
 
-  // Append privileged menu items at the bottom of the list
-  configuredMenuItems.push(...privilegedMenuItems);
+    configuredMenuItems.push(...privilegedMenuItems);
+  }
 
   return configuredMenuItems.map((menuItem) => {
     if (menuItem.disabled) {
@@ -133,6 +146,79 @@ export function generateEndUserMenuItems({
         id: menuItem.id,
         isNav: true, // Custom links are also nav items
         url: isEndUserUI ? menuItem.url : '', // URL only if it's the end user UI to avoid any navigation in admin UI
+      };
+    }
+
+    // Handle GROUP menu items — render with privilege-gated, ordered sub-items.
+    // In the end-user UI each sub-item is vetted:
+    //   - Dividers pass through.
+    //   - Custom links use stored url.
+    //   - Items in privilegesMap are shown with a derived routeTo.
+    //   - All other items are omitted (managed objects require a privilege).
+    // The group itself is omitted if no sub-items survive filtering.
+    if (menuItem.id === END_USER_MENU_CONSTANTS.GROUP) {
+      const groupSubItems = (menuItem.subItems || []).map((subItem) => {
+        if (subItem.id === END_USER_MENU_CONSTANTS.DIVIDER) {
+          return { ...DIVIDER_MENU_ITEM };
+        }
+        if (subItem.id === END_USER_MENU_CONSTANTS.CUSTOM) {
+          return {
+            id: subItem.id,
+            displayName: getLocaleBasedMenuItemLabel(subItem.label, subItem.labelKey),
+            icon: subItem.icon || subItem.id,
+            url: isEndUserUI ? subItem.url : '',
+          };
+        }
+        // In the end-user UI, use privilegesMap as the authoritative source.
+        // A sub-item is only shown if either:
+        //   (a) the user has a matching privilege for it (managed object), or
+        //   (b) it is NOT a managed object and has a stored routeTo (e.g. dashboard, profile)
+        if (isEndUserUI) {
+          const privilege = privilegesMap.get(subItem.id);
+          if (privilege) {
+            if (checkIfAlphaUsersShouldBeHidden(subItem, hideAlphaUsersMenuItem)
+              || checkIfAlphaRolesShouldBeHidden(subItem, hideAlphaRolesMenuItem)) {
+              return null;
+            }
+            return {
+              id: subItem.id,
+              displayName: getLocaleBasedMenuItemLabel(subItem.label, subItem.labelKey),
+              icon: subItem.icon || subItem.id,
+              routeTo: createMenuRouteObject({ ...subItem, isManagedObject: true })?.routeTo,
+            };
+          }
+          // Managed-object sub-items always require a privilege — omit even if routeTo is stored
+          if (subItem.isManagedObject) {
+            return null;
+          }
+          // Non-managed-object sub-item without a privilege match: keep only if it has a route
+          if (!subItem.routeTo) {
+            return null;
+          }
+          return {
+            id: subItem.id,
+            displayName: getLocaleBasedMenuItemLabel(subItem.label, subItem.labelKey),
+            icon: subItem.icon || subItem.id,
+            routeTo: subItem.routeTo,
+          };
+        }
+        // Admin UI — show as-is
+        return {
+          id: subItem.id,
+          displayName: getLocaleBasedMenuItemLabel(subItem.label, subItem.labelKey),
+          icon: subItem.icon || subItem.id,
+        };
+      }).filter((subItem) => subItem?.id);
+      if (isEndUserUI && !groupSubItems.length) {
+        return null;
+      }
+      return {
+        displayName: getLocaleBasedMenuItemLabel(menuItem.label, menuItem.labelKey),
+        icon: menuItem.icon,
+        id: menuItem.id,
+        isGroup: true,
+        isNav: true,
+        subItems: groupSubItems,
       };
     }
 
@@ -242,9 +328,12 @@ export function generateEndUserMenuItems({
  *
  * @param {Array} themeMenuItems - The menu items from the theme.
  * @param {Array} allEndUserMenuItems - All available end user menu items.
+ * @param {boolean} [exactList=false] - When true, treat themeMenuItems as the complete set and
+ *   do not append items from allEndUserMenuItems that are absent from the theme list. Used when
+ *   menu items come from a policy (per-group nav) rather than a theme (which is additive by default).
  * @returns {Array} The constructed menu items.
  */
-export function buildMenuItemsFromTheme(themeMenuItems = [], allEndUserMenuItems = []) {
+export function buildMenuItemsFromTheme(themeMenuItems = [], allEndUserMenuItems = [], exactList = false) {
   const allMenuIdsMap = new Map(allEndUserMenuItems.map((item) => [item.id, item]));
   const visitedMenuIds = new Set();
   const menuItemsBuilt = themeMenuItems.map((menuItem) => {
@@ -261,13 +350,18 @@ export function buildMenuItemsFromTheme(themeMenuItems = [], allEndUserMenuItems
     // invalidate unknown menu items
     const isUnknownMenuItem = !menuItem.isManagedObject
       && !allMenuIdsMap.has(menuItem.id)
-      && ![END_USER_MENU_CONSTANTS.CUSTOM, END_USER_MENU_CONSTANTS.DIVIDER].includes(menuItem.id);
+      && ![END_USER_MENU_CONSTANTS.CUSTOM, END_USER_MENU_CONSTANTS.DIVIDER, END_USER_MENU_CONSTANTS.GROUP].includes(menuItem.id);
     if (isUnknownMenuItem) {
       return undefined;
     }
 
     return menuItem;
   }).filter(Boolean); // Filter out any undefined items
+
+  // When exactList is true the configured items are treated as the complete set — no additions
+  if (exactList) {
+    return menuItemsBuilt;
+  }
 
   // Consider menu items that were not visited, not disabled nor part of theme.endUserMenuItems or added newly
   const newMenuItems = allEndUserMenuItems.filter((menuItem) => !visitedMenuIds.has(menuItem.id) && !menuItem.disabled);

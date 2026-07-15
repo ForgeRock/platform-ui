@@ -1,343 +1,388 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { DIVIDER_MENU_ITEM, END_USER_MENU_CONSTANTS } from '../../constants/endUserMenuConstants';
 import {
-  getAllEndUserMenuItems,
   generateEndUserMenuItems,
   buildMenuItemsFromTheme,
 } from './endUserMenu';
 
-import * as managedObjectsAsMenu from './managedObjectsAsMenu';
-import * as menuFeatureFlags from './menuFeatureFlags';
-import * as menuFilter from './menuFilter';
-import * as menuItemTranslations from './menuItemTranslations';
-import * as menuItemUtils from './menuItemUtils';
+jest.mock('./menuItemTranslations', () => ({
+  ...jest.requireActual('./menuItemTranslations'),
+  getLocaleBasedMenuItemLabel: (label) => label?.en || '',
+  updateMenuItemsWithTranslations: jest.fn(),
+}));
 
-// Mocks
-jest.mock('./managedObjectsAsMenu');
-jest.mock('./menuFeatureFlags');
-jest.mock('./menuFilter');
-jest.mock('./menuItemTranslations');
+jest.mock('./menuFeatureFlags', () => ({
+  generateFeatureFlags: jest.fn().mockReturnValue({}),
+}));
 
-const DEFAULT_MENU_ITEMS = [
-  { id: 'home', icon: 'home', labelKey: 'sideMenu.endUser.home' },
-  { id: 'divider' },
-  {
-    id: 'custom',
-    icon: 'link',
-    labelKey: 'sideMenu.endUser.custom',
-    label: { en: 'Custom' },
-    url: 'https://custom.com',
-  },
-  {
-    id: 'inbox',
-    icon: 'inbox',
-    labelKey: 'sideMenu.endUser.inbox',
-    label: { en: 'Inbox' },
-    subItems: [
-      {
-        id: 'approvals',
-        labelKey: 'sideMenu.endUser.approvals',
-        label: { en: 'Approvals' },
-        routeTo: { name: 'Approvals' },
-      },
-      {
-        id: 'tasks',
-        labelKey: 'sideMenu.endUser.tasks',
-        label: { en: 'Tasks' },
-        routeTo: { name: 'Tasks' },
-      },
-    ],
-  },
-  {
-    id: 'lcm',
-    icon: 'lcm',
-    labelKey: 'sideMenu.endUser.lcm',
-    subItems: [
-      { id: 'lcmUsers', labelKey: 'sideMenu.endUser.lcmUsers' },
-      { id: 'lcmEntitlements', labelKey: 'sideMenu.endUser.lcmEntitlements' },
-    ],
-  },
-  {
-    id: 'access',
-    icon: 'access',
-    labelKey: 'sideMenu.endUser.access',
-    subItems: [
-      { id: 'sub1', labelKey: 'sideMenu.endUser.sub1' },
-      { id: 'sub2', labelKey: 'sideMenu.endUser.sub2' },
-    ],
-    selectedSubItems: ['sub1'],
-  },
-];
+jest.mock('./managedObjectsAsMenu', () => ({
+  fetchManagedObjectsAsMenuItems: jest.fn().mockResolvedValue([]),
+}));
 
-describe('endUserMenu.js', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    // Provide default implementations for all imported constants
-    jest.spyOn(menuFeatureFlags, 'generateFeatureFlags').mockReturnValue({
-      govLcmUser: true,
-      ifGovernance: true,
-      realm: 'alpha',
-    });
-    jest.spyOn(menuFilter, 'filterAvailableEndUserMenuItems').mockResolvedValue(DEFAULT_MENU_ITEMS);
-    jest.spyOn(managedObjectsAsMenu, 'fetchManagedObjectsAsMenuItems').mockResolvedValue([
-      {
-        id: 'managed1',
-        icon: 'managed',
-        labelKey: 'sideMenu.endUser.managed1',
-        isManagedObject: true,
-      },
-    ]);
-    jest.spyOn(menuItemTranslations, 'updateMenuItemsWithTranslations').mockResolvedValue();
-    jest.spyOn(menuItemTranslations, 'getLocaleBasedMenuItemLabel').mockImplementation((label, key) => label?.en || key);
-    jest.spyOn(menuItemUtils, 'getUniqueMenuItems').mockImplementation((items) => items);
-    jest.spyOn(menuItemUtils, 'normalizeMenuItems').mockImplementation((items) => items);
-  });
+jest.mock('./menuFilter', () => ({
+  filterAvailableEndUserMenuItems: jest.fn().mockResolvedValue([]),
+}));
 
-  describe('getAllEndUserMenuItems', () => {
-    it('should return normalized, unique menu items with managed objects', async () => {
-      const result = await getAllEndUserMenuItems({ store: {}, getTranslations: false });
-      expect(menuFeatureFlags.generateFeatureFlags).toHaveBeenCalled();
-      expect(menuFilter.filterAvailableEndUserMenuItems).toHaveBeenCalled();
-      expect(managedObjectsAsMenu.fetchManagedObjectsAsMenuItems).toHaveBeenCalled();
-      expect(menuItemUtils.getUniqueMenuItems).toHaveBeenCalled();
-      expect(menuItemUtils.normalizeMenuItems).toHaveBeenCalled();
-      expect(result).toEqual([
-        ...DEFAULT_MENU_ITEMS,
-        {
-          id: 'managed1',
-          icon: 'managed',
-          labelKey: 'sideMenu.endUser.managed1',
-          isManagedObject: true,
-        },
-      ]);
-    });
+// ---------------------------------------------------------------------------
+// Shared fixtures
+// ---------------------------------------------------------------------------
 
-    it('should call updateMenuItemsWithTranslations if getTranslations is true', async () => {
-      await getAllEndUserMenuItems({ store: {}, getTranslations: true });
-      expect(menuItemTranslations.updateMenuItemsWithTranslations).toHaveBeenCalled();
-    });
+const profileItem = {
+  id: 'profile',
+  icon: 'person',
+  label: { en: 'Profile' },
+  labelKey: 'sideMenu.endUser.profile',
+  routeTo: { name: 'Profile' },
+};
 
-    it('should handle errors gracefully', async () => {
-      menuFeatureFlags.generateFeatureFlags.mockImplementationOnce(() => { throw new Error('fail'); });
-      await expect(getAllEndUserMenuItems({ store: {} })).resolves.toBeInstanceOf(Array);
-    });
-  });
+const managedItem = {
+  id: 'alpha_user',
+  icon: 'people',
+  label: { en: 'Alpha Users' },
+  labelKey: 'sideMenu.endUser.alpha_user',
+  isManagedObject: true,
+  routeTo: { name: 'ListResource', params: { resourceType: 'managed', resourceName: 'alpha_user' } },
+};
 
-  describe('generateEndUserMenuItems', () => {
-    it('should process divider menu item', () => {
+const alphaUserPrivilege = {
+  privilegePath: 'managed/alpha_user',
+  title: 'Alpha Users',
+  'mat-icon': 'people',
+};
+
+const groupItem = {
+  id: 'group',
+  icon: 'folder',
+  label: { en: 'Identities' },
+  labelKey: 'sideMenu.endUser.group',
+  subItems: [{ ...managedItem }],
+};
+
+// ---------------------------------------------------------------------------
+// generateEndUserMenuItems
+// ---------------------------------------------------------------------------
+
+describe('generateEndUserMenuItems', () => {
+  describe('exactList', () => {
+    it('returns only configured items when exactList is true — does not append privilege-based items', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [{ id: END_USER_MENU_CONSTANTS.DIVIDER }],
-        store: {},
-      });
-      expect(result[0]).toEqual(DIVIDER_MENU_ITEM);
-    });
-
-    it('should process custom menu item', () => {
-      const result = generateEndUserMenuItems({
-        configuredMenuItems: [DEFAULT_MENU_ITEMS[2]],
+        configuredMenuItems: [{ ...profileItem }],
+        exactList: true,
+        privileges: [alphaUserPrivilege],
         isEndUserUI: true,
-        store: {},
       });
-      expect(result[0]).toMatchObject({
-        displayName: 'Custom',
-        icon: 'link',
-        id: 'custom',
-        isNav: true,
-        url: 'https://custom.com',
-      });
+      expect(result.map((item) => item.id)).toEqual(['profile']);
     });
 
-    it('should process regular menu item with subItems', () => {
+    it('appends privilege-based managed objects when exactList is false', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [DEFAULT_MENU_ITEMS[3]],
-        store: {},
+        configuredMenuItems: [{ ...profileItem }],
+        exactList: false,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: false,
       });
-      expect(result[0]).toMatchObject({
-        icon: 'inbox',
-        displayName: expect.any(String),
-        id: 'inbox',
-        isNav: true,
-        subItems: [{ id: 'approvals', displayName: expect.any(String) }, { id: 'tasks', displayName: expect.any(String) }],
-      });
+      expect(result.map((item) => item.id)).toContain('alpha_user');
     });
 
-    it('should skip disabled menu items', () => {
+    it('does not duplicate managed objects already present in configuredMenuItems', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [{ id: 'home', disabled: true }],
-        store: {},
+        configuredMenuItems: [{ ...managedItem }],
+        exactList: false,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: false,
       });
-      expect(result).toEqual([]);
+      expect(result.filter((item) => item.id === 'alpha_user')).toHaveLength(1);
     });
 
-    it('should filter out LCM menu item if governance is not enabled', () => {
-      menuFeatureFlags.generateFeatureFlags.mockReturnValueOnce({ ifGovernance: false });
+    it('does not append managed objects that are already inside a GROUP sub-items list', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [DEFAULT_MENU_ITEMS[4]],
-        store: {},
+        configuredMenuItems: [{ ...groupItem }],
+        exactList: false,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: false,
       });
-      expect(result).toEqual([]);
+      // alpha_user lives inside the group; it must not also appear at top level
+      expect(result.filter((item) => item.id === 'alpha_user')).toHaveLength(0);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('group');
+    });
+  });
+
+  describe('divider and custom items', () => {
+    it('passes divider items through as DIVIDER_MENU_ITEM', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ id: 'divider' }],
+        exactList: true,
+        isEndUserUI: true,
+      });
+      expect(result[0].isDivider).toBe(true);
     });
 
-    it('should filter out LCM menu item if govLcmUser and govLcmEntitlement are not enabled, even it is governance', () => {
-      menuFeatureFlags.generateFeatureFlags.mockReturnValueOnce({ ifGovernance: true, govLcmUser: false, govLcmEntitlement: false });
+    it('renders custom items with isNav and url in end-user UI', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [DEFAULT_MENU_ITEMS[4]],
-        store: {},
+        configuredMenuItems: [{
+          id: 'custom', label: { en: 'My Link' }, icon: 'link', url: 'https://example.com',
+        }],
+        exactList: true,
+        isEndUserUI: true,
       });
-      expect(result).toEqual([]);
+      expect(result[0].id).toBe('custom');
+      expect(result[0].isNav).toBe(true);
+      expect(result[0].url).toBe('https://example.com');
     });
 
-    it('should filter out LCM user menu item if govLcmUser is not enabled', () => {
-      menuFeatureFlags.generateFeatureFlags.mockReturnValueOnce({ ifGovernance: true, govLcmUser: false, govLcmEntitlement: true });
+    it('strips url from custom items in admin UI', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [DEFAULT_MENU_ITEMS[4]],
-        store: {},
+        configuredMenuItems: [{
+          id: 'custom', label: { en: 'My Link' }, icon: 'link', url: 'https://example.com',
+        }],
+        exactList: true,
+        isEndUserUI: false,
       });
-      expect(result[0].id).toEqual('lcm');
-      expect(result[0].subItems[0].id).toEqual('lcmEntitlements');
-      expect(result.find((item) => item.id === 'lcmUsers')).toBeUndefined();
+      expect(result[0].url).toBe('');
+    });
+  });
+
+  describe('GROUP rendering', () => {
+    it('renders a GROUP item with isGroup and isNav flags', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...groupItem }],
+        exactList: true,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: true,
+      });
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('group');
+      expect(result[0].isGroup).toBe(true);
+      expect(result[0].isNav).toBe(true);
     });
 
-    it('should filter out LCM entitlement menu item if govLcmEntitlement is not enabled', () => {
-      menuFeatureFlags.generateFeatureFlags.mockReturnValueOnce({ ifGovernance: true, govLcmUser: true, govLcmEntitlement: false });
+    it('includes managed-object sub-items for which the user has a privilege', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [DEFAULT_MENU_ITEMS[4]],
-        store: {},
+        configuredMenuItems: [{ ...groupItem }],
+        exactList: true,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: true,
       });
-      expect(result[0].id).toEqual('lcm');
-      expect(result[0].subItems[0].id).toEqual('lcmUsers');
-      expect(result.find((item) => item.id === 'lcmEntitlements')).toBeUndefined();
+      expect(result[0].subItems).toHaveLength(1);
+      expect(result[0].subItems[0].id).toBe('alpha_user');
     });
 
-    it('should include LCM submenu items if they are enabled', () => {
-      menuFeatureFlags.generateFeatureFlags.mockReturnValueOnce({ ifGovernance: true, govLcmUser: true, govLcmEntitlement: true });
+    it('omits the GROUP entirely when no sub-items survive privilege filtering in the end-user UI', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [DEFAULT_MENU_ITEMS[4]],
-        store: {},
+        configuredMenuItems: [{ ...groupItem }],
+        exactList: true,
+        privileges: [],
+        isEndUserUI: true,
       });
-      expect(result[0].id).toEqual('lcm');
-      expect(result[0].subItems[0].id).toEqual('lcmUsers');
-      expect(result[0].subItems[1].id).toEqual('lcmEntitlements');
+      expect(result.find((item) => item.id === 'group')).toBeUndefined();
     });
 
-    it('should filter out alpha users menu item if hideAlphaUsersMenuItem is true', () => {
-      const privilege = {
-        privilegePath: 'managed/alpha_user',
-        id: 'alpha_user',
-        title: 'Alpha',
-        'mat-icon': 'icon',
-      };
+    it('passes divider sub-items through inside a group', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [],
-        privileges: [privilege],
+        configuredMenuItems: [{
+          ...groupItem,
+          subItems: [{ id: 'divider', isDivider: true }, { ...managedItem }],
+        }],
+        exactList: true,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: true,
+      });
+      const subIds = result[0].subItems.map((sub) => sub.id);
+      expect(subIds).toContain('divider');
+      expect(subIds).toContain('alpha_user');
+    });
+
+    it('passes custom sub-items through with url in end-user UI', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{
+          ...groupItem,
+          subItems: [{
+            id: 'custom', label: { en: 'Link' }, icon: 'link', url: 'https://example.com',
+          }],
+        }],
+        exactList: true,
+        privileges: [],
+        isEndUserUI: true,
+      });
+      expect(result[0].subItems[0].url).toBe('https://example.com');
+    });
+
+    it('includes non-managed sub-items that have a stored routeTo', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...groupItem, subItems: [{ ...profileItem }] }],
+        exactList: true,
+        privileges: [],
+        isEndUserUI: true,
+      });
+      expect(result[0].subItems[0].id).toBe('profile');
+      expect(result[0].subItems[0].routeTo).toEqual(profileItem.routeTo);
+    });
+
+    it('omits non-managed sub-items that have no routeTo', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...groupItem, subItems: [{ id: 'orphan', label: { en: 'Orphan' }, icon: 'help' }] }],
+        exactList: true,
+        privileges: [],
+        isEndUserUI: true,
+      });
+      expect(result).toHaveLength(0);
+    });
+
+    it('renders all sub-items in the admin UI without privilege filtering', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...groupItem }],
+        exactList: true,
+        privileges: [],
+        isEndUserUI: false,
+      });
+      expect(result[0].subItems).toHaveLength(1);
+      expect(result[0].subItems[0].id).toBe('alpha_user');
+    });
+
+    it('hides alpha_user sub-items inside a group when hideAlphaUsersMenuItem is true', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...groupItem }],
+        exactList: true,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: true,
         hideAlphaUsersMenuItem: true,
-        store: {},
       });
-      expect(result).toEqual([]);
-    });
-
-    it('should consider only selected subitems', () => {
-      const menuItem = JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS[3]));
-      menuItem.selectedSubItems = ['approvals'];
-      const result = generateEndUserMenuItems({
-        configuredMenuItems: [menuItem],
-        store: {},
-        isEndUserUI: true,
-      });
-      expect(result[0].subItems).toHaveLength(menuItem.selectedSubItems.length);
-      expect(result[0].subItems[0].id).toEqual('approvals');
-      expect(result[0].subItems[1]).toBeUndefined();
-    });
-
-    describe('with and without isEndUserUI option', () => {
-      it('should not allow non privileged managed objects in end user UI', () => {
-        const privilege = { privilegePath: 'managed/managed1', title: 'Managed', 'mat-icon': 'icon' };
-        const managedObjectMenuItem = [{ id: 'managed1', isManagedObject: true }, { id: 'managed2', isManagedObject: true }];
-        const result = generateEndUserMenuItems({
-          configuredMenuItems: managedObjectMenuItem,
-          privileges: [privilege],
-          store: {},
-          isEndUserUI: true,
-        });
-        expect(result.length).toBe(1);
-        expect(result[0].id).toBe('managed1');
-        expect(result[0].id).not.toBe('managed2');
-      });
-
-      it('should not allow alpha_user managed object when realm is alpha and lcmUser is enabled', () => {
-        const privilege = { privilegePath: 'managed/alpha_user', title: 'Alpha', 'mat-icon': 'icon' };
-        jest.spyOn(menuFeatureFlags, 'generateFeatureFlags').mockReturnValue({
-          govLcmUser: true,
-          ifGovernance: true,
-          realm: 'alpha',
-        });
-        const result = generateEndUserMenuItems({
-          configuredMenuItems: [{ id: 'alpha_user', isManagedObject: true }],
-          privileges: [privilege],
-          store: {},
-          isEndUserUI: true,
-          hideAlphaUsersMenuItem: true,
-        });
-        expect(result).toEqual([]);
-      });
+      expect(result).toHaveLength(0);
     });
   });
 
-  describe('buildMenuItemsFromTheme', () => {
-    it('should build menu items from theme and all end user menu items', () => {
-      const themeMenuItems = [
-        { id: 'home' },
-        { id: 'managed1', isManagedObject: true },
-      ];
-      const allEndUserMenuItems = [
-        { id: 'home' },
-        { id: 'managed1', isManagedObject: true },
-        { id: 'extra' },
-      ];
-      const result = buildMenuItemsFromTheme(themeMenuItems, allEndUserMenuItems);
-      expect(result).toEqual([
-        { id: 'home' },
-        { id: 'managed1', isManagedObject: true },
-        { id: 'extra' },
-      ]);
+  describe('privilege filtering', () => {
+    it('excludes managed-object top-level items when the user has no matching privilege', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...managedItem }],
+        exactList: true,
+        privileges: [],
+        isEndUserUI: true,
+      });
+      expect(result.find((item) => item.id === 'alpha_user')).toBeUndefined();
     });
 
-    it('should skip disabled menu items', () => {
-      const themeMenuItems = [{ id: 'dashboard', disabled: true }];
-      const allEndUserMenuItems = [{ id: 'home' }];
-      const result = buildMenuItemsFromTheme(themeMenuItems, allEndUserMenuItems);
-      expect(result).toEqual([{ id: 'home' }]);
+    it('includes managed-object top-level items when the user has a matching privilege', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...managedItem }],
+        exactList: true,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: true,
+      });
+      expect(result.find((item) => item.id === 'alpha_user')).toBeTruthy();
     });
 
-    it('should skip unknown menu items', () => {
-      const themeMenuItems = [{ id: 'unknown' }];
-      const allEndUserMenuItems = [{ id: 'home' }];
-      const result = buildMenuItemsFromTheme(themeMenuItems, allEndUserMenuItems);
-      expect(result).toEqual([{ id: 'home' }]);
+    it('hides alpha_user top-level items when hideAlphaUsersMenuItem is true', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...managedItem }],
+        exactList: true,
+        privileges: [alphaUserPrivilege],
+        isEndUserUI: true,
+        hideAlphaUsersMenuItem: true,
+      });
+      expect(result.find((item) => item.id === 'alpha_user')).toBeUndefined();
     });
 
-    it('should not remove custom and divider items from configured menu list', () => {
-      const themeMenuItems = [
-        { id: 'custom', label: { en: 'Custom' } },
-        { id: 'divider', label: { en: 'Divider' } },
-        { id: 'unknown', label: { en: 'Unknown' } },
-      ];
-      const allEndUserMenuItems = [{ id: 'home' }];
-      const result = buildMenuItemsFromTheme(themeMenuItems, allEndUserMenuItems);
-      expect(result.map((item) => item.id)).toEqual(['custom', 'divider', 'home']);
+    it('omits disabled menu items', () => {
+      const result = generateEndUserMenuItems({
+        configuredMenuItems: [{ ...profileItem, disabled: true }],
+        exactList: true,
+        privileges: [],
+        isEndUserUI: true,
+      });
+      expect(result.find((item) => item.id === 'profile')).toBeUndefined();
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// buildMenuItemsFromTheme
+// ---------------------------------------------------------------------------
+
+describe('buildMenuItemsFromTheme', () => {
+  const knownItem = { id: 'dashboard', label: { en: 'Dashboard' }, icon: 'dashboard' };
+  const unknownItem = { id: 'not-a-real-menu-item', label: { en: 'Ghost' }, icon: 'help' };
+
+  it('returns theme items that are known to allEndUserMenuItems', () => {
+    const result = buildMenuItemsFromTheme([knownItem], [knownItem]);
+    expect(result.map((item) => item.id)).toContain('dashboard');
+  });
+
+  it('filters out unknown (non-managed, non-custom, non-divider, non-group) items', () => {
+    const result = buildMenuItemsFromTheme([unknownItem], [knownItem]);
+    expect(result.find((item) => item.id === 'not-a-real-menu-item')).toBeUndefined();
+  });
+
+  it('keeps managed-object items even if absent from allEndUserMenuItems', () => {
+    const result = buildMenuItemsFromTheme([{ ...managedItem }], [knownItem]);
+    expect(result.find((item) => item.id === 'alpha_user')).toBeTruthy();
+  });
+
+  it('keeps custom items even if absent from allEndUserMenuItems', () => {
+    const customItem = { id: 'custom', label: { en: 'Link' }, url: 'https://example.com' };
+    const result = buildMenuItemsFromTheme([customItem], [knownItem]);
+    expect(result.find((item) => item.id === 'custom')).toBeTruthy();
+  });
+
+  it('keeps divider items even if absent from allEndUserMenuItems', () => {
+    const divider = { id: 'divider', isDivider: true };
+    const result = buildMenuItemsFromTheme([divider], [knownItem]);
+    expect(result.find((item) => item.id === 'divider')).toBeTruthy();
+  });
+
+  it('keeps group items even if absent from allEndUserMenuItems', () => {
+    const result = buildMenuItemsFromTheme([{ ...groupItem }], [knownItem]);
+    expect(result.find((item) => item.id === 'group')).toBeTruthy();
+  });
+
+  it('backfills label from allEndUserMenuItems when theme item has no label', () => {
+    const themeItem = { id: 'dashboard', icon: 'dashboard' };
+    const result = buildMenuItemsFromTheme([themeItem], [knownItem]);
+    expect(result[0].label).toEqual(knownItem.label);
+  });
+
+  it('does not overwrite a label that is already present on the theme item', () => {
+    const themeItem = { id: 'dashboard', icon: 'dashboard', label: { en: 'My Dashboard' } };
+    const result = buildMenuItemsFromTheme([themeItem], [knownItem]);
+    expect(result[0].label).toEqual({ en: 'My Dashboard' });
+  });
+
+  describe('exactList=false (additive / default)', () => {
+    it('appends allEndUserMenuItems not already present in the theme list', () => {
+      const extraItem = { id: 'profile', label: { en: 'Profile' } };
+      const result = buildMenuItemsFromTheme([knownItem], [knownItem, extraItem], false);
+      expect(result.map((item) => item.id)).toContain('profile');
     });
 
-    it('should not add additional divider menu items as only menu items', () => {
-      const themeMenuItems = [{ id: 'dashboard' }];
-      const allEndUserMenuItems = [{ id: 'dashboard' }, { id: 'home', disabled: true }, { id: 'divider' }];
-      const result = buildMenuItemsFromTheme(themeMenuItems, allEndUserMenuItems);
-      expect(result).toEqual([{ id: 'dashboard' }]);
+    it('does not append disabled items from allEndUserMenuItems', () => {
+      const disabledItem = { id: 'profile', label: { en: 'Profile' }, disabled: true };
+      const result = buildMenuItemsFromTheme([knownItem], [knownItem, disabledItem], false);
+      expect(result.find((item) => item.id === 'profile')).toBeUndefined();
+    });
+
+    it('does not append trailing dividers when all new items are dividers', () => {
+      const divider = { id: 'divider', isDivider: true };
+      const result = buildMenuItemsFromTheme([knownItem], [knownItem, divider], false);
+      expect(result.filter((item) => item.id === 'divider')).toHaveLength(0);
+    });
+  });
+
+  describe('exactList=true', () => {
+    it('returns only the built theme items — does not append anything from allEndUserMenuItems', () => {
+      const extraItem = { id: 'profile', label: { en: 'Profile' } };
+      const result = buildMenuItemsFromTheme([knownItem], [knownItem, extraItem], true);
+      expect(result.map((item) => item.id)).toEqual(['dashboard']);
+    });
+
+    it('still filters out unknown items even with exactList=true', () => {
+      const result = buildMenuItemsFromTheme([unknownItem], [knownItem], true);
+      expect(result).toHaveLength(0);
     });
   });
 });

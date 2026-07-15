@@ -717,6 +717,10 @@
     }
   }
 
+  .fr-nav-item-label {
+    color: $dk-body-color;
+  }
+
   /* Misc */
 	--shadow-sm: #{$dk-box-shadow-sm};
 	--shadow: #{$dk-box-shadow};
