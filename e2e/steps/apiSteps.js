@@ -20,11 +20,13 @@ import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
 import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
 import RealmApiSteps from './api/RealmApiSteps';
+import RoleApiSteps from './api/RoleApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
 
 export default {
   admins: AdminsApiSteps,
+  application: ApplicationApiSteps,
   applications: ApplicationApiSteps,
   authScripts: AuthScriptApiSteps,
   csp: CspApiSteps,
@@ -39,6 +41,7 @@ export default {
   managedObject: ManagedObjectApiSteps,
   oauth2Clients: Oauth2ClientApiSteps,
   realm: RealmApiSteps,
+  roles: RoleApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   user: UserApiSteps,
 };

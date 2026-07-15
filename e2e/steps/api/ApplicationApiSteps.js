@@ -6,12 +6,18 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import { deleteApplication, deleteOAuth2Client } from '@e2e/api/applicationsApi.e2e';
+import createApplication, { deleteApplication, deleteOAuth2Client } from '@e2e/api/applicationsApi.e2e';
 
 export default class ApplicationApiSteps {
   static createdManagedAppIds = [];
 
   static createdClientIds = [];
+
+  static createdApplicationIds = [];
+
+  static get applicationResourceName() {
+    return Cypress.env('IS_FRAAS') ? 'alpha_application' : 'application';
+  }
 
   static trackNextCreation(clientId) {
     const managedResource = Cypress.env('IS_FRAAS') ? 'alpha_application' : 'application';
@@ -31,12 +37,28 @@ export default class ApplicationApiSteps {
     }).as('createOAuth2Client');
   }
 
+  /** Create a minimal native/spa application via API and track its id for cleanup. */
+  static createApplication(appName) {
+    return createApplication({
+      name: appName,
+      templateName: 'web',
+      templateVersion: '2.0',
+      authoritative: false,
+    }).then((response) => {
+      expect(response.status).to.equal(201);
+      ApplicationApiSteps.createdApplicationIds.push(response.body._id);
+      return response;
+    });
+  }
+
   static deleteCreatedApplications() {
     return cy.wrap(null).then(() => {
       const managedIds = [...ApplicationApiSteps.createdManagedAppIds];
       const clientIds = [...ApplicationApiSteps.createdClientIds];
+      const applicationIds = [...ApplicationApiSteps.createdApplicationIds];
       ApplicationApiSteps.createdManagedAppIds = [];
       ApplicationApiSteps.createdClientIds = [];
+      ApplicationApiSteps.createdApplicationIds = [];
 
       const deleteManaged = managedIds.length
         ? cy.wrap(managedIds).each((id) => deleteApplication(id).then((response) => {
@@ -45,14 +67,20 @@ export default class ApplicationApiSteps {
           }
         }))
         : cy.wrap(null);
-      return deleteManaged.then(() => {
-        if (!clientIds.length) return cy.wrap(null);
-        return cy.wrap(clientIds).each((id) => deleteOAuth2Client(id).then((response) => {
-          if (!response.isOkStatusCode) {
-            throw new Error(`Failed to delete OAuth2 client ${id} — tenant may be in a dirty state. Status: ${response.status}`);
-          }
-        }));
-      });
+
+      return deleteManaged
+        .then(() => {
+          if (!clientIds.length) return cy.wrap(null);
+          return cy.wrap(clientIds).each((id) => deleteOAuth2Client(id).then((response) => {
+            if (!response.isOkStatusCode) {
+              throw new Error(`Failed to delete OAuth2 client ${id} — tenant may be in a dirty state. Status: ${response.status}`);
+            }
+          }));
+        })
+        .then(() => {
+          if (!applicationIds.length) return cy.wrap(null);
+          return cy.wrap(applicationIds).each((id) => deleteApplication(id));
+        });
     });
   }
 }
