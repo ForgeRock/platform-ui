@@ -68,6 +68,8 @@
     "HttpClientEdit": "Edit HTTP Client",
     "FormEditor": "Form Editor",
     "Forms": "Forms",
+    "EditGatewayConnection": "Gateway Connection",
+    "GatewayCommunication": "Gateway Communication",
     "GatewaysAndAgents": "Gateways And Agents",
     "Glossary": "Glossary",
     "GovernanceAuditLog": "Audit Logs",
@@ -165,6 +167,7 @@
     "extensions": "Extensions",
     "externalIdentityProviders": "Identity Providers",
     "forms": "Forms",
+    "gatewayCommunication": "Gateway Communication",
     "glossary": "Glossary",
     "governance": "Governance",
     "governanceAuditLog": "Audit Logs",
@@ -3494,6 +3497,49 @@
         "appSecret": "Application Secret",
         "generalSettings": "General Settings"
       }
+    }
+  },
+  "gatewayCommunication": {
+    "title": "Gateway Communication",
+    "description": "Configure secure communication channels for authentication journeys to communicate directly with Identity Gateway.",
+    "newConnection": "Connection",
+    "connection": "Gateway Connection",
+    "secondaryTitle": "Gateway Connection",
+    "modalTitle": "Add Gateway Connection",
+    "nameDescription": "Human-friendly name for this gateway connection.",
+    "headers": {
+      "connection": "Connection"
+    },
+    "emptyState": {
+      "serviceDisabledTitle": "Gateway Communication is not enabled",
+      "enableButton": "Enable Gateway Communication",
+      "provisioningTitle": "Setting up Gateway Communication",
+      "provisioningSubtitle": "This should only take a moment.",
+      "noConnectionsTitle": "No Gateway Connections",
+      "noConnectionsSubtitle": "Add a connection to get started.",
+      "noSearchResults": "No Gateway Connections found.",
+      "noResultsHelp": "Try adjusting your search to find what you are looking for."
+    },
+    "notFound": {
+      "backLabel": "Back to Gateway Communication"
+    },
+    "fieldDescriptions": {
+      "signPublicKey": "The public key portion of a JWK, used to validate the signature of the JWT sent by Identity Gateway. This key will also be used to encrypt the JWT sent to IG."
+    },
+    "errors": {
+      "loadError": "There was an error loading gateway connections",
+      "enableError": "There was an error enabling the Gateway Communication service",
+      "creationError": "There was an error creating the gateway connection",
+      "loadInstanceError": "There was an error loading the gateway connection",
+      "loadSchemaError": "There was an error loading the gateway connection schema",
+      "saveError": "There was an error saving the gateway connection",
+      "deleteError": "There was an error deleting the gateway connection"
+    },
+    "success": {
+      "serviceEnabled": "Gateway Communication service enabled",
+      "connectionCreated": "Gateway connection created",
+      "saveSuccess": "Gateway connection saved",
+      "connectionDeleted": "Gateway connection deleted"
     }
   },
   "gatewaysAndAgents": {

@@ -291,6 +291,7 @@ export const createAmForm = ({
   values,
   showOnlyRequired = false,
   showOnlyRequiredAndEmpty = false,
+  overrides = {},
 }) => {
   const { filteredSchema, initialValues } = Object.entries(schema.properties).reduce((acc, [key, prop]) => {
     const rawValue = values[key];
@@ -300,6 +301,8 @@ export const createAmForm = ({
     // template value are still treated as empty (matching AM's getEmptyValueKeys behaviour).
     if (shouldIncludeProperty(prop, rawValue, { showOnlyRequired, showOnlyRequiredAndEmpty })) {
       const formattedProp = { ...formatPropertyField(prop), key };
+      if (overrides[key]?.description !== undefined) formattedProp.description = overrides[key].description;
+      if (overrides[key]?.title !== undefined) formattedProp.title = overrides[key].title;
       const hasPlaceholder = rawValue !== undefined && rawValue !== null && doesValueContainPlaceholder(rawValue);
       acc.initialValues[key] = hasPlaceholder ? applyPlaceholderOverrides(formattedProp, rawValue) : initialValue;
 

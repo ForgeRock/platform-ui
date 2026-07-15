@@ -501,5 +501,56 @@ describe('amSchemaUtils', () => {
         expect(values.clientId).toBe('my-client');
       });
     });
+
+    describe('overrides', () => {
+      const overrideSchema = {
+        properties: {
+          myField: {
+            type: 'string', description: 'Original description', title: 'Original title', propertyOrder: 1,
+          },
+          otherField: {
+            type: 'string', description: 'Other description', title: 'Other title', propertyOrder: 2,
+          },
+        },
+      };
+
+      it('replaces description when provided in overrides', () => {
+        const { schema: result } = createAmForm({
+          schema: overrideSchema,
+          values: {},
+          overrides: { myField: { description: 'Overridden description' } },
+        });
+        expect(result.find((f) => f.key === 'myField').description).toBe('Overridden description');
+      });
+
+      it('replaces title when provided in overrides', () => {
+        const { schema: result } = createAmForm({
+          schema: overrideSchema,
+          values: {},
+          overrides: { myField: { title: 'Overridden title' } },
+        });
+        expect(result.find((f) => f.key === 'myField').title).toBe('Overridden title');
+      });
+
+      it('leaves non-matching fields unchanged', () => {
+        const { schema: result } = createAmForm({
+          schema: overrideSchema,
+          values: {},
+          overrides: { myField: { description: 'Overridden description', title: 'Overridden title' } },
+        });
+        expect(result.find((f) => f.key === 'otherField').description).toBe('Other description');
+        expect(result.find((f) => f.key === 'otherField').title).toBe('Other title');
+      });
+
+      it('does not mutate the original schema property', () => {
+        const originalDesc = overrideSchema.properties.myField.description;
+        createAmForm({
+          schema: overrideSchema,
+          values: {},
+          overrides: { myField: { description: 'Overridden description' } },
+        });
+        expect(overrideSchema.properties.myField.description).toBe(originalDesc);
+      });
+    });
   });
 });
