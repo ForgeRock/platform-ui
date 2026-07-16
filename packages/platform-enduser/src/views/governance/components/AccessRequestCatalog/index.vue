@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -523,7 +523,7 @@ export default {
       }
       if (this.tabType === 'entitlement') {
         const sortOptions = [
-          { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'assignment.name' },
+          { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'descriptor.idx./entitlement.displayName' },
           { text: this.catalogTabs.application.capitalizedSingularTitle, value: 'application.name' },
         ];
         if (this.requestType !== 'recommendations') {
@@ -635,9 +635,9 @@ export default {
      */
     tabChange() {
       const sortFieldMap = {
-        application: 'application',
-        entitlement: 'assignment',
-        role: 'role',
+        application: 'application.name',
+        entitlement: 'descriptor.idx./entitlement.displayName',
+        role: 'role.name',
       };
       this.searchCatalog({
         applicationFilter: '',
@@ -645,7 +645,7 @@ export default {
         page: 1,
         searchValue: '',
         sortDir: 'desc',
-        sortKeys: `${sortFieldMap[this.tabType]}.name`,
+        sortKeys: sortFieldMap[this.tabType],
       });
     },
     /**
