@@ -7,6 +7,7 @@
     "AIAgents": "AI Agents",
     "AIAgentEdit": "Edit AI Agent",
     "Applications": "Applications",
+    "AssertionServers": "Assertion Servers",
     "Authentication": "Authentication",
     "AuthenticationMethods": "Authentication Methods",
     "PushAuthentication": "Push Authentication",
@@ -148,6 +149,7 @@
     "accessManagement": "Access Management",
     "agents": "Agents",
     "applications": "Applications",
+    "assertionServers": "Assertion Servers",
     "aiAgents": "AI Agents",
     "authentication": "Authentication",
     "authenticationMethods": "Authentication Methods",
@@ -6087,6 +6089,49 @@
     "rateLimitError": "Monitoring api has hit it's rate limit. Retrying request in { retrySeconds } seconds..."
   },
   "integrations": {
+    "assertionServers": {
+      "title": "Assertion Servers",
+      "description": "Configure trusted identity assertion servers.",
+      "newAssertionServer": "Assertion Server",
+      "nameLabel": "Assertion Server Name",
+      "modalTitleAdd": "Add Assertion Server",
+      "modalTitleEdit": "Edit Assertion Server",
+      "saveChanges": "Save Changes",
+      "serverType": "Assertion Server",
+      "tabLabels": {
+        "assertionServers": "Assertion Servers",
+        "settings": "Settings"
+      },
+      "headers": {
+        "server": "Assertion Server",
+        "serverUrl": "Server URL",
+        "jwtExpiration": "JWT TTL (seconds)",
+        "skewAllowance": "Skew Allowance (seconds)"
+      },
+      "emptyState": {
+        "title": "Assertion Servers are not enabled",
+        "subtitle": "Enable to configure trusted identity assertion servers.",
+        "enableButton": "Enable Assertion Servers",
+        "noServersTitle": "No Assertion Servers",
+        "noServersSubtitle": "Get started by creating your first Assertion Server.",
+        "noSearchResults": "No Assertion Servers found.",
+        "noResultsHelp": "Try adjusting your search to find what you are looking for."
+      },
+      "errors": {
+        "loadFailed": "An error occurred while loading assertion servers",
+        "createFailed": "An error occurred while creating the service",
+        "enableFailed": "An error occurred while enabling the service",
+        "deleteFailed": "An error occurred while deleting the assertion server",
+        "saveFailed": "An error occurred while saving changes"
+      },
+      "success": {
+        "created": "Assertion server created successfully",
+        "updated": "Assertion server updated successfully",
+        "deleted": "Assertion server deleted successfully",
+        "enabled": "Service enabled successfully",
+        "settingsSaved": "Service settings saved successfully"
+      }
+    },
     "externalIdentityProviders": {
       "title": "Identity Providers",
       "description": "Allow users to sign in and register using identity providers.",
