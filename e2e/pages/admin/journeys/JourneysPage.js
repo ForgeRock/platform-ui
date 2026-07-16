@@ -28,9 +28,13 @@ export default class JourneysPage {
   }
 
   static journeyRowButton(treeTitle) {
+    // Match the title span directly to avoid @testing-library's accessible-name computation
+    // crashing on journeys that carry a "Default" badge (appends badge text to the name).
     return cy.get('.tab-content')
       .should('be.visible')
-      .findByRole('button', { name: new RegExp(`^${treeTitle}`) });
+      .find('[data-testid="tree-header-title"] span.text-truncate')
+      .contains(new RegExp(`^${treeTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`))
+      .closest('[role="button"]');
   }
 
   static get defaultJourneyBadge() {
