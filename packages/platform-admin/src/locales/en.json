@@ -142,8 +142,9 @@
     "TenantUpdates": "Tenant Updates",
     "TermsAndConditions": "Terms & Conditions",
     "Workflows": "Workflows",
-    "WorkflowTasks": "Workflow Tasks",
-    "WorkflowProcesses": "Workflow Processes"
+    "WorkflowProcesses": "Workflow Processes",
+    "WorkflowSettings": "Workflow Settings",
+    "WorkflowTasks": "Workflow Tasks"
   },
   "sideMenu": {
     "accessManagement": "Access Management",
@@ -209,6 +210,7 @@
     "userExperience": "User Experience",
     "workflow": "Workflow",
     "workflows": "Workflows",
+    "workflowSettings": "Settings",
     "workflowTasks": "Tasks",
     "workflowProcesses": "Processes",
     "endUser": {
@@ -6317,6 +6319,51 @@
     "taskDetails": "Task Details",
     "title": "Workflow Tasks",
     "viewModalTitle": "Task Details"
+  },
+  "workflowSettings": {
+    "title": "Workflow Settings",
+    "subtitle": "Configure the workflow engine, its data source, and the identity resources and mail server it uses.",
+    "enabledTitle": "Enabled",
+    "enabledDescription": "Enable the workflow engine.",
+    "useDataSourceTitle": "Data Source",
+    "useDataSourceDescription": "Name of the data source the workflow engine uses.",
+    "workflowDirectoryTitle": "Workflow Directory",
+    "workflowDirectoryDescription": "Directory the workflow engine scans for workflow definitions.",
+    "userResource": {
+      "title": "User Resource",
+      "pathTitle": "Path",
+      "pathDescription": "Managed object path used to look up users.",
+      "queryFilterTitle": "Query Filter",
+      "queryFilterDescription": "Query filter used to select the users returned to the workflow engine."
+    },
+    "groupResource": {
+      "title": "Group Resource",
+      "pathTitle": "Path",
+      "pathDescription": "Managed object path used to look up groups.",
+      "queryFilterTitle": "Query Filter",
+      "queryFilterDescription": "Query filter used to select the groups returned to the workflow engine."
+    },
+    "mail": {
+      "title": "Mail",
+      "hostTitle": "Host",
+      "hostDescription": "Hostname of the mail server used to send workflow notifications.",
+      "portTitle": "Port",
+      "portDescription": "Port the mail server listens on.",
+      "usernameTitle": "Username",
+      "usernameDescription": "Username used to authenticate with the mail server.",
+      "passwordTitle": "Password",
+      "passwordDescription": "Password used to authenticate with the mail server.",
+      "useSSLTitle": "Use SSL",
+      "useSSLDescription": "Connect to the mail server over an SSL/TLS connection.",
+      "starttlsTitle": "Use STARTTLS",
+      "starttlsDescription": "Upgrade the mail server connection to TLS using STARTTLS.",
+      "defaultFromTitle": "Default From Address",
+      "defaultFromDescription": "Email address used as the sender for workflow notifications."
+    },
+    "saveSuccess": "Workflow settings saved",
+    "notConfigured": "Workflow is not yet configured for this instance. Enable workflow and save to create the configuration.",
+    "errorLoading": "There was an error loading workflow settings",
+    "errorSaving": "There was an error saving workflow settings"
   },
   "authenticationMethods": {
     "title": "Authentication Methods",

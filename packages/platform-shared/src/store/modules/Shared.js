@@ -17,6 +17,7 @@ const defaultState = {
   analyticsReportsAiAssistantEnabled: false,
   devIdmEnabled: false,
   idmWorkflowEnabled: false,
+  idmWorkflowConfigEnabled: false,
   autoCustomReportsEnabled: false,
   autoReportsEnabled: false,
   currentPackage: '',
@@ -295,6 +296,9 @@ const mutations = {
   },
   setIdmWorkflowEnabled(state, val) {
     state.idmWorkflowEnabled = val;
+  },
+  setIdmWorkflowConfigEnabled(state, val) {
+    state.idmWorkflowConfigEnabled = val;
   },
   setWebStorageAvailable(state, val) {
     state.webStorageAvailable = val;
