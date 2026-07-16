@@ -1,9 +1,8 @@
 /**
- * Copyright 2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
@@ -56,6 +55,16 @@ export function getEventList(params = { _pageSize: 10 }) {
  */
 export function getFilterProperties(resourceName = 'user') {
   return generateIgaApi().get(`${eventUrl}/entity/${resourceName}`);
+}
+
+/**
+ * Get the governance event configuration: the entity types currently
+ * supported for events, each with its supported action and mutation types
+ * @returns The response is a promise that resolves to the event configuration
+ * (`{ entityTypes: [{ name, displayName, actionTypes, mutationTypes }] }`).
+ */
+export function getEventConfig() {
+  return generateIgaApi().get(`${eventUrl}/config`);
 }
 
 /**

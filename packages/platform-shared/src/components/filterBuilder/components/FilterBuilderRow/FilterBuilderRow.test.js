@@ -248,6 +248,25 @@ describe('FilterBuilderRow', () => {
       expect(valueExists).toBe(false);
     });
 
+    it('Renders without a value field for is_null and is_not_null operators', () => {
+      ['is_null', 'is_not_null'].forEach((operator) => {
+        const unaryWrapper = mount(FilterBuilderRow, {
+          ...mountProps,
+          props: {
+            ...mountProps.props,
+            rule: {
+              field: '/userName', operator, uniqueIndex: 2, value: '',
+            },
+          },
+        });
+        const valueExists = unaryWrapper.find(
+          '.depth-1.queryfilter-row:first-child .form-row > .rule-value-col',
+        ).exists();
+        expect(valueExists).toBe(false);
+        unaryWrapper.unmount();
+      });
+    });
+
     it('Emits add rule', async () => {
       wrapper.vm.addRule();
       await wrapper.vm.$nextTick();

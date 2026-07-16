@@ -1,15 +1,17 @@
-<!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrEditTemplate
     @save-event="saveEvent($event)"
     event-based
     :event-cert="eventCert"
+    :entity-type="entityContext.entityType"
+    :mutation-type="entityContext.mutationType"
     :event-trigger-name="eventTriggerName"
     :event-filter-properties="filterProperties"
+    :schema-resource="schemaResource"
     :is-saving-event="isSavingEvent"
     :type="types.IDENTITY" />
 </template>
@@ -17,7 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script setup>
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { camelCase, cloneDeep, isEmpty } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrEditTemplate from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate';
 import { types } from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/templateTypes';
@@ -40,24 +42,40 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  entityType: {
+    type: String,
+    default: '',
+  },
+  mutationType: {
+    type: String,
+    default: '',
+  },
+  eventTriggerName: {
+    type: String,
+    default: '',
+  },
+  /** Schema resource prefix (see EventEditManager); empty keeps the entity-type default. */
+  schemaResource: {
+    type: String,
+    default: '',
+  },
 });
 
 // data
 const { eventId } = route.params;
-const { eventTrigger } = route.query;
 
-function getEventTypeFromEvent(entityType, mutationType) {
-  return camelCase(`${entityType} ${mutationType}`);
-}
+// Props win (create flow); the loaded event's values in the edit flow (immutable).
 
-const eventTriggerType = computed(() => {
-  const trigger = isEmpty(props.event)
-    ? eventTrigger
-    : getEventTypeFromEvent(props.event.entityType, props.event.mutationType);
-  return trigger;
-});
+const entityContext = computed(() => ({
+  entityType: props.entityType || props.event.entityType || '',
+  mutationType: props.mutationType || props.event.mutationType || '',
+}));
 
-const eventTriggerName = computed(() => (i18n.global.t(`governance.events.types.${eventTriggerType.value}`)));
+// Manager's resolved resource, else the entity context, else user.
+
+const schemaResource = computed(() => props.schemaResource
+  || entityContext.value.entityType
+  || 'user');
 
 const eventCert = computed(() => {
   if (isEmpty(props.event)) return {};
@@ -77,7 +95,7 @@ async function saveEvent({ forms, id }) {
   const certPayload = buildSavePayload(types.IDENTITY, certDetails, true);
 
   try {
-    const payload = buildEventCertificationPayload(eventDetails, certPayload, id, eventTriggerType.value);
+    const payload = buildEventCertificationPayload(eventDetails, certPayload, id, entityContext.value);
     if (eventId === 'new') await createEvent(payload);
     else await putEvent(eventId, payload);
 

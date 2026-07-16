@@ -7,12 +7,22 @@
 
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { getEventConfig } from '@forgerock/platform-shared/src/api/governance/EventApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 
 export const useGovernanceStore = defineStore('governance', () => {
+  const eventConfig = ref(null);
   const privileges = ref({});
   const schema = ref({});
+
+  /** Fetch the event config once; only successful responses cache, so failures retry. */
+  async function setEventConfig() {
+    if (eventConfig.value === null) {
+      const { data } = await getEventConfig();
+      eventConfig.value = data;
+    }
+  }
 
   async function setPrivileges(resourcePath) {
     if (!privileges.value[resourcePath]) {
@@ -29,8 +39,10 @@ export const useGovernanceStore = defineStore('governance', () => {
   }
 
   return {
+    eventConfig,
     privileges,
     schema,
+    setEventConfig,
     setPrivileges,
     setSchema,
   };

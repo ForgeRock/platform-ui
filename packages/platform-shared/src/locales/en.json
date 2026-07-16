@@ -881,6 +881,7 @@
     "contains": "contains",
     "currentValueOf": "Current value of",
     "doesNotContain": "does not contain",
+    "doesNotExist": "does not exist",
     "doesNotStartWith": "does not start with",
     "dontInclude": "don't include",
     "endsWith": "ends with",
@@ -2836,7 +2837,8 @@
           "configureSuccess": "Applications created successfully",
           "createAppError": "Failed to create the application for {name}",
           "createTaskError": "Failed to configure classification for {name}",
-          "updateAppError": "Failed to update the application {name}"
+          "updateAppError": "Failed to update the application {name}",
+          "createEventError": "Error configuring IGA event for agent onboarding"
         }
       }
     },

@@ -14,6 +14,7 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import * as NotificationTemplateApi from '@forgerock/platform-shared/src/api/governance/NotificationTemplateApi';
+import FrEventDetails from '@forgerock/platform-shared/src/views/Governance/Events/EventEdit/EventDetails';
 import * as CertificationUtils from '@/views/Governance/utils/certification';
 import * as TemplateApi from '@/api/governance/TemplateApi';
 import EditTemplate from './index';
@@ -293,6 +294,21 @@ describe('EditTemplate View', () => {
       await flushPromises();
 
       expect(wrapper.emitted().save[0]).toBeTruthy();
+    });
+
+    it('forwards entity context to the event details tab', async () => {
+      wrapper.vm.grantFilterPropertiesLoaded = true;
+      await wrapper.setProps({
+        entityType: 'agent',
+        mutationType: 'create',
+        eventTriggerName: 'Agent Created',
+      });
+      await flushPromises();
+
+      const eventDetails = wrapper.findComponent(FrEventDetails);
+      expect(eventDetails.exists()).toBeTruthy();
+      expect(eventDetails.props('entityType')).toBe('agent');
+      expect(eventDetails.props('mutationType')).toBe('create');
     });
   });
 });

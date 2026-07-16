@@ -10,6 +10,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import * as EventApi from '@forgerock/platform-shared/src/api/governance/EventApi';
 import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
@@ -129,6 +130,9 @@ describe('ConfigureAgentSourceModal', () => {
     ApplicationsApi.saveApplicationTask = jest.fn().mockResolvedValue({ data: {} });
     ApplicationsApi.updateApplication = jest.fn().mockResolvedValue({ data: {} });
     ConfigApi.getConfig = jest.fn().mockResolvedValue({ data: mockManagedConfig });
+    // The privilege source also ensures the agent-onboarding governance event exists.
+    EventApi.getEventList = jest.fn().mockResolvedValue({ data: { result: [], totalCount: 0 } });
+    EventApi.createEvent = jest.fn().mockResolvedValue({ data: {} });
     displayNotification.mockClear();
     showErrorMessage.mockClear();
     mockBvModal.show.mockClear();
@@ -453,6 +457,79 @@ describe('ConfigureAgentSourceModal', () => {
       expect(showErrorMessage).toHaveBeenCalledWith(expect.any(Error), 'Failed to configure classification for bedrock');
       expect(displayNotification).not.toHaveBeenCalledWith('success', expect.anything());
       expect(wrapper.emitted('configured')).toBeUndefined();
+    });
+
+    it('creates the agent-onboarding event with the form owners when it does not exist', async () => {
+      const wrapper = await mountReadyToConfigure();
+      await wrapper.vm.configureSource();
+      await flushPromises();
+
+      expect(EventApi.getEventList).toHaveBeenCalledWith({ queryFilter: "name eq 'Privilege Agent Onboarded'" });
+      expect(EventApi.createEvent).toHaveBeenCalledTimes(1);
+      const payload = EventApi.createEvent.mock.calls[0][0];
+      expect(payload.name).toBe('Privilege Agent Onboarded');
+      expect(payload.entityType).toBe('agent');
+      expect(payload.mutationType).toBe('create');
+      expect(payload.owners).toEqual([{ id: 'managed/alpha_user/user-1' }]);
+      expect(payload.action).toEqual({ type: 'orchestration', name: 'agentOnboarding', parameters: {} });
+    });
+
+    it('does not recreate the agent-onboarding event when it already exists', async () => {
+      EventApi.getEventList = jest.fn().mockResolvedValue({ data: { result: [{ id: 'event-1', name: 'Privilege Agent Onboarded' }], totalCount: 1 } });
+
+      const wrapper = await mountReadyToConfigure();
+      await wrapper.vm.configureSource();
+      await flushPromises();
+
+      expect(EventApi.createEvent).not.toHaveBeenCalled();
+    });
+
+    it('surfaces the specific error message when the event creation fails, without blocking configuration', async () => {
+      EventApi.createEvent = jest.fn().mockRejectedValue(new Error('event create failed'));
+
+      const wrapper = await mountReadyToConfigure();
+      await wrapper.vm.configureSource();
+      await flushPromises();
+
+      expect(showErrorMessage).toHaveBeenCalledWith(null, 'Error configuring IGA event for agent onboarding');
+      // configuration itself still succeeds
+      expect(displayNotification).toHaveBeenCalledWith('success', 'Applications created successfully');
+      expect(wrapper.emitted('configured')).toHaveLength(1);
+      expect(mockBvModal.hide).toHaveBeenCalledWith('ConfigureAgentSourceModal');
+    });
+
+    it('does not attempt the event call when the source is not privilege', async () => {
+      UseAgentConfig.useAgentConfig = jest.fn().mockReturnValue({
+        agentApplicationProps: ref({}),
+        agentSources: ref({ privilege: mockAgentSources.privilege }),
+        agentTemplateSourceArrays: ref({}),
+        loadConfig: jest.fn().mockResolvedValue({}),
+      });
+      const wrapper = mountComponent({ sources: { privilege: mockAgentSources.privilege } });
+      // re-point the modal at a non-privilege source while keeping the config
+      await wrapper.setProps({ source: 'other' });
+      await wrapper.vm.onShown();
+      await flushPromises();
+      wrapper.vm.connectionValues.apiSecret = 'super-secret';
+      wrapper.vm.applicationOwners = [{ _ref: 'managed/alpha_user/user-1' }];
+      await flushPromises();
+
+      await wrapper.vm.configureSource();
+      await flushPromises();
+
+      expect(EventApi.createEvent).not.toHaveBeenCalled();
+      expect(EventApi.getEventList).not.toHaveBeenCalled();
+    });
+
+    it('does not attempt the event call when no owners were chosen', async () => {
+      const wrapper = await mountReadyToConfigure();
+      wrapper.vm.applicationOwners = [];
+      await flushPromises();
+
+      await wrapper.vm.configureSource();
+      await flushPromises();
+
+      expect(EventApi.createEvent).not.toHaveBeenCalled();
     });
   });
 });

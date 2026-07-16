@@ -1,8 +1,7 @@
-<!-- Copyright 2024-2026 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100">
     <FrFormWizard
@@ -22,8 +21,11 @@ to such license between the licensee and ForgeRock AS. -->
         <Component
           v-model="forms[tab.formPath]"
           :is="tab.component"
+          :entity-type="entityContext.entityType"
+          :mutation-type="entityContext.mutationType"
           :event-trigger-name="eventTriggerName"
           :filter-properties="filterProperties"
+          :schema-resource="schemaResource"
           :summary="summary"
           @toggle-valid="isValid = $event" />
       </template>
@@ -34,7 +36,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { isEmpty, camelCase } from 'lodash';
+import { isEmpty } from 'lodash';
 import FrFormWizard from '@forgerock/platform-shared/src/components/FormWizard/FormWizard';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { buildEventWorkflowPayload, buildEventWorkflowForm } from '@forgerock/platform-shared/src/views/Governance/utils/events';
@@ -58,11 +60,27 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  entityType: {
+    type: String,
+    default: '',
+  },
+  mutationType: {
+    type: String,
+    default: '',
+  },
+  eventTriggerName: {
+    type: String,
+    default: '',
+  },
+  /** Schema resource prefix (see EventEditManager); empty keeps the entity-type default. */
+  schemaResource: {
+    type: String,
+    default: '',
+  },
 });
 
 // data
 const { eventId } = route.params;
-const { eventTrigger } = route.query;
 const edit = ref(false);
 const isValid = ref(true);
 const tabComponents = [
@@ -97,10 +115,6 @@ const forms = ref({
   status: 'active',
 });
 
-function getEventTypeFromEvent(entityType, mutationType) {
-  return camelCase(`${entityType} ${mutationType}`);
-}
-
 // computed
 const summary = computed(() => ({
   description: forms.value.eventDetails.eventDescription,
@@ -109,14 +123,18 @@ const summary = computed(() => ({
   workflow: forms.value.workflowDetails.workflow,
 }));
 
-const eventTriggerType = computed(() => {
-  const trigger = isEmpty(props.event)
-    ? eventTrigger
-    : getEventTypeFromEvent(props.event.entityType, props.event.mutationType);
-  return trigger;
-});
+// Props win (create flow); the loaded event's values in the edit flow (immutable).
 
-const eventTriggerName = computed(() => (i18n.global.t(`governance.events.types.${eventTriggerType.value}`)));
+const entityContext = computed(() => ({
+  entityType: props.entityType || props.event.entityType || '',
+  mutationType: props.mutationType || props.event.mutationType || '',
+}));
+
+// Manager's resolved resource, else the entity context, else user.
+
+const schemaResource = computed(() => props.schemaResource
+  || entityContext.value.entityType
+  || 'user');
 
 const title = computed(() => (edit.value
   ? i18n.global.t('governance.events.edit.editWorkflowEvent')
@@ -125,7 +143,7 @@ const title = computed(() => (edit.value
 
 async function saveEvent() {
   try {
-    const payload = buildEventWorkflowPayload(forms.value, eventTriggerType.value);
+    const payload = buildEventWorkflowPayload(forms.value, entityContext.value);
     if (eventId === 'new') await createEvent(payload);
     else await putEvent(eventId, payload);
     displayNotification('success', i18n.global.t('governance.events.edit.saveSuccess'));

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -76,6 +76,10 @@ export function convertToIGAFilter(filter, resourceName = 'user', properties, ig
   filter.subfilters.forEach((filterRule) => {
     if (filterRule.operator === 'or' || filterRule.operator === 'and') {
       convertedFilter[filter.operator].push(convertToIGAFilter(filterRule, resourceName, properties, ignoreTemporals));
+    } else if (filterRule.operator === 'is_null' || filterRule.operator === 'is_not_null') {
+      // Unary operators carry no value operand — the temporal field path is the whole operand
+      const field = ignoreTemporals ? filterRule.field : `${resourceName}.${filterRule.temporalValue}.${filterRule.field}`;
+      convertedFilter[filter.operator].push({ [filterRule.operator]: field });
     } else {
       const operator = operatorMap[filterRule.operator] || filterRule.operator;
       const subfilter = { [operator]: {} };
@@ -113,12 +117,18 @@ export function convertToIGAFilter(filter, resourceName = 'user', properties, ig
 
 /**
  * Takes IGA formatted filter and converts to format that can be consumed by shared filter builder
- * @property {Object} filter - IGA filter to convert
+ * @param {Object} filter - IGA filter to convert
+ * @param {Number} currentUniqueIndex - index to continue counting unique subfilter indexes from
+ * @param {Boolean} ignoreTemporals - whether the temporal (before/after) segment of field paths
+ *   should be ignored, leaving the full field path intact
+ * @param {String} resourceName - name of the resource the filter is aimed against; field paths are
+ *   expected to be shaped `${resourceName}.${temporalValue}.${field}` and the empty-filter fallback
+ *   defaults to `${resourceName}.after.`
  * @returns {Object} filterBuilder-formatted filter
  */
-export function convertFromIGAFilter(filter, currentUniqueIndex = 0, ignoreTemporals) {
+export function convertFromIGAFilter(filter, currentUniqueIndex = 0, ignoreTemporals, resourceName = 'user') {
   let uniqueIndex = currentUniqueIndex;
-  const igaFilter = Object.keys(filter).length ? filter : { or: [{ starts_with: { prefix: { literal: '' }, value: 'user.after.' } }] };
+  const igaFilter = Object.keys(filter).length ? filter : { or: [{ starts_with: { prefix: { literal: '' }, value: `${resourceName}.after.` } }] };
   const filterEntry = Object.entries(igaFilter)[0];
   const convertedFilter = {
     operator: filterEntry[0],
@@ -128,7 +138,7 @@ export function convertFromIGAFilter(filter, currentUniqueIndex = 0, ignoreTempo
   filterEntry[1].forEach((filterRule) => {
     const [operator, fieldValueObject] = Object.entries(filterRule)[0];
     if (operator === 'or' || operator === 'and') {
-      const subfilter = convertFromIGAFilter(filterRule, uniqueIndex + 1, ignoreTemporals);
+      const subfilter = convertFromIGAFilter(filterRule, uniqueIndex + 1, ignoreTemporals, resourceName);
       convertedFilter.subfilters.push(subfilter.convertedFilter);
       uniqueIndex = subfilter.uniqueIndex;
     } else {
@@ -143,13 +153,33 @@ export function convertFromIGAFilter(filter, currentUniqueIndex = 0, ignoreTempo
       if ((operator === 'not_equals' || operator === 'equals')
         && (typeof fieldValueObject.left === 'string' || fieldValueObject.left instanceof String)
         && (typeof fieldValueObject.right === 'string' || fieldValueObject.right instanceof String)) {
-        // convert to has_changed and has_not_changed
-        const field = fieldValueObject.left?.split('.').pop();
+        // field path is `${resourceName}.${temporalValue}.${field}` — keep the
+        // full remainder so dotted field names survive
+        const field = fieldValueObject.left?.split('.').slice(2).join('.');
         subfilter.operator = operator === 'not_equals'
           ? 'has_changed'
           : 'has_not_changed';
         subfilter.field = field;
         subfilter.temporalValue = 'after';
+      } else if (operator === 'is_null' || operator === 'is_not_null') {
+        // Unary operators carry the field path as the whole operand (a bare string) with no value
+        subfilter.value = '';
+        subfilter.field = typeof fieldValueObject === 'string' ? fieldValueObject : '';
+        if (subfilter.field && !ignoreTemporals) {
+          const splitField = subfilter.field.split('.');
+          // an operand without a temporal segment cannot be parsed into
+          // `${resourceName}.${temporalValue}.${field}` — keep the raw path as the
+          // field (slice(2) would otherwise wipe it) and default the temporal
+          const hasTemporal = Boolean(splitField[1]) && splitField.length > 2;
+          if (hasTemporal) {
+            [, subfilter.temporalValue] = splitField;
+            subfilter.field = splitField.slice(2).join('.');
+          } else {
+            subfilter.temporalValue = 'after';
+          }
+        } else if (subfilter.field) {
+          subfilter.temporalValue = 'after';
+        }
       } else {
         // find the key that field converts to
         subfilter.field = fieldValueObject[filterFieldMap[operator]] || fieldValueObject.in_string_array || '';
@@ -166,10 +196,14 @@ export function convertFromIGAFilter(filter, currentUniqueIndex = 0, ignoreTempo
             : 'False';
         }
         if (subfilter.field) {
-          // pull temporal value from field [resourceName, temporalValue, fieldName]
+          // pull temporal value from field [resourceName, temporalValue, ...fieldName] — keep the
+          // full remainder joined so dotted field names survive (e.g. account.before.descriptor.displayName)
           const splitField = subfilter.field.split('.');
           if (ignoreTemporals) subfilter.temporalValue = 'after';
-          else [, subfilter.temporalValue, subfilter.field] = splitField;
+          else {
+            [, subfilter.temporalValue] = splitField;
+            subfilter.field = splitField.slice(2).join('.');
+          }
         }
       }
       convertedFilter.subfilters.push(subfilter);
@@ -303,14 +337,21 @@ export function checkIGAFilterMeetsRequirements(filter) {
     )) {
       // setup to determine if there is at least one after condition to match each unique before property
       const subfilterValues = Object.values(subfilter)[0];
-      const value = (subfilterValues.value || subfilterValues.left || subfilterValues.in_string || subfilterValues.in_string_array);
-      const propertyName = value.split('.')[2];
+      // unary operators (is_null, is_not_null) carry the field path as the whole operand
+      const value = typeof subfilterValues === 'string' ? subfilterValues
+        : (subfilterValues.value || subfilterValues.left || subfilterValues.in_string || subfilterValues.in_string_array);
+      // group by the full field name (everything after `${resourceName}.${temporalValue}.`) so
+      // dotted field names match their before/after pair correctly
+      const propertyName = value.split('.').slice(2).join('.');
       if (!properties[propertyName]) {
         properties[propertyName] = {};
       }
-      if (value.includes('before')) {
+      // temporal side is path segment 2 — never a substring test, as field names
+      // may legitimately contain 'before'/'after'
+      const temporalSide = value.split('.')[1];
+      if (temporalSide === 'before') {
         properties[propertyName].beforeFound = true;
-      } else if (value.includes('after')) {
+      } else if (temporalSide === 'after') {
         properties[propertyName].afterFound = true;
       }
     }

@@ -30,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
         :event-trigger-name="eventTriggerName"
         :filter-properties="eventFilterProperties"
         :grant-filter-properties="grantFilterProperties"
+        :schema-resource="resolvedSchemaResource"
         :summary="summary"
         :type="type"
         @set-counts="setCounts"
@@ -112,6 +113,27 @@ export default {
     eventFilterProperties: {
       type: Array,
       default: () => [],
+    },
+    /**
+     * Entity context for event-based certifications, forwarded to the
+     * FrEventDetails tab. Defaults preserve the pre-genericization user
+     * rendering when only the display name is known.
+     */
+    entityType: {
+      type: String,
+      default: 'user',
+    },
+    mutationType: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Resource prefix of the event condition schema (see EventEditManager).
+     * Empty keeps the entity-type-as-resource default for non-event templates.
+     */
+    schemaResource: {
+      type: String,
+      default: '',
     },
     /* For an event based cert, isSavingEvent prop helps to update save button's local state. */
     isSavingEvent: {
@@ -328,6 +350,14 @@ export default {
     },
     breadcrumbTitle() {
       return this.eventBased ? this.$t('pageTitles.GovernanceEvents') : this.$t('governance.certification.title');
+    },
+    /**
+     * Resource prefix for the event filter builder: the parent's resolved
+     * schema resource when provided, else the entity type (whose schema
+     * matches its own name), else user.
+     */
+    resolvedSchemaResource() {
+      return this.schemaResource || this.entityType || 'user';
     },
     ownerInfo() {
       if (isEmpty(this.forms.FrDetailsForm.ownerInfo)) {

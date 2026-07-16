@@ -285,15 +285,17 @@ describe('GovernanceFilterBuilder', () => {
       const ruleCondition = wrapper.find('#ruleCondition_user_1');
       const operatorList = ruleCondition.findAll('li').filter((element) => !element.attributes('style'));
 
-      expect(operatorList.length).toBe(8);
+      expect(operatorList.length).toBe(10);
       expect(operatorList[0].text()).toBe('is');
       expect(operatorList[1].text()).toBe('is not');
-      expect(operatorList[2].text()).toBe('has changed');
-      expect(operatorList[3].text()).toBe('has not changed');
-      expect(operatorList[4].text()).toBe('GTE (>=)');
-      expect(operatorList[5].text()).toBe('GT (>)');
-      expect(operatorList[6].text()).toBe('LTE (<=)');
-      expect(operatorList[7].text()).toBe('LT (<)');
+      expect(operatorList[2].text()).toBe('exists');
+      expect(operatorList[3].text()).toBe('does not exist');
+      expect(operatorList[4].text()).toBe('has changed');
+      expect(operatorList[5].text()).toBe('has not changed');
+      expect(operatorList[6].text()).toBe('GTE (>=)');
+      expect(operatorList[7].text()).toBe('GT (>)');
+      expect(operatorList[8].text()).toBe('LTE (<=)');
+      expect(operatorList[9].text()).toBe('LT (<)');
     });
 
     it('Change numeric condition value should emit properly filter-update event', async () => {
@@ -445,6 +447,139 @@ describe('GovernanceFilterBuilder', () => {
       const valueInput = wrapper.find('#inputValue_user_1');
       expect(valueInput.exists()).toBe(true);
       expect(valueInput.find('input[type="text"]').exists()).toBe(true);
+    });
+
+    it('loads a dotted-path account filter with the full dotted field intact', async () => {
+      const wrapper = mountComponent({
+        resourceName: 'account',
+        properties: [{ label: 'Display Name', value: 'descriptor.displayName' }],
+        filterValue: {
+          or: [{ starts_with: { prefix: { literal: 'John' }, value: 'account.before.descriptor.displayName' } }],
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.vm.queryFilter).toEqual({
+        operator: 'or',
+        subfilters: [
+          {
+            operator: 'starts_with',
+            field: 'descriptor.displayName',
+            value: 'John',
+            temporalValue: 'before',
+            uniqueIndex: 1,
+          },
+        ],
+        uniqueIndex: 0,
+      });
+    });
+
+    it('round-trips a dotted account filter through the advanced editor and back', async () => {
+      const wrapper = mountComponent({
+        resourceName: 'account',
+        properties: [{ label: 'Display Name', value: 'descriptor.displayName' }],
+        filterValue: {
+          or: [
+            { starts_with: { prefix: { literal: 'John' }, value: 'account.before.descriptor.displayName' } },
+            { starts_with: { prefix: { literal: 'John' }, value: 'account.after.descriptor.displayName' } },
+          ],
+        },
+      });
+      await flushPromises();
+
+      // switch to the advanced editor: the script editor shows the IGA filter
+      const advancedButton = wrapper.findAllComponents('button').filter((item) => item.text().includes('Advanced Editor'))[0];
+      advancedButton.trigger('click');
+      await flushPromises();
+      expect(wrapper.find('.fr-script-editor').exists()).toBe(true);
+      expect(wrapper.vm.scriptEditorValue).toContain('account.before.descriptor.displayName');
+
+      // switch back to basic: the dotted fields survive the round-trip
+      const basicButton = wrapper.findAllComponents('button').filter((item) => item.text().includes('Basic Editor'))[0];
+      basicButton.trigger('click');
+      await flushPromises();
+      expect(wrapper.find('.fr-script-editor').exists()).toBe(false);
+      expect(wrapper.vm.queryFilter.subfilters.map((rule) => rule.field)).toEqual([
+        'descriptor.displayName', 'descriptor.displayName',
+      ]);
+      expect(wrapper.vm.queryFilter.subfilters.map((rule) => rule.temporalValue)).toEqual(['before', 'after']);
+    });
+
+    it('keeps 3-segment user field parsing byte-identical', async () => {
+      const wrapper = mountComponent({
+        resourceName: 'user',
+        properties: [{ label: 'Last Name', value: 'sn' }],
+        filterValue: {
+          or: [
+            { starts_with: { prefix: { literal: 'x' }, value: 'user.before.sn' } },
+            { not_equals: { left: 'user.before.sn', right: 'user.after.sn' } },
+          ],
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.vm.queryFilter.subfilters[0]).toEqual({
+        operator: 'starts_with',
+        field: 'sn',
+        value: 'x',
+        temporalValue: 'before',
+        uniqueIndex: 1,
+      });
+      // not_equals with two field sides converts to has_changed with a full path
+      expect(wrapper.vm.queryFilter.subfilters[1]).toEqual({
+        operator: 'has_changed',
+        field: 'sn',
+        temporalValue: 'after',
+        uniqueIndex: 2,
+      });
+    });
+
+    it('builds the empty-filter fallback from the caller resourceName', async () => {
+      const wrapper = mountComponent({
+        resourceName: 'account',
+        properties: [{ label: 'Display Name', value: 'descriptor.displayName' }],
+        filterValue: {},
+      });
+      await flushPromises();
+
+      // The advanced editor re-derives the IGA filter from the loaded (empty)
+      // query filter, whose fallback field carries the caller's resourceName.
+      const advancedButton = wrapper.findAllComponents('button').filter((item) => item.text().includes('Advanced Editor'))[0];
+      advancedButton.trigger('click');
+      await flushPromises();
+
+      expect(JSON.parse(wrapper.vm.scriptEditorValue)).toEqual({
+        or: [{ starts_with: { prefix: { literal: '' }, value: 'account.after.' } }],
+      });
+    });
+
+    it('emits the dotted backend field when a dotted property rule changes', async () => {
+      // matching before/after conditions for the dotted property, so the
+      // before/after validation passes (showTemporalValueField defaults true)
+      const wrapper = mountComponent({
+        resourceName: 'account',
+        properties: [{ label: 'Display Name', value: 'descriptor.displayName', type: 'string' }],
+        filterValue: {
+          or: [
+            { equals: { right: { literal: 'John' }, left: 'account.before.descriptor.displayName' } },
+            { equals: { right: { literal: 'John' }, left: 'account.after.descriptor.displayName' } },
+          ],
+        },
+      });
+      await flushPromises();
+
+      const filterBuilderGroup = wrapper.findComponent('.pb-3.background-none');
+      filterBuilderGroup.vm.$emit('rule-change', {
+        depth: 0, index: 0, path: '0', value: { operator: 'equals' },
+      });
+      await flushPromises();
+
+      const emitted = wrapper.emitted('filter-update');
+      expect(emitted).toBeTruthy();
+      const lastEmit = emitted[emitted.length - 1][0];
+      expect(lastEmit.or.map((rule) => rule.equals.left)).toEqual([
+        'account.before.descriptor.displayName', 'account.after.descriptor.displayName',
+      ]);
     });
   });
 });

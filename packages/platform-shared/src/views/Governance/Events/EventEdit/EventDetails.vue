@@ -17,9 +17,9 @@ of the MIT license. See the LICENSE file for details. -->
           no-body
           class="py-1">
           <div
-            class="rounded-circle d-flex align-items-center justify-content-center mr-3 bg-lightgreen"
+            :class="['rounded-circle', 'd-flex', 'align-items-center', 'justify-content-center', 'mr-3', entityMeta.iconClasses]"
             style="width: 34px; height: 34px;">
-            <FrIcon name="person_add_alt" />
+            <FrIcon :name="entityMeta.icon" />
           </div>
           <BMediaBody>
             <small class="text-muted">
@@ -116,11 +116,11 @@ of the MIT license. See the LICENSE file for details. -->
           <BFormRadio
             :value="0"
             @change="formFields.filter = {}">
-            {{ $t('governance.events.edit.allUsers') }}
+            {{ $t('governance.events.edit.allEntityTypes', { entityTypes: entityMeta.plural }) }}
           </BFormRadio>
           <BFormRadio
             :value="1">
-            {{ $t('governance.events.edit.subsetUsers') }}
+            {{ $t('governance.events.edit.subsetEntityTypes', { entityTypes: entityMeta.plural }) }}
           </BFormRadio>
         </BFormRadioGroup>
       </BFormGroup>
@@ -134,8 +134,8 @@ of the MIT license. See the LICENSE file for details. -->
             :prefix-group-text="$t('governance.events.edit.filterTriggerPrefix')"
             :properties="filterProperties"
             :filter-value="formFields.filter"
-            resource-name="user"
-            :show-temporal-value-field="eventTriggerName === $t('governance.events.types.userUpdate')"
+            :resource-name="resolvedSchemaResource"
+            :show-temporal-value-field="showTemporalValueField"
             @filter-update="formFields.filter = $event"
             @toggle-valid="$emit('toggle-valid', $event)" />
         </BFormGroup>
@@ -156,11 +156,17 @@ import {
   BMediaBody,
 } from 'bootstrap-vue';
 import { isEqual } from 'lodash';
-import { reactive, ref, watch } from 'vue';
+import {
+  computed,
+  reactive,
+  ref,
+  watch,
+} from 'vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrGovernanceFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/GovernanceFilterBuilder';
 import FrResourceSelect from '@forgerock/platform-shared/src/components/Field/ResourceSelect';
+import { getEventEntityMeta } from '@forgerock/platform-shared/src/views/Governance/utils/events';
 
 const emit = defineEmits(['input', 'toggle-valid']);
 
@@ -187,7 +193,39 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  entityType: {
+    type: String,
+    default: 'user',
+  },
+  mutationType: {
+    type: String,
+    default: '',
+  },
+  /**
+   * Resource prefix of the condition schema (`account` for agent events).
+   * Empty keeps the entity-type-as-resource default.
+   */
+  schemaResource: {
+    type: String,
+    default: '',
+  },
 });
+
+// computed
+// Empty entity falls back to 'user' so the panel never renders degenerate wording.
+const resolvedEntityType = computed(() => props.entityType || 'user');
+
+/**
+ * Filter-builder prefix (`${prefix}.${before|after}.${field}`) — see
+ * EventEditManager's schemaResource. Falls back to the entity type.
+ */
+const resolvedSchemaResource = computed(() => props.schemaResource || resolvedEntityType.value);
+
+/** Entity UI metadata; defaults preserve the pre-genericization user rendering. */
+const entityMeta = computed(() => getEventEntityMeta(resolvedEntityType.value, props.mutationType));
+
+// Temporal filters are only meaningful for update mutations of any entity.
+const showTemporalValueField = computed(() => props.mutationType === 'update');
 
 // watchers
 watch(

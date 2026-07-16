@@ -1,20 +1,59 @@
 /**
- * Copyright 2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
-import { isEmpty } from 'lodash';
+import { capitalize, isEmpty } from 'lodash';
 
-export const typeMap = {
-  userCreate: { mutationType: 'create', entityType: 'user' },
-  userUpdate: { mutationType: 'update', entityType: 'user' },
+import i18n from '@/i18n';
+
+/**
+ * UI metadata for known event entity types, keyed by the config API's entity
+ * `name`. Any entity missing from this map falls back to the generic default,
+ * so a new config entity renders with no frontend code change (per-entity
+ * icon/color polish is an accepted small addition per new entity).
+ * @type {Object}
+ */
+const EVENT_ENTITY_META_MAP = {
+  account: {
+    icon: 'web_asset',
+    iconClasses: 'color-blue bg-lightblue',
+    plural: 'accounts',
+  },
+  agent: {
+    icon: 'smart_toy',
+    iconClasses: 'color-purple bg-lightpurple',
+    plural: 'agents',
+  },
+  user: {
+    icon: 'person_add_alt',
+    mutationIcons: { update: 'manage_accounts' },
+    iconClasses: 'text-success bg-lightgreen',
+    plural: 'users',
+  },
 };
 
-export function buildEventWorkflowPayload(form, eventTrigger) {
-  const { mutationType, entityType } = typeMap[eventTrigger];
+/**
+ * Generic UI metadata used for entity types that are not present in
+ * `EVENT_ENTITY_META_MAP`.
+ * @type {Object}
+ */
+const DEFAULT_EVENT_ENTITY_META = {
+  icon: 'event',
+  iconClasses: 'text-muted bg-light',
+};
+
+/**
+ * Builds the event payload for creating/updating a workflow event
+ * @param {Object} form form values
+ * @param {Object} entityContext `{ entityType, mutationType }` resolved from
+ *   the selection (create flow) or the loaded event (edit flow)
+ * @returns {Object} event payload, ready for POST/PUT
+ */
+export function buildEventWorkflowPayload(form, entityContext) {
+  const { mutationType, entityType } = entityContext;
   const owners = form.eventDetails.eventOwners
     .map((owner) => ({
       id: `managed/user/${owner._id}`,
@@ -85,8 +124,17 @@ export function buildEventWorkflowForm(event) {
   return formValues;
 }
 
-export function buildEventCertificationPayload(eventDetails, certDetails, certId, eventTrigger) {
-  const { mutationType, entityType } = typeMap[eventTrigger];
+/**
+ * Builds the event payload for creating/updating a certification event
+ * @param {Object} eventDetails event details form values
+ * @param {Object} certDetails certification template details
+ * @param {String|null} certId template id when editing an existing template
+ * @param {Object} entityContext `{ entityType, mutationType }` resolved from
+ *   the selection (create flow) or the loaded event (edit flow)
+ * @returns {Object} event payload, ready for POST/PUT
+ */
+export function buildEventCertificationPayload(eventDetails, certDetails, certId, entityContext) {
+  const { mutationType, entityType } = entityContext;
   const owners = eventDetails.eventOwners
     .map((owner) => ({
       id: `managed/user/${owner._id}`,
@@ -133,6 +181,52 @@ export function buildEventCertificationForm(event) {
     },
   };
   return formValues;
+}
+
+/**
+ * Composes an event trigger display name, e.g. "User Created": the entity
+ * `displayName` from the event config API followed by the capitalized
+ * mutation label from `governance.events.listView.<mutationType>`. Falls back
+ * to the capitalized raw mutation type when that i18n key is missing
+ * (vue-i18n returns the key path for missing keys, which is detected here),
+ * so an unknown mutation never renders a raw i18n key path.
+ * @param {String} displayName entity display name from the event config API
+ * @param {String} mutationType raw mutation type, e.g. 'create'
+ * @returns {String} composed trigger name, e.g. "User Created"
+ */
+export function getEventTriggerName(displayName, mutationType) {
+  const key = `governance.events.listView.${mutationType}`;
+  const translated = i18n.global.t(key);
+  const mutationLabel = translated === key
+    ? capitalize(mutationType)
+    : capitalize(translated);
+  return `${displayName} ${mutationLabel}`;
+}
+
+/**
+ * Returns the UI metadata (icon, icon classes, plural label) for an event
+ * entity type. Known entities have polished entries in
+ * `EVENT_ENTITY_META_MAP`; any other entity returns the generic default so
+ * new config entities render with no frontend code change.
+ * @param {String} entityType entity `name` from the event config API
+ * @param {String} [mutationType] mutation type, e.g. 'create', used to resolve
+ *   per-mutation icon overrides
+ * @returns {{icon: String, iconClasses: String, plural: String}} UI metadata
+ */
+export function getEventEntityMeta(entityType, mutationType = '') {
+  const meta = EVENT_ENTITY_META_MAP[entityType];
+  if (!meta) {
+    return {
+      icon: DEFAULT_EVENT_ENTITY_META.icon,
+      iconClasses: DEFAULT_EVENT_ENTITY_META.iconClasses,
+      plural: `${entityType}s`,
+    };
+  }
+  return {
+    icon: meta.mutationIcons?.[mutationType] || meta.icon,
+    iconClasses: meta.iconClasses,
+    plural: meta.plural,
+  };
 }
 
 export function getNameFromDisplayName(displayName) {

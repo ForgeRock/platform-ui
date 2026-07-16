@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -339,7 +339,7 @@ async function toggleMode(showBasic) {
   if (showBasic && checkIGAFilterWithinNLayers(igaFilter, 0, 2)) {
     isBasic.value = true;
     const parsedIgaFilter = JSON.parse(scriptEditorValue.value);
-    const response = convertFromIGAFilter(parsedIgaFilter, uniqueIndex);
+    const response = convertFromIGAFilter(parsedIgaFilter, uniqueIndex, props.ignoreTemporals, props.resourceName);
     queryFilter.value = response.convertedFilter;
     uniqueIndex = response.uniqueIndex;
     igaFilter = parsedIgaFilter;
@@ -390,13 +390,13 @@ function checkFilterString(filterString) {
 function loadFilter() {
   igaFilter = props.filterValue;
   if (!Object.keys(igaFilter).length) {
-    igaFilter = { or: [{ starts_with: { prefix: { literal: '' }, value: 'user.before.' } }] };
+    igaFilter = { or: [{ starts_with: { prefix: { literal: '' }, value: `${props.resourceName}.before.` } }] };
   }
   if (!checkIGAFilterWithinNLayers(igaFilter, 0, 2) || checkIGAFilterForArrays(JSON.stringify(igaFilter))) {
     allowBasicMode.value = false;
     toggleMode(false);
   }
-  const response = convertFromIGAFilter(cloneDeep(props.filterValue), 0, props.ignoreTemporals);
+  const response = convertFromIGAFilter(cloneDeep(props.filterValue), 0, props.ignoreTemporals, props.resourceName);
   queryFilter.value = cloneDeep(response.convertedFilter);
   uniqueIndex = response.uniqueIndex;
 }

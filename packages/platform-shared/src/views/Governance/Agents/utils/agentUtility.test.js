@@ -8,6 +8,7 @@
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import {
   getAgentTypeVariant, getAgentDisplayName, getAgentTemplateLabel, getMappingSystemKey, buildAgentPropertiesDisplay, buildAgentApplicationPayload,
+  buildAgentOnboardingEvent, AGENT_ONBOARDING_EVENT_NAME,
 } from './agentUtility';
 import agentConstants from './agentConstants';
 
@@ -165,6 +166,31 @@ describe('Agent Utility Functions', () => {
       expect(result.createdAt).toBe('');
       expect(result.status).toBe('');
       expect(result['provider.tenant']).toBe('');
+    });
+  });
+
+  describe('buildAgentOnboardingEvent', () => {
+    it('builds the agent-onboarding event payload with the form owners as full relationship refs', () => {
+      const event = buildAgentOnboardingEvent(['managed/user/cc3828af-b74a-4392-8d2f-d1b701ccee59']);
+      expect(event).toEqual({
+        action: { type: 'orchestration', name: 'agentOnboarding', parameters: {} },
+        name: 'Privilege Agent Onboarded',
+        condition: {
+          version: 'v2',
+          filter: { or: [{ is_not_null: 'account.after.application.aiAgentSource' }] },
+        },
+        description: 'This is an event that triggers when a PingOne Privilege agent is created in IGA.  It calls a workflow to handle agent classification and agent identity linking.',
+        entityType: 'agent',
+        mutationType: 'create',
+        owners: [{ id: 'managed/user/cc3828af-b74a-4392-8d2f-d1b701ccee59' }],
+        status: 'active',
+      });
+      expect(event.name).toBe(AGENT_ONBOARDING_EVENT_NAME);
+    });
+
+    it('keeps the environment-specific owner collection intact', () => {
+      const event = buildAgentOnboardingEvent(['managed/alpha_user/owner-1']);
+      expect(event.owners).toEqual([{ id: 'managed/alpha_user/owner-1' }]);
     });
   });
 });

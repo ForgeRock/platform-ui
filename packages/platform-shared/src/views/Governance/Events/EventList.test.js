@@ -1,13 +1,13 @@
 /**
- * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as EventApi from '@forgerock/platform-shared/src/api/governance/EventApi';
 import i18n from '@/i18n';
@@ -45,9 +45,58 @@ const getEventListResponse = {
   },
 };
 
+const accountEventListResponse = {
+  data: {
+    result: [
+      {
+        name: 'Account Creation Event',
+        description: 'Kicks off an orchestration when an account is created.',
+        entityType: 'account',
+        mutationType: 'create',
+        condition: {
+          operator: 'ALL',
+          operand: [],
+        },
+        action: {
+          type: 'orchestration',
+          name: 'AccountKickOff',
+        },
+        status: 'active',
+        owners: [],
+        id: 'aaaa-bbbb-cccc',
+      },
+    ],
+  },
+};
+
 describe('EventList', () => {
-  function mountComponent(props) {
+  beforeAll(() => {
+    // Shared jest i18n lacks governance.events; merge the admin-runtime keys.
+    i18n.global.mergeLocaleMessage('en', {
+      governance: {
+        events: {
+          listView: {
+            title: 'Governance Events',
+            subtitle: 'Trigger workflows or certifications based on identity events.',
+            eventType: 'Event Type',
+            eventTypeValue: '{entityType} {mutationType}',
+            action: 'Action',
+            create: 'created',
+            update: 'updated',
+            delete: 'deleted',
+            certification: 'Certification',
+            orchestration: 'Workflow',
+            errorGetData: 'There was an error retrieving events',
+            noProperties: 'There are no events to show',
+          },
+        },
+      },
+    });
+  });
+
+  function mountComponent(props, initialState) {
     mockModal();
+    setupTestPinia(initialState);
     const wrapper = mount(EventList, {
       attachTo: createAppContainer(document.body),
       global: {
@@ -154,6 +203,65 @@ describe('EventList', () => {
       wrapper.vm.toggleEvent('1', 'active');
       await flushPromises();
       expect(showSpy).toHaveBeenCalledWith('deactivateModalEvent');
+    });
+
+    it('renders the entity type column from the config displayName', async () => {
+      jest.spyOn(EventApi, 'getEventList').mockImplementation(() => Promise.resolve(accountEventListResponse));
+      // Distinguishable from the capitalize('account') fallback.
+      const wrapper = mountComponent({}, {
+        governance: {
+          eventConfig: {
+            entityTypes: [
+              {
+                name: 'account',
+                displayName: 'Azure AD Account',
+                actionTypes: ['orchestration'],
+                mutationTypes: ['create', 'update'],
+              },
+            ],
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.find('tbody tr').text()).toContain('Azure AD Account created');
+    });
+
+    it('renders the capitalize fallback when the config is unavailable', async () => {
+      jest.spyOn(EventApi, 'getEventList').mockImplementation(() => Promise.resolve(accountEventListResponse));
+      // default setupTestPinia leaves eventConfig null (stubbed setEventConfig
+      // never populates it), so the cell falls back to capitalize(entityType)
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      expect(wrapper.find('tbody tr').text()).toContain('Account created');
+    });
+
+    it('renders the capitalize fallback for an entity missing from the config', async () => {
+      jest.spyOn(EventApi, 'getEventList').mockImplementation(() => Promise.resolve(accountEventListResponse));
+      // config is present but has no account entity, so the cell falls back
+      // to capitalize(entityType)
+      const wrapper = mountComponent({}, {
+        governance: {
+          eventConfig: {
+            entityTypes: [
+              { name: 'user', displayName: 'User' },
+            ],
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.find('tbody tr').text()).toContain('Account created');
+    });
+
+    it('renders the header subtitle with the entity-neutral key', async () => {
+      jest.spyOn(EventApi, 'getEventList').mockImplementation(() => Promise.resolve(getEventListResponse));
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      expect(wrapper.text()).toContain('Trigger workflows or certifications based on identity events.');
+      expect(wrapper.text()).not.toContain('based on user events');
     });
   });
 });

@@ -65,7 +65,7 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </template>
             <template #cell(entityType)="{ item }">
-              {{ $t(`governance.events.listView.eventTypeValue`, { entityType: capitalize(item.entityType), mutationType: $t(`governance.events.listView.${item.mutationType}`) }) }}
+              {{ $t(`governance.events.listView.eventTypeValue`, { entityType: getEntityDisplayName(item), mutationType: $t(`governance.events.listView.${item.mutationType}`) }) }}
             </template>
             <template #cell(action)="{ item }">
               <BMedia
@@ -196,7 +196,7 @@ import {
   BMediaBody,
   BTable,
 } from 'bootstrap-vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
@@ -211,12 +211,14 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { getDisplayNamefromName } from '@forgerock/platform-shared/src/views/Governance/utils/events';
 import { getEventList, deleteEvent, updateEvent } from '@forgerock/platform-shared/src/api/governance/EventApi';
+import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
 import FrNewEventModal from './modals/NewEvent';
 import i18n from '@/i18n';
 
 // composables
 const { bvModal } = useBvModal();
 const router = useRouter();
+const governanceStore = useGovernanceStore();
 
 // Data
 const currentPage = ref(1);
@@ -288,6 +290,17 @@ function hideDeactivateConfirmModal() {
 function hideDeleteConfirmModal() {
   actionEventId = null;
   bvModal.value.hide('deleteEventModal');
+}
+
+/**
+ * Entity display name from the cached config, falling back to the capitalized type.
+ * @param {Object} item event row from the event list
+ * @returns {String} entity display name, e.g. 'Account' or 'User'
+ */
+function getEntityDisplayName(item) {
+  const configEntity = governanceStore.eventConfig?.entityTypes
+    ?.find((entity) => entity.name === item.entityType);
+  return configEntity?.displayName || capitalize(item.entityType);
 }
 
 /**
@@ -420,4 +433,10 @@ function sortChanged(sortContext) {
 }
 
 getData();
+
+// Best-effort config fetch: non-blocking, failures ignored (column falls back
+// to the capitalized type). Promise.resolve tolerates store-action test stubs.
+onMounted(() => {
+  Promise.resolve(governanceStore.setEventConfig()).catch(() => {});
+});
 </script>

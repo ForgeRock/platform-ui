@@ -85,10 +85,12 @@ import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import {
   createUnmanagedApplication, saveApplicationTask, updateApplication, getApplication,
 } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import { createEvent, getEventList } from '@forgerock/platform-shared/src/api/governance/EventApi';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import {
-  buildAgentApplicationPayload, buildAgentUpdatePayload, AGENT_CLASSIFICATION_TASK, IS_AGENT_SECRET_REQUIRED,
+  buildAgentApplicationPayload, buildAgentUpdatePayload, buildAgentOnboardingEvent,
+  AGENT_CLASSIFICATION_TASK, AGENT_ONBOARDING_EVENT_NAME, IS_AGENT_SECRET_REQUIRED,
 } from '../utils/agentUtility';
 import { useAgentConfig } from '../utils/useAgentConfig';
 import {
@@ -230,6 +232,23 @@ function onShown() {
 }
 
 /**
+ * Creates the agent-onboarding governance event when it does not already exist.
+ * Fire-and-forget: rejections are caught and surfaced with their specific error.
+ * @param {Array} ownerIds full owner relationship refs (e.g. 'managed/user/<uuid>'),
+ *   kept under the ownerIds name to match the app-payload owner derivation above
+ */
+async function ensureAgentOnboardingEvent(ownerIds) {
+  try {
+    const { data } = await getEventList({ queryFilter: `name eq '${AGENT_ONBOARDING_EVENT_NAME}'` });
+    if (data.totalCount === 0) {
+      await createEvent(buildAgentOnboardingEvent(ownerIds));
+    }
+  } catch (err) {
+    showErrorMessage(null, i18n.global.t('governance.agents.integration.errors.createEventError'));
+  }
+}
+
+/**
  * Creates apps for unconfigured subtypes, updates configured ones (typed secret
  * rotates the credential; derived refs echo back). Handshakes run server-side.
  */
@@ -288,6 +307,13 @@ async function configureSource() {
     }
     // Re-fetch so the subtype status in the card reflects the newly created applications.
     await fetchSourceApplications(props.source);
+
+    if (props.source === 'privilege' && applicationOwners.value.length) {
+      // Best-effort: the agent-onboarding event must not block or fail the
+      // configuration, so its own failure surfaces only its specific error.
+      // The event takes the full owner refs; app payloads take the bare ids.
+      ensureAgentOnboardingEvent(applicationOwners.value.map(({ _ref }) => _ref));
+    }
   } finally {
     isConfiguring.value = false;
   }

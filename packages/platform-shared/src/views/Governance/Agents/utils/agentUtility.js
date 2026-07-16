@@ -347,3 +347,29 @@ export const AGENT_CLASSIFICATION_TASK = {
     },
   },
 };
+
+/** The governance event created on privilege source configuration (name-matched for dedupe). */
+export const AGENT_ONBOARDING_EVENT_NAME = 'Privilege Agent Onboarded';
+
+/**
+ * Builds the agent-onboarding governance event created after privilege source
+ * configuration; owner refs are the full relationship refs chosen in the
+ * configuration form (collection varies by environment, e.g. managed/user).
+ * @param {Array} ownerRefs full owner relationship refs (e.g. 'managed/user/cc3828af-...')
+ * @returns {Object} governance event payload for EventApi.createEvent
+ */
+export function buildAgentOnboardingEvent(ownerRefs) {
+  return {
+    action: { type: 'orchestration', name: 'agentOnboarding', parameters: {} },
+    name: AGENT_ONBOARDING_EVENT_NAME,
+    condition: {
+      version: 'v2',
+      filter: { or: [{ is_not_null: 'account.after.application.aiAgentSource' }] },
+    },
+    description: 'This is an event that triggers when a PingOne Privilege agent is created in IGA.  It calls a workflow to handle agent classification and agent identity linking.',
+    entityType: 'agent',
+    mutationType: 'create',
+    owners: ownerRefs.map((ref) => ({ id: ref })),
+    status: 'active',
+  };
+}

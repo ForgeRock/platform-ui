@@ -32,6 +32,8 @@ export const governanceConditionOptions = {
   DoesNotContain: { label: i18n.global.t('filters.doesNotContain'), value: 'not_contains', type: ['string', 'array'] },
   Is: { label: i18n.global.t('filters.is'), value: 'equals', type: ['string', 'reference', 'boolean', 'number'] },
   IsNot: { label: i18n.global.t('filters.isNot'), value: 'not_equals', type: ['string', 'reference', 'number'] },
+  Exists: { label: i18n.global.t('filters.exists'), value: 'is_not_null', type: ['string', 'number', 'boolean', 'reference', 'array', 'int', 'managedObject'] },
+  DoesNotExist: { label: i18n.global.t('filters.doesNotExist'), value: 'is_null', type: ['string', 'number', 'boolean', 'reference', 'array', 'int', 'managedObject'] },
   StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'starts_with', type: ['string'] },
   EndsWith: { label: i18n.global.t('filters.endsWith'), value: 'ends_with', type: ['string'] },
   HasChanged: { label: i18n.global.t('filters.hasChanged'), value: 'has_changed', type: ['reference', 'string', 'number'] },

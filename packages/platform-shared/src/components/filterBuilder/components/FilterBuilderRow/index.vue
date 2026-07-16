@@ -137,6 +137,7 @@ export default {
       return this.depth === this.maxDepth - 1;
     },
     conditionIsPresent() {
+      if (['is_null', 'is_not_null'].includes(this.rule.operator)) return true;
       if (!this.operatorOptions.IsPresent) return false;
       return this.rule.operator === this.operatorOptions.IsPresent.value || this.rule.operator === this.operatorOptions.IsNotPresent.value;
     },
