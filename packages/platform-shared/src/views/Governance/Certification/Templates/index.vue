@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2026 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard no-body>
     <BCardHeader class="p-0">
@@ -89,10 +88,10 @@ to such license between the licensee and ForgeRock AS. -->
           :test-id="'certification-template-' + index"
           :edit-option="false"
           duplicate-option
-          :divider="isStatusPending(item)"
-          :delete-option="isStatusPending(item)"
+          divider
+          delete-option
           @duplicate-clicked="duplicateTemplate(item)"
-          @delete-clicked="openDeleteModal(item.id)">
+          @delete-clicked="openDeleteModal(item.id, item.status)">
           <template #custom-top-actions>
             <BDropdownItem
               @click="openRunModal(item.id)">
@@ -146,8 +145,21 @@ to such license between the licensee and ForgeRock AS. -->
       @load-template-list="search" />
     <FrDeleteModal
       :is-deleting="isDeleting"
+      :size="rowTemplateSelectedStatus !== 'pending' ? 'lg' : ''"
       :translated-item-type="$t('governance.templates.template')"
-      @delete-item="deleteTemplate" />
+      @delete-item="deleteTemplate">
+      <template
+        v-if="rowTemplateSelectedStatus !== 'pending'"
+        #below-body>
+        <FrAlert
+          class="mt-3 mb-0"
+          show
+          variant="warning"
+          :dismissible="false">
+          {{ $t('governance.templates.deleteActiveWarning') }}
+        </FrAlert>
+      </template>
+    </FrDeleteModal>
   </BCard>
 </template>
 <script>
@@ -178,6 +190,7 @@ import {
   getTemplateList,
   runPublishedTemplate,
 } from '@forgerock/platform-shared/src/api/governance/TemplateApi';
+import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import FrRunTemplateModal from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/modals/RunTemplateModal';
 import FrTemplateTypeModal from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/modals/TemplateTypeModal';
 import FrScheduleTemplateModal from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/modals/ScheduleTemplateModal';
@@ -195,6 +208,7 @@ export default {
     BMediaBody,
     BTable,
     FrActionsCell,
+    FrAlert,
     FrDeleteModal,
     FrIcon,
     FrTemplateTypeModal,
@@ -226,6 +240,7 @@ export default {
       paginationPage: 1,
       rowTemplateSelectedId: null,
       rowTemplateSelectedSchedule: null,
+      rowTemplateSelectedStatus: '',
       fields: [
         {
           key: 'name',
@@ -317,11 +332,9 @@ export default {
         this.isLoading = false;
       });
     },
-    isStatusPending(item) {
-      return item.status === 'pending';
-    },
-    openDeleteModal(templateId) {
+    openDeleteModal(templateId, templateStatus) {
       this.rowTemplateSelectedId = templateId;
+      this.rowTemplateSelectedStatus = templateStatus;
       this.$bvModal.show('deleteModal');
     },
     openRunModal(templateId) {
