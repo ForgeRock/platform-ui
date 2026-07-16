@@ -3205,12 +3205,9 @@
     "corsDescription": "Allow trusted domains to make requests to Ping Identity-protected resources.",
     "deleteCorsConfigError": "Unable to delete CORS Configuration",
     "getCorsConfigsDataError": "Unable to retrieve CORS Configurations",
-    "getServiceStatusError": "Failed to retrieve CORS Service status",
-    "saveServiceStatusError": "Unable to update CORS Service status",
     "saveCorsConfigError": "Unable to save CORS Configuration",
     "noCorsConfigText": "You haven't added any CORS Configurations",
     "successSaving": "Successfully saved CORS Configuration",
-    "successSavingService": "Successfully saved CORS Service status",
     "corsConfigModal": {
       "chooseTemplate": "Choose a template for your new CORS Configuration",
       "sdk": "Ping SDK",
@@ -3240,11 +3237,6 @@
     },
     "deleteCorsConfigModal": {
       "successDeleting": "Successfully deleted CORS Configuration"
-    },
-    "updateCorsServiceModal": {
-      "activateService": "Activate CORS Service?",
-      "configAdded": "You've added a CORS configuration but the CORS service is currently deactivated. Do you want to activate the CORS service now?",
-      "skipThis": "Skip this"
     },
     "getAllCorsConfigsDataError": "Unable to retrieve CORS configurations."
   },
@@ -4388,16 +4380,16 @@
       },
       "configUpdateSuccess": "Config update underway",
       "trustedCertificates": {
-          "noDataTitle": "You haven't configured any Trusted Certificates for this tenant",
-          "noDataSubtitle": "Add Trusted Certificates for this tenant",
-          "trustedCertificateDisplayName": "Trusted Certificate",
-          "subjectTableFieldName": "Subject",
-          "expireTimeTableFieldName": "Expiry Time",
-          "typeTableFieldName": "Type",
-          "issuerTableFieldName": "Issuer",
-          "errorCreatingTrustedCertificate": "Could not create trusted certificate",
-          "errorDeletingTrustedCertificate": "Could not delete trusted certificate",
-          "certificateCreatedSuccess": "Certificate successfully created"
+        "noDataTitle": "You haven't configured any Trusted Certificates for this tenant",
+        "noDataSubtitle": "Add Trusted Certificates for this tenant",
+        "trustedCertificateDisplayName": "Trusted Certificate",
+        "subjectTableFieldName": "Subject",
+        "expireTimeTableFieldName": "Expiry Time",
+        "typeTableFieldName": "Type",
+        "issuerTableFieldName": "Issuer",
+        "errorCreatingTrustedCertificate": "Could not create trusted certificate",
+        "errorDeletingTrustedCertificate": "Could not delete trusted certificate",
+        "certificateCreatedSuccess": "Certificate successfully created"
       },
       "createTrustedCertificateModal": {
         "title": "Upload Trusted Certificate",

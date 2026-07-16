@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,9 @@ of the MIT license. See the LICENSE file for details. -->
                 </BBadge>
               </template>
             </BCol>
-            <BCol class="text-right">
+            <BCol
+              v-if="!listItem.hideToggle"
+              class="text-right">
               <template v-if="listItem.value">
                 <BButton
                   @click="changeState(key, false, listItem.route)"
@@ -81,6 +83,7 @@ const props = defineProps({
         hostedPages: {
           title: 'Status',
           value: true,
+          hideToggle: true, // optional flag to hide the enable/disable button
         },
       }
      */

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -78,5 +78,30 @@ describe('SettingsCardList', () => {
     expect(wrapper.emitted().change[0][0].key).toBe('key');
     expect(wrapper.emitted().change[0][0].value).toBe(true);
     expect(wrapper.emitted().change[0][0].route).toBe(undefined);
+  });
+
+  it('Does not show toggle button when hideToggle is true', () => {
+    wrapper = setup({
+      listItems: {
+        example: {
+          title: 'Example',
+          value: true,
+          hideToggle: true,
+        },
+      },
+    });
+    expect(wrapper.find('button').exists()).toBeFalsy();
+  });
+
+  it('Shows toggle button when hideToggle is not set', () => {
+    wrapper = setup({
+      listItems: {
+        example: {
+          title: 'Example',
+          value: true,
+        },
+      },
+    });
+    expect(wrapper.find('button').exists()).toBeTruthy();
   });
 });
