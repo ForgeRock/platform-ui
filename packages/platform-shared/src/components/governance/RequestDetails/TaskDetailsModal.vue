@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
+    :aria-label="`${$t('governance.requestModal.titles.taskDetails')}: ${taskDetails?.name}`"
     :ok-title="$t('common.done')"
     id="TaskDetailsModal"
     no-close-on-backdrop

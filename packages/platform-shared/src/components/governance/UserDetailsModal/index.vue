@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
+    :aria-label="userFullName"
     :ok-title="$t('common.done')"
     body-class="p-0"
     content-class="border-0"

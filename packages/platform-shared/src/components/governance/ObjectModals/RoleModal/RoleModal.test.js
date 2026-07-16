@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -68,5 +68,16 @@ describe('AccountModal', () => {
   it('should show role owner', async () => {
     const owner = findByTestId(wrapper, 'role-owner');
     expect(owner.text()).toContain('owner username');
+  });
+
+  it('sets aria-label combining subtitle and role name', () => {
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toBe('governance.certificationTask.roleDetails: test role');
+  });
+
+  it('uses fallback label when role has no name', async () => {
+    await wrapper.setProps({ roleDetails: { role: {} } });
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toBe('governance.certificationTask.roleDetails');
   });
 });

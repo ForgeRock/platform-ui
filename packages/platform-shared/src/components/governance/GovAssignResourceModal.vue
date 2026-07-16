@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-slot="{ meta: { valid } }"
     as="span">
     <BModal
+      :aria-label="modalTitle"
       cancel-variant="outline-secondary"
       :id="modalId"
       no-close-on-backdrop

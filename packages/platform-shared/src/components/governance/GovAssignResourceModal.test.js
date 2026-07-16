@@ -100,6 +100,13 @@ describe('GovAssignResourceModal Component', () => {
     );
   });
 
+  it('sets an accessible aria-label on the modal', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toContain('Entitlements');
+  });
+
   it('changes step when next is clicked', async () => {
     const wrapper = mountComponent({ parentResourceName: 'role' });
     await flushPromises();

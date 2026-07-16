@@ -57,6 +57,22 @@ describe('EntitlementModal', () => {
     expect(wrapper.find('#CertificationTaskEntAccountModal').exists()).toBeTruthy();
   });
 
+  it('sets aria-label combining app name and entitlement display name when available', async () => {
+    await wrapper.setProps({
+      entitlement: {
+        ...entitlement,
+        descriptor: { idx: { '/entitlement': { displayName: 'My Entitlement' } } },
+      },
+    });
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toContain('My Entitlement');
+  });
+
+  it('sets aria-label combining header and display name when entitlement has no descriptor name', () => {
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toContain('governance.certificationTask.entitlementModal.name');
+  });
+
   it('does not fetch schema when entitlement has no applicationId or objectType', async () => {
     await flushPromises();
     expect(ApplicationsApi.getObjectTypeSchema).not.toHaveBeenCalled();

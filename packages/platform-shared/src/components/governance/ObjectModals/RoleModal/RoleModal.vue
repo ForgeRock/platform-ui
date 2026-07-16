@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     :id="modalId"
+    :aria-label="roleObj?.name ? `${$t('governance.certificationTask.roleDetails')}: ${roleObj.name}` : $t('governance.certificationTask.roleDetails')"
     body-class="p-0"
     no-body
     no-close-on-backdrop

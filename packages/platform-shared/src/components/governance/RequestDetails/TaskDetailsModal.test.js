@@ -36,6 +36,18 @@ function setup(props) {
 }
 
 describe('TaskDetailsModal', () => {
+  it('sets aria-label combining subtitle and task name when provided', () => {
+    wrapper = setup();
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toBe('governance.requestModal.titles.taskDetails: Sample Task');
+  });
+
+  it('shows subtitle with undefined when task has no name', () => {
+    wrapper = setup({ taskDetails: { ...TASK_DETAILS, name: undefined } });
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toBe('governance.requestModal.titles.taskDetails: undefined');
+  });
+
   it('renders task details correctly', () => {
     wrapper = setup();
     expect(wrapper.find('.modal-title').text()).toBe(TASK_DETAILS.name);

@@ -11,21 +11,10 @@ of the MIT license. See the LICENSE file for details. -->
     :id="modalId"
     no-close-on-backdrop
     scrollable
-    size="lg">
-    <template #modal-header="{ close }">
-      <h5 class="modal-title">
-        {{ $t('governance.certificationTask.lineItemCommentsModal.title', { count: comments.length }) }}
-      </h5>
-      <BButtonClose
-        variant="link"
-        class="ml-auto"
-        @click="close">
-        <FrIcon
-          name="close"
-          icon-class="md-24" />
-      </BButtonClose>
-    </template>
-
+    size="lg"
+    :title="$t('governance.certificationTask.lineItemCommentsModal.title', { count: comments.length })"
+    title-class="h5"
+    title-tag="h2">
     <!-- Loading spinner -->
     <template v-if="!comments.length">
       <FrSpinner class="py-5" />
@@ -123,7 +112,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import dayjs from 'dayjs';
 import {
-  BButtonClose,
   BModal,
   BTable,
   BButton,
@@ -138,7 +126,6 @@ export default {
   name: 'CommentsModal',
   components: {
     BButton,
-    BButtonClose,
     BImg,
     BMedia,
     BModal,

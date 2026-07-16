@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
+    :aria-label="appName ? `${$t('governance.entitlements.entitlementDetails')}: ${appName}` : $t('governance.entitlements.entitlementDetails')"
     body-class="p-0"
     content-class="border-0"
     :id="modalId"

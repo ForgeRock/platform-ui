@@ -32,6 +32,20 @@ describe('AccountModal', () => {
     expect(wrapper.vm.grant).toStrictEqual({ id: 'test' });
   });
 
+  it('sets aria-label combining subtitle and account display name when available', async () => {
+    await wrapper.setProps({
+      grant: {
+        id: 'test',
+        descriptor: { idx: { '/account': { displayName: 'Test Account' } } },
+      },
+    });
+    expect(wrapper.find('#CertificationTaskAccountModal').attributes('arialabel')).toBe('governance.accounts.accountDetails: Test Account');
+  });
+
+  it('shows subtitle only when display name is absent', () => {
+    expect(wrapper.find('#CertificationTaskAccountModal').attributes('arialabel')).toBe('governance.accounts.accountDetails');
+  });
+
   it('does not fetch schema when grant has no applicationId or objectType', async () => {
     await flushPromises();
     expect(ApplicationsApi.getObjectTypeSchema).not.toHaveBeenCalled();

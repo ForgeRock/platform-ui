@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
+    :aria-label="violation?.policyRule?.name ? `${$t('common.reviewers')}: ${violation.policyRule.name}` : $t('common.reviewers')"
     :ok-title="$t('common.ok')"
     id="ViolationReviewersModal"
     no-close-on-backdrop

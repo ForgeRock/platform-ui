@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -29,5 +29,14 @@ describe('ApplicationModal', () => {
     const fullName = wrapper.vm.getFullName('first', 'last');
 
     expect(fullName).toBe('common.userFullName');
+  });
+
+  it('sets aria-label combining display name and application name when provided', async () => {
+    await wrapper.setProps({ application: { id: 'test', name: 'My App' } });
+    expect(wrapper.find('#CertificationTaskApplicationModal').attributes('arialabel')).toContain('My App');
+  });
+
+  it('falls back to translated string when application has no name', () => {
+    expect(wrapper.find('#CertificationTaskApplicationModal').attributes('arialabel')).toBe('common.application');
   });
 });

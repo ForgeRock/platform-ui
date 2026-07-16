@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
+    :aria-label="$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title')"
     body-class="p-0"
     :footer-class="footerClass"
     content-class="border-0"

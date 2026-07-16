@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -72,6 +72,18 @@ describe('UserEntitlementModal', () => {
       displayName: 'test 2',
     },
   ];
+
+  it('sets aria-label combining subtitle and application name when grant has one', () => {
+    const wrapper = mountComponent({ grant: { application: { name: 'My App' } } });
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toBe('Entitlement Details: My App');
+  });
+
+  it('shows subtitle only when grant has no application name', () => {
+    const wrapper = mountComponent({ grant: {} });
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('ariaLabel')).toBe('Entitlement Details');
+  });
 
   it('has a tab for entitlement details and a tab for account details', () => {
     const wrapper = mountComponent({ grant: { account: true } });

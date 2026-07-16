@@ -8,20 +8,10 @@ of the MIT license. See the LICENSE file for details. -->
     :id="modalId"
     no-close-on-backdrop
     size="lg"
+    :title="$t('governance.certificationTask.lineItemCommentsModal.addComment')"
+    title-class="h5"
+    title-tag="h2"
     @hidden="resetModal">
-    <template #modal-header="{ close }">
-      <h5 class="modal-title">
-        {{ $t('governance.certificationTask.lineItemCommentsModal.addComment') }}
-      </h5>
-      <BButtonClose
-        variant="link"
-        class="ml-auto"
-        @click="close">
-        <FrIcon
-          name="close"
-          icon-class="md-24" />
-      </BButtonClose>
-    </template>
     <FrTextArea
       v-model="comment"
       name="comment"
@@ -46,21 +36,17 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BButtonClose,
   BModal,
   BButton,
 } from 'bootstrap-vue';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 
 export default {
   name: 'AddCommentModal',
   components: {
-    BButtonClose,
     FrButtonWithSpinner,
     BModal,
-    FrIcon,
     FrTextArea,
     BButton,
   },

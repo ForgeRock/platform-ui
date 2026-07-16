@@ -10,20 +10,10 @@ of the MIT license. See the LICENSE file for details. -->
     :id="modalId"
     no-close-on-backdrop
     scrollable
-    size="lg">
-    <template #modal-header="{ close }">
-      <h5 class="modal-title">
-        {{ $t('governance.certificationTask.lineItemReviewersModal.title') }}
-      </h5>
-      <BButtonClose
-        variant="link"
-        class="ml-auto"
-        @click="close">
-        <FrIcon
-          name="close"
-          icon-class="md-24" />
-      </BButtonClose>
-    </template>
+    size="lg"
+    :title="$t('governance.certificationTask.lineItemReviewersModal.title')"
+    title-class="h5"
+    title-tag="h2">
     <div>
       <BTable
         class="m-0"
@@ -137,7 +127,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BButtonClose,
   BModal,
   BTable,
   BButton,
@@ -156,7 +145,6 @@ import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/ty
 export default {
   name: 'ReviewersModal',
   components: {
-    BButtonClose,
     BModal,
     BTable,
     FrIcon,

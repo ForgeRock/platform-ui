@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -302,6 +302,10 @@ describe('EditReviewerModal', () => {
       },
     });
     expect(wrapper.find('#CertificationTaskEditReviewerEntitlementModal').exists()).toBeTruthy();
+  });
+
+  it('sets an accessible aria-label on the modal', () => {
+    expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').attributes('arialabel')).toBe('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title');
   });
 
   it('getMappedPermissions method should map correctly reviewer permissions when reviewer change', async () => {
