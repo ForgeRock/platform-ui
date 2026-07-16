@@ -6079,10 +6079,6 @@
     "title": "Identity Verification",
     "description": "Configure services used to verify user identity and device trust for this realm.",
     "rows": {
-      "securityQuestions": "Security Questions",
-      "securityQuestionsDescription": "Verify user identity using challenge questions.",
-      "androidKeyAttestation": "Android Key Attestation",
-      "androidKeyAttestationDescription": "Validate Android device integrity during authentication.",
       "jumio": "Jumio",
       "jumioDescription": "Verify user identity using government ID and biometric validation.",
       "oneSpan": "OneSpan",
@@ -6184,7 +6180,9 @@
       "webauthnProfileEncryption": "WebAuthn Storage & Encryption",
       "webauthnProfileEncryptionDescription": "Configure encryption for stored WebAuthn device profile data.",
       "deviceBinding": "Device Binding",
-      "deviceBindingDescription": "Configure device binding used to associate trusted devices with user identities."
+      "deviceBindingDescription": "Configure device binding used to associate trusted devices with user identities.",
+      "androidKeyAttestation": "Android Key Attestation",
+      "androidKeyAttestationDescription": "Validate Android device integrity during authentication."
     }
   },
   "pushAuthentication": {
