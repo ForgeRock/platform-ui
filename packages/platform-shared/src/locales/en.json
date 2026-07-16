@@ -3084,6 +3084,7 @@
       "editSchedule": "Edit Schedule",
       "editTemplate": "Edit Template",
       "noTemplates": "No Templates",
+      "deleteActiveWarning": "This certification template has been used to create existing certification campaigns. Those campaigns will be unaffected by this deletion, but be sure this is the template you wish to delete before doing so.",
       "runPublishedTemplateConfirm": "Are you sure you want to run this campaign now? This will send notifications to all certifiers.",
       "errors": {
         "errorDeletingTemplate": "Error deleting template",

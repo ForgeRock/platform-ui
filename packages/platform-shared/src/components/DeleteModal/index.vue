@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="text-break"
     :id="id"
     :ref="id"
+    :size="size"
     :static="isTesting"
     @cancel="$emit('cancel-delete')"
     @hidden="$emit('hidden')"
@@ -25,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else>
       {{ $t('deletePanel.body', { type: translatedItemType.toLowerCase() }) }}
     </div>
+    <slot name="below-body" />
     <template #modal-footer="{ cancel }">
       <BButton
         v-if="!isDeleting"
@@ -99,6 +101,11 @@ export default {
     isTesting: {
       type: Boolean,
       default: false,
+    },
+    size: {
+      type: String,
+      default: '',
+      validator: (value) => ['sm', 'md', 'lg', 'xl', ''].includes(value),
     },
   },
 };

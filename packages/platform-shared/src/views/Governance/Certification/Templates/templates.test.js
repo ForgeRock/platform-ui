@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import {
@@ -195,12 +194,6 @@ describe('test with shallow mount', () => {
           expect(getTemplateList).toHaveBeenCalled();
         });
       });
-      describe('isStatusPending', () => {
-        it('should set the new template id to rowTemplateSelectedId', () => {
-          expect(wrapper.vm.isStatusPending({ status: 'active', id: 'testId' })).toBeFalsy();
-          expect(wrapper.vm.isStatusPending({ status: 'pending', id: 'testId' })).toBeTruthy();
-        });
-      });
       describe('openDeleteModal', () => {
         it('should set the new template id to rowTemplateSelectedId', () => {
           wrapper.vm.openDeleteModal('templateIdTest');
@@ -209,6 +202,14 @@ describe('test with shallow mount', () => {
         it('should call $bvModal to show the delete modal', () => {
           wrapper.vm.openDeleteModal();
           expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('deleteModal');
+        });
+        it('should set rowTemplateSelectedStatus to active when status is active', () => {
+          wrapper.vm.openDeleteModal('templateIdTest', 'active');
+          expect(wrapper.vm.rowTemplateSelectedStatus).toBe('active');
+        });
+        it('should set rowTemplateSelectedStatus to pending when status is pending', () => {
+          wrapper.vm.openDeleteModal('templateIdTest', 'pending');
+          expect(wrapper.vm.rowTemplateSelectedStatus).toBe('pending');
         });
       });
       describe('openRunModal', () => {
@@ -371,10 +372,11 @@ describe('test with mount', () => {
     deleteCell.trigger('click');
     await flush();
 
-    expect(deleteSpy).toHaveBeenCalledWith('859be895-0211-4992-bfb7-test');
+    expect(deleteSpy).toHaveBeenCalledWith('859be895-0211-4992-bfb7-test', 'pending');
 
-    const deleteCellActive = findByTestId(wrapper, 'dropdown-delete-certification-template-1');
-    expect(deleteCellActive.exists()).toBeFalsy();
+    await toggleActionsMenu(wrapper, 1);
+    const deleteCellActive = findByTestId(domWrapper, 'dropdown-delete-certification-template-1');
+    expect(deleteCellActive.exists()).toBeTruthy();
   });
   it('should show noData component when there are no templates', async () => {
     wrapper.vm.loadTemplateList({ data: { result: [], totalHits: 0 } }, 0);
