@@ -129,7 +129,7 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
 
     if (resourceIsUser) {
       queryParams.fields = 'application,entitlement,id,descriptor,glossary';
-      queryParams.sortKeys = 'assignment.name';
+      queryParams.sortKeys = 'descriptor.idx./entitlement.displayName';
       const { data } = await searchCatalog(queryParams, payload, !isEndUser);
       return data?.result.map((result) => ({ value: result.id, text: get(result, 'descriptor.idx./entitlement.displayName') })) || [];
     }

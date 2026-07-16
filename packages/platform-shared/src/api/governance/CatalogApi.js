@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -55,7 +55,7 @@ export function searchCatalogEntitlements(resource, params = {}) {
     fields: 'descriptor,assignment',
     pageSize: 10,
     pagedResultsOffset: 0,
-    sortKeys: '-assignment.name',
+    sortKeys: '-descriptor.idx./entitlement.displayName',
     action: 'search',
   };
   const payload = {
