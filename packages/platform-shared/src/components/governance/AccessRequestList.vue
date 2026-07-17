@@ -93,14 +93,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="mx-1"
             aria-hidden="true">|</span>
           <FrIcon
-            v-if="item.rawData.decision?.outcome === 'provisioned'"
-            icon-class="text-success mr-1"
-            name="check_circle" />
-          <FrIcon
-            v-else
-            icon-class="text-danger mr-1"
-            name="cancel" />
-          <span>{{ item.rawData.decision?.outcome === 'provisioned' ? $t('governance.outcomes.provisioned') : $t('governance.outcomes.notProvisioned') }}</span>
+            :icon-class="`${outcomeDisplay(item.rawData.decision?.outcome).iconClass} mr-1`"
+            :name="outcomeDisplay(item.rawData.decision?.outcome).icon" />
+          <span>{{ $t(outcomeDisplay(item.rawData.decision?.outcome).labelKey) }}</span>
         </div>
       </template>
       <template #cell(date)="{ item }">
@@ -176,6 +171,16 @@ const prop = defineProps({
 });
 
 const emit = defineEmits(['open-detail']);
+
+const outcomeMap = {
+  provisioned: { icon: 'check_circle', iconClass: 'text-success', labelKey: 'governance.outcomes.provisioned' },
+  fulfilled: { icon: 'check_circle', iconClass: 'text-success', labelKey: 'governance.outcomes.fulfilled' },
+};
+const defaultOutcome = { icon: 'cancel', iconClass: 'text-danger', labelKey: 'governance.outcomes.notProvisioned' };
+
+function outcomeDisplay(outcome) {
+  return outcomeMap[outcome] || defaultOutcome;
+}
 
 const items = ref([]);
 const isAutoIdEnabled = computed(() => prop.autoIdSettings?.enableAutoId);
