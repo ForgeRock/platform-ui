@@ -13,8 +13,8 @@ import NotificationMessagesModal from './NotificationMessagesModal';
 expect.extend(toHaveNoViolations);
 
 const testMessages = [
-  { timeStamp: '2026-05-07T14:30:00.000Z', comment: 'First message' },
-  { timeStamp: '2026-05-08T09:15:00.000Z', comment: 'Second message' },
+  { date: '2026-05-07T14:30:00.000Z', message: 'First message' },
+  { date: '2026-05-08T09:15:00.000Z', message: 'Second message' },
 ];
 
 function mountComponent(props = {}) {

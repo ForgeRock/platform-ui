@@ -54,10 +54,10 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(message)="{ item }">
           <div class="media-body my-2 pr-5 border-bottom">
             <div class="text-muted mb-1 small">
-              {{ formatDate(item.timeStamp) }}
+              {{ formatDate(item.date) }}
             </div>
             <p class="mb-0">
-              {{ item.comment }}
+              {{ item.message }}
             </p>
           </div>
         </template>
