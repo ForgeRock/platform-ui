@@ -211,6 +211,15 @@ describe('EntitlementsTab', () => {
     return wrapper;
   }
 
+  it('passes excludeDisconnected to FrAppAndObjectType', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+    wrapper.find('button.btn-primary').trigger('click');
+    await flushPromises();
+    const appAndObjectType = wrapper.findComponent({ name: 'AppAndObjectType' });
+    expect(appAndObjectType.props('excludeDisconnected')).toBe(true);
+  });
+
   it('displays a button to add entitlements', async () => {
     wrapper = mountComponent();
     await flushPromises();
