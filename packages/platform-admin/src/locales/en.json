@@ -3845,12 +3845,12 @@
       "notApplied": "ESV \"{id}\" has not been applied"
     },
     "engineChoice": {
-      "description": "A new script engine for Journey Decision nodes introduces new features and functions. You can create a script using the new version or use the previous one.",
+      "description": "The Next Generation script engine introduces features and functions not available in the Legacy script engine.",
       "legacyTitle": "Legacy",
-      "legacyEngineChoice": "Use the legacy Journey Node scripting engine with existing features and functions.",
+      "legacyEngineChoice": "Use the legacy script engine with existing features and functions.",
       "nextGenerationTitle": "Next Generation",
-      "nextGenerationChoice": "Take advantage of the enhanced scripting engine with new features and functions.",
-      "scriptUsesNewGeneration": "This script uses the next generation scripting engine.",
+      "nextGenerationChoice": "Take advantage of the enhanced script engine with new features and functions.",
+      "scriptUsesNewGeneration": "This script uses the next generation script engine.",
       "selectEngineTitle": "Choose Script Engine",
       "title": "Script Engine"
     },
