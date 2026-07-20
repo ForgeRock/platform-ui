@@ -7,12 +7,24 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
+import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import i18n from '@/i18n';
 import GovAssignResourceModal from './GovAssignResourceModal';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
 }));
+
+jest.mock('lodash', () => ({
+  ...jest.requireActual('lodash'),
+  debounce: (fn) => fn,
+}));
+
+jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
+
+EntitlementApi.getApplicationList.mockResolvedValue({
+  data: { result: [] },
+});
 
 mockValidation(['required']);
 
@@ -29,8 +41,36 @@ const mountComponent = (propsData = {}) => mount(GovAssignResourceModal, {
 });
 
 describe('GovAssignResourceModal Component', () => {
+  it('queries applications via getApplicationList with disconnected filter', async () => {
+    mountComponent({ parentResourceName: 'role' });
+    await flushPromises();
+
+    expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
+      'application',
+      expect.objectContaining({
+        queryFilter: expect.stringContaining('!(application.isDisconnected eq "true")'),
+      }),
+    );
+  });
+
+  it('queries applications with name filter when searching', async () => {
+    const wrapper = mountComponent({ parentResourceName: 'role' });
+    await flushPromises();
+
+    const resourceSelect = wrapper.findComponent('[label="Select application"]');
+    resourceSelect.vm.debouncedSearch('myapp');
+    await flushPromises();
+
+    expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
+      'application',
+      expect.objectContaining({
+        queryFilter: expect.stringContaining('application.name co "myapp"'),
+      }),
+    );
+  });
+
   it('changes step when next is clicked', async () => {
-    const wrapper = mountComponent();
+    const wrapper = mountComponent({ parentResourceName: 'role' });
     await flushPromises();
     expect(wrapper.find('header').text()).toContain('Grant Entitlements');
 
@@ -45,7 +85,7 @@ describe('GovAssignResourceModal Component', () => {
   });
 
   it('enables grant button when application is selected', async () => {
-    const wrapper = mountComponent();
+    const wrapper = mountComponent({ parentResourceName: 'role' });
     await flushPromises();
 
     const selectApplicationField = wrapper.findComponent('[label="Select application"]');

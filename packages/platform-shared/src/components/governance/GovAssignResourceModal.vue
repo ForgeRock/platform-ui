@@ -55,7 +55,11 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="stepIndex === STEPS.ChooseApplication">
         <FrGovResourceSelect
           v-model="selectedApplication"
+          name="applicationSelect"
           resource-path="application"
+          :option-function="applicationOptionFunction"
+          :query-param-function="buildApplicationQueryParamFunction"
+          :resource-function="getApplicationList"
           @selected:option="setValuesFromApplicationSelect">
           <template
             v-for="(slotName, index) in ['singleLabel', 'option']"
@@ -150,6 +154,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
+import { getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -218,6 +223,23 @@ const stepDescription = computed(() => {
   }
   return i18n.global.t('governance.resource.assignResourceModal.stepTwoDescription', { appName: selectedApplicationName.value, resource: props.resourceType, managedResource: props.parentResourceName });
 });
+
+function buildApplicationQueryParamFunction(query) {
+  const baseFilter = 'application.objectTypes.accountAttribute co "" and !(application.isDisconnected eq "true")';
+  return {
+    pageSize: 10,
+    queryFilter: query ? `application.name co "${query}" and ${baseFilter}` : baseFilter,
+  };
+}
+
+function applicationOptionFunction(resource) {
+  return {
+    ...resource.application,
+    id: resource.id,
+    text: resource.application?.name,
+    value: `managed/application/${resource.id}`,
+  };
+}
 
 function getEntitlements(searchValue) {
   const applicationPath = selectedApplication.value.split('/');

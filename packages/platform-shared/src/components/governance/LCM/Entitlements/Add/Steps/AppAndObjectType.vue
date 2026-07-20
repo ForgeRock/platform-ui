@@ -72,6 +72,10 @@ import { onImageError } from '@forgerock/platform-shared/src/utils/applicationIm
 const emit = defineEmits(['input', 'selected:application']);
 
 const props = defineProps({
+  excludeDisconnected: {
+    type: Boolean,
+    default: false,
+  },
   overrideScopePermission: {
     type: Boolean,
     default: false,
@@ -103,9 +107,11 @@ function optionFunction(resource) {
  * @param {Object} query - The query search term.
  */
 function queryParamFunction(query) {
-  const baseFilter = 'application.objectTypes.accountAttribute co ""';
+  const filters = ['application.objectTypes.accountAttribute co ""'];
+  if (props.excludeDisconnected) filters.push('!(application.isDisconnected eq "true")');
+  const baseFilter = filters.join(' and ');
   const queryFilter = query
-    ? `application.name co "${query}"" and ${baseFilter}`
+    ? `application.name co "${query}" and ${baseFilter}`
     : baseFilter;
   return {
     pageSize: 10,

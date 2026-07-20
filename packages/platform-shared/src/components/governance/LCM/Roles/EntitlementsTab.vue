@@ -125,6 +125,7 @@ of the MIT license. See the LICENSE file for details. -->
       @close="hideEntitlementModal()">
       <FrAppAndObjectType
         v-if="step === 0"
+        exclude-disconnected
         override-scope-permission
         :label-text="$t('governance.entitlements.chooseEntitlementApplication')"
         @selected:application="application = $event"

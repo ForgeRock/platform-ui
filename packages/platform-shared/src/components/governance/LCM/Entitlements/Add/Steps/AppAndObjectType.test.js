@@ -67,6 +67,23 @@ describe('AppAndObjectType', () => {
     );
   });
 
+  it('excludes disconnected apps when excludeDisconnected is true', async () => {
+    wrapper = mount(AppAndObjectType, {
+      global: { plugins: [i18n] },
+      props: { excludeDisconnected: true },
+    });
+    await flushPromises();
+
+    expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
+      'application',
+      {
+        pageSize: 10,
+        queryFilter: 'application.objectTypes.accountAttribute co "" and !(application.isDisconnected eq "true")',
+      },
+      false,
+    );
+  });
+
   it('selecting application type sets object type options and emits event', async () => {
     wrapper = mountComponent();
     await flushPromises();
