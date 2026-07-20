@@ -86,8 +86,7 @@ Then('the password requirements are displayed as:', (dataTable) => {
     const [name, status] = requirement;
     const isMet = status.toLowerCase() === 'met';
 
-    cy.contains('span[aria-hidden="true"]', name)
-      .closest('li')
+    cy.contains('li.fr-policy-list-item', name)
       .should(isMet ? 'have.class' : 'not.have.class', 'opacity-50');
   });
 });

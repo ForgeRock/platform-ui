@@ -12,7 +12,9 @@ Feature: Admin Login
     Then page title is "Sign In"
     And the value of the "User Name" field is ""
     And the value of the "Password" field is ""
-    
+
+  # FLAKY TEST detected within: IAM-11605
+  @skip
   @C29559
   @cloud @forgeops
   Scenario: Cannot login with empty admin password
@@ -50,7 +52,7 @@ Feature: Admin Login
     And user types the stored value of "endUserPassword" in "Password" field
     And user clicks on "Next" button
     Then "Login failure" error message is displayed
- 
+
   @C29563
   @forgeops
   Scenario: End user redirected to their end user dashboard after logging in from the admin login page - Forgeops only
@@ -80,6 +82,8 @@ Feature: Admin Login
     And user clicks on "Next" button
     Then admin dashboard is loaded
 
+  # FLAKY TEST detected within: IAM-11605
+  @skip
   @C29567
   @cloud
   Scenario: Admin logs in successfully - Cloud only
