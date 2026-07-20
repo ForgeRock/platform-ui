@@ -152,4 +152,83 @@ export default class JourneyEditorPage {
   static get errorIndicator() {
     return cy.get('#frErrorIndicator');
   }
+
+  // ── Node versioning ───────────────────────────────────────────────────────
+
+  static get versionDropdown() {
+    // BootstrapVue BDropdown wrapper — text starts with `v{major.minor}`. The
+    // edit panel has other .dropdown-toggle elements (ESV pickers) whose text
+    // also contains a "v", so we anchor on the first token starting with `v`
+    // followed by a digit.
+    return JourneyEditorPage.editPanel
+      .find('.b-dropdown')
+      .filter((_, el) => /^\s*v\d/i.test((el.textContent || '').trim()))
+      .first();
+  }
+
+  static get versionDropdownToggle() {
+    return JourneyEditorPage.versionDropdown.find('.dropdown-toggle').first();
+  }
+
+  static get versionMenuItems() {
+    // Scope to the version dropdown's own menu — a global `[role="menuitem"]`
+    // selector also picks up hidden menus (theme toggle, journey-edit kebab,
+    // ESV pickers) whose first item is `.dropdown-item.active` inside a
+    // `display: none` menu, causing false negatives on `.should('be.visible')`.
+    // Also avoids `@testing-library/dom`'s accessible-name walker, which
+    // throws `Cannot read properties of null (reading 'includes')` on the
+    // icon-bearing menu items.
+    return JourneyEditorPage.versionDropdown.find('[role="menuitem"]');
+  }
+
+  static versionMenuItem(versionText) {
+    // Match the visible text (`Latest (v2.0)` for the newest entry, `v1.0` for
+    // older entries). `:contains()` avoids the a11y-name computation.
+    return JourneyEditorPage.versionMenuItems.filter(`:contains("${versionText}")`).first();
+  }
+
+  static outOfDateIconForNode(name) {
+    return JourneyEditorPage.nodeWrapper(name).find('.fr-node-upgrade-icon');
+  }
+
+  static nodeTitleForNode(name) {
+    return JourneyEditorPage.nodeWrapper(name).find('h4');
+  }
+
+  static get updateAvailableAlert() {
+    return JourneyEditorPage.editPanel.findByTestId('update-available-alert');
+  }
+
+  static get viewDetailsButton() {
+    return JourneyEditorPage.updateAvailableAlert.findByRole('button', { name: 'View Details' });
+  }
+
+  static get updateModal() {
+    return cy.get('#updateNodeVersionModal');
+  }
+
+  static get updateModalWhatsNewHeading() {
+    return JourneyEditorPage.updateModal.findByRole('heading', { name: "What's New" });
+  }
+
+  static get updateModalDocsLink() {
+    return JourneyEditorPage.updateModal.find('a[href*="docs.pingidentity.com"]');
+  }
+
+  static get updateModalUpdateButton() {
+    return JourneyEditorPage.updateModal.findByRole('button', { name: 'Update' });
+  }
+
+  static get revertModal() {
+    return cy.get('#revertNodeVersionModal');
+  }
+
+  static get revertModalConfirmButton() {
+    return JourneyEditorPage.revertModal.findByRole('button', { name: 'Revert' });
+  }
+
+  static paletteVersionForNodeType(nodeType) {
+    // Version is only rendered inside the sidebar node's hover popover.
+    return cy.findByTestId(`${nodeType}-version`);
+  }
 }
