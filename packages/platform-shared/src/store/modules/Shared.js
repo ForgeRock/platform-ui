@@ -35,6 +35,7 @@ const defaultState = {
   governanceEnabled: false,
   governanceEnabledV4: false,
   governanceRoleMiningEnabled: false,
+  governanceUnmanagedAppsEnabled: false,
   hasAmUrl: false,
   helixEnvironmentId: '',
   helixEnvironmentUrl: '',
@@ -205,6 +206,9 @@ const mutations = {
         }
         if (env.VUE_APP_ENABLE_GOVERNANCE_AGENTS?.toString() === 'true') {
           state.governanceAgentsEnabled = true;
+        }
+        if (env.VUE_APP_ENABLE_GOVERNANCE_UNMANAGED_APPS?.toString() === 'true') {
+          state.governanceUnmanagedAppsEnabled = true;
         }
       }
 
