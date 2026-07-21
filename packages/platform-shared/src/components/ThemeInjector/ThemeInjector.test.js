@@ -6,10 +6,15 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import store from '@/store';
 import ThemeInjector from './index';
 
 const fontProvider = 'https://fonts.bunny.net';
 describe('Theme Injector Component', () => {
+  afterEach(() => {
+    store.state.SharedStore.isAirGapped = false;
+  });
+
   it('Constructs Bunny Fonts font url from object', () => {
     const wrapper = shallowMount(ThemeInjector, {
       props: {
@@ -50,6 +55,30 @@ describe('Theme Injector Component', () => {
       },
     });
     expect(wrapper.vm.fontUrl).toEqual(null);
+  });
+
+  it('Returns null when air-gapped, even for a non-ignored font', () => {
+    store.state.SharedStore.isAirGapped = true;
+    const wrapper = shallowMount(ThemeInjector, {
+      props: {
+        theme: {
+          fontFamily: 'Open Sans',
+        },
+      },
+    });
+    expect(wrapper.vm.fontUrl).toEqual(null);
+  });
+
+  it('Returns Bunny Fonts font url when not air-gapped', () => {
+    store.state.SharedStore.isAirGapped = false;
+    const wrapper = shallowMount(ThemeInjector, {
+      props: {
+        theme: {
+          fontFamily: 'Open Sans',
+        },
+      },
+    });
+    expect(wrapper.vm.fontUrl).toEqual(`${fontProvider}/css2?family=Open+Sans:ital,wght@0,100..900;1,100..900&display=swap`);
   });
 
   describe('getContrastColor', () => {
