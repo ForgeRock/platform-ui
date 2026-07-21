@@ -668,6 +668,7 @@ export function getAccessFilterConfig(components, options) {
             options: statusOptions,
             label: i18n.global.t('governance.access.filter.status'),
             name: 'status',
+            'aria-label': i18n.global.t('governance.access.filter.status'),
           },
         },
       ],

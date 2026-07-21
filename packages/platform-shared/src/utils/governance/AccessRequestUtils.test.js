@@ -770,4 +770,10 @@ describe('getAccessFilterConfig requestType field', () => {
     const requestTypeItem = config.requestType.components.find((c) => c.id === 'requestType');
     expect(requestTypeItem.props).not.toHaveProperty('options');
   });
+
+  it('sets aria-label on the status radiogroup component props', () => {
+    const config = getAccessFilterConfig(components, { statusOptions: [], filterData });
+    const statusItem = config.status.components.find((c) => c.id === 'statuses');
+    expect(statusItem.props['aria-label']).toBe('Status');
+  });
 });
