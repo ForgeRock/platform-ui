@@ -985,8 +985,8 @@ export default {
     }
 
     const allColumnCategories = getAllColumnCategories(this.certificationGrantType || 'accounts', filterProperties, this.autoIdSettings);
-    this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings, this.campaignDetails?.uiConfig?.columnSortConfig);
     this.columnCategories = allColumnCategories;
+    this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings, this.campaignDetails?.uiConfig?.columnSortConfig);
 
     resetFilterTypes();
     this.filterData = getInitialFilterData();
@@ -1208,6 +1208,7 @@ export default {
       if (certificationGrantType === 'entitlementComposition') grantType = 'entitlement';
       if (certificationGrantType === 'roles') grantType = 'roleMembership';
       if (certificationGrantType === 'identityProfile') grantType = 'user';
+      if (certificationGrantType === 'roleComposition') grantType = 'role';
 
       return getBasicFilter('EQUALS', 'item.type', grantType);
     },
@@ -1887,6 +1888,7 @@ export default {
         role: item.role,
         glossary: item.glossary,
         roleOwner: item.roleOwner,
+        applications: item.role?.applications || [],
       };
       this.$bvModal.show(this.getModalId('role'));
     },

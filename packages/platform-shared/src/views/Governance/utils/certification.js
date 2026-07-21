@@ -101,13 +101,15 @@ function checkForEqualityFilter(filter, field) {
   return false;
 }
 
-export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant, enableRoleGrant, enableEntitlementCompositionGrant, enableIdentityProfileGrant) {
+export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant, enableRoleGrant, enableEntitlementCompositionGrant, enableIdentityProfileGrant, enableRoleCompositionGrant) {
   const filterGrant = [];
   if (enableAccountGrant) filterGrant.push('accountGrant');
   if (enableEntitlementGrant) filterGrant.push('entitlementGrant');
   if (enableRoleGrant) filterGrant.push('roleMembership');
   if (enableEntitlementCompositionGrant) filterGrant.push('entitlement');
   if (enableIdentityProfileGrant) filterGrant.push('user');
+  if (enableRoleCompositionGrant) filterGrant.push('role');
+
   return filterGrant;
 }
 
@@ -219,7 +221,7 @@ export function buildSavePayload(type, forms, eventBased) {
     }
   } else {
     saveObj.targetFilter = {
-      type: getFilterGrantByType(what.enableAccountGrant, what.enableEntitlementGrant, what.enableRoleGrant, what.enableEntitlementCompositionGrant, false),
+      type: getFilterGrantByType(what.enableAccountGrant, what.enableEntitlementGrant, what.enableRoleGrant, what.enableEntitlementCompositionGrant, false, what.enableRoleCompositionGrant),
       user: userFilter,
       application: appFilter,
       account: accountFilter,
@@ -254,7 +256,7 @@ export function buildSavePayload(type, forms, eventBased) {
   saveObj.excludeConditionalAccess = what.excludeConditionalAccess;
   saveObj.excludeRoleBasedAccess = what.excludeRoleBasedAccess;
 
-  if (type === 'ENTITLEMENTCOMPOSITION' || type === 'IDENTITYPROFILE') {
+  if (type === 'ENTITLEMENTCOMPOSITION' || type === 'IDENTITYPROFILE' || type === 'ROLECOMPOSITION') {
     delete saveObj.excludeConditionalAccess;
     delete saveObj.excludeRoleBasedAccess;
   }
@@ -424,6 +426,10 @@ export function buildSavePayload(type, forms, eventBased) {
     columnConfig.identityProfile = customization.columnConfig.identityProfile;
     columnSortConfig.identityProfile = customization.sortableColumnConfig?.identityProfile || [];
   }
+  if (what.enableRoleCompositionGrant) {
+    columnConfig.roleComposition = customization.columnConfig.roleComposition;
+    columnSortConfig.roleComposition = customization.sortableColumnConfig?.roleComposition || [];
+  }
   saveObj.uiConfig = {
     columnConfig,
     columnSortConfig,
@@ -555,9 +561,10 @@ export function getFormValuesFromTemplate(template, eventBased) {
     enableAccountGrant: template.targetFilter.type.includes('accountGrant'),
     enableEntitlementGrant: template.targetFilter.type.includes('entitlementGrant'),
     enableRoleGrant: template.targetFilter.type.includes('roleMembership'),
-    enableEntitlementComposition: template.targetFilter.type.includes('entitlement'),
+    enableEntitlementCompositionGrant: template.targetFilter.type.includes('entitlement'),
     enableIdentityProfileGrant: template.certificationType === uiTypeMap.IDENTITYPROFILE
       && template.targetFilter.type.includes('user'),
+    enableRoleCompositionGrant: template.targetFilter.type.includes('role'),
     entitlementFilter,
     entitlementSelection,
     excludeConditionalAccess,
@@ -734,6 +741,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
       roles: template.uiConfig?.columnConfig?.roles || [],
       entitlementComposition: template.uiConfig?.columnConfig?.entitlementComposition || [],
       identityProfile: template.uiConfig?.columnConfig?.identityProfile || [],
+      roleComposition: template.uiConfig?.columnConfig?.roleComposition || [],
     },
     sortableColumnConfig: {
       accounts: template.uiConfig?.columnSortConfig?.accounts || [],
@@ -741,6 +749,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
       roles: template.uiConfig?.columnSortConfig?.roles || [],
       entitlementComposition: template.uiConfig?.columnSortConfig?.entitlementComposition || [],
       identityProfile: template.uiConfig?.columnSortConfig?.identityProfile || [],
+      roleComposition: template.uiConfig?.columnSortConfig?.roleComposition || [],
     },
   };
   return forms;

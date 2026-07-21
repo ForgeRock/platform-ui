@@ -74,6 +74,7 @@ const availableGrantTypes = [
   { value: 'roles', text: i18n.global.t('common.roles') },
   { value: 'entitlementComposition', text: i18n.global.t('common.entitlementComposition') },
   { value: 'identityProfile', text: i18n.global.t('common.identityProfile') },
+  { value: 'roleComposition', text: i18n.global.t('common.roleComposition') },
 ];
 
 const grantTypes = computed(() => {
@@ -92,6 +93,9 @@ const grantTypes = computed(() => {
   }
   if (props.summary?.enableIdentityProfileGrant) {
     types.push(availableGrantTypes.find((type) => type.value === 'identityProfile'));
+  }
+  if (props.summary?.enableRoleCompositionGrant) {
+    types.push(availableGrantTypes.find((type) => type.value === 'roleComposition'));
   }
   return types;
 });
@@ -113,6 +117,7 @@ function init() {
     if (templateConfig.roles?.length) columnConfig.roles = [...templateConfig.roles];
     if (templateConfig.entitlementComposition?.length) columnConfig.entitlementComposition = [...templateConfig.entitlementComposition];
     if (templateConfig.identityProfile?.length) columnConfig.identityProfile = [...templateConfig.identityProfile];
+    if (templateConfig.roleComposition?.length) columnConfig.roleComposition = [...templateConfig.roleComposition];
   }
   updatedColumnConfig.value = columnConfig;
 
@@ -123,6 +128,7 @@ function init() {
     entitlementComposition: savedSortable.entitlementComposition || [],
     roles: savedSortable.roles || [],
     identityProfile: savedSortable.identityProfile || [],
+    roleComposition: savedSortable.roleComposition || [],
   };
 }
 

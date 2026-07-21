@@ -18,6 +18,7 @@ const CAMPAIGNS_BY_TYPE_KEYS_COLORS = {
   entitlementComposition: '#da3a2b',
   roleMembership: '#ba4de1',
   identityProfile: '#69e4ff',
+  roleComposition: '#eb498f',
 };
 
 const CAMPAIGNS_BY_STATUS_KEYS_COLORS = {

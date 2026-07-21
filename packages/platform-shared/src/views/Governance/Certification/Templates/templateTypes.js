@@ -13,6 +13,7 @@ export const types = {
   EVENTBASED: 'EVENTBASED',
   ENTITLEMENTCOMPOSITION: 'ENTITLEMENTCOMPOSITION',
   IDENTITYPROFILE: 'IDENTITYPROFILE',
+  ROLECOMPOSITION: 'ROLECOMPOSITION',
 };
 
 // maps from ui type to iga type
@@ -22,6 +23,7 @@ export const uiTypeMap = {
   ROLEMEMBERSHIP: 'roleMembership',
   ENTITLEMENTCOMPOSITION: 'entitlementComposition',
   IDENTITYPROFILE: 'identityProfile',
+  ROLECOMPOSITION: 'roleComposition',
 };
 
 // types of filters
@@ -80,6 +82,12 @@ export const IDENTITYPROFILE = {
   certifierOptions: ['user', 'role', 'manager', 'organizationAdmin', 'custom'],
 };
 
+// Role Composition certification
+export const ROLECOMPOSITION = {
+  filters: [filterTypes.ROLES],
+  certifierOptions: ['user', 'role', 'roleOwner'],
+};
+
 // All certification types
 export const typeSpecificFields = {
   IDENTITY,
@@ -88,4 +96,5 @@ export const typeSpecificFields = {
   ROLEMEMBERSHIP,
   ENTITLEMENTCOMPOSITION,
   IDENTITYPROFILE,
+  ROLECOMPOSITION,
 };

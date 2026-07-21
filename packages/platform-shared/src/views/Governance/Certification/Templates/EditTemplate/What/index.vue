@@ -36,8 +36,8 @@ of the MIT license. See the LICENSE file for details. -->
             type="checkbox"
             :label="$t('governance.certification.certifyUserType', { type: $t('common.entitlements') })" />
           <FrField
-            :value="formFields.enableRoleGrant"
-            @input="formFields.enableRoleGrant = $event; updateFilter()"
+            :value="formFields.enableRoleGrant || formFields.enableRoleCompositionGrant"
+            @input="isRoleComposition ? (formFields.enableRoleCompositionGrant = $event) : (formFields.enableRoleGrant = $event); updateFilter()"
             class="mb-3"
             name="enableRoleGrant"
             testid="enable-role-cert"
@@ -72,7 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="anyGrantEnabled"
         class="mt-3">
         <FrField
-          v-if="(formFields.enableEntitlementGrant || formFields.enableAccountGrant) && !isEntitlementComposition && !isIdentityProfile"
+          v-if="(formFields.enableEntitlementGrant || formFields.enableAccountGrant) && !isEntitlementComposition && !isIdentityProfile && !isRoleComposition"
           :value="formFields.excludeRoleBasedAccess"
           @input="formFields.excludeRoleBasedAccess = $event; updateFilter()"
           class="mb-3"
@@ -80,7 +80,7 @@ of the MIT license. See the LICENSE file for details. -->
           type="checkbox"
           :label="$t('governance.editTemplate.excludeRoleBased')" />
         <FrField
-          v-if="formFields.enableRoleGrant && !isEntitlementComposition && !isIdentityProfile"
+          v-if="formFields.enableRoleGrant && !isEntitlementComposition && !isIdentityProfile && !isRoleComposition"
           :value="formFields.excludeConditionalAccess"
           @input="formFields.excludeConditionalAccess = $event; updateFilter()"
           class="mb-3"
@@ -181,6 +181,7 @@ const uiTypeMapping = {
   [types.ROLEMEMBERSHIP]: uiTypeMap.ROLEMEMBERSHIP,
   [types.ENTITLEMENTCOMPOSITION]: uiTypeMap.ENTITLEMENTCOMPOSITION,
   [types.IDENTITYPROFILE]: uiTypeMap.IDENTITYPROFILE,
+  [types.ROLECOMPOSITION]: uiTypeMap.ROLECOMPOSITION,
 };
 
 export default {
@@ -240,6 +241,7 @@ export default {
         enableEntitlementCompositionGrant: false,
         enableRoleGrant: false,
         enableIdentityProfileGrant: false,
+        enableRoleCompositionGrant: false,
         excludeConditionalAccess: true,
         excludeRoleBasedAccess: true,
       },
@@ -268,7 +270,9 @@ export default {
       return this.formFields.enableEntitlementGrant
         || this.formFields.enableAccountGrant
         || this.formFields.enableRoleGrant
-        || this.formFields.enableIdentityProfileGrant;
+        || this.formFields.enableIdentityProfileGrant
+        || this.formFields.enableEntitlementCompositionGrant
+        || this.formFields.enableRoleCompositionGrant;
     },
     errors() {
       const errors = this.anyGrantEnabled ? [] : [i18n.global.t('common.policyValidationMessages.AT_LEAST_ONE_CHECKBOX')];
@@ -280,7 +284,7 @@ export default {
         {
           label: this.$t('common.users'),
           value: this.counts.user,
-          enabled: !this.eventBased && !this.isEntitlementComposition,
+          enabled: !this.eventBased && !this.isEntitlementComposition && !this.isRoleComposition,
           testId: 'user-count',
         },
         {
@@ -304,7 +308,7 @@ export default {
         {
           label: this.$t('common.roles'),
           value: this.counts.role,
-          enabled: this.formFields.enableRoleGrant,
+          enabled: this.formFields.enableRoleGrant || this.formFields.enableRoleCompositionGrant,
           testId: 'role-count',
         },
       ];
@@ -319,6 +323,9 @@ export default {
     },
     isIdentityProfile() {
       return this.type === types.IDENTITYPROFILE;
+    },
+    isRoleComposition() {
+      return this.type === types.ROLECOMPOSITION;
     },
   },
   created() {
@@ -353,6 +360,13 @@ export default {
       this.formFields.enableIdentityProfileGrant = true;
     }
 
+    if (this.type === types.ROLECOMPOSITION) {
+      this.formFields.enableAccountGrant = false;
+      this.formFields.enableEntitlementGrant = false;
+      this.formFields.enableRoleGrant = false;
+      this.formFields.enableRoleCompositionGrant = true;
+    }
+
     [this.validatedCheckboxName] = findFieldNamesMatchingName('enableAccountGrant', this.formValues);
   },
   methods: {
@@ -370,7 +384,7 @@ export default {
       if (filterComponent === 'FrEntitlementFilter') {
         return this.formFields.enableEntitlementGrant || this.formFields.enableEntitlementCompositionGrant;
       }
-      if (filterComponent === 'FrRoleFilter') return this.formFields.enableRoleGrant;
+      if (filterComponent === 'FrRoleFilter') return this.formFields.enableRoleGrant || this.formFields.enableRoleCompositionGrant;
       return true;
     },
     /**
@@ -421,7 +435,7 @@ export default {
       // check if all filters are present before getting count
       // this prevents unnecessary api calls when we only need one with all the filters
       if (this.allFiltersPresent(this.filters)) {
-        const grantTypes = getFilterGrantByType(this.formFields.enableAccountGrant, this.formFields.enableEntitlementGrant, this.formFields.enableRoleGrant, this.formFields.enableEntitlementCompositionGrant, this.formFields.enableIdentityProfileGrant);
+        const grantTypes = getFilterGrantByType(this.formFields.enableAccountGrant, this.formFields.enableEntitlementGrant, this.formFields.enableRoleGrant, this.formFields.enableEntitlementCompositionGrant, this.formFields.enableIdentityProfileGrant, this.formFields.enableRoleCompositionGrant);
         const filtersClone = cloneDeep(this.filters);
 
         Object.keys(filtersClone).forEach((key) => {

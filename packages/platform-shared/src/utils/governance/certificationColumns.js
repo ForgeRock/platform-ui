@@ -115,7 +115,7 @@ const OOTBColumns = {
     category: 'role',
     class: 'text-truncate fr-access-cell',
     show: true,
-    showFor: ['roles'],
+    showFor: ['roles', 'roleComposition'],
     exportFields: ['role.name'],
     value: 'role.role',
   },
@@ -171,7 +171,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-175px text-truncate fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition'],
     value: 'review.flags',
   },
   comments: {
@@ -181,7 +181,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-140px fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition'],
     value: 'review.comments',
   },
   actions: {
@@ -190,7 +190,7 @@ const OOTBColumns = {
     label: i18n.global.t('common.actions'),
     sortable: false,
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition'],
     value: 'actions',
   },
 };
@@ -322,7 +322,7 @@ const categories = [
   {
     name: 'review',
     header: i18n.global.t('governance.certificationTask.columns.review'),
-    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition'],
     items: [
       { ...OOTBColumns.prediction },
       { ...OOTBColumns.flags },
@@ -356,7 +356,7 @@ const categories = [
   {
     name: 'role',
     header: i18n.global.t('common.role'),
-    showFor: ['roles'],
+    showFor: ['roles', 'roleComposition'],
     items: [
       { ...OOTBColumns.role },
     ],

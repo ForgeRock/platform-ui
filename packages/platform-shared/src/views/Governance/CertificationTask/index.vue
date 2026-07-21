@@ -190,6 +190,12 @@ export default {
           label: this.$t('governance.certificationTask.certificationTabs.identityProfile'),
         });
       }
+      if (this.governanceDevEnabled && this.isRoleCompositionTargetFilter) {
+        tabs.push({
+          key: 'roleComposition',
+          label: this.$t('governance.certificationTask.certificationTabs.roleComposition'),
+        });
+      }
       return tabs;
     },
     isComplete() {
@@ -212,6 +218,9 @@ export default {
     },
     isIdentityProfileTargetFilter() {
       return this.campaignDetails.certificationType === uiTypeMap.IDENTITYPROFILE;
+    },
+    isRoleCompositionTargetFilter() {
+      return this.isGrantType('role');
     },
     governanceDevEnabled() {
       return this.$store.state.SharedStore.governanceDevEnabled;

@@ -104,7 +104,7 @@ describe('CertificationTask', () => {
     },
   }));
 
-  function mountComponent() {
+  function mountComponent({ governanceDevEnabled = false } = {}) {
     setupTestPinia();
     return mount(CertificationTask, {
       global: {
@@ -121,7 +121,7 @@ describe('CertificationTask', () => {
           },
           $bvModal: { show: modalShow, hide: modalHide },
           $router: { push: jest.fn() },
-          $store: { state: { SharedStore: { governanceDevEnabled: false } } },
+          $store: { state: { SharedStore: { governanceDevEnabled } } },
         },
         plugins: [Notifications],
         stubs: [
@@ -387,6 +387,26 @@ describe('CertificationTask', () => {
       const tabs = wrapper.findAllComponents({ name: 'BTab' });
       const entitlementCompositionTab = tabs.find((tab) => tab.props('title') === wrapper.vm.$t('governance.certificationTask.certificationTabs.entitlementComposition'));
       expect(entitlementCompositionTab).toBeTruthy();
+    });
+
+    it('should load only role composition tab because there is a target filter defined for role composition', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          targetFilter: {
+            type: [
+              'role',
+            ],
+          },
+        },
+      }));
+
+      wrapper = mountComponent({ governanceDevEnabled: true });
+
+      await flushPromises();
+
+      const tabs = wrapper.findAllComponents({ name: 'BTab' });
+      const roleCompositionTab = tabs.find((tab) => tab.props('title') === wrapper.vm.$t('governance.certificationTask.certificationTabs.roleComposition'));
+      expect(roleCompositionTab).toBeTruthy();
     });
   });
 

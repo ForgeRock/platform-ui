@@ -38,6 +38,11 @@ export const baseColumnConfig = {
     'review.flags',
     'review.comments',
   ],
+  roleComposition: [
+    'role.role',
+    'review.flags',
+    'review.comments',
+  ],
 };
 
 export const OOTBColumns = {

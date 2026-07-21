@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
               <BMedia no-body>
                 <FrIcon
                   name="person"
-                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border mr-4 color-green border-green" />
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 rounded border mr-4 color-green border-green" />
                 <BMediaBody>
                   <h3
                     class="h5"
@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
               <BMedia no-body>
                 <FrIcon
                   name="assignment_turned_in"
-                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border mr-4 border-pink color-pink" />
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 rounded border mr-4 border-pink color-pink" />
                 <BMediaBody>
                   <h3
                     class="h5"
@@ -76,7 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
               <BMedia no-body>
                 <FrIcon
                   name="assignment_ind"
-                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border mr-4 border-yellow color-yellow" />
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 rounded border mr-4 border-yellow color-yellow" />
                 <BMediaBody>
                   <h3
                     class="h5"
@@ -125,6 +125,25 @@ of the MIT license. See the LICENSE file for details. -->
                   </h3>
                   <div class="d-block">
                     {{ $t('governance.campaignTemplateTypeModal.identityProfileCertificationMessage') }}
+                  </div>
+                </BMediaBody>
+              </BMedia>
+            </FrCardRadioInput>
+            <FrCardRadioInput
+              class="mb-3"
+              :radio-value="types.ROLECOMPOSITION"
+              name="selectedCampaignTemplateType"
+              v-model="selectedCampaignTemplateType">
+              <BMedia no-body>
+                <FrIcon
+                  name="assignment_ind"
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border color-red border-red" />
+                <BMediaBody>
+                  <h3 class="h5">
+                    {{ $t('governance.campaignTemplateTypeModal.roleCompositionCertification') }}
+                  </h3>
+                  <div class="d-block">
+                    {{ $t('governance.campaignTemplateTypeModal.roleCompositionCertificationMessage') }}
                   </div>
                 </BMediaBody>
               </BMedia>
