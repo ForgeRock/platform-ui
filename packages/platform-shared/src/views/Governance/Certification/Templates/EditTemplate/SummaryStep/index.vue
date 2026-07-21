@@ -89,7 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ summary.numEntitlements }}
               </dd>
             </template>
-            <template v-if="summary.enableRoleGrant">
+            <template v-if="summary.enableRoleGrant || summary.enableRoleCompositionGrant">
               <dt
                 class="mb-1"
                 data-testid="summary-role">
@@ -118,11 +118,12 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="!isEntitlementComposition && !isIdentityProfile">
+            <template v-if="!isEntitlementComposition && !isIdentityProfile && !isRoleComposition">
               <dt class="mb-1">
                 <small>{{ $t('common.users') }}</small>
               </dt>
-              <dd class="mb-4">
+              <dd
+                class="mb-4">
                 {{ summary.numUsers }}
               </dd>
             </template>
@@ -252,7 +253,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="!isEntitlementComposition">
+            <template v-if="!isEntitlementComposition && !isRoleComposition">
               <dt class="mb-1">
                 <small>{{ startCaseTranslationKey('governance.editTemplate.allowSelfCert') }}</small>
               </dt>
@@ -489,6 +490,9 @@ export default {
     },
     isIdentityProfile() {
       return this.summary.type === types.IDENTITYPROFILE;
+    },
+    isRoleComposition() {
+      return this.summary.type === types.ROLECOMPOSITION;
     },
   },
 };

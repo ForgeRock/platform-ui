@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       </h4>
       <FrField
         v-model="formFields.allowSelfCert"
-        v-if="!isEntitlementComposition"
+        v-if="!isEntitlementComposition && !isRoleComposition"
         class="mb-4"
         name="allowSelfCert"
         testid="allow-self-cert"
@@ -515,6 +515,9 @@ export default {
   computed: {
     isEntitlementComposition() {
       return this.type === types.ENTITLEMENTCOMPOSITION;
+    },
+    isRoleComposition() {
+      return this.type === types.ROLECOMPOSITION;
     },
   },
   watch: {

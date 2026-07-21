@@ -152,8 +152,8 @@ function getRoleRequestDetails(request) {
   return {
     role: request.role,
     glossary: request.role.glossary,
-    entitlements: request.role.object.entitlements,
-    members: request.role.object.addedRoleMembers,
+    entitlements: request.role.object.entitlements || [],
+    members: request.role.object.addedRoleMembers || [],
   };
 }
 

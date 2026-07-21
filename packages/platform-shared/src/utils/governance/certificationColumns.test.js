@@ -299,8 +299,22 @@ describe('getInitialColumns', () => {
     expect(result.find((c) => c.value === 'application.application').sortable).toBe(true);
     expect(result.find((c) => c.value === 'review.flags').sortable).toBe(false);
   });
-});
 
+  it('returns OOTB columns filtered by grantType "roleComposition" - role, flags, comments, actions only', () => {
+    const result = getInitialColumns('roleComposition', null, false, null, null);
+    expect(result.map((c) => c.key)).toEqual(['role', 'flags', 'comments', 'actions']);
+  });
+
+  it('does not include user column for roleComposition', () => {
+    const result = getInitialColumns('roleComposition', null, false, null, null);
+    expect(result.map((c) => c.key)).not.toContain('user');
+  });
+
+  it('returns OOTB columns filtered by grantType "entitlementComposition" - application, entitlement, flags, comments, actions only', () => {
+    const result = getInitialColumns('entitlementComposition', null, false, null, null);
+    expect(result.map((c) => c.key)).toEqual(['application', 'entitlement', 'flags', 'comments', 'actions']);
+  });
+});
 describe('getAllColumnCategories', () => {
   it('returns only categories relevant to the grantType', () => {
     const categories = getAllColumnCategories('accounts', {});
@@ -336,6 +350,34 @@ describe('getAllColumnCategories', () => {
     const categories = getAllColumnCategories('accounts', filterProperties, { enableAutoId: true });
     const reviewCategory = categories.find((cat) => cat.name === 'review');
     expect(reviewCategory.items.some((item) => item.key === 'prediction')).toBe(true);
+  });
+
+  it('returns only role and review categories for roleComposition grantType', () => {
+    const categories = getAllColumnCategories('roleComposition', {});
+    const categoryNames = categories.map((cat) => cat.name);
+    expect(categoryNames).toContain('role');
+    expect(categoryNames).toContain('review');
+    expect(categoryNames).not.toContain('user');
+    expect(categoryNames).not.toContain('application');
+    expect(categoryNames).not.toContain('entitlement');
+    expect(categoryNames).not.toContain('account');
+  });
+
+  it('returns role column item in role category for roleComposition', () => {
+    const categories = getAllColumnCategories('roleComposition', {});
+    const roleCategory = categories.find((cat) => cat.name === 'role');
+    expect(roleCategory).toBeTruthy();
+    expect(roleCategory.items.some((item) => item.key === 'role')).toBe(true);
+  });
+
+  it('returns application and entitlement categories for entitlementComposition grantType', () => {
+    const categories = getAllColumnCategories('entitlementComposition', {});
+    const categoryNames = categories.map((cat) => cat.name);
+    expect(categoryNames).toContain('application');
+    expect(categoryNames).toContain('entitlement');
+    expect(categoryNames).not.toContain('user');
+    expect(categoryNames).not.toContain('account');
+    expect(categoryNames).not.toContain('role');
   });
 
   it('returns empty array if no categories match the grantType', () => {

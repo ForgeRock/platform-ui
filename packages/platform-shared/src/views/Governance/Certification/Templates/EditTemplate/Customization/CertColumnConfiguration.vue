@@ -112,13 +112,13 @@ const categorySelects = computed(() => [
     key: 'role',
     label: 'Role',
     options: getSelectOptionsForCategory('role'),
-    showFor: ['roles'],
+    showFor: ['roles', 'roleComposition'],
   },
   {
     key: 'review',
     label: 'Review',
     options: getSelectOptionsForCategory('review'),
-    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition'],
   },
 ]);
 

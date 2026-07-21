@@ -77,8 +77,9 @@ describe('certification', () => {
       enableCertDecisionFilter: false,
       enableEntitlementGrant: false,
       enableRoleGrant: false,
-      enableEntitlementComposition: false,
+      enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
+      enableRoleCompositionGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -164,8 +165,9 @@ describe('certification', () => {
       enableCertDecisionFilter: false,
       enableEntitlementGrant: false,
       enableRoleGrant: false,
-      enableEntitlementComposition: false,
+      enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
+      enableRoleCompositionGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -302,8 +304,9 @@ describe('certification', () => {
       enableCertDecisionFilter: false,
       enableEntitlementGrant: false,
       enableRoleGrant: false,
-      enableEntitlementComposition: false,
+      enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
+      enableRoleCompositionGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -417,8 +420,9 @@ describe('certification', () => {
       enableCertDecisionFilter: false,
       enableEntitlementGrant: false,
       enableRoleGrant: false,
-      enableEntitlementComposition: false,
+      enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
+      enableRoleCompositionGrant: false,
       entitlementFilter: {
         operand: [
           {
@@ -474,8 +478,9 @@ describe('certification', () => {
       enableCertDecisionFilter: false,
       enableEntitlementGrant: false,
       enableRoleGrant: false,
-      enableEntitlementComposition: false,
+      enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
+      enableRoleCompositionGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -601,6 +606,7 @@ describe('certification', () => {
         entitlements: ['prop1', 'prop2'],
         entitlementComposition: [],
         identityProfile: [],
+        roleComposition: [],
       });
     });
 
@@ -613,6 +619,7 @@ describe('certification', () => {
         entitlements: [],
         entitlementComposition: [],
         identityProfile: [],
+        roleComposition: [],
       });
     });
 
@@ -714,6 +721,7 @@ describe('certification', () => {
       forms.FrWhat.enableRoleGrant = true;
       forms.FrWhat.enableEntitlementCompositionGrant = true;
       forms.FrWhat.enableIdentityProfileGrant = true;
+      forms.FrWhat.enableRoleCompositionGrant = true;
 
       const savePayload = buildSavePayload('identity', forms);
       expect(savePayload.uiConfig.columnConfig).toEqual({
@@ -783,6 +791,7 @@ describe('certification', () => {
           entitlements: ['prop1', 'prop2'],
           entitlementComposition: ['prop1', 'prop2'],
           identityProfile: [],
+          roleComposition: [],
         },
       };
       forms.FrWhat.enableEntitlementCompositionGrant = true;
@@ -790,6 +799,25 @@ describe('certification', () => {
 
       expect(savePayload.uiConfig.columnConfig).toEqual({
         entitlementComposition: ['prop1', 'prop2'],
+      });
+    });
+
+    it('should save a custom columnConfig only for role composition grants', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrCustomization = {
+        columnConfig: {
+          accounts: ['prop1', 'prop2', 'prop3'],
+          roles: ['prop1'],
+          entitlements: ['prop1', 'prop2'],
+          entitlementComposition: [],
+          roleComposition: ['prop1'],
+        },
+      };
+      forms.FrWhat.enableRoleCompositionGrant = true;
+      const savePayload = buildSavePayload('roleComposition', forms);
+
+      expect(savePayload.uiConfig.columnConfig).toEqual({
+        roleComposition: ['prop1'],
       });
     });
 
@@ -918,6 +946,23 @@ describe('certification', () => {
       };
 
       const savePayload = buildSavePayload('IDENTITYPROFILE', forms);
+
+      expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeConditionalAccess')).toBe(false);
+      expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeRoleBasedAccess')).toBe(false);
+    });
+
+    it('should remove excludeConditionalAccess and excludeRoleBasedAccess for role composition type', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrWhat.enableRoleCompositionGrant = true;
+      forms.FrCustomization = {
+        columnConfig: {
+          accounts: [],
+          roles: [],
+          entitlements: [],
+        },
+      };
+
+      const savePayload = buildSavePayload('ROLECOMPOSITION', forms);
 
       expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeConditionalAccess')).toBe(false);
       expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeRoleBasedAccess')).toBe(false);

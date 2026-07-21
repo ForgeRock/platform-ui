@@ -185,4 +185,59 @@ describe('What View', () => {
       expect(findByTestId(wrapper, 'entitlement-count').exists()).toBeFalsy();
     });
   });
+  describe('Role Composition', () => {
+    beforeEach(() => jest.resetModules());
+    it('has only the role filter', () => {
+      mountComponent({ type: templateTypes.types.ROLECOMPOSITION });
+      expect(findByTestId(wrapper, 'FrRoleFilter').exists()).toBeTruthy();
+    });
+    it('hides user, account, application and entitlement filters', () => {
+      mountComponent({ type: templateTypes.types.ROLECOMPOSITION });
+      expect(findByTestId(wrapper, 'FrUserFilter').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'FrAccountFilter').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'FrApplicationFilter').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'FrEntitlementFilter').exists()).toBeFalsy();
+    });
+    it('shows the role count', async () => {
+      mountComponent({ type: templateTypes.types.ROLECOMPOSITION });
+      await flushPromises();
+      expect(findByTestId(wrapper, 'role-count').exists()).toBeTruthy();
+    });
+    it('hides user, account, application, and entitlement counts', async () => {
+      mountComponent({ type: templateTypes.types.ROLECOMPOSITION });
+      await flushPromises();
+      expect(findByTestId(wrapper, 'user-count').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'account-count').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'application-count').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'entitlement-count').exists()).toBeFalsy();
+    });
+  });
+
+  describe('Entitlement Composition', () => {
+    beforeEach(() => jest.resetModules());
+    it('has entitlement and application filters', () => {
+      mountComponent({ type: templateTypes.types.ENTITLEMENTCOMPOSITION });
+      expect(findByTestId(wrapper, 'FrEntitlementFilter').exists()).toBeTruthy();
+      expect(findByTestId(wrapper, 'FrApplicationFilter').exists()).toBeTruthy();
+    });
+    it('hides user, account, and role filters', () => {
+      mountComponent({ type: templateTypes.types.ENTITLEMENTCOMPOSITION });
+      expect(findByTestId(wrapper, 'FrUserFilter').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'FrAccountFilter').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'FrRoleFilter').exists()).toBeFalsy();
+    });
+    it('has entitlement and application counts', async () => {
+      mountComponent({ type: templateTypes.types.ENTITLEMENTCOMPOSITION });
+      await flushPromises();
+      expect(findByTestId(wrapper, 'entitlement-count').exists()).toBeTruthy();
+      expect(findByTestId(wrapper, 'application-count').exists()).toBeTruthy();
+    });
+    it('hides user, account, and role counts', async () => {
+      mountComponent({ type: templateTypes.types.ENTITLEMENTCOMPOSITION });
+      await flushPromises();
+      expect(findByTestId(wrapper, 'user-count').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'account-count').exists()).toBeFalsy();
+      expect(findByTestId(wrapper, 'role-count').exists()).toBeFalsy();
+    });
+  });
 });

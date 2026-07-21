@@ -202,6 +202,7 @@ export default {
           enableEntitlementCompositionGrant: false,
           enableRoleGrant: false,
           enableIdentityProfileGrant: false,
+          enableRoleCompositionGrant: false,
           entitlementFilter: {},
           entitlementSelection: this.$t('governance.editTemplate.allEntitlements'),
           excludeConditionalAccess: true,
@@ -388,6 +389,7 @@ export default {
         enableEntitlementCompositionGrant: this.forms.FrWhat.enableEntitlementCompositionGrant,
         enableRoleGrant: this.forms.FrWhat.enableRoleGrant,
         enableIdentityProfileGrant: this.forms.FrWhat.enableIdentityProfileGrant,
+        enableRoleCompositionGrant: this.forms.FrWhat.enableRoleCompositionGrant,
         notifications: {
           assignmentNotification: this.forms.FrNotifications.initialNotification,
           escalation: this.forms.FrAdditionalOptions.escalation,

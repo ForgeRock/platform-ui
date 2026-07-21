@@ -334,6 +334,7 @@
     "revoked": "Revoked",
     "revoking": "Revoking",
     "role": "Role",
+    "roleComposition": "Role Composition",
     "roleOwner": "Role Owner",
     "roles": "Roles",
     "route": "Route",
@@ -2024,7 +2025,9 @@
       "entitlementCompositionCertification": "Entitlement Composition Certification",
       "entitlementCompositionCertificationMessage": "Certify the technical details and glossary metadata of entitlements.",
       "identityProfileCertification": "Identity Profile Certification",
-      "identityProfileCertificationMessage": "Certify the technical details of user attributes based on filters you define."
+      "identityProfileCertificationMessage": "Certify the technical details of user attributes based on filters you define.",
+      "roleCompositionCertification": "Role Composition Certification",
+      "roleCompositionCertificationMessage": "Certify the technical details and glossary metadata of roles."
     },
     "certification": {
       "accessReviewHistory": "Access Review History",
@@ -2043,7 +2046,8 @@
         "entitlementComposition": "Entitlement Composition",
         "application": "Application",
         "roleMembership": "Role Membership",
-        "identityProfile": "Identity Profile"
+        "identityProfile": "Identity Profile",
+        "roleComposition": "Role Composition"
       },
       "campaignsByStatusLabels": {
         "in-progress": "Active",
@@ -2146,6 +2150,7 @@
       "decisionsBreakdownChartNoDecisionsLabel": "No decisions yet",
       "decisionsBreakdownChartTooltip": "Decisions made in this campaign",
       "decisionsByAppChartLabel": "Access by Application",
+      "decisionsByAppChartNoApplicationsLabel": "No applications",
       "decisionsByAppChartTooltip": "Number of accounts to be certified in this campaign by application",
       "previousDecisionChartLabel": "Previous Decision",
       "previousDecisionChartTooltip": "Items in this campaign that were certified in the past",
@@ -2423,7 +2428,8 @@
         "entitlements": "entitlements",
         "entitlementComposition": "entitlement composition",
         "groupByAccount": "group by account",
-        "identityProfile": "identity profile"
+        "identityProfile": "identity profile",
+        "roleComposition": "role composition"
       },
       "columns": {
         "review": "Review",
@@ -2509,7 +2515,8 @@
           "entitlements": "entitlement grants",
           "entitlementComposition": "entitlements",
           "roles": "role grants",
-          "identityProfile": "users"
+          "identityProfile": "users",
+          "roleComposition": "roles"
         },
         "xlsx": "XLSX",
         "xlsxDescription": "Export in XLSX format. Maximum: 10,000 rows"
@@ -2663,14 +2670,16 @@
         "ENTITLEMENT": "Entitlement",
         "ROLEMEMBERSHIP": "Role Membership",
         "ENTITLEMENTCOMPOSITION": "Entitlement Composition",
-        "IDENTITYPROFILE": "Identity Profile"
+        "IDENTITYPROFILE": "Identity Profile",
+        "ROLECOMPOSITION": "Role Composition"
       },
       "templateType": {
         "identity": "Identity Certification",
         "entitlement": "Entitlement Certification",
         "roleMembership": "Role Membership Certification",
         "entitlementComposition": "Entitlement Composition Certification",
-        "identityProfile": "Identity Profile Certification"
+        "identityProfile": "Identity Profile Certification",
+        "roleComposition": "Role Composition Certification"
       },
       "accounts": "Accounts",
       "additionalOptions": "Additional Options",

@@ -27,6 +27,7 @@ describe('Customization', () => {
       entitlements: ['user.name'],
       roles: ['user.name'],
       entitlementComposition: ['application.application', 'entitlement.entitlement', 'review.flags', 'review.comments'],
+      roleComposition: ['role.role', 'review.flags', 'review.comments'],
     },
   };
 
@@ -35,6 +36,7 @@ describe('Customization', () => {
     enableEntitlementGrant: true,
     enableRoleGrant: true,
     enableEntitlementCompositionGrant: true,
+    enableRoleCompositionGrant: true,
   };
 
   function mountComponent(customValue = value, customSummary = summary) {
@@ -59,6 +61,7 @@ describe('Customization', () => {
     expect(tabTitles[1]).toContain('Entitlements');
     expect(tabTitles[2]).toContain('Roles');
     expect(tabTitles[3]).toContain('Entitlement Composition');
+    expect(tabTitles[4]).toContain('Role Composition');
   });
 
   it('does not have tabs for grant types that are not a part of the certification', async () => {
@@ -67,6 +70,7 @@ describe('Customization', () => {
       enableEntitlementGrant: false,
       enableRoleGrant: true,
       enableEntitlementCompositionGrant: false,
+      enableRoleCompositionGrant: false,
     };
     wrapper = mountComponent(value, customSummary);
     await flushPromises();
@@ -83,10 +87,10 @@ describe('Customization', () => {
 
     // Find all CertColumnConfiguration stubs
     const certColConfigs = wrapper.findAllComponents({ name: 'CertColumnConfiguration' });
-    expect(certColConfigs.length).toBe(4);
+    expect(certColConfigs.length).toBe(5);
 
     // Check that each CertColumnConfiguration receives the correct model-value and grant-type
-    const grantTypes = ['accounts', 'entitlements', 'roles', 'entitlementComposition'];
+    const grantTypes = ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'roleComposition'];
     certColConfigs.forEach((colConfig, idx) => {
       expect(colConfig.props('modelValue')).toEqual(value.columnConfig[grantTypes[idx]]);
       expect(colConfig.props('grantFilterProperties')).toEqual(grantFilterProperties);
@@ -126,11 +130,13 @@ describe('Customization', () => {
         roles: ['user.name'],
         entitlementComposition: ['application.application', 'entitlement.entitlement', 'review.flags', 'review.comments'],
         identityProfile: ['user.user', 'review.flags', 'review.comments'],
+        roleComposition: ['role.role', 'review.flags', 'review.comments'],
       },
       sortableColumnConfig: {
         accounts: [],
         entitlements: [],
         entitlementComposition: [],
+        roleComposition: [],
         roles: [],
         identityProfile: [],
       },

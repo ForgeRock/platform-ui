@@ -259,7 +259,7 @@ of the MIT license. See the LICENSE file for details. -->
         lg="4"
       >
         <FrVisualizationCard
-          v-if="isEntitlementComposition || isIdentityProfile"
+          v-if="isEntitlementComposition || isIdentityProfile || isRoleComposition"
           class="h-100"
           data-testid="chart-previous-decision"
           :title="$t('governance.certificationDetails.previousDecisionChartLabel')"
@@ -334,6 +334,7 @@ of the MIT license. See the LICENSE file for details. -->
               :height="120"
               :radius="50"
               :data="decisionsByApp"
+              :no-data-label="$t('governance.certificationDetails.decisionsByAppChartNoApplicationsLabel')"
               :stroke-width="1"
               :width="120"
             />
@@ -461,6 +462,7 @@ export default {
         orchid: '#ba4de1',
         skyblue: '#61e2e2',
         yellow: '#ffb946',
+        whitesmoke: '#f5f7f9',
       },
     };
   },
@@ -508,7 +510,7 @@ export default {
     },
     decisionsByApp() {
       const colors = [this.styles.green, this.styles.blue, this.styles.yellow, this.styles.orchid, this.styles.skyblue];
-      return Object.entries(this.campaign.statistics?.decisionsByApplication || {})
+      const result = Object.entries(this.campaign.statistics.decisionsByApplication || {})
         .sort(([, valueA], [, valueB]) => valueB - valueA)
         .reduce((acc, [key, value], index) => {
           if (index < 5) {
@@ -525,6 +527,10 @@ export default {
           }
           return acc;
         }, []);
+      if (result.length === 0) {
+        return [{ label: '', value: 0, color: this.styles.whitesmoke }];
+      }
+      return result;
     },
     progress() {
       const progress = this.campaign.progress * 100;
@@ -541,6 +547,9 @@ export default {
     },
     isIdentityProfile() {
       return this.campaign.certificationType === uiTypeMap.IDENTITYPROFILE;
+    },
+    isRoleComposition() {
+      return this.campaign.certificationType === uiTypeMap.ROLECOMPOSITION;
     },
     previousDecisionChart() {
       const colors = [this.styles.green, this.styles.blue];
