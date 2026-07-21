@@ -975,7 +975,7 @@ export default {
       const fontFamily = this.theme?.fontFamily;
       const themeFont = fontFamily?.family || fontFamily;
 
-      if (this.ignoredFonts.includes(themeFont) || !themeFont) {
+      if (this.ignoredFonts.includes(themeFont) || !themeFont || store.state?.SharedStore?.isAirGapped) {
         return null;
       }
 
