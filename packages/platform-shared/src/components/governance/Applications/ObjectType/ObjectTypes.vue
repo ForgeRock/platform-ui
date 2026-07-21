@@ -156,7 +156,7 @@ of the MIT license. See the LICENSE file for details. -->
             :object-type-category="loadedObjectType.type"
             :properties="loadedObjectType.properties || {}" />
         </BTab>
-        <BTab v-if="loadedObjectType.type === 'account'">
+        <BTab v-if="loadedObjectType.type === 'account' && governanceDevEnabled">
           <FrObjectTypeCorrelation
             :application-id="applicationId"
             :object-type="loadedObjectType" />
@@ -209,6 +209,7 @@ import FrObjectTypeCorrelation from './ObjectTypeCorrelation';
 import FrObjectTypeDataList from './ObjectTypeDataList';
 import FrObjectTypePropertyList from './ObjectTypePropertyList';
 import i18n from '@/i18n';
+import store from '@/store';
 
 const props = defineProps({
   applicationId: {
@@ -240,6 +241,8 @@ const showAddModal = ref(false);
 const emptyAddForm = () => ({ id: '', type: 'account' });
 const addForm = ref(emptyAddForm());
 
+const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
+
 const selectedObjectType = computed(() => props.objectTypes[selectedObjectTypeTab.value] || null);
 
 const hasAccountType = computed(() => props.objectTypes.some((ot) => ot.type === 'account'));
@@ -249,7 +252,7 @@ const navItems = computed(() => {
     { displayName: i18n.global.t('governance.applications.edit.objectTypesTab.propertiesTab') },
     { displayName: i18n.global.t('governance.applications.edit.objectTypesTab.dataTab') },
   ];
-  if (loadedObjectType.value?.type === 'account') {
+  if (loadedObjectType.value?.type === 'account' && governanceDevEnabled.value) {
     items.push({ displayName: i18n.global.t('governance.unmanagedApplications.correlationTab.navLabel') });
   }
   return items;
