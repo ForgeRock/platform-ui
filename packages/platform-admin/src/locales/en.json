@@ -5665,7 +5665,9 @@
         "saveError": "There was an error saving this workflow",
         "saveSuccess": "All Changes Saved",
         "templatesError": "There was an error retrieving email templates",
-        "validationError": "Workflow validation could not be completed"
+        "validationError": "Workflow validation could not be completed",
+        "workflowAlreadyExists": "A workflow with an equivalent id already exists. Names with different casing are treated as the same (e.g. 'my-workflow' and 'My Workflow' are identical).",
+        "workflowCheckError": "There was an error checking if a workflow with this name already exists"
       },
       "createDuplicate": "Create Duplicate",
       "immutableDescription": "This workflow is immutable and cannot be edited",
