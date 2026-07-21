@@ -304,6 +304,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is-saving="assigningResource"
       :modal-id="modalId + '-show'"
       :parent-resource-name="parentResourceName"
+      :require-request-justification="requireRequestJustification"
       :resource-type="pluralizedGrantType"
       :user-id="userId"
       @assign-resources="$emit('assign-resources', $event)"
@@ -352,7 +353,7 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="assigningResource"
           :show-spinner="assigningResource"
           :spinner-text="$t('governance.access.requesting')"
-          @click="$emit('assign-resources', itemToRequest)" />
+          @click="$emit('assign-resources', { entitlements: itemToRequest, justification: $t('governance.lcm.justification.adminEntitlementGrant') })" />
       </template>
     </BModal>
     <FrUserEntitlementModal

@@ -127,6 +127,9 @@ async function submitRequest() {
       ? formValue.value
       : { user: formValue.value };
     const requestPayload = getFormRequestPayload(userValues, originalUser.value);
+    if (!form.value) {
+      requestPayload.common.justification = i18n.global.t('governance.lcm.justification.modifyUser');
+    }
 
     const { data } = await submitCustomRequest(requestTypes.MODIFY_USER.value, requestPayload);
     requestId.value = data.id;

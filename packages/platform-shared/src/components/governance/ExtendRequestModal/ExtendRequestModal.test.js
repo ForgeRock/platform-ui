@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,6 +9,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import dayjs from 'dayjs';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import ExtendRequestModal from './ExtendRequestModal';
 
@@ -18,6 +19,10 @@ jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi', () =
   submitCustomRequest: jest.fn(),
 }));
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi', () => ({
+  getIgaAccessRequest: jest.fn(),
+}));
+
 jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
   displayNotification: jest.fn(),
   showErrorMessage: jest.fn(),
@@ -25,6 +30,10 @@ jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
 
 describe('ExtendRequestModal Component', () => {
   let wrapper;
+
+  beforeEach(() => {
+    getIgaAccessRequest.mockResolvedValue({ data: { requireRequestJustification: false } });
+  });
 
   function setup() {
     wrapper = mount(ExtendRequestModal, {
@@ -68,6 +77,7 @@ describe('ExtendRequestModal Component', () => {
   });
 
   it('Should not enable submit button if justification is not given', async () => {
+    getIgaAccessRequest.mockResolvedValue({ data: { requireRequestJustification: true } });
     validationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
     setup();
     await flushPromises();
@@ -160,5 +170,21 @@ describe('ExtendRequestModal Component', () => {
     await flushPromises();
 
     expect(wrapper.vm.isLoading).toBe(false);
+  });
+
+  it('should require justification when requireRequestJustification is true', async () => {
+    getIgaAccessRequest.mockResolvedValue({ data: { requireRequestJustification: true } });
+    setup();
+    await flushPromises();
+
+    expect(wrapper.vm.requireRequestJustification).toBe(true);
+  });
+
+  it('should not require justification when requireRequestJustification is false', async () => {
+    getIgaAccessRequest.mockResolvedValue({ data: { requireRequestJustification: false } });
+    setup();
+    await flushPromises();
+
+    expect(wrapper.vm.requireRequestJustification).toBe(false);
   });
 });

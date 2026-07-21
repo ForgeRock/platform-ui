@@ -136,7 +136,7 @@ async function submitRequest(userId) {
     };
   } else {
     requestPayload = {
-      common: {},
+      common: { justification: i18n.global.t('governance.lcm.justification.deleteUser') },
       custom: {},
       user: { userId },
     };

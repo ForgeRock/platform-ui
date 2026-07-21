@@ -9,6 +9,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -24,6 +25,7 @@ jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
 
 RelationshipEdit.mounted = jest.fn();
+CommonsApi.getIgaAccessRequest = jest.fn().mockResolvedValue({ data: {} });
 
 describe('Users', () => {
   let wrapper;

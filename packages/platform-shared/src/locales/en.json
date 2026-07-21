@@ -2904,6 +2904,17 @@
       "importingItem": "Importing {itemType}...",
       "description": "Choose a JSON file containing the {itemType} to import."
     },
+    "lcm": {
+      "justification": {
+        "createUser": "LCM: Create user",
+        "deleteUser": "LCM: Delete user",
+        "modifyUser": "LCM: Modify user",
+        "createEntitlement": "LCM: Create entitlement",
+        "modifyEntitlement": "LCM: Modify entitlement",
+        "deleteRole": "LCM: Delete role",
+        "adminEntitlementGrant": "Admin: Grant entitlement"
+      }
+    },
     "prediction": {
       "HIGH": "High Confidence",
       "LOW": "Not Recommended"

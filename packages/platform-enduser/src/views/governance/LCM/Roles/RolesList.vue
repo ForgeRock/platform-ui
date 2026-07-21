@@ -452,6 +452,7 @@ async function deleteRoles() {
   try {
     await Promise.all(map(deleteRoleIds.value, async (id) => {
       const payload = {
+        common: { justification: i18n.global.t('governance.lcm.justification.deleteRole') },
         role: {
           roleId: id,
           status: roleStatus.value,

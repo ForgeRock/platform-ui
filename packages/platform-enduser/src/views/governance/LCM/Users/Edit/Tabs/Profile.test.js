@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -120,7 +120,7 @@ describe('Profile', () => {
     expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
       'modifyUser',
       {
-        common: {},
+        common: { justification: 'LCM: Modify user' },
         custom: {},
         user: {
           userId: '12345',
@@ -140,7 +140,7 @@ describe('Profile', () => {
     expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
       'modifyUser',
       {
-        common: {},
+        common: { justification: 'LCM: Modify user' },
         custom: {},
         user: {
           userId: '12345',
@@ -210,6 +210,8 @@ describe('Profile', () => {
         common: { aCommonProp: 'test' },
         user: { userId: '12345', object: { userName: 'test' } },
       });
+      const callArgs = AccessRequestApi.submitCustomRequest.mock.calls.at(-1)[1];
+      expect(callArgs.common).not.toHaveProperty('justification');
     });
   });
 });

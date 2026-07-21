@@ -32,6 +32,7 @@ function mountComponent(props = {}) {
     data: { result: testLogs, totalCount: testLogs.length },
   });
   CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({});
+  CommonsApi.getIgaAccessRequest = jest.fn().mockResolvedValue({ data: { requireRequestJustification: false } });
 
   setupTestPinia();
   return mount(Activity, {

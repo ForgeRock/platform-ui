@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
           :description="$t('governance.requestModal.detailsTab.changeResumeDateJustification')"
           :max-rows="10"
           :rows="5"
-          :validation="{ required: true }" />
+          :validation="{ required: requireRequestJustification }" />
       </BFormGroup>
       <!-- Priority dropdown select -->
       <BFormGroup>
@@ -97,6 +97,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   computed,
   defineProps,
+  onMounted,
   ref,
   watch,
 } from 'vue';
@@ -113,6 +114,7 @@ import dayjs from 'dayjs';
 import { Form as VeeForm } from 'vee-validate';
 import { getPriorityImageSrc, requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
 
@@ -131,6 +133,7 @@ const prop = defineProps({
 
 const isLoading = ref(false);
 const newEndDate = ref(null);
+const requireRequestJustification = ref(false);
 const justificationText = ref('');
 const selectedPriority = ref('low');
 const minEndDate = computed(() => new Date().toISOString());
@@ -158,6 +161,17 @@ watch(() => prop.currentItem, (value) => {
     newEndDate.value = value.item?.decision?.accessRequest?.grantEndDate;
   }
 }, { immediate: true });
+
+onMounted(async () => {
+  try {
+    const { data } = await getIgaAccessRequest();
+    requireRequestJustification.value = data.requireRequestJustification;
+  } catch (e) {
+    // non-fatal; default false. Backend also enforces this requirement server-side.
+    // eslint-disable-next-line no-console
+    console.error('Failed to fetch requireRequestJustification flag; defaulting to false', e);
+  }
+});
 
 function resetModal() {
   newEndDate.value = null;

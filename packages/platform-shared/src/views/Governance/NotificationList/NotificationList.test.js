@@ -42,6 +42,7 @@ const testTasks = [
 
 function mountComponent() {
   CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({ data: {} });
+  CommonsApi.getIgaAccessRequest = jest.fn().mockResolvedValue({ data: { requireRequestJustification: false } });
   NotificationTaskApi.getNotificationTasks = jest.fn().mockResolvedValue({
     data: { result: testTasks, totalCount: testTasks.length },
   });

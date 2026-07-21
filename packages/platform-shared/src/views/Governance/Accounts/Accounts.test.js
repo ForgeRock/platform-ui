@@ -7,11 +7,14 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import Accounts from './Accounts';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
 }));
+
+CommonsApi.getIgaAccessRequest = jest.fn().mockResolvedValue({ data: {} });
 
 const createData = (params = {}, totalCount = 100) => {
   const { pageNumber = 0, pageSize = 10 } = params;

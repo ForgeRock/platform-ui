@@ -137,7 +137,7 @@ function resetModal() {
  */
 async function submitRequest() {
   let requestPayload = {
-    common: {},
+    common: { justification: i18n.global.t('governance.lcm.justification.createUser') },
     custom: {},
     user: { object: userValues.value },
   };

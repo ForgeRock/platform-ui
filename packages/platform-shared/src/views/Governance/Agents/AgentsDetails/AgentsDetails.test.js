@@ -21,6 +21,8 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
 }));
 
+jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: false } });
+
 mockRouter({ params: { agentId: 'system/Target/User/102' } });
 
 let wrapper;
@@ -84,6 +86,10 @@ function mountComponent(props = {}) {
 }
 
 describe('AgentsDetails', () => {
+  afterEach(() => {
+    jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: false } });
+  });
+
   it('should retrieve the agent on load', async () => {
     mountComponent();
     await flushPromises();
@@ -147,7 +153,7 @@ describe('AgentsDetails', () => {
     await flushPromises();
 
     const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', ['a/b/entitlement-1', 'a/b/entitlement-2']);
+    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1', 'a/b/entitlement-2'], justification: '' });
     await flushPromises();
 
     expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
@@ -157,6 +163,70 @@ describe('AgentsDetails', () => {
         accountId: testAgent.keys.accountId,
       }),
     });
+  });
+
+  it('includes justification in common when assign-resources payload has a non-empty justification', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1'], justification: 'business reason' });
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
+      common: expect.objectContaining({
+        entitlementId: 'entitlement-1',
+        userId: testAgent.user.id,
+        justification: 'business reason',
+      }),
+    });
+  });
+
+  it('does not include justification in common when assign-resources payload justification is empty', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1'], justification: '' });
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
+      common: expect.not.objectContaining({ justification: expect.anything() }),
+    });
+  });
+
+  it('does not include justification in common when assign-resources payload justification is whitespace only', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1'], justification: '   ' });
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
+      common: expect.not.objectContaining({ justification: expect.anything() }),
+    });
+  });
+
+  it('passes requireRequestJustification true to FrGovResourceTable when API returns true', async () => {
+    jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: true } });
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    expect(govResourceTable.props('requireRequestJustification')).toBe(true);
+  });
+
+  it('passes requireRequestJustification false to FrGovResourceTable when API returns false', async () => {
+    jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: false } });
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    expect(govResourceTable.props('requireRequestJustification')).toBe(false);
   });
 
   it('calls getEntitlements on get-entitlements emit', async () => {

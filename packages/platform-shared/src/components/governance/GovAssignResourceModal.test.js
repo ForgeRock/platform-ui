@@ -46,6 +46,19 @@ const mountComponent = (propsData = {}) => mount(GovAssignResourceModal, {
   },
 });
 
+/**
+ * Advances the modal from step 0 (application picker) to step 1 (entitlement selection)
+ * by emitting a selected:option event and clicking Next.
+ */
+async function advanceToStepOne(wrapper) {
+  const selectApplicationField = wrapper.findComponent('[label="Select application"]');
+  selectApplicationField.vm.$emit('selected:option', { name: 'testApp', icon: 'icon.svg' });
+  await flushPromises();
+  const nextButton = wrapper.findAllComponents('[type="button"]').filter((item) => item.text().includes('Next'))[0];
+  await nextButton.trigger('click');
+  await flushPromises();
+}
+
 describe('GovAssignResourceModal Component', () => {
   it('queries applications via getApplicationList with disconnected filter when resourceType is roles', async () => {
     mountComponent({ parentResourceName: 'role', resourceType: 'roles' });
@@ -246,9 +259,72 @@ describe('GovAssignResourceModal Component', () => {
 
     expect(wrapper.emitted('assign-resources')).toBeTruthy();
     const [payload] = wrapper.emitted('assign-resources')[0];
-    expect(payload).toEqual({
+    expect(payload).toMatchObject({
       entitlements: [{ entitlementId: 'value', assignmentId: 'assign-1' }],
       accountId: 'acc-only',
+    });
+  });
+
+  describe('justification field', () => {
+    it('renders the justification textarea on step 1 with required: true validation when requireRequestJustification is true', async () => {
+      const wrapper = mountComponent({ requireRequestJustification: true });
+      await flushPromises();
+
+      await advanceToStepOne(wrapper);
+
+      const allFields = wrapper.findAllComponents({ name: 'FrField' });
+      const justificationField = allFields.find((f) => f.props('name') === 'justificationText');
+      expect(justificationField).toBeDefined();
+      expect(justificationField.vm.$attrs.validation).toEqual({ required: true });
+    });
+
+    it('renders the justification textarea on step 1 with required: false validation when requireRequestJustification is false (default)', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      await advanceToStepOne(wrapper);
+
+      const allFields = wrapper.findAllComponents({ name: 'FrField' });
+      const justificationField = allFields.find((f) => f.props('name') === 'justificationText');
+      expect(justificationField).toBeDefined();
+      expect(justificationField.vm.$attrs.validation).toEqual({ required: false });
+    });
+
+    it('emits assign-resources with { entitlements, justification } payload when grant button is clicked', async () => {
+      // Stub Form (vee-validate component name) to always report valid so the grant button is enabled
+      const wrapper = mount(GovAssignResourceModal, {
+        global: {
+          plugins: [i18n],
+          stubs: {
+            Form: { template: '<span><slot :meta="{ valid: true }" /></span>' },
+          },
+        },
+        props: {
+          entitlementOptions: [{ text: 'EntitlementText', value: 'value' }],
+          isTesting: true,
+          resourceType: 'entitlements',
+        },
+      });
+      await flushPromises();
+
+      await advanceToStepOne(wrapper);
+
+      // Set justification text via the field's v-model compat event
+      const allFields = wrapper.findAllComponents({ name: 'FrField' });
+      const justificationField = allFields.find((f) => f.props('name') === 'justificationText');
+      await justificationField.vm.$emit('modelCompat:input', 'My justification');
+      await flushPromises();
+
+      const grantButton = wrapper.findAll('[type="button"]').filter((item) => item.text().includes('Grant Entitlements'))[0];
+      await grantButton.trigger('click');
+      await flushPromises();
+
+      const emitted = wrapper.emitted('assign-resources');
+      expect(emitted).toBeTruthy();
+      expect(emitted[0][0]).toMatchObject({
+        entitlements: expect.any(Array),
+        justification: 'My justification',
+      });
     });
   });
 });

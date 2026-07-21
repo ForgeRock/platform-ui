@@ -96,6 +96,7 @@ PermissionsApi.getPermissionsForUser.mockImplementation(() => Promise.resolve({
 }));
 
 RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementation(() => Promise.resolve({ data: { result: [] } }));
+CommonsApi.getIgaAccessRequest.mockResolvedValue({ data: { requireRequestJustification: false } });
 
 describe('UserDetails', () => {
   let wrapper;

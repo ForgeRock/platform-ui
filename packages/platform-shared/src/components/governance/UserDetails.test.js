@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import UserDetails from './UserDetails';
+
+CommonsApi.getIgaAccessRequest = jest.fn().mockResolvedValue({ data: {} });
 
 describe('UserDetails.vue', () => {
   function mountComponent(propsData) {

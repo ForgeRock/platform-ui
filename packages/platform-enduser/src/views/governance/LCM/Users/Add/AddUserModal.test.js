@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -96,6 +96,12 @@ describe('AddUserModal', () => {
     nextButton.trigger('click');
     await flushPromises();
     expect(wrapper.vm.step).toBe(1);
+    expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
+      'createUser',
+      expect.objectContaining({
+        common: expect.objectContaining({ justification: 'LCM: Create user' }),
+      }),
+    );
   });
 
   it('second step has link to access request', async () => {
@@ -177,6 +183,8 @@ describe('AddUserModal', () => {
         common: { aCommonProp: 'test' },
         user: { object: { userName: 'test' } },
       });
+      const callArgs = AccessRequestApi.submitCustomRequest.mock.calls.at(-1)[1];
+      expect(callArgs.common).not.toHaveProperty('justification');
     });
   });
 });

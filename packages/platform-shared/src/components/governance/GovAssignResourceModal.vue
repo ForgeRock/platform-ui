@@ -106,6 +106,13 @@ of the MIT license. See the LICENSE file for details. -->
           type="multiselect"
           validation="required"
           @search-change="debouncedSearch" />
+        <FrField
+          v-model="justificationText"
+          data-testid="justification-field"
+          name="justificationText"
+          type="textarea"
+          :label="$t('governance.accessRequest.newRequest.justification')"
+          :validation="{ required: requireRequestJustification }" />
       </template>
       <template #modal-footer="{ cancel }">
         <div class="flex-grow-1">
@@ -214,6 +221,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  requireRequestJustification: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['assign-resources', 'get-entitlements']);
@@ -224,6 +235,7 @@ const accountGrantsLoading = ref(false);
 const appLogoSource = ref('');
 let debouncedSearch;
 const selectedAccountId = ref(null);
+const justificationText = ref('');
 const selectedApplication = ref('');
 const selectedApplicationName = ref('');
 const selectedEntitlements = ref([]);
@@ -304,6 +316,7 @@ function initializeData() {
   selectedEntitlements.value = [];
   accountGrants.value = [];
   selectedAccountId.value = null;
+  justificationText.value = '';
   if (props.initialApplicationId) {
     selectedApplication.value = `managed/application/${props.initialApplicationId}`;
     selectedApplicationName.value = props.initialApplicationName;
@@ -329,7 +342,7 @@ function submitAssignment() {
     entitlementId: id,
     assignmentId: props.entitlementOptions.find((o) => o.value === id)?.assignmentId,
   }));
-  emit('assign-resources', { entitlements, accountId: selectedAccountId.value });
+  emit('assign-resources', { entitlements, accountId: selectedAccountId.value, justification: justificationText.value });
 }
 
 function changeStep(changeValue) {

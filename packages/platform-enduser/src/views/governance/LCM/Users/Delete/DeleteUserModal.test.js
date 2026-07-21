@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -53,7 +53,7 @@ describe('DeleteUserModal', () => {
     expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
       'deleteUser',
       {
-        common: {},
+        common: { justification: 'LCM: Delete user' },
         custom: {},
         user: { userId: 'testUserId' },
       },
@@ -140,6 +140,8 @@ describe('DeleteUserModal', () => {
         common: { aCommonProp: 'test' },
         user: { userId: 'testUserId', userName: 'test' },
       });
+      const callArgs = AccessRequestApi.submitCustomRequest.mock.calls.at(-1)[1];
+      expect(callArgs.common).not.toHaveProperty('justification');
     });
   });
 });

@@ -251,6 +251,9 @@ async function submitRequest() {
       object: entitlementValues.value,
     },
   };
+  if (!form.value) {
+    requestPayload.common.justification = i18n.global.t('governance.lcm.justification.createEntitlement');
+  }
   if (userStore.adminUser) {
     requestPayload.common.context = {
       type: 'admin',

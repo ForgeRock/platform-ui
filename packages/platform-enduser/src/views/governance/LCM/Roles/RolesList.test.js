@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@ import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHel
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as PermissionsApi from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import * as RoleApi from '@forgerock/platform-shared/src/api/governance/RoleApi';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import RolesList from './RolesList';
 import i18n from '@/i18n';
 
@@ -73,6 +74,14 @@ const rolesMock = [
     },
   },
 ];
+
+jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/composables/bvModal', () => ({
+  __esModule: true,
+  default: () => ({
+    bvModal: { value: { show: jest.fn(), hide: jest.fn() } },
+  }),
+}));
 
 PermissionsApi.getPrivileges = jest.fn().mockResolvedValue(({
   data: {
@@ -195,5 +204,23 @@ describe('RolesList', () => {
     await flushPromises();
     const newRoleBtn = wrapper.find('button.btn-primary');
     expect(newRoleBtn.exists()).toBe(false);
+  });
+
+  it('submits deleteRole request with justification in common', async () => {
+    AccessRequestApi.submitCustomRequest.mockImplementation(() => Promise.resolve({ data: { id: 'req-123' } }));
+    wrapper = mountComponent();
+    await flushPromises();
+
+    wrapper.vm.deleteRoleIds = ['roleId1'];
+    await wrapper.vm.deleteRoles();
+    await flushPromises();
+
+    expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
+      'deleteRole',
+      expect.objectContaining({
+        common: expect.objectContaining({ justification: 'LCM: Delete role' }),
+        role: expect.objectContaining({ roleId: 'roleId1' }),
+      }),
+    );
   });
 });

@@ -246,6 +246,9 @@ async function submitRequest() {
       object: entitlementValues.value,
     },
   };
+  if (!form.value) {
+    requestPayload.common.justification = i18n.global.t('governance.lcm.justification.createEntitlement');
+  }
   return submitCustomRequest(CREATE_ENTITLEMENT_REQUEST_TYPE, requestPayload);
 }
 

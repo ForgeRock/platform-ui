@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,6 +18,32 @@ import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 
 mockValidation(['required']);
 
+// mockFormState holds a mutable reference to the form value.
+// The jest.mock factory (hoisted) reads from this object, so tests can set
+// mockFormState.current before mounting to simulate a custom form being active.
+// Per Jest rules, variables prefixed with 'mock' are permitted in hoisted factory scope.
+const mockFormState = { current: null };
+
+// eslint-disable-next-line global-require
+jest.mock('@forgerock/platform-shared/src/composables/governance/forms', () => {
+  // eslint-disable-next-line global-require
+  const { ref } = require('vue');
+  return () => {
+    // Each useForm() call gets a fresh ref whose initial value matches
+    // whatever the test set on mockFormState.current before mounting.
+    const form = ref(mockFormState.current);
+    return {
+      form,
+      formValue: ref({}),
+      formTypes: { APPLICATION: 'application' },
+      isLoadingForm: ref(false),
+      isValidForm: ref(true),
+      getFormDefinitionByType: jest.fn().mockResolvedValue(undefined),
+      setDefaultFormValues: jest.fn(),
+    };
+  };
+});
+
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
@@ -29,6 +55,10 @@ jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
 describe('AddEntitlementModal', () => {
   let wrapper;
   let routerPush;
+
+  beforeEach(() => {
+    mockFormState.current = null;
+  });
 
   GlossaryApi.getGlossaryAttributes.mockImplementation(() => Promise.resolve({
     data: {
@@ -135,7 +165,7 @@ describe('AddEntitlementModal', () => {
     expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
       'createEntitlement',
       {
-        common: {},
+        common: { justification: 'LCM: Create entitlement' },
         custom: {},
         entitlement: {
           applicationId: 'TestId',
@@ -146,6 +176,31 @@ describe('AddEntitlementModal', () => {
       },
     );
     expect(wrapper.vm.step).toBe(2);
+  });
+
+  it('does not include justification in common when custom form is active', async () => {
+    mockFormState.current = { form: { fields: [] } };
+
+    wrapper = mountComponent();
+    wrapper.vm.step = 1;
+    wrapper.vm.applicationId = 'TestId';
+    wrapper.vm.objectType = 'Role';
+    await flushPromises();
+
+    wrapper.findComponent('[aria-label="Submit"]').trigger('click');
+    await flushPromises();
+
+    expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
+      'createEntitlement',
+      expect.objectContaining({
+        common: expect.not.objectContaining({ justification: expect.anything() }),
+        custom: {},
+        entitlement: expect.objectContaining({
+          applicationId: 'TestId',
+          objectType: 'Role',
+        }),
+      }),
+    );
   });
 
   it('third step has link to access request', async () => {

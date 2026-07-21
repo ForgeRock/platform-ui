@@ -55,6 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
             :initial-application-name="agent.application?.name"
             :items="entitlementList"
             :parent-resource-name="$t('governance.agents.agent')"
+            :require-request-justification="requireRequestJustification"
             :saving-status="savingGovernanceResourcesStatus"
             show-view-details
             :total-count="entitlementTotalCount"
@@ -99,6 +100,7 @@ import FrGovResourceTable from '@forgerock/platform-shared/src/components/govern
 import { getEntitlements } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
 import FrDetailsTab from './DetailsTab';
 import store from '@/store';
@@ -125,6 +127,7 @@ const entitlementTotalCount = ref(0);
 const id = route.params.agentId;
 const savingGovernanceResourcesStatus = ref('');
 const entitlements = ref([]);
+const requireRequestJustification = ref(false);
 const tabs = ['details', 'entitlements', 'activity'];
 const entitlementTableFields = [
   {
@@ -178,9 +181,10 @@ async function getGovernanceEntitlements({ searchValue = '', selectedApplication
 
 /**
  * Assigns entitlements to the agent via IGA
- * @param {Array} resourceIds IDs of entitlements to assign
+ * @param {Object} payload Contains entitlements array and optional justification string
  */
-async function assignGovernanceResources(resourceIds) {
+async function assignGovernanceResources(payload) {
+  const { entitlements: resourceIds, justification } = payload;
   const userId = agent.value?.user?.id;
   if (!userId) {
     return;
@@ -191,6 +195,7 @@ async function assignGovernanceResources(resourceIds) {
     const common = { entitlementId: entitlementId.split('/')[2], userId };
     if (!props.isEndUser) common.context = { type: 'admin' };
     if (accountId) common.accountId = accountId;
+    if (justification?.trim()) common.justification = justification.trim();
     return submitCustomRequest('entitlementGrant', { common });
   });
   const results = await Promise.allSettled(requests);
@@ -291,6 +296,12 @@ onBeforeMount(async () => {
     setBreadcrumb('/my-agents', i18n.global.t('sideMenu.endUser.agents'));
   } else {
     setBreadcrumb('/agents', i18n.global.t('governance.agents.title'));
+  }
+  try {
+    const { data } = await getIgaAccessRequest();
+    requireRequestJustification.value = data.requireRequestJustification;
+  } catch {
+    // non-fatal; default false
   }
   await loadAppTemplates();
   getAgent();

@@ -52,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
             :initial-application-name="account.application?.name"
             :items="entitlementList"
             parent-resource-name="account"
+            :require-request-justification="requireRequestJustification"
             :saving-status="savingGovernanceResourcesStatus"
             show-view-details
             :total-count="entitlementTotalCount"
@@ -93,6 +94,7 @@ import FrGovResourceTable from '@forgerock/platform-shared/src/components/govern
 import { getEntitlements } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getAccountAttribute, getObjectTypeFromAccountId } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
@@ -126,6 +128,7 @@ const isCorrelated = computed(() => account.value.user);
 const isDisconnected = computed(() => account.value.application?.isDisconnected);
 const savingGovernanceResourcesStatus = ref('');
 const entitlements = ref([]);
+const requireRequestJustification = ref(false);
 const tabs = computed(() => [
   'details',
   'objectProperties',
@@ -175,9 +178,10 @@ async function getGovernanceEntitlements({ searchValue = '', selectedApplication
 
 /**
  * Assigns entitlements to the account via IGA
- * @param {Array} resourceIds IDs of entitlements to assign
+ * @param {Object} payload Contains entitlements array and optional justification string
  */
-async function assignGovernanceResources(resourceIds) {
+async function assignGovernanceResources(payload) {
+  const { entitlements: resourceIds, justification } = payload;
   const userId = account.value?.user?.id;
   if (!userId) {
     return;
@@ -188,6 +192,7 @@ async function assignGovernanceResources(resourceIds) {
     const common = { entitlementId: entitlementId.split('/')[2], userId };
     if (!props.isEndUser) common.context = { type: 'admin' };
     if (accountId) common.accountId = accountId;
+    if (justification?.trim()) common.justification = justification.trim();
     return submitCustomRequest('entitlementGrant', { common });
   });
   const results = await Promise.allSettled(requests);
@@ -309,6 +314,12 @@ onBeforeMount(async () => {
     setBreadcrumb('/my-machine-accounts', i18n.global.t('sideMenu.endUser.machineAccounts'));
   } else {
     setBreadcrumb('/accounts', i18n.global.t('common.accounts'));
+  }
+  try {
+    const { data } = await getIgaAccessRequest();
+    requireRequestJustification.value = data.requireRequestJustification;
+  } catch {
+    // non-fatal; default false
   }
   await loadAppTemplates();
   await getAccount();

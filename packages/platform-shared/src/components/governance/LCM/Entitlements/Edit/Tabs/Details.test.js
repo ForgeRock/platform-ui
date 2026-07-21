@@ -8,13 +8,41 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import Details from './Details';
 import i18n from '@/i18n';
 import { setupTestPinia } from '../../../../../../utils/testPiniaHelpers';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi');
+
+// mockFormState holds a mutable reference to the form value.
+// The jest.mock factory (hoisted) reads from this object, so tests can set
+// mockFormState.current before mounting to simulate a custom form being active.
+// Per Jest rules, variables prefixed with 'mock' are permitted in hoisted factory scope.
+const mockFormState = { current: null };
+
+// eslint-disable-next-line global-require
+jest.mock('@forgerock/platform-shared/src/composables/governance/forms', () => {
+  // eslint-disable-next-line global-require
+  const { ref } = require('vue');
+  return () => {
+    // Each useForm() call gets a fresh ref whose initial value matches
+    // whatever the test set on mockFormState.current before mounting.
+    const form = ref(mockFormState.current);
+    return {
+      form,
+      formValue: ref({}),
+      formTypes: { APPLICATION: 'application' },
+      isLoadingForm: ref(false),
+      isValidForm: ref(true),
+      getFormDefinitionByType: jest.fn().mockResolvedValue(undefined),
+      setDefaultFormValues: jest.fn(),
+    };
+  };
+});
 
 describe('Details', () => {
   let wrapper;
@@ -44,6 +72,10 @@ describe('Details', () => {
     item: { objectType: 'Role' },
     id: 'testEntitlement',
   };
+
+  beforeEach(() => {
+    mockFormState.current = null;
+  });
 
   GlossaryApi.getGlossaryAttributes.mockImplementation(() => Promise.resolve({
     data: {
@@ -116,5 +148,40 @@ describe('Details', () => {
     const objectInput = wrapper.find('[id="test object property"]');
     expect(objectInput.exists()).toBe(true);
     expect(objectInput.attributes('value')).toEqual('some other value');
+  });
+
+  it('submits request with justification in common when using default form', async () => {
+    AccessRequestApi.submitCustomRequest.mockImplementation(() => Promise.resolve({ data: { id: 'test-id' } }));
+    wrapper = mountComponent();
+    await flushPromises();
+
+    await wrapper.vm.submitRequest();
+    await flushPromises();
+
+    expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
+      'modifyEntitlement',
+      expect.objectContaining({
+        common: expect.objectContaining({ justification: 'LCM: Modify entitlement' }),
+      }),
+    );
+  });
+
+  it('does not include justification in common when custom form is active', async () => {
+    mockFormState.current = { form: { fields: [] } };
+
+    AccessRequestApi.submitCustomRequest.mockImplementation(() => Promise.resolve({ data: { id: 'test-id' } }));
+
+    wrapper = mountComponent();
+    await flushPromises();
+
+    await wrapper.vm.submitRequest();
+    await flushPromises();
+
+    expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(
+      'modifyEntitlement',
+      expect.objectContaining({
+        common: expect.not.objectContaining({ justification: expect.anything() }),
+      }),
+    );
   });
 });

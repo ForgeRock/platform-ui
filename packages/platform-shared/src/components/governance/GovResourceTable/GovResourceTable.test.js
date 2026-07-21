@@ -57,6 +57,7 @@ beforeEach(() => {
 
 describe('GovResourceTable', () => {
   CommonsApi.getGlossarySchema = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  CommonsApi.getIgaAccessRequest = jest.fn().mockResolvedValue({ data: { requireRequestJustification: false } });
   CommonsApi.getUserGrants = jest.fn().mockReturnValue(Promise.resolve({
     data: {
       result: mockItems,
@@ -271,6 +272,16 @@ describe('GovResourceTable', () => {
     await domWrapper.find('#app > .menu li:nth-of-type(2) > a').trigger('click'); // Request menu item
 
     expect(request).toHaveBeenCalled();
+  });
+
+  it('sets itemToRequest with the catalog id when showRequestModal is called', async () => {
+    const { wrapper } = await mountComponent({ showViewDetails: true, showRequest: true, grantType: 'entitlement' });
+    await wrapper.setProps({ items: mockItems });
+
+    wrapper.vm.showRequestModal(mockItems[0]);
+    await flushPromises();
+
+    expect(wrapper.vm.itemToRequest).toEqual([mockItems[0]?.catalog?.id]);
   });
 
   it('should show floating bar when row is selected, and show revoke modal when revoke button is clicked', async () => {
