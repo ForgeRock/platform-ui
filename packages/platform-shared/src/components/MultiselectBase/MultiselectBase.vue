@@ -11,8 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
     class="multiselect"
     @click="activate()"
     @blur="searchable ? null : deactivate()"
-    @keydown.down.prevent="pointerForward()"
-    @keydown.up.prevent="pointerBackward()"
+    @keydown.down.prevent="onArrowKey('forward')"
+    @keydown.up.prevent="onArrowKey('backward')"
     @keypress.enter.tab.stop.self="addPointerElement($event)"
     @keydown.esc.prevent.stop="deactivate()"
     @focus="onlyTagging && activate()"
@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
     :autofocus="autofocus || null"
     :role="wrapperHasComboboxRole ? 'combobox' : null"
     :aria-autocomplete="wrapperHasComboboxRole ? 'list': null"
-    :aria-activedescendant="wrapperHasComboboxRole && isOpen ? `${id}-${pointer}`: null"
+    :aria-activedescendant="wrapperHasComboboxRole && isOpen && hasNavigated ? `${id}-${pointer}`: null"
     :aria-expanded="wrapperHasComboboxRole ? isOpen.toString() : null"
     :aria-controls="wrapperHasComboboxRole ? `listbox-${id}` : null"
     :aria-labelledby="wrapperHasComboboxRole ? comboboxLabelledby || `${id}-label` : null"
@@ -116,7 +116,7 @@ of the MIT license. See the LICENSE file for details. -->
         @keydown.delete.stop="removeLastElement()"
         :role="inputHasComboboxRole ? 'combobox' : null"
         :aria-autocomplete="inputHasComboboxRole ? 'list': null"
-        :aria-activedescendant="inputHasComboboxRole && isOpen ? `${id}-${pointer}`: null"
+        :aria-activedescendant="inputHasComboboxRole && isOpen && hasNavigated ? `${id}-${pointer}`: null"
         :aria-expanded="inputHasComboboxRole ? isOpen.toString() : null"
         :aria-controls="inputHasComboboxRole ? `listbox-${id}` : null"
         :aria-labelledby="inputHasComboboxRole ? comboboxLabelledby || `${id}-label` : null"
@@ -200,7 +200,7 @@ of the MIT license. See the LICENSE file for details. -->
             </li>
           </template>
           <template v-if="showNoResults && (!hasFilteredOptions && search && !loading)">
-            <li>
+            <li aria-hidden="true">
               <span class="multiselect__option">
                 <slot
                   name="noResult"
@@ -219,11 +219,19 @@ of the MIT license. See the LICENSE file for details. -->
         </ul>
       </div>
     </transition>
+    <div
+      v-if="isOpen"
+      role="status"
+      class="sr-only">
+      {{ searchStatusMessage }}
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, useSlots } from 'vue';
+import {
+  ref, computed, onUnmounted, useSlots, watch,
+} from 'vue';
 import { debounce, isNull, isUndefined } from 'lodash';
 import useMultiselect from './multiselectComposable';
 import usePointer from './pointerComposable';
@@ -613,6 +621,27 @@ const wrapperHasComboboxRole = computed(() => !inputIsCombobox.value || hasSingl
 const inputHasComboboxRole = computed(() => inputIsCombobox.value && !hasSingleLabelSlot);
 const hasFilteredOptions = computed(() => !(filteredOptions.value.length === 0));
 const debouncePointerSet = debounce(pointerSet, 15);
+const hasNavigated = ref(false);
+const onArrowKey = (direction) => {
+  hasNavigated.value = true;
+  if (direction === 'forward') pointerForward();
+  else pointerBackward();
+};
+watch(search, () => { hasNavigated.value = false; });
+const searchStatusMessage = ref('');
+const updateSearchStatusMessage = debounce((value) => {
+  searchStatusMessage.value = value;
+}, 1400);
+onUnmounted(() => { updateSearchStatusMessage.cancel(); });
+watch([search, filteredOptions, isOpen], () => {
+  if (!search.value || !isOpen.value || props.loading) {
+    updateSearchStatusMessage('');
+    return;
+  }
+  const count = filteredOptions.value.filter((option) => !option.$isLabel && !option.isTag).length;
+  if (count > 0) updateSearchStatusMessage(i18n.global.tc('multiselectBase.searchResults', count, { count }));
+  else updateSearchStatusMessage(i18n.global.t('multiselectBase.noResults'));
+});
 </script>
 
 <style lang="scss" scoped src="./multiselectBase.scss"></style>

@@ -908,6 +908,7 @@
     "maxElements": "Maximum of { max } options selected. First remove a selected option to select another.",
     "noOptions": "List is empty.",
     "noResults": "No elements found. Consider changing the search query.",
+    "searchResults": "{count} result available. | {count} results available.",
     "selectGroupLabel": "Press enter to select group",
     "selectLabel": "Press enter to select",
     "selectOption": "Select option",

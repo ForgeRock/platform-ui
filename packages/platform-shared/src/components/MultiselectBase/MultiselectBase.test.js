@@ -94,7 +94,7 @@ describe('MultiSelectBase', () => {
       const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
       multiselectInput.trigger('keypress.enter');
       await wrapper.vm.$nextTick();
-      expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+      expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
       expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
       multiselectInput.trigger('keydown.down');
       await wrapper.vm.$nextTick();
@@ -217,7 +217,7 @@ describe('MultiSelectBase', () => {
     expect(multiselectInput.element.value).toBe('');
     multiselectInput.trigger('click');
     await wrapper.vm.$nextTick();
-    expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+    expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
     expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
     const optionOne = wrapper.find('#multiselectBaseId-0 > span');
     optionOne.trigger('click', { force: true });
@@ -2178,6 +2178,115 @@ describe('Multiselect.vue', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.find('.no-result-slot').exists()).toBe(false);
+    });
+  });
+
+  describe('searchStatusMessage', () => {
+    function setupSearch(options = ['apple', 'banana', 'cherry']) {
+      return mount(FrMultiselectBase, {
+        global: {
+          mocks: {
+            $t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+            $tc: (key, count, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+          },
+        },
+        props: {
+          name: 'stub-name',
+          testid: 'multiselectBaseTestid',
+          id: 'multiselectBaseId',
+          options,
+          searchable: true,
+        },
+      });
+    }
+
+    test('announces result count after search matches options', async () => {
+      jest.useFakeTimers();
+      const wrapper = setupSearch();
+
+      wrapper.vm.activate();
+      await wrapper.vm.$nextTick();
+      wrapper.vm.updateSearch('app');
+      await wrapper.vm.$nextTick();
+
+      jest.advanceTimersByTime(1400);
+      await wrapper.vm.$nextTick();
+
+      const liveRegion = wrapper.find('[role="status"]');
+      expect(liveRegion.exists()).toBe(true);
+      expect(liveRegion.text()).toContain('1');
+
+      jest.useRealTimers();
+    });
+
+    test('announces no results message when search matches nothing', async () => {
+      jest.useFakeTimers();
+      const wrapper = setupSearch();
+
+      wrapper.vm.activate();
+      await wrapper.vm.$nextTick();
+      wrapper.vm.updateSearch('zzz');
+      await wrapper.vm.$nextTick();
+
+      jest.advanceTimersByTime(1400);
+      await wrapper.vm.$nextTick();
+
+      const liveRegion = wrapper.find('[role="status"]');
+      expect(liveRegion.exists()).toBe(true);
+      expect(liveRegion.text()).toContain('No elements found');
+
+      jest.useRealTimers();
+    });
+
+    test('clears status message when search is cleared', async () => {
+      jest.useFakeTimers();
+      const wrapper = setupSearch();
+
+      wrapper.vm.activate();
+      await wrapper.vm.$nextTick();
+      wrapper.vm.updateSearch('app');
+      await wrapper.vm.$nextTick();
+      jest.advanceTimersByTime(1400);
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.updateSearch('');
+      await wrapper.vm.$nextTick();
+      jest.advanceTimersByTime(1400);
+      await wrapper.vm.$nextTick();
+
+      const liveRegion = wrapper.find('[role="status"]');
+      expect(liveRegion.text()).toBe('');
+
+      jest.useRealTimers();
+    });
+  });
+
+  describe('updateSearchStatusMessage debounce cleanup', () => {
+    test('cancels pending debounce on unmount to avoid setting state on unmounted component', async () => {
+      jest.useFakeTimers();
+      const wrapper = mount(FrMultiselectBase, {
+        global,
+        props: {
+          name: 'stub-name',
+          testid: 'multiselectBaseTestid',
+          id: 'multiselectBaseId',
+          options: [1, 2, 3],
+          searchable: true,
+        },
+      });
+
+      wrapper.vm.activate();
+      await wrapper.vm.$nextTick();
+      wrapper.vm.updateSearch('a');
+      await wrapper.vm.$nextTick();
+
+      // Unmount before the 1400ms debounce fires
+      wrapper.unmount();
+
+      // Advance timers past the debounce delay — should not throw or warn
+      expect(() => { jest.advanceTimersByTime(1500); }).not.toThrow();
+
+      jest.useRealTimers();
     });
   });
 });
