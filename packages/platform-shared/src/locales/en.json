@@ -1890,7 +1890,9 @@
       "roles": {
         "members": "Members",
         "entitlements": "Entitlements",
-        "newRole": "New role"
+        "newRole": "New role",
+        "successMemberAdded": "Request(s) created to add member to role",
+        "successMemberRemoved": "Request(s) created to remove member from role"
       },
       "entitlements": {
         "title": "Entitlements",

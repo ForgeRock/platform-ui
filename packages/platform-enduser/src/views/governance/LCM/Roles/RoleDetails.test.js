@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,6 +18,7 @@ import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/E
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as applicationImageResolver from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
 import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
 import {
   getRoleByIdMock,
@@ -107,6 +108,10 @@ EntitlementApi.getEntitlementList.mockImplementation(() => getEntitlementListMoc
 describe('RoleDetails', () => {
   let wrapper;
   const app = createAppContainer();
+
+  beforeEach(() => {
+    mockRouter({ params: { roleId: 'testId', roleStatus: 'active' } });
+  });
   function mountComponent(user = { userId: '1234' }, params = {}) {
     setupTestPinia({ user });
     wrapper = mount(RoleDetails, {
@@ -142,7 +147,7 @@ describe('RoleDetails', () => {
     expect(roleName.text()).toBe('Test Role');
   });
 
-  it('has tabs for the role details, entitlements, and members', async () => {
+  it('has tabs for the role details, entitlements, and members when editing an existing role', async () => {
     wrapper = mountComponent();
     await flushPromises();
     const roleTabs = wrapper.findAll('li.nav-item');
@@ -150,6 +155,16 @@ describe('RoleDetails', () => {
     expect(roleTabs[0].text()).toContain('Details');
     expect(roleTabs[1].text()).toContain('Entitlements');
     expect(roleTabs[2].text()).toContain('Members');
+  });
+
+  it('does not show the members tab when creating a new role', async () => {
+    mockRouter({ params: { roleId: 'new', roleStatus: 'active' } });
+    wrapper = mountComponent(null, { roleId: 'new' });
+    await flushPromises();
+    const roleTabs = wrapper.findAll('li.nav-item');
+    expect(roleTabs.length).toBe(2);
+    expect(roleTabs[0].text()).toContain('Details');
+    expect(roleTabs[1].text()).toContain('Entitlements');
   });
 
   it('displays a "Save" button for existing roles if the user has modifyRole permissions', async () => {
@@ -218,7 +233,6 @@ describe('RoleDetails', () => {
           description: '',
           entitlements: [],
           justifications: [],
-          addedRoleMembers: [],
           name: 'Test',
         },
         status: 'active',
@@ -249,7 +263,6 @@ describe('RoleDetails', () => {
           description: '',
           entitlements: [],
           justifications: [],
-          addedRoleMembers: [],
           name: 'Test',
         },
         status: 'active',
@@ -270,5 +283,89 @@ describe('RoleDetails', () => {
     saveBtns[1].trigger('click');
     await flushPromises();
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'publish', null, mockPayload);
+  });
+
+  it('issues a roleGrant request immediately when members are added', async () => {
+    mockRouter({ params: { roleId: 'testId', roleStatus: 'active' } });
+    wrapper = mountComponent();
+    await flushPromises();
+    AccessRequestApi.requestAction.mockClear();
+    wrapper.vm.updateTabData('members', 'add', [{ usr_id: 'user3', givenName: 'Carol', sn: 'Clark' }]);
+    await flushPromises();
+    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('roleGrant', 'publish', null, { common: { userId: 'user3', roleId: 'testId' } });
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleRemove', expect.anything(), expect.anything(), expect.anything());
+  });
+
+  it('issues a roleRemove request immediately when members are removed', async () => {
+    mockRouter({ params: { roleId: 'testId', roleStatus: 'active' } });
+    wrapper = mountComponent();
+    await flushPromises();
+    AccessRequestApi.requestAction.mockClear();
+    wrapper.vm.updateTabData('members', 'remove', [{ user: { id: 'user1' } }]);
+    await flushPromises();
+    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('roleRemove', 'publish', null, { common: { userId: 'user1', roleId: 'testId' } });
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleGrant', expect.anything(), expect.anything(), expect.anything());
+  });
+
+  it('reloads the member list and shows an error when a roleGrant partially fails', async () => {
+    mockRouter({ params: { roleId: 'testId', roleStatus: 'active' } });
+    wrapper = mountComponent();
+    await flushPromises();
+    const error = new Error('grant failed');
+    AccessRequestApi.requestAction
+      .mockResolvedValueOnce({ data: { id: 'req1' } })
+      .mockRejectedValueOnce(error);
+    RoleApi.getRoleDataById.mockClear();
+    wrapper.vm.updateTabData('members', 'add', [
+      { usr_id: 'user3' },
+      { usr_id: 'user4' },
+    ]);
+    await flushPromises();
+    expect(RoleApi.getRoleDataById).toHaveBeenCalledWith('testId', 'active', 'members');
+    expect(Notifications.showErrorMessage).toHaveBeenCalledWith(error, expect.any(String));
+  });
+
+  it('reloads the member list and shows an error when a roleRemove partially fails', async () => {
+    mockRouter({ params: { roleId: 'testId', roleStatus: 'active' } });
+    wrapper = mountComponent();
+    await flushPromises();
+    const error = new Error('remove failed');
+    AccessRequestApi.requestAction
+      .mockResolvedValueOnce({ data: { id: 'req1' } })
+      .mockRejectedValueOnce(error);
+    RoleApi.getRoleDataById.mockClear();
+    wrapper.vm.updateTabData('members', 'remove', [
+      { user: { id: 'user1' } },
+      { user: { id: 'user2' } },
+    ]);
+    await flushPromises();
+    expect(RoleApi.getRoleDataById).toHaveBeenCalledWith('testId', 'active', 'members');
+    expect(Notifications.showErrorMessage).toHaveBeenCalledWith(error, expect.any(String));
+  });
+
+  it('calls the modifyRole endpoint with the correct payload when saving an existing role', async () => {
+    const mockPayload = {
+      role: {
+        roleId: 'testId',
+        glossary: {},
+        object: {
+          description: 'Test',
+          entitlements: ['ent1', 'ent2'],
+          justifications: [],
+          name: 'Test Role',
+        },
+        status: 'active',
+      },
+    };
+    mockRouter({ params: { roleId: 'testId', roleStatus: 'active' } });
+    wrapper = mountComponent();
+    await flushPromises();
+    AccessRequestApi.requestAction.mockClear();
+    const saveBtn = wrapper.find('div.d-flex.justify-content-end > button');
+    saveBtn.trigger('click');
+    await flushPromises();
+    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('modifyRole', 'publish', null, mockPayload);
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleGrant', expect.anything(), expect.anything(), expect.anything());
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleRemove', expect.anything(), expect.anything(), expect.anything());
   });
 });

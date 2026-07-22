@@ -37,6 +37,7 @@ const defaultState = {
   governanceEnabledV4: false,
   governanceRoleMiningEnabled: false,
   governanceUnmanagedAppsEnabled: false,
+  roleRequestMembersEnabled: false,
   hasAmUrl: false,
   helixEnvironmentId: '',
   helixEnvironmentUrl: '',
@@ -196,6 +197,7 @@ const mutations = {
       if (env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {
         state.governanceEnabled = true;
         state.governanceDevEnabled = true;
+        state.roleRequestMembersEnabled = true;
       } else if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true') {
         state.governanceEnabled = true;
       }

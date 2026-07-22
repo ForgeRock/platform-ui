@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BTabs
         pills
         vertical
-        class="flex-nowrap"
+        class="flex-nowrap card-tabs-vertical"
         content-class="position-inherit"
         v-model="tabIndex">
         <BTab
@@ -169,15 +169,18 @@ const isReadOnly = computed(() => {
 const tabs = [
   {
     component: FrDetailsTab,
+    key: 'details',
     title: i18n.global.t('common.details'),
     type: 'role',
   },
   {
     component: FrEntitlementsTab,
+    key: 'entitlements',
     title: i18n.global.t('governance.administer.roles.entitlements'),
   },
   {
     component: FrMembersTab,
+    key: 'members',
     title: i18n.global.t('governance.administer.roles.members'),
   },
 ];
@@ -221,7 +224,7 @@ async function loadRoleEntitlements() {
   isLoading.value = true;
   const { data } = await getRoleDataById(roleId.value, roleStatus.value, 'entitlements');
   entitlements.value = data.result;
-  entitlementCount.value = data.totalCount;
+  entitlementCount.value = data.resultCount;
   isLoading.value = false;
 }
 
@@ -246,7 +249,7 @@ async function loadRoleMembers() {
   isLoading.value = true;
   const { data } = await getRoleDataById(roleId.value, roleStatus.value, 'members');
   members.value = enrichMemberList(data.result);
-  memberCount.value = data.totalHits;
+  memberCount.value = data.resultCount;
   isLoading.value = false;
 }
 
@@ -276,7 +279,6 @@ async function saveRoleData(action = 'publish', isPublishDraftRequest) {
           description,
           justifications: justifications || [],
           entitlements: map(formData.value.entitlements, 'id'),
-          addedRoleMembers: map(formData.value.members, (member) => member._id || member.id),
         },
         glossary: formData.value.glossary,
       },
@@ -357,7 +359,7 @@ async function updateTabData(tabUpdated, operation, data) {
   if (tabUpdated === 'entitlements') {
     if (operation === 'load') {
       formData.value.entitlements = data.result;
-      entitlementCount.value = data.totalHits;
+      entitlementCount.value = data.resultCount;
     } else if (operation === 'add') {
       forEach(data, (entitlement) => {
         formData.value.entitlements.push(entitlement);
@@ -373,54 +375,74 @@ async function updateTabData(tabUpdated, operation, data) {
   if (tabUpdated === 'members') {
     if (operation === 'load') {
       formData.value.members = data.result;
-      memberCount.value = data.totalHits;
+      memberCount.value = data.resultCount;
     } else if (operation === 'add') {
-      const existingIds = map(formData.value.members, (member) => member.id || member._id);
-      forEach(data, (member) => {
-        member.editable = true;
-        if (existingIds.indexOf(member.usr_id) < 0) {
-          formData.value.members.push(member);
-        }
-      });
+      const memberIds = map(data, (member) => member.usr_id || member._id || member.id);
+      const results = await Promise.allSettled(
+        memberIds.map((memberId) => requestAction('roleGrant', 'publish', null, { common: { userId: memberId, roleId: roleId.value } })),
+      );
+      await loadRoleMembers();
+      formData.value.members = members.value;
+      const firstRejected = results.find((r) => r.status === 'rejected');
+      if (firstRejected) {
+        showErrorMessage(firstRejected.reason, i18n.global.t('errors.savingObject', { object: 'role' }));
+      } else {
+        requestId.value = results[0]?.value?.data?.id;
+        successMessage.value = i18n.global.t('governance.administer.roles.successMemberAdded');
+        showSuccessModal();
+      }
     } else if (operation === 'remove') {
-      const idsToRemove = map(data, (member) => member.id || member._id);
-      const newMembers = filter(formData.value.members, (member) => idsToRemove.indexOf(member.id || member._id) < 0);
-      formData.value.members = newMembers;
+      const memberIds = map(data, (member) => member.user?.id || member._id || member.id);
+      const results = await Promise.allSettled(
+        memberIds.map((memberId) => requestAction('roleRemove', 'publish', null, { common: { userId: memberId, roleId: roleId.value } })),
+      );
+      await loadRoleMembers();
+      formData.value.members = members.value;
+      const firstRejected = results.find((r) => r.status === 'rejected');
+      if (firstRejected) {
+        showErrorMessage(firstRejected.reason, i18n.global.t('errors.savingObject', { object: 'role' }));
+      } else {
+        requestId.value = results[0]?.value?.data?.id;
+        successMessage.value = i18n.global.t('governance.administer.roles.successMemberRemoved');
+        showSuccessModal();
+      }
     }
+    return;
   }
   isFormChanged.value = true;
 }
 
-const tabsToShow = computed(() => tabs.filter(({ hide }) => !hide));
+const tabsToShow = computed(() => tabs.filter((tab) => tab.component !== FrMembersTab || roleId.value !== 'new'));
+const activeTabKey = computed(() => tabsToShow.value[tabIndex.value]?.key);
 const itemsForTab = computed(() => {
-  if (tabIndex.value === 0) {
+  if (activeTabKey.value === 'details') {
     return {
       role: formData.value.role,
       glossary: formData.value.glossary,
     };
   }
-  if (tabIndex.value === 1) {
+  if (activeTabKey.value === 'entitlements') {
     return formData.value.entitlements;
   }
-  if (tabIndex.value === 2) {
+  if (activeTabKey.value === 'members') {
     return formData.value.members;
   }
   return [];
 });
 const countForTab = computed(() => {
-  if (tabIndex.value === 1) {
+  if (activeTabKey.value === 'entitlements') {
     return entitlementCount.value;
   }
-  if (tabIndex.value === 2) {
+  if (activeTabKey.value === 'members') {
     return memberCount.value;
   }
   return [];
 });
 const loadDataForTab = computed(() => {
-  if (tabIndex.value === 1) {
+  if (activeTabKey.value === 'entitlements') {
     return loadRoleEntitlements;
   }
-  if (tabIndex.value === 2) {
+  if (activeTabKey.value === 'members') {
     return loadRoleMembers;
   }
   return [];
@@ -457,5 +479,9 @@ span.icon-large {
 
 :deep(.tab-content) {
   overflow-x: visible !important;
+}
+
+:deep(.nav-pills .nav-link:not(.active)) {
+  color: $gray-700;
 }
 </style>

@@ -7,6 +7,28 @@
 
 import shared from './Shared';
 
+describe('setFeatureFlags', () => {
+  it('sets roleRequestMembersEnabled when VUE_APP_FRAAS and VUE_APP_ENABLE_GOVERNANCE_DEV are true', () => {
+    const state = { roleRequestMembersEnabled: false, governanceEnabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_FRAAS: 'true',
+      VUE_APP_ENABLE_GOVERNANCE_DEV: 'true',
+    });
+    expect(state.roleRequestMembersEnabled).toBe(true);
+    expect(state.governanceEnabled).toBe(true);
+  });
+
+  it('does not set roleRequestMembersEnabled when only VUE_APP_ENABLE_GOVERNANCE is true', () => {
+    const state = { roleRequestMembersEnabled: false, governanceEnabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_FRAAS: 'true',
+      VUE_APP_ENABLE_GOVERNANCE: 'true',
+    });
+    expect(state.roleRequestMembersEnabled).toBe(false);
+    expect(state.governanceEnabled).toBe(true);
+  });
+});
+
 describe('should handle relative paths for FRaaS urls', () => {
   let windowSpy;
 

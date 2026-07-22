@@ -55,6 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
         @update-tab-data="updateTabData" />
     </BTab>
     <BTab
+      v-if="store.state.SharedStore.roleRequestMembersEnabled"
       :title="$t('governance.administer.roles.members')">
       <FrMembersTab
         :items="memberList"
@@ -102,6 +103,7 @@ import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/govern
 import FrEntitlementsTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/EntitlementsTab';
 import FrMembersTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/MembersTab';
 import i18n from '@/i18n';
+import store from '@/store';
 
 const props = defineProps({
   item: {

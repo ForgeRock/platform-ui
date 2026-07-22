@@ -592,7 +592,8 @@ describe('DetailsTab', () => {
       const wrapper = setup({ isDraft: true, ...formItem });
       await flushPromises();
       const saveDraftButton = wrapper.findAll('button.btn-primary');
-      await saveDraftButton[2].trigger('click');
+      // index 1: FrRequestFormManager renders a btn-primary at index 0; the role-specific Submit button is index 1
+      await saveDraftButton[1].trigger('click');
       await flushPromises();
       const expectedPayload = {
         common: {
