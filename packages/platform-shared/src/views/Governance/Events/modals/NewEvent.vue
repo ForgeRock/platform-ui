@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BMedia no-body>
               <FrIcon
                 :name="option.icon"
-                :icon-class="`wh-34px rounded-circle d-flex align-items-center justify-content-center mr-3 ${option.iconClasses}`" />
+                :icon-class="`size-36 rounded-circle d-flex align-items-center justify-content-center mr-3 ${option.iconClasses}`" />
               <BMediaBody>
                 <h3
                   class="h5"
@@ -144,7 +144,7 @@ const EVENT_ACTIONS = [
   {
     description: capitalize(i18n.global.t('governance.events.newEventModal.triggerWorkflow')),
     icon: 'account_tree',
-    iconClasses: 'text-info bg-lightblue',
+    iconClasses: 'color-blue bg-lightblue',
     name: capitalize(i18n.global.t('governance.events.newEventModal.workflow')),
     value: 'workflow',
   },
@@ -214,10 +214,3 @@ function onHide() {
 }
 
 </script>
-
-<style lang="scss" scoped>
-.wh-34px {
-  width: 34px;
-  height: 34px;
-}
-</style>
