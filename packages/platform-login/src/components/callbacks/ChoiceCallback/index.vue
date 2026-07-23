@@ -110,8 +110,14 @@ export default {
       text: item,
       value: itemIndex,
     }));
+    let displayType = 'select';
+    if (this.stage?.displayType) {
+      displayType = this.stage.displayType;
+    } else if (this.callback.getOutputByName('radio', false)) {
+      displayType = 'radio';
+    }
     return {
-      displayType: this.stage?.displayType ? this.stage.displayType : 'select',
+      displayType,
       selected: {
         name: `callback_${this.index}`,
         label: this.callback.getPrompt(),

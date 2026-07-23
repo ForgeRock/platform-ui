@@ -14,6 +14,7 @@ describe('ChoiceCallback', () => {
     getChoices: () => ['Option A', 'Option B', 'Option C'],
     getDefaultChoice: () => 0,
     getPrompt: () => 'Choose one',
+    getOutputByName: jest.fn(() => false),
     setInputValue: jest.fn(),
   };
 
@@ -224,6 +225,34 @@ describe('ChoiceCallback', () => {
 
       expect(verticalWrapper.findComponent({ name: 'BFormRadioGroup' }).attributes('aria-label')).toBe('Choose one');
       expect(horizontalWrapper.findComponent({ name: 'BFormRadioGroup' }).attributes('aria-label')).toBe('Choose one');
+    });
+  });
+
+  describe('Radio via output field', () => {
+    afterEach(() => {
+      mockCallback.getOutputByName.mockReturnValue(false);
+    });
+
+    it('Renders radio buttons when callback output field "radio" is true and no stage displayType is set', () => {
+      mockCallback.getOutputByName.mockImplementation((name) => name === 'radio');
+      const wrapper = createWrapper(null);
+
+      expect(wrapper.vm.displayType).toBe('radio');
+      expect(wrapper.findComponent({ name: 'BFormRadioGroup' }).exists()).toBe(true);
+    });
+
+    it('Defaults to select display when callback output field "radio" is not set', () => {
+      const wrapper = createWrapper(null);
+
+      expect(wrapper.vm.displayType).toBe('select');
+      expect(wrapper.findComponent({ name: 'BFormRadioGroup' }).exists()).toBe(false);
+    });
+
+    it('Stage displayType takes precedence over the callback output field "radio"', () => {
+      mockCallback.getOutputByName.mockImplementation((name) => name === 'radio');
+      const wrapper = createWrapper({ displayType: 'verticalButtons' });
+
+      expect(wrapper.vm.displayType).toBe('verticalButtons');
     });
   });
 
