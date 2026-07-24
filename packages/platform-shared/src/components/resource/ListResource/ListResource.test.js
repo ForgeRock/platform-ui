@@ -303,6 +303,28 @@ describe('ListResource Component', () => {
     expect(paginationChangeSpy).toHaveBeenCalled();
   });
 
+  it('does not call loadData when FrPagination mounts and emits @input on init', async () => {
+    const loadDataSpy = jest.spyOn(wrapper.vm, 'loadData').mockImplementation(() => {});
+
+    // Set tableData so that Pagination mounts, BPagination emits @input(1) during init.
+    // With @change wired (not @input), that init emission must not trigger loadData.
+    await wrapper.setProps({ tableData: [{}] });
+    await wrapper.vm.$nextTick();
+
+    expect(loadDataSpy).not.toHaveBeenCalled();
+  });
+
+  it('calls loadData when FrPagination emits @change', async () => {
+    await wrapper.setProps({ tableData: [{}] });
+    const loadDataSpy = jest.spyOn(wrapper.vm, 'loadData').mockImplementation(() => {});
+
+    const pagination = wrapper.findComponent(FrPagination);
+    pagination.vm.$emit('change', 2);
+    await wrapper.vm.$nextTick();
+
+    expect(loadDataSpy).toHaveBeenCalled();
+  });
+
   it('regenerates column list when propColumns are provided', async () => {
     await wrapper.setProps({
       propColumns: [

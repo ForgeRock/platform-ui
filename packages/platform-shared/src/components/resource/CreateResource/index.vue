@@ -392,10 +392,11 @@ export default {
       this.initialiseData();
     },
     /**
-     * User decides to view the `new`ly created resource.
+     * User decides to view the newly created resource.
      */
     navigateToDetailView() {
       this.$emit('show-details', this.newObjectResponseData);
+      this.newObjectResponseData = null;
       this.hideModal();
     },
     isCloseOnSelect(field) {

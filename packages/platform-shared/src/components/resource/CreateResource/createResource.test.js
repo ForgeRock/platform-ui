@@ -369,14 +369,24 @@ describe('CreateResource.vue', () => {
     expect(initializeDataSpy).toHaveBeenCalled();
   });
 
-  it('navigateToDetailView emits show-details with response data and hides modal', () => {
+  it('navigateToDetailView emits show-details with response data, clears newObjectResponseData, and hides modal', () => {
     const responseData = { _id: 'abc123' };
     wrapper.vm.newObjectResponseData = responseData;
     const hideModalSpy = jest.spyOn(wrapper.vm, 'hideModal');
     wrapper.vm.navigateToDetailView();
     expect(wrapper.emitted('show-details')).toBeTruthy();
     expect(wrapper.emitted('show-details')[0]).toEqual([responseData]);
+    expect(wrapper.vm.newObjectResponseData).toBeNull();
     expect(hideModalSpy).toHaveBeenCalled();
+  });
+
+  it('onModalHidden does not emit refresh-data after navigateToDetailView (navigation clears response data)', async () => {
+    wrapper.setProps({ showPostSaveStep: true });
+    await wrapper.vm.$nextTick();
+    wrapper.vm.newObjectResponseData = { _id: 'abc123' };
+    wrapper.vm.navigateToDetailView();
+    wrapper.vm.onModalHidden();
+    expect(wrapper.emitted('refresh-data')).toBeFalsy();
   });
 
   it('onModalHidden emits refresh-data and clears response data when a resource was created with postSave step', async () => {
