@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     :loading="isLoading"
     :options="selectOptions"
     :placeholder="$t('common.placeholders.typeToSearchFor', { item: 'Entitlement' })"
-    @input="$emit('update:modelValue', $event)"
+    @input="onSelect"
     @search-change="debouncedSearch">
     <template #noResult>
       {{ $t('common.noResultsFound') }}
@@ -57,7 +57,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue']);
 
 const selectedValue = ref(props.modelValue);
 const selectOptions = ref([]);
@@ -68,6 +68,7 @@ const isLoading = ref(false);
 const entriesPerPage = 10;
 let currentPage = 0;
 let totalPagedResults = 0;
+let ignoreNextEmptySearch = false;
 
 function getEntitlementDisplayName(item) {
   return item.descriptor?.idx?.['/entitlement']?.displayName || item.entitlement.displayName;
@@ -76,8 +77,8 @@ function getEntitlementDisplayName(item) {
 async function search() {
   isLoading.value = true;
   const searchParameters = {
-    pageNumber: currentPage,
-    pageSize: entriesPerPage,
+    _pagedResultsOffset: currentPage * entriesPerPage,
+    _pageSize: entriesPerPage,
     sortKeys: 'descriptor.idx./entitlement.displayName',
     queryFilter: `descriptor.idx./entitlement.displayName co '${searchQuery.value}'`,
   };
@@ -139,7 +140,14 @@ function loadMore() {
 }
 
 const debouncedSearch = debounce((event) => {
-  // reset the search when the user types
+  // vue-multiselect fires @search-change with '' immediately after selection.
+  // Consume that one synthetic clear without resetting, so the selected option
+  // stays visible. A subsequent genuine empty search (user cleared the field)
+  // falls through and reloads the unfiltered list.
+  if (event === '' && ignoreNextEmptySearch) {
+    ignoreNextEmptySearch = false;
+    return;
+  }
   searchQuery.value = event;
   selectOptions.value = [];
   currentPage = 0;
@@ -147,6 +155,12 @@ const debouncedSearch = debounce((event) => {
   viewMore.value = false;
   search();
 }, 500);
+
+function onSelect(value) {
+  ignoreNextEmptySearch = true;
+  debouncedSearch.cancel();
+  emit('update:modelValue', value);
+}
 
 search();
 </script>

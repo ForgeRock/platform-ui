@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -260,6 +260,50 @@ describe('EntitlementSelect', () => {
     const element = wrapper.find('.multiselect__option');
     await element.trigger('click');
     expect(wrapper.emitted('update:modelValue')[0]).toEqual(['Test Entitlement']);
+  });
+
+  it('should display the selected value after selecting an option found via typeahead search', async () => {
+    jest.useFakeTimers();
+    EntitlementApi.getEntitlementList = jest.fn()
+      .mockReturnValueOnce(Promise.resolve(getEntitlementsResult()))
+      .mockReturnValueOnce(Promise.resolve(getOneEntitlementsResult()));
+
+    const wrapper = setup();
+    await flushPromises();
+
+    const input = wrapper.find('input');
+    await input.setValue('Test Entitlement 3');
+    jest.runAllTimers();
+    await flushPromises();
+
+    const option = wrapper.find('.multiselect__option');
+    await option.trigger('click');
+    await flushPromises();
+
+    expect(wrapper.vm.selectedValue).toBe('Test Entitlement 3');
+    expect(wrapper.emitted('update:modelValue')[0]).toEqual(['Test Entitlement 3']);
+
+    // Advance past the debounce to simulate the trailing @search-change '' that
+    // vue-multiselect fires after clearing the search input on selection.
+    // The flag consumes this synthetic clear, so selectOptions must stay intact.
+    jest.advanceTimersByTime(500);
+    await flushPromises();
+
+    expect(wrapper.vm.selectOptions).toEqual([
+      { text: 'Test Entitlement 3', value: 'Test Entitlement 3' },
+    ]);
+
+    // A second empty search is a genuine user clear — it must reset to the full list.
+    EntitlementApi.getEntitlementList = jest.fn().mockReturnValue(Promise.resolve(getEntitlementsResult()));
+    wrapper.vm.debouncedSearch('');
+    jest.advanceTimersByTime(500);
+    await flushPromises();
+
+    expect(wrapper.vm.selectOptions).toEqual([
+      { text: 'Test Entitlement', value: 'Test Entitlement' },
+      { text: 'Test Entitlement 2', value: 'Test Entitlement 2' },
+    ]);
+    jest.useRealTimers();
   });
 
   it('should search entitlements when input is changed', async () => {
