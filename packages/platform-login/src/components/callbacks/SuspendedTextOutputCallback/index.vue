@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="row mb-2"
+    aria-live="off"
     ref="textOutputPanel">
     <div
       data-testid="suspend-text-output"
