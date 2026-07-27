@@ -11,7 +11,7 @@ import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUt
 import { searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getUserGrants, searchGovernanceResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import {
   getResourceFunction,
   getResourcePath,
@@ -49,32 +49,29 @@ export async function assignResourcesToIDM(parentResourceName, parentResourceId,
 
 /**
  * Assigns resources to IGA backend
- * @param {String} parentResourceId id of parent IDM resource
- * @param {Array} resourceIds list of resources to create relationship to IDM resource
- * @param {String} grantType IGA grant type to attribute new resources to
- * @param {Boolean} isEndUser Whether context should be saved as end user or not, which requires different request payload
+ * @param {String} userId id of the user receiving the entitlements
+ * @param {Array} entitlements list of catalog entitlement objects, each with an assignmentId property
+ * @param {String} grantType IGA grant type label used in success/error messages
+ * @param {Boolean} isEndUser Whether context should be saved as end user or not
  * @param {String} accountId optional IGA account ID to scope the request to a specific account
  * @returns {String} saving status
  */
-export async function assignResourcesToIGA(parentResourceId, resourceIds, grantType, isEndUser = false, accountId = null) {
-  const entitlements = resourceIds.map((resourceId) => ({ type: 'entitlement', id: resourceId }));
-
-  const payload = {
-    accessModifier: 'add',
-    catalogs: entitlements,
-    context: { type: isEndUser ? 'request' : 'admin' },
-    users: [parentResourceId],
-    justification: 'Admin submitted', // Not translated as this is filler text for auto-approved requests
-  };
-  if (accountId) payload.accountId = accountId;
+export async function assignResourcesToIGA(userId, entitlements, grantType, isEndUser = false, accountId = null) {
   try {
-    const { data } = await saveNewRequest(payload);
-    if (data?.errors?.length) {
-      data.errors.forEach((error) => {
-        showErrorMessage(error, error.message);
-      });
+    const results = await Promise.all(entitlements.map(({ assignmentId }) => {
+      const common = {
+        context: { type: isEndUser ? 'request' : 'admin' },
+        entitlementId: assignmentId,
+        userId,
+        ...(accountId && { accountId }),
+      };
+      return requestAction('entitlementGrant', 'publish', null, { common });
+    }));
+    const errors = results.filter((r) => r?.data?.errors?.length).flatMap((r) => r.data.errors);
+    if (errors.length) {
+      errors.forEach((error) => showErrorMessage(error, error.message));
     }
-    if (!data?.errors?.length || data.errors.length < resourceIds.length) {
+    if (errors.length < entitlements.length) {
       displayNotification('success', i18n.global.t('governance.resource.successfullyAdded', { resource: grantType }));
       return 'success';
     }
@@ -128,10 +125,10 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
     };
 
     if (resourceIsUser) {
-      queryParams.fields = 'application,entitlement,id,descriptor,glossary';
+      queryParams.fields = 'application,assignment,entitlement,id,descriptor,glossary';
       queryParams.sortKeys = 'descriptor.idx./entitlement.displayName';
       const { data } = await searchCatalog(queryParams, payload, !isEndUser);
-      return data?.result.map((result) => ({ value: result.id, text: get(result, 'descriptor.idx./entitlement.displayName') })) || [];
+      return data?.result.map((result) => ({ value: result.entitlement?.id, text: get(result, 'descriptor.idx./entitlement.displayName'), assignmentId: result.assignment?.id })) || [];
     }
     queryParams.sortBy = 'descriptor.idx./entitlement.displayName';
     const { data } = await searchGovernanceResource(payload, queryParams);
@@ -150,7 +147,10 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
  */
 export async function getGovernanceGrants(grantType, resourceId, params) {
   try {
-    const { data } = await getUserGrants(resourceId, params);
+    const queryParams = grantType === 'entitlement'
+      ? { ...params, _fields: 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship,assignment.id' }
+      : params;
+    const { data } = await getUserGrants(resourceId, queryParams);
     return { items: data.result, totalCount: data.totalCount };
   } catch (err) {
     showErrorMessage(err, i18n.global.t('governance.access.errorGettingData', { grantType: pluralizeValue(grantType) }));
@@ -268,28 +268,26 @@ export async function revokeResourcesFromIDM(parentResourceName, parentResourceI
  */
 export async function revokeResourcesFromIGA(revokePayload, parentResourceId, adminAccess) {
   try {
-    const payload = {
-      expiryDate: revokePayload.expiryDate,
-      justification: revokePayload.justification || 'Admin submitted', // Not translated as this is filler text for auto-approved requests
-      priority: revokePayload.priority,
+    const requestTypeMap = {
+      accountGrant: 'applicationRemove',
+      roleMembership: 'roleRemove',
     };
-    payload.accessModifier = 'remove';
-    payload.catalogs = revokePayload.itemsToRevoke.map((request) => {
-      const typeMap = {
-        entitlementGrant: 'entitlement',
-        accountGrant: 'application',
-        roleMembership: 'role',
+    const results = await Promise.all(revokePayload.itemsToRevoke.map((request) => {
+      const requestType = requestTypeMap[request.item?.type] || 'entitlementRemove';
+      const common = {
+        context: { type: adminAccess ? 'admin' : 'request' },
+        entitlementId: request.assignmentId || '',
+        userId: parentResourceId,
+        ...(revokePayload.accountId && { accountId: revokePayload.accountId }),
+        ...(revokePayload.justification && { justification: revokePayload.justification }),
+        ...(revokePayload.priority && { priority: revokePayload.priority }),
+        ...(revokePayload.expiryDate && { expiryDate: revokePayload.expiryDate }),
       };
-      return { type: typeMap[request.item.type], id: get(request.catalog, 'id', '') };
-    });
-    payload.users = [parentResourceId];
-    if (adminAccess) payload.context = { type: 'admin' };
-    if (revokePayload.accountId) payload.accountId = revokePayload.accountId;
-
-    const { data } = await saveNewRequest(payload);
-
-    if (data.errors?.length) {
-      showErrorMessage(null, data.errors[0].message);
+      return requestAction(requestType, 'publish', null, { common });
+    }));
+    const errors = results.filter((r) => r?.data?.errors?.length).flatMap((r) => r.data.errors);
+    if (errors.length) {
+      showErrorMessage(null, errors[0].message);
       return { status: 'error' };
     }
     displayNotification('success', i18n.global.t('governance.request.requestSuccess'));

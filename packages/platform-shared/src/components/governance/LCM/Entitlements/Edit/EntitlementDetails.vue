@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="mt-4"
           :title="$t('common.users')">
           <FrUsers
+            :application-id="entitlement?.application?.id"
             :entitlement-id="entitlementId" />
         </BTab>
       </BTabs>

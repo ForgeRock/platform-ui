@@ -74,6 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :items="resourceItems"
                 :total-count="resourceTotalCount"
                 :modal-id="`${tab.displayName}-modal`"
+                :user-id="userId"
                 @add-clicked="handleAdd(tab.grantType, userId)"
                 @load-data="queryResource($event, tab.grantType)"
                 @revoke-items="revokeResourcesAndCloseModal($event, userId, `${tab.displayName}-modal-revoke`)" />

@@ -126,12 +126,13 @@ of the MIT license. See the LICENSE file for details. -->
       no-close-on-backdrop
       title-class="h5"
       title-tag="h2"
-      :ok-disabled="newMembers.length === 0"
+      :ok-disabled="isSaveDisabled"
       :ok-title="$t('common.save')"
       ref="addMembersToEntitlementModal"
       :static="isTesting"
       :title="$t('common.addObject', { object: $t('governance.administer.roles.members') })"
       size="lg"
+      @hidden="newMembers = []"
       @ok="updateEntitlementMembers('add')">
       <FrRelationshipEdit
         v-if="relationshipArrayProperty"
@@ -140,6 +141,40 @@ of the MIT license. See the LICENSE file for details. -->
         :show-time-constraints-switch="false"
         :index="0"
         @setValue="onSelectAdditionalMembers" />
+      <BTable
+        v-if="newMembers.length > 0"
+        class="mt-3 mb-0"
+        :fields="addMembersColumns"
+        :items="newMembers">
+        <template #cell(user)="{ item }">
+          <FrUserBasicInfo
+            :pic-dimension="28"
+            :user="item" />
+        </template>
+        <template #cell(accounts)="{ item, index }">
+          <span
+            v-if="item.userGrantsLoading"
+            class="text-muted">
+            <FrSpinner size="sm" />
+          </span>
+          <FrField
+            v-else-if="item.userGrants.length > 1"
+            type="select"
+            :label="$t('common.account')"
+            :name="`account-select-${index}`"
+            :options="item.userGrants"
+            :value="item.selectedAccountId"
+            @input="setMemberAccount(index, $event)" />
+          <span v-else-if="item.userGrants.length === 1">
+            {{ item.userGrants[0].text }}
+          </span>
+          <span
+            v-else
+            class="text-muted">
+            {{ item.accountUnknown ? $t('governance.entitlements.accountUnknown') : $t('governance.entitlements.noExistingAccount') }}
+          </span>
+        </template>
+      </BTable>
     </BModal>
     <BModal
       id="removeMembersModal"
@@ -188,9 +223,11 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getEntitlementUsers } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import { getUserGrants } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrRequestSubmitSuccessModal from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccessModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -207,6 +244,10 @@ const { bvModal } = useBvModal();
 const userStore = useUserStore();
 
 const props = defineProps({
+  applicationId: {
+    type: String,
+    default: null,
+  },
   entitlementId: {
     type: String,
     required: true,
@@ -259,7 +300,22 @@ const columns = [
   },
 ];
 
+const addMembersColumns = [
+  {
+    key: 'user',
+    label: i18n.global.t('common.user.user'),
+  },
+  {
+    key: 'accounts',
+    label: i18n.global.t('common.account'),
+  },
+];
+
 const relationshipArrayProperty = computed(() => find(relationshipArray.value, (schema) => schema.propName === 'members'));
+
+const isSaveDisabled = computed(() => newMembers.value.length === 0
+  || newMembers.value.some((m) => m.userGrantsLoading)
+  || newMembers.value.some((m) => m.userGrants.length > 1 && !m.selectedAccountId));
 
 /**
  * Get the role glossary schema.
@@ -354,23 +410,85 @@ async function onSelectAdditionalMembers(val) {
     newMembers.value = [];
     return;
   }
+  const selectedIds = new Set(val.map((user) => user._ref.split('/').pop()));
+  const existingById = Object.fromEntries(newMembers.value.map((m) => [m._id, m]));
+  const newIds = [...selectedIds].filter((id) => !existingById[id]);
+
+  // Remove deselected users, keeping existing state for still-selected ones
+  newMembers.value = newMembers.value.filter((m) => selectedIds.has(m._id));
+
+  if (newIds.length === 0) return;
+
+  let newUserRecords = [];
   try {
-    const userFilter = val.map((user) => `_id eq '${user._ref.split('/').pop()}'`).join(' or ');
+    const userFilter = newIds.map((id) => `_id eq '${id}'`).join(' or ');
     const params = {
       _queryFilter: userFilter,
       fields: 'userName,sn,givenName,profileImage,_id',
       sortKeys: 'userName',
     };
     const { data } = await getManagedResourceList('alpha_user', params);
-    newMembers.value = data?.result?.map((user) => ({
+    newUserRecords = data?.result?.map((user) => ({
       ...user,
       usr_id: user._id,
       usr_name: `${user.givenName} ${user.sn}`,
+      userGrants: [],
+      userGrantsLoading: true,
     })) || [];
   } catch (error) {
     showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: i18n.global.t('common.users') }));
-    newMembers.value = [];
+    return;
   }
+
+  newMembers.value = [...newMembers.value, ...newUserRecords];
+
+  await Promise.all(newUserRecords.map(async (member) => {
+    try {
+      const grantsParams = {
+        grantType: 'account',
+        _pageSize: 10,
+        _pagedResultsOffset: 0,
+        _fields: 'keys,descriptor',
+        ...(props.applicationId && { _queryFilter: `application.id eq '${props.applicationId}'` }),
+      };
+      const { data: grantsData } = await getUserGrants(member._id, grantsParams);
+      const userGrants = (grantsData?.result || []).flatMap((grant) => {
+        const displayName = grant.descriptor?.idx?.['/account']?.displayName;
+        const accountId = grant.keys?.accountId;
+        return displayName && accountId ? [{ text: displayName, value: accountId }] : [];
+      });
+      const selectedAccountId = userGrants.length === 1 ? userGrants[0].value : null;
+      const memberIndex = newMembers.value.findIndex((m) => m._id === member._id);
+      if (memberIndex !== -1) {
+        newMembers.value[memberIndex] = {
+          ...newMembers.value[memberIndex],
+          userGrants,
+          selectedAccountId,
+          userGrantsLoading: false,
+        };
+      }
+    } catch (error) {
+      const memberIndex = newMembers.value.findIndex((m) => m._id === member._id);
+      if (memberIndex !== -1) {
+        newMembers.value[memberIndex] = {
+          ...newMembers.value[memberIndex],
+          userGrants: [],
+          selectedAccountId: null,
+          userGrantsLoading: false,
+          accountUnknown: error?.response?.status === 400,
+        };
+      }
+    }
+  }));
+}
+
+/**
+ * Set the selected account for a member in the add modal.
+ * @param {number} index - Index of the member in newMembers.
+ * @param {string} accountId - The selected account ID.
+ */
+function setMemberAccount(index, accountId) {
+  newMembers.value[index] = { ...newMembers.value[index], selectedAccountId: accountId };
 }
 
 /**
@@ -411,7 +529,11 @@ async function updateEntitlementMembers(operation) {
   let users = map(selected.value, (item) => ({ userId: item.user?.id, hasUser: Boolean(item.user?.id), accountId: item.keys?.accountId }));
   const requestType = operation === 'add' ? 'entitlementGrant' : 'entitlementRemove';
   if (operation === 'add') {
-    users = newMembers.value.map((member) => ({ userId: member._id, hasUser: true }));
+    users = newMembers.value.map((member) => ({
+      userId: member._id,
+      hasUser: true,
+      accountId: member.selectedAccountId,
+    }));
     newMembers.value = [];
   }
   const payload = {

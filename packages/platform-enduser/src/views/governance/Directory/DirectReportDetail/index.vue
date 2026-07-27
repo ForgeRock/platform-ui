@@ -95,6 +95,7 @@ of the MIT license. See the LICENSE file for details. -->
               :require-request-justification="requireRequestJustification"
               :total-count="resourceTotalCount"
               :modal-id="`${tab.displayName}-modal`"
+              :user-id="directReportUserInfo.userId"
               @load-data="queryResource"
               @revoke-items="revokeResourcesAndCloseModal($event, directReportUserInfo.userId, `${tab.displayName}-modal-revoke`)" />
           </BTab>

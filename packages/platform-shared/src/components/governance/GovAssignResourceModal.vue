@@ -83,6 +83,20 @@ of the MIT license. See the LICENSE file for details. -->
         </FrGovResourceSelect>
       </template>
       <template v-else>
+        <div
+          v-if="accountGrantsLoading"
+          class="mb-3 text-center">
+          <FrSpinner size="sm" />
+        </div>
+        <FrField
+          v-else-if="accountGrants.length > 1"
+          class="mb-3"
+          type="select"
+          :label="$t('common.account')"
+          name="accountSelect"
+          :options="accountGrants"
+          :value="selectedAccountId"
+          @input="selectedAccountId = $event" />
         <FrField
           v-model="selectedEntitlements"
           :internal-search="false"
@@ -117,10 +131,10 @@ of the MIT license. See the LICENSE file for details. -->
         <FrButtonWithSpinner
           v-else
           :button-text="$t('governance.resource.assignResourceModal.grantResource', { resource: capitalizedResourceType })"
-          :disabled="!valid"
+          :disabled="!valid || (accountGrants.length > 1 && !selectedAccountId)"
           :show-spinner="isSaving"
           :spinner-text="$t('common.saving')"
-          @click="emit('assign-resources', selectedEntitlements)" />
+          @click="submitAssignment" />
       </template>
     </BModal>
   </VeeForm>
@@ -151,10 +165,12 @@ import { Form as VeeForm } from 'vee-validate';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import { getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import { getUserGrants } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -194,13 +210,20 @@ const props = defineProps({
     type: String,
     default: 'userEntitlementModal',
   },
+  userId: {
+    type: String,
+    default: '',
+  },
 });
 
-const emit = defineEmits(['get-entitlements']);
+const emit = defineEmits(['assign-resources', 'get-entitlements']);
 
 // Data
+const accountGrants = ref([]);
+const accountGrantsLoading = ref(false);
 const appLogoSource = ref('');
 let debouncedSearch;
+const selectedAccountId = ref(null);
 const selectedApplication = ref('');
 const selectedApplicationName = ref('');
 const selectedEntitlements = ref([]);
@@ -225,7 +248,10 @@ const stepDescription = computed(() => {
 });
 
 function buildApplicationQueryParamFunction(query) {
-  const baseFilter = 'application.objectTypes.accountAttribute co "" and !(application.isDisconnected eq "true")';
+  let baseFilter = 'application.objectTypes.accountAttribute co ""';
+  if (props.resourceType === 'roles') {
+    baseFilter += ' and !(application.isDisconnected eq "true")';
+  }
   return {
     pageSize: 10,
     queryFilter: query ? `application.name co "${query}" and ${baseFilter}` : baseFilter,
@@ -246,14 +272,45 @@ function getEntitlements(searchValue) {
   emit('get-entitlements', { searchValue, selectedApplicationId: applicationPath[applicationPath.length - 1] });
 }
 
+async function fetchAccountGrants() {
+  if (!props.userId) return;
+  const applicationPath = selectedApplication.value.split('/');
+  const applicationId = applicationPath[applicationPath.length - 1];
+  accountGrantsLoading.value = true;
+  accountGrants.value = [];
+  selectedAccountId.value = null;
+  try {
+    const { data } = await getUserGrants(props.userId, {
+      grantType: 'account',
+      _pageSize: 10,
+      _pagedResultsOffset: 0,
+      _fields: 'keys,descriptor',
+      _queryFilter: `application.id eq '${applicationId}'`,
+    });
+    accountGrants.value = (data?.result || []).flatMap((grant) => {
+      const displayName = grant.descriptor?.idx?.['/account']?.displayName;
+      const accountId = grant.keys?.accountId;
+      return displayName && accountId ? [{ text: displayName, value: accountId }] : [];
+    });
+    if (accountGrants.value.length === 1) {
+      selectedAccountId.value = accountGrants.value[0].value;
+    }
+  } finally {
+    accountGrantsLoading.value = false;
+  }
+}
+
 function initializeData() {
   selectedEntitlements.value = [];
+  accountGrants.value = [];
+  selectedAccountId.value = null;
   if (props.initialApplicationId) {
     selectedApplication.value = `managed/application/${props.initialApplicationId}`;
     selectedApplicationName.value = props.initialApplicationName;
     appLogoSource.value = props.initialApplicationLogo;
     stepIndex.value = STEPS.ChooseEntitlement;
     getEntitlements('');
+    fetchAccountGrants();
   } else {
     selectedApplication.value = '';
     selectedApplicationName.value = '';
@@ -267,12 +324,23 @@ function setValuesFromApplicationSelect(option) {
   appLogoSource.value = getApplicationLogo(option);
 }
 
+function submitAssignment() {
+  const entitlements = selectedEntitlements.value.map((id) => ({
+    entitlementId: id,
+    assignmentId: props.entitlementOptions.find((o) => o.value === id)?.assignmentId,
+  }));
+  emit('assign-resources', { entitlements, accountId: selectedAccountId.value });
+}
+
 function changeStep(changeValue) {
   stepIndex.value += changeValue;
   if (stepIndex.value === STEPS.ChooseApplication) {
     selectedEntitlements.value = [];
+    accountGrants.value = [];
+    selectedAccountId.value = null;
   } else {
     getEntitlements('');
+    fetchAccountGrants();
   }
 }
 

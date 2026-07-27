@@ -305,6 +305,7 @@ of the MIT license. See the LICENSE file for details. -->
       :modal-id="modalId + '-show'"
       :parent-resource-name="parentResourceName"
       :resource-type="pluralizedGrantType"
+      :user-id="userId"
       @assign-resources="$emit('assign-resources', $event)"
       @get-entitlements="$emit('get-entitlements', $event)" />
     <FrRevokeRequestModal
@@ -540,6 +541,10 @@ export default {
       type: Boolean,
       default: null,
     },
+    userId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -623,6 +628,7 @@ export default {
       // the flag on every render. BTable manages _showDetails itself via toggleDetails.
       return this.items.map((item) => ({
         ...item,
+        assignmentId: item.assignment?.id,
         assignment: this.assignmentHandler(item),
       }));
     },

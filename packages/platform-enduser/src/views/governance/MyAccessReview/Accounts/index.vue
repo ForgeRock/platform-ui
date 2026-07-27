@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
         grant-type="account"
         :items="resourceItems"
         :total-count="resourceTotalCount"
+        :user-id="userId"
         @load-data="queryResource"
         @revoke-items="createRevokeRequest($event, userId, 'gov-resource-revoke')" />
     </BCard>

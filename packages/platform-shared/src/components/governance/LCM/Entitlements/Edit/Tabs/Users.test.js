@@ -247,4 +247,46 @@ describe('Users', () => {
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.selected).toEqual([{ user: { id: 'testUserId' } }]);
   });
+
+  describe('isSaveDisabled', () => {
+    it('is true when newMembers is empty', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.newMembers = [];
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isSaveDisabled).toBe(true);
+    });
+
+    it('is true when any member has userGrantsLoading true', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.newMembers = [{ userGrantsLoading: true, userGrants: [], selectedAccountId: null }];
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isSaveDisabled).toBe(true);
+    });
+
+    it('is true when a member has multiple grants but no account selected', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.newMembers = [{ userGrantsLoading: false, userGrants: [{}, {}], selectedAccountId: null }];
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isSaveDisabled).toBe(true);
+    });
+
+    it('is false when grants are loaded and account is selected', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.newMembers = [{ userGrantsLoading: false, userGrants: [{}, {}], selectedAccountId: 'acc-1' }];
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isSaveDisabled).toBe(false);
+    });
+
+    it('is false when a member has only one grant and no account selected', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.newMembers = [{ userGrantsLoading: false, userGrants: [{}], selectedAccountId: null }];
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isSaveDisabled).toBe(false);
+    });
+  });
 });

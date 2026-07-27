@@ -2861,6 +2861,8 @@
       "entitlementSourceAttributes": "Entitlement Source Attributes",
       "glossaryAttributes": "Glossary Attributes",
       "modifyMembersSuccess": "Your request(s) to modify the members of this entitlement has been submitted.",
+      "accountUnknown": "Account unknown",
+      "noExistingAccount": "No existing account",
       "modifySuccess": "Your request to modify this entitlement has been submitted.",
       "newEntitlement": "New Entitlement",
       "newEntitlementTitle": "{appName} {objectType} Entitlement",
