@@ -37,12 +37,14 @@ of the MIT license. See the LICENSE file for details. -->
       @update:model="emit('update:glossaryModel', $event)"
       @update:glossaryCreateFlag="emit('update:glossaryCreateFlag', $event)" />
 
+    <!-- eslint-disable vue/no-deprecated-v-on-native-modifier -->
     <template #footer>
       <div class="d-flex justify-content-end">
         <!--
-            Use @mousedown.prevent instead of @click as VeeValidate's form validation was making the
+            Use @mousedown.native.prevent instead of @click as VeeValidate's form validation was making the
             blur prevent validation from properly running. This ensures validation runs
             before the button's action is triggered.
+            When moving to non-compat Vue 3, this can likely be updated to use @click.prevent
           -->
         <FrButtonWithSpinner
           id="app-submit"
@@ -50,9 +52,9 @@ of the MIT license. See the LICENSE file for details. -->
           variant="primary"
           :show-spinner="isSaving || isFormValidating"
           :spinner-text="isFormValidating ? $t('common.validating') : $t('common.saving')"
-          @mousedown.prevent="emit('save-app')"
-          @keydown.enter.prevent="emit('save-app')"
-          @keydown.space.prevent="emit('save-app')"
+          @mousedown.native.prevent="emit('save-app')"
+          @keydown.native.enter.prevent="emit('save-app')"
+          @keydown.native.space.prevent="emit('save-app')"
         />
       </div>
     </template>
