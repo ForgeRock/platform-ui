@@ -315,6 +315,19 @@ describe('RequestFormManager', () => {
                 required: true,
               },
             },
+            {
+              label: 'Priority',
+              model: 'common.priority',
+              name: 'priority',
+              type: 'string',
+              layout: {
+                offset: 0,
+                columns: 12,
+              },
+              validation: {
+                required: true,
+              },
+            },
           ],
         },
       ],
@@ -388,11 +401,23 @@ describe('RequestFormManager', () => {
       jest.spyOn(RequestFormsApi, 'getRequestForm')
         .mockResolvedValue({ data: userFormSchema });
 
-      const wrapper = setup({ isApproval: true, ...createUserRequest });
+      const requestWithCommon = {
+        isApproval: true,
+        request: {
+          ...createUserRequest.request,
+          request: {
+            ...createUserRequest.request.request,
+            common: { priority: 'high' },
+          },
+        },
+      };
+
+      const wrapper = setup(requestWithCommon);
       await flushPromises();
 
-      expect(wrapper.find('.fr-field').exists()).toBe(true);
-      expect(wrapper.find('.fr-field').attributes('value')).toBe('testUser');
+      const fields = wrapper.findAll('.fr-field');
+      expect(fields[0].attributes('value')).toBe('testUser');
+      expect(fields[1].attributes('value')).toBe('high');
     });
   });
 

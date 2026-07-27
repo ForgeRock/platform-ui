@@ -179,7 +179,11 @@ async function setFormValues(request) {
           ...request.request?.user?.object,
         };
       if (form.value) {
-        formValue.value = { user: convertRelationshipPropertiesToFormBuilder(userValues || {}, propertySchema.value) };
+        formValue.value = {
+          common: request.request?.common || {},
+          custom: request.request?.custom || {},
+          user: convertRelationshipPropertiesToFormBuilder(userValues || {}, propertySchema.value),
+        };
       } else {
         defaultFormOptions.value = {
           userValues: userValues || {},
