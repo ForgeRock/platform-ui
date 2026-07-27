@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-invalid="isAriaInvalid"
           @animationstart="floatingLabel && animationStart"
           @blur="onBlur($event)"
-          @focus="$emit('focused') && (floatingLabel && label) && (floatLabels = true)"
+          @focus="onFocus"
           :data-testid="`input-${testid}`">
         <input
           v-else
@@ -64,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-required="isRequiredAria"
           :aria-invalid="isAriaInvalid"
           @blur="onBlur($event);"
-          @focus="$emit('focused') && (floatingLabel && label) && (floatLabels = true)"
+          @focus="onFocus"
           @animationstart="floatingLabel && animationStart"
           :data-testid="`input-${testid}`">
       </template>
@@ -230,6 +230,7 @@ export default {
       validateOnMount: false, initialValue: '', bails: false, validateOnValueUpdate: false, label: toRef(props, 'label'),
     });
     const wasInvalid = ref(false);
+    const isFocused = ref(false);
     const input = ref(null);
     // Debounced validation to prevent validation on every keypress
     const debouncedValidate = debounce(validate, 250);
@@ -279,7 +280,7 @@ export default {
     };
 
     return {
-      inputValue, fieldErrors, meta, validationListeners, input,
+      inputValue, fieldErrors, isFocused, meta, validationListeners, input,
     };
   },
   computed: {
@@ -320,12 +321,17 @@ export default {
       return inputClasses;
     },
     /**
-     * If the field is invalid, we return a string list of error ids which this field is described by
+     * Returns the ids of the elements describing this field for the input's `aria-describedby` attribute.
+     * Error ids are only included while the field is focused or when `validationImmediate` is true or when errors.length is true;
+     * otherwise falls back to the `describedbyId` prop (or undefined if that is empty).
      */
     ariaDescribedBy() {
-      if ((this.meta.valid && !this.errors.length) || !this.fieldErrors) return this.describedbyId || undefined;
-
-      if (!this.combinedErrors) return this.describedbyId || undefined;
+      if (
+        (!this.isFocused && !this.validationImmediate && !this.errors.length)
+        || (this.meta.valid && !this.errors.length)
+        || !this.fieldErrors
+        || !this.combinedErrors
+      ) return this.describedbyId || undefined;
 
       return createAriaDescribedByList(this.name, this.combinedErrors);
     },
@@ -356,6 +362,18 @@ export default {
     },
   },
   methods: {
+    /**
+     * Handles the focus event on the input element.
+     * Sets isFocused to true, emits a focused event to the parent,
+     * and floats the label upward when floatingLabel and label are both set.
+     */
+    onFocus() {
+      this.isFocused = true;
+      this.$emit('focused');
+      if (this.floatingLabel && this.label) {
+        this.floatLabels = true;
+      }
+    },
     /**
      * Toggles the display of text for a password
      */
@@ -405,6 +423,7 @@ export default {
     * @param {Object} event event object emitted by vue-multiselect during blur
     */
     onBlur(event) {
+      this.isFocused = false;
       this.$emit('blur', event);
       const newVal = event.target?.value || '';
       if (this.floatingLabel && this.label) {

@@ -224,22 +224,24 @@ describe('BasicInput', () => {
         });
 
         // Note: when an error occurs due to user input in the component.
-        // TODO: If anyone can figure out how to get this test working properly, please do
-        xit('when component errors', async () => {
+        it('when component errors', async () => {
           const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
           const wrapper = setup({ validation: 'required', errors: [] });
 
           const input = findByTestId(wrapper, 'input-stub-testid');
+          await input.setValue('');
+          await input.trigger('blur');
+          await input.trigger('focus');
 
           // Note: this is due to how often the Field is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-Field-debounced-state
           await flushPromises();
           jest.runAllTimers();
-          expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['stub-name is not valid.']);
+          expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['Please provide a value']);
 
           expect(input.attributes('aria-describedby')).toBe('stub-name0-error');
 
           const error = findByTestId(wrapper, 'stub-name-validation-error-0');
-          expect(error.text()).toBe('stub-name is not valid.');
+          expect(error.text()).toBe('Please provide a value');
         });
 
         // Note: when an error is provided to the component by its parent on load.
@@ -442,6 +444,50 @@ describe('BasicInput', () => {
   });
 
   describe('@actions', () => {
+    describe('onFocus', () => {
+      it('sets isFocused to true when input is focused', async () => {
+        const wrapper = setup({});
+        const input = findByTestId(wrapper, 'input-stub-testid');
+
+        expect(wrapper.vm.isFocused).toBe(false);
+        await input.trigger('focus');
+        expect(wrapper.vm.isFocused).toBe(true);
+      });
+
+      it('emits focused event when input is focused', async () => {
+        const wrapper = setup({});
+        const input = findByTestId(wrapper, 'input-stub-testid');
+
+        await input.trigger('focus');
+        expect(wrapper.emitted('focused')).toBeTruthy();
+      });
+
+      it('sets floatLabels to true when floatingLabel and label are set', async () => {
+        const wrapper = setup({ floatingLabel: true, label: 'My Label' });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+
+        expect(wrapper.vm.floatLabels).toBe(false);
+        await input.trigger('focus');
+        expect(wrapper.vm.floatLabels).toBe(true);
+      });
+
+      it('does not set floatLabels when floatingLabel is false', async () => {
+        const wrapper = setup({ floatingLabel: false, label: 'My Label' });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+
+        await input.trigger('focus');
+        expect(wrapper.vm.floatLabels).toBe(false);
+      });
+
+      it('does not set floatLabels when label is not set', async () => {
+        const wrapper = setup({ floatingLabel: true, label: '' });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+
+        await input.trigger('focus');
+        expect(wrapper.vm.floatLabels).toBe(false);
+      });
+    });
+
     it('should reveal password', async () => {
       const wrapper = setup({ type: 'password', label: 'My Input' });
       const input = findByTestId(wrapper, 'input-stub-testid');
