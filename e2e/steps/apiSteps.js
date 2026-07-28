@@ -8,6 +8,7 @@
 
 import AdminsApiSteps from './api/AdminsApiSteps';
 import ApplicationApiSteps from './api/ApplicationApiSteps';
+import EmailProviderApiSteps from './api/EmailProviderApiSteps';
 import ManagedObjectApiSteps from './api/ManagedObjectApiSteps';
 import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import CspApiSteps from './api/CspApiSteps';
@@ -33,6 +34,7 @@ export default {
   csp: CspApiSteps,
   customDomain: CustomDomainApiSteps,
   customEndpoints: CustomEndpointApiSteps,
+  emailProvider: EmailProviderApiSteps,
   endUser: EndUserApiSteps,
   eventHooks: EventHookApiSteps,
   inviteAdmins: InviteAdminsApiSteps,
