@@ -795,4 +795,70 @@ describe('Pagination Component', () => {
       expect(nextButton.classes('disabled')).toBe(false);
     });
   });
+
+  describe('page size dropdown focus management', () => {
+    it('focusFirstDropdownItem focuses the active item when perPage is not the first entry', async () => {
+      const wrapper = mountPagination({ propsData: { totalRows: 100, perPage: 50 } });
+      await flushPromises();
+
+      const activeItem = wrapper.find('.dropdown-item.active');
+      expect(activeItem.exists()).toBe(true);
+      const focusSpy = jest.spyOn(activeItem.element, 'focus');
+
+      wrapper.vm.focusFirstDropdownItem();
+      await flushPromises();
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('focusFirstDropdownItem falls back to the first item when no item matches perPage', async () => {
+      // pageSizes=[20,50,100] does not include perPage=10, so no item is .active
+      const wrapper = mountPagination({ propsData: { totalRows: 100, perPage: 10, pageSizes: [20, 50, 100] } });
+      await flushPromises();
+
+      const firstItem = wrapper.find('.dropdown-item');
+      expect(firstItem.classes()).not.toContain('active');
+      const focusSpy = jest.spyOn(firstItem.element, 'focus');
+
+      wrapper.vm.focusFirstDropdownItem();
+      await flushPromises();
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('@shown wiring calls focusFirstDropdownItem and focuses the active item', async () => {
+      const wrapper = mountPagination({ propsData: { totalRows: 100, perPage: 10 } });
+      await flushPromises();
+
+      const activeItem = wrapper.find('.dropdown-item.active');
+      const focusSpy = jest.spyOn(activeItem.element, 'focus');
+
+      // Trigger the @shown event on the BDropdown to exercise the template binding
+      wrapper.vm.$refs.pageSizeDropdown.$emit('shown');
+      await flushPromises();
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('selected item has aria-current="true" and no disabled class', () => {
+      const wrapper = mountPagination({ propsData: { totalRows: 100, perPage: 10 } });
+      const items = wrapper.findAll('.dropdown-item');
+      expect(items[0].classes()).not.toContain('disabled');
+      expect(items[0].attributes('aria-current')).toBe('true');
+      expect(items[1].attributes('aria-current')).toBeFalsy();
+    });
+
+    it('pageSizeChanged does not emit when the same page size is clicked', () => {
+      const wrapper = mountPagination({ propsData: { totalRows: 100, perPage: 10 } });
+      wrapper.vm.pageSizeChanged(10);
+      expect(wrapper.emitted('on-page-size-change')).toBeFalsy();
+    });
+
+    it('pageSizeChanged emits when a different page size is clicked', () => {
+      const wrapper = mountPagination({ propsData: { totalRows: 100, perPage: 10 } });
+      wrapper.vm.pageSizeChanged(20);
+      expect(wrapper.emitted('on-page-size-change')).toBeTruthy();
+      expect(wrapper.emitted('on-page-size-change')[0]).toEqual([20]);
+    });
+  });
 });

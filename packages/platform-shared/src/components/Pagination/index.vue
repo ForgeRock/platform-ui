@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Dropdown -->
     <BDropdown
       v-if="datasetSize !== DatasetSize.SMALL && !hidePageSizeSelector"
+      ref="pageSizeDropdown"
       data-testid="page_size-button"
       class="mr-1 pagination-dropdown"
       id="dropdown"
@@ -17,13 +18,14 @@ of the MIT license. See the LICENSE file for details. -->
       :boundary="boundary"
       :disabled="disabled"
       :text="effectiveTotalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows: effectiveTotalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
+      @shown="focusFirstDropdownItem"
     >
       <BDropdownItem
         v-for="(pageSize, index) in pageSizes"
         :data-testid="`page_size-${pageSize}`"
         :key="index"
         :active="pageSize === perPage"
-        :disabled="pageSize === perPage"
+        :aria-current="pageSize === perPage ? 'true' : null"
         @click="pageSizeChanged(pageSize)"
       >
         {{ $t('pagination.dropdown.pageSize', { pageSize }) }}
@@ -285,14 +287,27 @@ export default {
     },
   },
   methods: {
-    pageSizeChanged(pageSize) {
-      /**
-       * Emited to change the page size
-       *
-       * @event on-page-size-change
-       * @type {object}
-       * @property {number} pageSize - Indicates the new page size.
+    /**
+     * BDropdown's focusMenu() focuses the <ul> container, not the first item.
+     * The ARIA APG Menu Button pattern requires focus on the current/active menuitem on open,
+     * falling back to the first item when no item is selected.
+     * $nextTick defers execution until after BV's own @shown focus handler (focusMenu) has run,
+     * preventing a race where BV retakes focus from our target item.
      */
+    focusFirstDropdownItem() {
+      this.$nextTick(() => {
+        const menu = this.$refs.pageSizeDropdown?.$el.querySelector('.dropdown-menu');
+        const target = menu?.querySelector('.dropdown-item.active') || menu?.querySelector('.dropdown-item');
+        if (target) target.focus();
+      });
+    },
+    /**
+     * Emited to change the page size
+     * @event on-page-size-change
+     * @property {number} pageSize - Indicates the new page size.
+     */
+    pageSizeChanged(pageSize) {
+      if (pageSize === this.perPage) return;
       this.$emit('on-page-size-change', pageSize);
     },
     /**
