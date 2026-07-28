@@ -154,6 +154,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import FrMultiselectBase from '@forgerock/platform-shared/src/components/MultiselectBase/MultiselectBase';
+import i18n from '@/i18n';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 import store from '@/store';
@@ -329,9 +330,9 @@ export default {
     },
     setSearchPlaceholder(numChars) {
       if (numChars) {
-        this.searchPlaceholder = this.$t('common.placeholders.typeXCharactersToSearchFor', { numChars, item: this.label || this.resourceCollection.label });
+        this.searchPlaceholder = i18n.global.t('common.placeholders.typeXCharactersToSearchFor', { numChars, item: this.label || this.resourceCollection.label });
       } else {
-        this.searchPlaceholder = this.$t('common.placeholders.typeToSearchFor', { item: this.label || this.resourceCollection.label });
+        this.searchPlaceholder = i18n.global.t('common.placeholders.typeToSearchFor', { item: this.label || this.resourceCollection.label });
       }
     },
     async setOptions(query) {

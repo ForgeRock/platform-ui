@@ -251,12 +251,24 @@ When('user focus field {string}', (field) => {
   cy.findByLabelText(field).focus();
 });
 
+When('user focus textbox {string}', (field) => {
+  cy.findByRole('textbox', { name: field }).focus();
+});
+
 When('user types {string} in the field {string}', (value, field) => {
   cy.findByLabelText(field).clear().type(value);
 });
 
+When('user types {string} in the textbox {string}', (value, field) => {
+  cy.findByRole('textbox', { name: field }).clear().type(value);
+});
+
 When('user types the stored value of {string} in {string} field', (storedDataName, fieldName) => {
   cy.findByLabelText(fieldName).clear().type(Cypress.env(storedDataName));
+});
+
+When('user types the stored value of {string} in {string} textbox', (storedDataName, fieldName) => {
+  cy.findByRole('textbox', { name: fieldName }).clear().type(Cypress.env(storedDataName));
 });
 
 When(/^user types the following text to the (markdown|css) editor:$/, (editorType, text) => {

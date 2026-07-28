@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import store from '@/store';
+
 /**
  * Builds API URL using a search value
  *
@@ -58,11 +60,13 @@ export function generateSearchQuery(filterString, searchableFields, schemaProps)
 
 /**
  * Filters out fields that are causing API failures when used in search queries.
- * Removes fields related to password management, date, and integer fields
+ * Removes fields related to password management, known non-indexed fields (only accountStatus currently),
+ * date, and integer fields
  * @param {Array} searchableFields - Array containing available searchable fields for the resource.
  * @returns {Array} The Filtered searchable fields array.
  */
 export function filterFieldsForSearchQuery(searchableFields) {
   const passwordFields = ['passwordLastChangedTime', 'passwordExpirationTime'];
-  return searchableFields.filter((field) => !passwordFields.includes(field) && !field.startsWith('frIndexedDate') && !field.startsWith('frUnindexedDate') && !field.startsWith('frIndexedInteger') && !field.startsWith('frUnindexedInteger'));
+  const nonIndexedFields = store.state.isFraas ? ['accountStatus'] : [];
+  return searchableFields.filter((field) => !passwordFields.includes(field) && !nonIndexedFields.includes(field) && !field.startsWith('frIndexedDate') && !field.startsWith('frUnindexedDate') && !field.startsWith('frIndexedInteger') && !field.startsWith('frUnindexedInteger'));
 }
