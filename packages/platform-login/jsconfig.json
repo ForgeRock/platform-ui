@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "types": [
+      "node",
+      "cypress",
+      "@testing-library/cypress",
+      "@testing-library/jest-dom"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*",
+        "./src/*/index.vue",
+        "./src/*/index.js"
+      ],
+      "@forgerock/*": [
+        "../*",
+        "../*/index.vue",
+        "../*/index.js"
+      ],
+      "@e2e/*": ["../../e2e/*"]
+    }
+  },
+  "include": ["src/**/*.js", "src/**/*.vue", "e2e/**/*.js", "*.js"],
+  "exclude": ["node_modules", "dist", "coverage"]
+}
