@@ -23,10 +23,27 @@ of the MIT license. See the LICENSE file for details. -->
         <FrHeader
           class="ml-3"
           :title="agent?.displayName"
-          :subtitle="agent?.application?.name"
-        />
+          :subtitle="agent?.application?.name">
+          <template #additionalContent>
+            <BBadge
+              v-if="agentModel"
+              class="mr-2 py-2"
+              pill
+              variant="info">
+              {{ $t('governance.agents.mappingKeys.model') }}: {{ agentModel }}
+            </BBadge>
+            <BBadge
+              v-if="agentStatus"
+              class="mr-2 py-2"
+              pill
+              variant="info">
+              {{ $t('governance.agents.mappingKeys.status') }}: {{ agentStatus }}
+            </BBadge>
+          </template>
+        </FrHeader>
       </div>
       <BTabs
+        v-if="tabsReady"
         content-class="mt-3"
         nav-class="fr-tabs"
         v-model="tabIndex"
@@ -38,32 +55,59 @@ of the MIT license. See the LICENSE file for details. -->
           lazy>
           <FrDetailsTab
             :agent="agent"
+            :governance-dev-enabled="governanceDevEnabled"
             :is-end-user="props.isEndUser"
             :read-only="readOnly" />
         </BTab>
         <BTab
-          :title="$t('governance.agents.details.tabs.entitlements')"
-          key="entitlements"
+          key="access"
           lazy>
-          <FrGovResourceTable
-            allow-add
-            :entitlement-options="entitlements"
-            :fields="entitlementTableFields"
-            :grant-type="$t('governance.agents.entitlement')"
-            :initial-application-id="agent.application?.id"
-            :initial-application-logo="agent.application?.icon"
-            :initial-application-name="agent.application?.name"
-            :items="entitlementList"
-            :parent-resource-name="$t('governance.agents.agent')"
-            :require-request-justification="requireRequestJustification"
-            :saving-status="savingGovernanceResourcesStatus"
-            show-view-details
-            :total-count="entitlementTotalCount"
-            :user-id="agent?.user?.id"
-            @assign-resources="assignGovernanceResources"
-            @get-entitlements="getGovernanceEntitlements"
-            @load-data="queryAgentEntitlements"
-            @revoke-items="revokeEntitlement" />
+          <template #title>
+            {{ $t('common.access') }}
+            <BBadge
+              v-if="accessGrantCount"
+              class="ml-1"
+              pill
+              variant="info">
+              {{ accessGrantCount }}
+            </BBadge>
+          </template>
+          <FrAccessTab
+            :agent="agent"
+            :agent-id="id"
+            :is-admin="!props.isEndUser && !props.isLcm"
+            :is-end-user="props.isEndUser"
+            :require-request-justification="requireRequestJustification" />
+        </BTab>
+        <BTab
+          v-for="group in resourceGroups"
+          :key="group.key"
+          lazy>
+          <template #title>
+            {{ group.label }}
+            <BBadge
+              v-if="group.count"
+              class="ml-1"
+              pill
+              variant="info">
+              {{ group.count }}
+            </BBadge>
+          </template>
+          <div class="row">
+            <div
+              v-for="resource in group.resources"
+              :key="resource.type"
+              class="col-12 mb-4">
+              <FrResourceTab
+                :agent-id="id"
+                :resource-type="resource.type"
+                :resource-label="resource.label"
+                :name-property="resource.nameProperty"
+                :description-property="resource.descriptionProperty"
+                :icon="resource.icon"
+                :icon-color="resource.iconColor" />
+            </div>
+          </div>
         </BTab>
         <BTab
           v-if="!props.isEndUser"
@@ -71,8 +115,7 @@ of the MIT license. See the LICENSE file for details. -->
           key="activity"
           lazy>
           <FrActivity
-            :object-id="id"
-            :object-types="['agent', 'account']"
+            :activity-url="`governance/agent/${encodeURIComponent(id)}/activity`"
             :parent-resource-name="$t('common.agent')" />
         </BTab>
       </BTabs>
@@ -82,30 +125,30 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
+  BBadge,
   BContainer,
   BMedia,
   BTabs,
   BTab,
 } from 'bootstrap-vue';
-import { ref, onBeforeMount } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { omit } from 'lodash';
+import { useStore } from 'vuex';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
-import { getAccountById, getAccountEntitlements } from '@forgerock/platform-shared/src/api/governance/AccountApi';
-import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
-import { getEntitlements } from '@forgerock/platform-shared/src/utils/governance/resource';
-import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
-import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getAgentById, getAgentGrants } from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
 import FrDetailsTab from './DetailsTab';
-import store from '@/store';
-import { getAgentDisplayName } from '../utils/agentUtility';
+import FrResourceTab from './ResourceTab';
+import FrAccessTab from './AccessTab';
+import agentConstants from '../utils/agentConstants';
+import { useAgentConfig, resolveAgentIcon, resolveTemplateId } from '../utils/useAgentConfig';
+import { getAgentDisplayName, getMappingSystemKey } from '../utils/agentUtility';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -117,190 +160,170 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  isLcm: {
+    type: Boolean,
+    default: false,
+  },
 });
+const store = useStore();
+const governanceDevEnabled = computed(() => props.isLcm && (store?.state?.SharedStore?.governanceDevEnabled ?? false));
 const { setBreadcrumb } = useBreadcrumb();
 const route = useRoute();
+const {
+  agentApplicationProps, agentMappings, agentTemplateSources, agentTemplateIcons, loadConfig,
+} = useAgentConfig();
 const tabIndex = ref(0);
 const agent = ref({});
 const isLoading = ref(true);
-const entitlementList = ref([]);
-const entitlementTotalCount = ref(0);
-const id = route.params.agentId;
-const savingGovernanceResourcesStatus = ref('');
-const entitlements = ref([]);
+const tabsReady = ref(false);
+const agentResourceProps = ref([]);
+const resourceGroups = ref([]);
+const accessGrantCount = ref(null);
 const requireRequestJustification = ref(false);
-const tabs = ['details', 'entitlements', 'activity'];
-const entitlementTableFields = [
-  {
-    key: 'entitlementNameAppName',
-    label: i18n.global.t('common.name'),
-    sortable: true,
-    class: 'w-50',
-  },
-  {
-    key: 'item.objectType',
-    label: i18n.global.t('objectType'),
-    class: 'w-25',
-  },
-  {
-    key: 'item.accountAttribute',
-    label: i18n.global.t('common.accountAttribute'),
-    class: 'w-25',
-  },
-  {
-    key: 'assignment',
-    label: i18n.global.t('common.assignment'),
-    class: 'w-25',
-  },
-  {
-    key: 'actions',
-    label: '',
-    class: 'w-120px fr-no-resize sticky-right',
-  },
-];
-/**
- * Sets the routing url
- * @param {number} index - currently selected tab index
- */
+// Badge values join to the account record through the template's mapping ("icf" key
+// for agents with an application.templateName, "privilege" otherwise)
+const agentTemplateName = computed(() => resolveTemplateId(agent.value.application, agentTemplateSources.value));
+function getAgentMappedValue(igaKey) {
+  const mapping = agentMappings.value[agentTemplateName.value] || agentMappings.value.default || [];
+  const entry = mapping.find((m) => m.iga === igaKey);
+  const attribute = entry ? getMappingSystemKey(entry, agent.value.application) : igaKey;
+  return attribute ? agent.value.account?.[attribute] : null;
+}
+const agentModel = computed(() => getAgentMappedValue('model.id'));
+const agentStatus = computed(() => getAgentMappedValue('status'));
+const id = route.params.agentId;
+const resourceTypeLabels = {
+  guardrails: i18n.global.t('governance.agents.guardrails'),
+  identity: i18n.global.t('governance.agents.identity'),
+  knowledge: i18n.global.t('governance.agents.knowledge'),
+  tools: i18n.global.t('governance.agents.tools'),
+  toolCredentials: i18n.global.t('governance.agents.toolCredentials'),
+  serviceAccount: i18n.global.t('governance.agents.serviceAccount'),
+  connection: i18n.global.t('governance.agents.connection'),
+};
+
+// Resource types grouped into two tabs. Order also drives card order within each tab.
+const RESOURCE_GROUP_KEYS = {
+  'data-tools': ['tools', 'knowledge', 'guardrails'],
+  security: ['toolCredentials', 'identity', 'serviceAccount', 'connection'],
+};
+
+// Legacy per-resource tab deep links (/:agentId/:tab) map to their group.
+const RESOURCE_TYPE_TO_GROUP = {};
+Object.entries(RESOURCE_GROUP_KEYS).forEach(([groupKey, types]) => {
+  types.forEach((type) => { RESOURCE_TYPE_TO_GROUP[type] = groupKey; });
+});
+
 function tabActivated(index) {
   tabIndex.value = index;
 }
 
-/**
- * Retrieves list of entitlements related to specified application and using search value
- * @param {*} queryParams Contains parameters to search for entitlements
- *   {String} searchValue User-entered value to filter entitlements by
- *   {String} selectedApplicationId Id of application to filter entitlements by
- */
-async function getGovernanceEntitlements({ searchValue = '', selectedApplicationId }) {
-  entitlements.value = await getEntitlements(false, searchValue, selectedApplicationId, `managed/${store.state.realm}_assignment`, props.isEndUser);
+function buildResourceProps(agentData) {
+  const templateId = resolveTemplateId(agentData.application, agentTemplateSources.value);
+  const templateProps = agentApplicationProps.value[templateId]
+    || agentApplicationProps.value.default || {};
+  return Object.entries(templateProps).map(([type, config]) => ({
+    type,
+    label: resourceTypeLabels[type] || type,
+    nameProperty: config.nameProperty || '__NAME__',
+    descriptionProperty: config.descriptionProperty || 'description',
+    accountAttribute: config.accountAttribute || type,
+    icon: agentConstants.AGENT_ICONS[type]?.icon || '',
+    iconColor: agentConstants.AGENT_ICONS[type]?.color || '',
+  }));
 }
 
 /**
- * Assigns entitlements to the agent via IGA
- * @param {Object} payload Contains entitlements array and optional justification string
+ * Groups the resources of the agent's matched template config into the fixed tab groups.
+ * Tabs are derived from the application definition alone (the template matched by
+ * templateName or aiAgentSource in buildResourceProps) — the account's resource
+ * attributes only feed the count badge. A group with no configured resources produces
+ * no tab.
+ * @param {Array} resourceProps - Per-resource props from buildResourceProps
+ * @returns {Array<{key: string, label: string, count: number, resources: Array}>}
  */
-async function assignGovernanceResources(payload) {
-  const { entitlements: resourceIds, justification } = payload;
-  const userId = agent.value?.user?.id;
-  savingGovernanceResourcesStatus.value = 'saving';
-  const accountId = agent.value?.keys?.accountId;
-  const requests = resourceIds.map(({ entitlementId }) => {
-    const common = { entitlementId: entitlementId.split('/').slice(2).join('/') };
-    if (userId) common.userId = userId;
-    if (!props.isEndUser) common.context = { type: 'admin' };
-    if (accountId) common.accountId = accountId;
-    if (justification?.trim()) common.justification = justification.trim();
-    return submitCustomRequest('entitlementGrant', { common });
-  });
-  const results = await Promise.allSettled(requests);
-  const failed = results.filter((r) => r.status === 'rejected');
-  if (failed.length < results.length) {
-    displayNotification('success', i18n.global.t('governance.resource.successfullyAdded', { resource: i18n.global.t('common.entitlements') }));
-    savingGovernanceResourcesStatus.value = 'success';
-  }
-  if (failed.length > 0) {
-    showErrorMessage(failed[0].reason, i18n.global.t('governance.resource.errors.errorCreatingAccessRequest'));
-    savingGovernanceResourcesStatus.value = 'error';
-  }
+function buildResourceGroups(resourceProps) {
+  return Object.entries(RESOURCE_GROUP_KEYS)
+    .map(([key, types]) => {
+      const resources = types
+        .map((type) => resourceProps.find((resource) => resource.type === type))
+        .filter(Boolean);
+      return {
+        key,
+        label: i18n.global.t(`governance.agents.resourceGroups.${key}`),
+        count: resources.reduce(
+          (sum, resource) => {
+            const value = agent.value.account?.[resource.accountAttribute];
+            if (Array.isArray(value)) return sum + value.length;
+            return value != null ? sum + 1 : sum;
+          },
+          0,
+        ),
+        resources,
+      };
+    })
+    .filter((group) => group.resources.length > 0);
 }
 
-/**
- * Sends off revoke entitlement request
- * @param {Object} payload Contains metadata for revoke request
- */
-async function revokeEntitlement(payload) {
-  const userId = agent.value?.user?.id;
-  savingGovernanceResourcesStatus.value = 'saving';
-  const accountId = agent.value?.keys?.accountId;
-  const requests = payload.itemsToRevoke.map((item) => {
-    const common = { entitlementId: item?.assignmentId };
-    if (userId) common.userId = userId;
-    if (!props.isEndUser) common.context = { type: 'admin' };
-    if (accountId) common.accountId = accountId;
-    if (payload.justification) common.justification = payload.justification;
-    if (payload.priority) common.priority = payload.priority;
-    return submitCustomRequest('entitlementRemove', { common });
-  });
-  const results = await Promise.allSettled(requests);
-  const failed = results.filter((r) => r.status === 'rejected');
-  if (failed.length < results.length) {
-    displayNotification('success', i18n.global.t('governance.request.requestSuccess'));
-    savingGovernanceResourcesStatus.value = 'requestsRevoked';
-  }
-  if (failed.length > 0) {
-    showErrorMessage(failed[0].reason, i18n.global.t('governance.request.requestError'));
-    savingGovernanceResourcesStatus.value = 'error';
-  }
-}
-
-/**
- * Queries the entitlements that belong to the given agent
- * @param params query parameters
- */
-async function queryAgentEntitlements(params = {}) {
-  if (params.queryString) {
-    params.queryFilter = `descriptor.idx./entitlement.displayName co '${params.queryString.replace(/'/g, "\\'")}'`;
-  }
-  if (params.sortBy) {
-    params.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy}`;
-  }
-  if (params.pageNumber != null && params.pageSize != null) {
-    params.pagedResultsOffset = params.pageNumber * params.pageSize;
-    delete params.pageNumber;
-  }
-
-  const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);
-  queryParams._fields = 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship,assignment.id';
-  const { data } = await getAccountEntitlements(id, queryParams);
-  data.result.forEach((entitlement) => {
-    entitlement.assignmentId = entitlement.assignment?.id;
-    entitlement.item.accountAttribute = getAccountAttribute(entitlement);
-  });
-  entitlementList.value = data?.result;
-  entitlementTotalCount.value = data?.totalCount;
-}
-
-/**
- * Retrieves the agent from the API and sets the agent data.
-*/
-async function getAgent() {
+onMounted(async () => {
   try {
-    isLoading.value = true;
-    const { data } = await getAccountById(id);
-    agent.value = { ...data };
+    if (props.isLcm) {
+      setBreadcrumb('/administer/agents', i18n.global.t('governance.administer.agents.title'));
+    } else if (props.isEndUser) {
+      setBreadcrumb('/my-agents', i18n.global.t('sideMenu.endUser.agents'));
+    } else if (route.query.originAppId) {
+      // Entered from an application's Objects tab — return the breadcrumb to that side tab
+      setBreadcrumb(`/applications/unmanaged/edit/${route.query.originAppId}/objects${route.query.originObjectTab ? `/${route.query.originObjectTab}` : ''}`,
+        route.query.originAppName || i18n.global.t('common.application'));
+    } else {
+      setBreadcrumb('/agents', i18n.global.t('governance.agents.title'));
+    }
 
-    const applicationIcon = agent.value?.application.icon || getApplicationLogo(agent.value?.application);
-    agent.value.application.icon = applicationIcon;
+    const [, agentResult] = await Promise.allSettled([
+      Promise.all([loadAppTemplates(), loadConfig()]),
+      getAgentById(id),
+    ]);
 
-    agent.value.displayName = getAgentDisplayName(agent.value);
-  } catch (e) {
-    showErrorMessage(e, i18n.global.t('governance.agents.failedToLoad'));
+    // Count only the three access tabs shown below (accounts, entitlements, roles)
+    getAgentGrants(id, {
+      _queryFilter: "item.type eq 'accountGrant' or item.type eq 'entitlementGrant' or item.type eq 'roleMembership'",
+      _pageSize: 0,
+    })
+      .then(({ data }) => { accessGrantCount.value = data?.totalCount ?? null; })
+      .catch(() => {});
+    try {
+      const { data } = await getIgaAccessRequest();
+      requireRequestJustification.value = data.requireRequestJustification;
+    } catch {
+      // non-fatal; default false
+    }
+    if (agentResult.status === 'fulfilled') {
+      const { data } = agentResult.value;
+      agent.value = { ...data };
+      if (agent.value.application) {
+        // application.icon -> template config icon -> app-template image lookup
+        const applicationIcon = resolveAgentIcon(
+          agent.value.application,
+          agentTemplateIcons.value,
+          agentTemplateSources.value,
+        ) || getApplicationLogo(agent.value.application);
+        agent.value.application.icon = applicationIcon;
+      }
+      agent.value.displayName = getAgentDisplayName(agent.value);
+      agentResourceProps.value = buildResourceProps(agent.value);
+      resourceGroups.value = buildResourceGroups(agentResourceProps.value);
+    } else {
+      showErrorMessage(agentResult.reason, i18n.global.t('governance.agents.failedToLoad'));
+    }
+
+    const tabKeys = ['details', 'access', ...resourceGroups.value.map((g) => g.key), 'activity'];
+    // Accept legacy per-resource-type tab params by mapping them to their group.
+    const requestedTab = RESOURCE_TYPE_TO_GROUP[route.params.tab] || route.params.tab;
+    const matchedTab = tabKeys.findIndex((key) => key === requestedTab);
+    tabIndex.value = matchedTab > -1 ? matchedTab : 0;
   } finally {
     isLoading.value = false;
+    tabsReady.value = true;
   }
-}
-
-onBeforeMount(async () => {
-  const matchedTab = tabs
-    .findIndex((key) => key === route.params.tab);
-  tabIndex.value = matchedTab > -1 ? matchedTab : 0;
-  if (props.isEndUser) {
-    setBreadcrumb('/my-agents', i18n.global.t('sideMenu.endUser.agents'));
-  } else if (route.query.originAppId) {
-    // Entered from an application's Objects tab — return the breadcrumb to that side tab
-    setBreadcrumb(`/applications/unmanaged/edit/${route.query.originAppId}/objects${route.query.originObjectTab ? `/${route.query.originObjectTab}` : ''}`,
-      route.query.originAppName || i18n.global.t('common.application'));
-  } else {
-    setBreadcrumb('/agents', i18n.global.t('governance.agents.title'));
-  }
-  try {
-    const { data } = await getIgaAccessRequest();
-    requireRequestJustification.value = data.requireRequestJustification;
-  } catch {
-    // non-fatal; default false
-  }
-  await loadAppTemplates();
-  getAgent();
 });
 </script>

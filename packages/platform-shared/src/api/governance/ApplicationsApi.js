@@ -58,6 +58,17 @@ export function createUnmanagedApplication(payload) {
 }
 
 /**
+ * Triggers a sync for an application.
+ *
+ * @param {string} id - The application ID to sync.
+ * @param {Object} [payload] - Optional body forwarded to the sync action (e.g. schedule fields).
+ * @returns {Promise} - A promise that resolves when the sync is accepted.
+ */
+export function syncApplication(id, payload) {
+  return generateIgaApi().post(`${applicationUrl}/${encodeURIComponent(id)}?_action=sync`, payload);
+}
+
+/**
  * Updates an unmanaged application by its ID.
  *
  * @param {string} id - The application ID.
@@ -217,10 +228,14 @@ export function getApplicationTask(applicationId, name) {
  *
  * @param {string} applicationId - The application ID.
  * @param {Object} payload - The task payload.
+ * @param {Object} [options] - Optional parameters.
+ * @param {boolean} [options.autoRun] - When false, stores the task without firing it and
+ * without a scheduled date, leaving it pending-but-unscheduled until explicitly triggered.
  * @returns {Promise} - A promise that resolves to the saved task object.
  */
-export function saveApplicationTask(applicationId, payload) {
-  return generateIgaApi().post(`${applicationUrl}/${applicationId}/task?_action=create`, payload);
+export function saveApplicationTask(applicationId, payload, { autoRun } = {}) {
+  const autoRunParam = autoRun === false ? '&autoRun=false' : '';
+  return generateIgaApi().post(`${applicationUrl}/${applicationId}/task?_action=create${autoRunParam}`, payload);
 }
 
 /**

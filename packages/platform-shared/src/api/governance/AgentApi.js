@@ -8,16 +8,97 @@
 import { generateIdmApi, generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
+const agentUrl = 'governance/agent';
 const applicationUrl = 'governance/application';
 
 /**
- ***** NOTE: This is being used in place of an in-progress IGA API.  It is calling an openidm/system API, so
- ***** calling this can only be done from the platform-admin usage of a shared component.  This will be updated
- ***** as soon as possible
+ * Get a list of agents.
  *
- * Get system resources for a connector and object type
- * pagedResultsCookie should not be encoded if its included
+ * @param {Object} queryParams - The query parameters to include in the request.
+ * @returns {Promise} - A promise that resolves to a list of agents.
+ */
+export function getAgentConfig() {
+  return generateIgaApi().get(`${agentUrl}/config`);
+}
+
+export async function getAgents(queryParams = {}) {
+  const encodedQueryParams = encodeQueryString(queryParams);
+  return generateIgaApi().get(`${agentUrl}${encodedQueryParams}`);
+}
+
+/**
+ * Get agent details for a single agent by ID.
  *
+ * @param {string} id - The ID of the agent to retrieve.
+ * @returns {Promise} A promise that resolves to the agent details.
+ */
+export function getAgentById(id) {
+  return generateIgaApi().get(`${agentUrl}/${id}`);
+}
+
+/**
+ * Fetch glossary attributes data for an agent.
+ *
+ * @param {string} agentId
+ * @returns {Promise}
+ */
+export function getAgentGlossaryAttributesData(agentId) {
+  return generateIgaApi().get(`${agentUrl}/${agentId}/glossary`);
+}
+
+/**
+ * Save glossary attributes data for an agent.
+ *
+ * @param {string} agentId
+ * @param {Object} payload - Object with all data of glossary attributes
+ * @returns {Promise}
+ */
+export function saveAgentGlossaryAttributesData(agentId, payload) {
+  return generateIgaApi().put(`${agentUrl}/${agentId}/glossary`, payload);
+}
+
+/**
+ * Fetch grants for an agent by grant type.
+ *
+ * @param {string} agentId
+ * @param {string} grantType - e.g. 'entitlement', 'account', 'role'
+ * @param {Object} queryParams - The query parameters to include in the request
+ * @returns {Promise}
+ */
+export function getAgentGrants(agentId, queryParams = {}) {
+  const encodedQueryParams = encodeQueryString(queryParams);
+  return generateIgaApi().get(`${agentUrl}/${agentId}/grants${encodedQueryParams}`);
+}
+
+/**
+ * Get custodians for an agent.
+ *
+ * @param {string} agentId
+ * @param {Object} queryParams - pageSize and pageNumber (plain params, not CREST-style)
+ * @returns {Promise}
+ */
+export function getAgentCustodians(agentId, queryParams = {}) {
+  const encodedQueryParams = encodeQueryString(queryParams, false);
+  return generateIgaApi().get(`${agentUrl}/${agentId}/custodians${encodedQueryParams}`);
+}
+
+/**
+ * Get resources of a specific type for an agent (e.g. guardrails, tools, knowledge).
+ *
+ * @param {string} agentId
+ * @param {string} resourceType - resource type key (e.g. 'guardrails', 'tools')
+ * @param {Object} queryParams - pageSize and pageNumber (plain params, not CREST-style)
+ * @returns {Promise}
+ */
+export function getAgentResources(agentId, resourceType, queryParams = {}) {
+  const encodedQueryParams = encodeQueryString(queryParams, false);
+  return generateIgaApi().get(`${agentUrl}/${agentId}/resources/${resourceType}${encodedQueryParams}`);
+}
+
+/**
+ * Get system resources for a connector and object type. Calls the IDM system API as a
+ * placeholder for an in-progress IGA API, so it only works from platform-admin usage
+ * of this shared component. pagedResultsCookie must not be encoded (it breaks if it is).
  * @param {String} connectorId ID of connector
  * @param {String} objectTypeName name of object type
  * @param {Object} params query params object (_queryFilter, _sortKeys, _fields, etc.)
@@ -41,12 +122,8 @@ async function getSystemResourceList(connectorId, objectTypeName, params) {
 }
 
 /**
- ***** NOTE: This is being used in place of an in-progress IGA API.  It is calling an openidm/system API, so
- ***** calling this can only be done from the platform-admin usage of a shared component.  This will be updated
- ***** as soon as possible
- *
- * Get a single system resource
- *
+ * Get a single system resource. Calls the IDM system API as a placeholder for an
+ * in-progress IGA API, so it only works from platform-admin usage of this shared component.
  * @param {String} connectorId ID of connector
  * @param {String} objectTypeName name of object type
  * @param {String} id system resource id
@@ -108,6 +185,44 @@ export async function getAgentResourcesByIds(queryParams = {}, application, reso
     return getApplicationObjectsByIds(queryParams, application.id, resourceType, idList);
   }
   return getConnectorObjectsByIds(queryParams, application.connectorId, resourceType, idList);
+}
+
+/**
+ * Fetch the discovery status (mapping list) for an agent application.
+ * Returns 404 if no reconMapping task has been created yet.
+ *
+ * @param {string} applicationId
+ * @returns {Promise} Array of mapping status objects
+ */
+export function getAgentDiscovery(applicationId) {
+  return generateIgaApi().get(`${agentUrl}/discovery`, { params: { applicationId } });
+}
+
+/**
+ * Schedule (upsert) a reconMapping discovery task for an agent application.
+ *
+ * @param {string} applicationId
+ * @param {Object} [options]
+ * @param {string} [options.date] - ISO date string for when to run; omit for immediate
+ * @param {number} [options.intervalMs] - Recurring interval in ms
+ * @param {boolean} [options.recurring]
+ * @returns {Promise}
+ */
+export function createAgentDiscovery(applicationId, options = {}) {
+  return generateIgaApi().post(`${agentUrl}/discovery?_action=create`, { applicationId, ...options });
+}
+
+/**
+ * Immediately trigger the existing reconMapping task for an agent application.
+ *
+ * @param {string} applicationId
+ * @param {Object} [options]
+ * @param {boolean} [options.preserveDate]
+ * @param {Object} [options.overrides]
+ * @returns {Promise}
+ */
+export function triggerAgentDiscovery(applicationId, options = {}) {
+  return generateIgaApi().post(`${agentUrl}/discovery?_action=trigger`, { applicationId, ...options });
 }
 
 /**

@@ -131,6 +131,10 @@ export const requestTypes = {
     label: 'governance.accessRequest.requestTypes.deleteUser',
     value: 'deleteUser',
   },
+  MODIFY_AGENT: {
+    label: 'governance.accessRequest.requestTypes.modifyAgent',
+    value: 'modifyAgent',
+  },
   ROLE_GRANT: {
     label: 'governance.accessRequest.requestTypes.roleGrant',
     value: 'roleGrant',

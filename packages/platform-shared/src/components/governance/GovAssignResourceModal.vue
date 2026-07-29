@@ -60,7 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
           resource-path="application"
           :option-function="applicationOptionFunction"
           :query-param-function="buildApplicationQueryParamFunction"
-          :resource-function="getApplicationList"
+          :resource-function="searchApplicationsWithScopePermission"
           @selected:option="setValuesFromApplicationSelect">
           <template
             v-for="(slotName, index) in ['singleLabel', 'option']"
@@ -233,15 +233,18 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  /** Scope permission for the application search (end users see only permitted apps). */
+  scopePermission: {
+    type: String,
+    default: 'createEntitlement',
+  },
 });
 
 const emit = defineEmits(['assign-resources', 'get-entitlements']);
 
 // Data
-// Every entitlement option seen this modal session, keyed by value. The cache resets
-// when the modal opens; searching replaces entitlementOptions with the current result
-// page, so an option selected earlier may no longer be present when the form is
-// submitted — this cache keeps the assignmentId resolvable at submit time.
+// Cache of every entitlement option seen this session (searches replace the
+// option list) — keeps the assignmentId resolvable at submit time.
 const entitlementOptionsCache = ref({});
 const accountGrants = ref([]);
 const accountGrantsLoading = ref(false);
@@ -281,6 +284,16 @@ function buildApplicationQueryParamFunction(query) {
     pageSize: 10,
     queryFilter: query ? `application.name co "${query}" and ${baseFilter}` : baseFilter,
   };
+}
+
+/**
+ * Threads the scopePermission prop into getApplicationList (GovResourceSelect
+ * calls resourceFunction with (resource, queryParams) only).
+ * @param {String} resource resource identifier passed through
+ * @param {Object} queryParams query parameters from the query param function
+ */
+function searchApplicationsWithScopePermission(resource, queryParams) {
+  return getApplicationList(resource, queryParams, false, props.scopePermission);
 }
 
 function applicationOptionFunction(resource) {

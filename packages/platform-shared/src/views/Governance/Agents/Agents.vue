@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrHeader
         :title="$t('governance.agents.title')"
         :subtitle="$t('governance.agents.subtitle')" />
+      <FrDiscoverAgentsModal />
       <div>
         <div class="my-5">
           <BRow class="mb-4">
@@ -136,6 +137,17 @@ of the MIT license. See the LICENSE file for details. -->
               </BCard>
             </BCol>
           </BRow>
+          <div class="d-flex justify-content-end mb-3">
+            <BButton
+              variant="primary"
+              @click="bvModal.show('DiscoverAgentsModal')">
+              <FrIcon
+                icon-class="mr-2"
+                name="travel_explore">
+                {{ $t('governance.agents.discovery.button') }}
+              </FrIcon>
+            </BButton>
+          </div>
           <BCard
             no-body
             class="card-tabs-vertical">
@@ -287,6 +299,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
+  BButton,
   BButtonToolbar,
   BCard,
   BCardHeader,
@@ -298,7 +311,9 @@ import {
   BTabs,
   BTable,
 } from 'bootstrap-vue';
-import { ref, computed, onMounted } from 'vue';
+import {
+  ref, computed, onMounted,
+} from 'vue';
 import { useRouter } from 'vue-router';
 import { capitalize } from 'lodash';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
@@ -312,15 +327,18 @@ import FrApplicationSearch from '@forgerock/platform-shared/src/components/gover
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getAccounts } from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import { getAgents } from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import {
   getResource, getIgaUiConfig, getGrants, getUsers,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { escapeQueryFilterValue } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import agentConstants from './utils/agentConstants';
-import { getAgentDisplayName } from './utils/agentUtility';
+import { getAgentDisplayName, getAgentTemplateLabel } from './utils/agentUtility';
+import { useAgentConfig, resolveAgentIcon } from './utils/useAgentConfig';
+import FrDiscoverAgentsModal from './DiscoverAgentsModal';
 import i18n from '@/i18n';
 
 const router = useRouter();
@@ -333,13 +351,15 @@ const sortBy = ref('displayName');
 const sortDesc = ref(false);
 const searchQuery = ref('');
 const previousQuery = ref('');
-const selectedTab = ref(0);
+const selectedTab = ref(null);
 const applicationSearchResults = ref([]);
 const selectedApplications = ref([]);
 const queryAll = ref(true);
 const chartTotalsSet = ref(false);
 const chartTotalAll = ref(0);
 const provisionedCount = ref(0);
+const { bvModal } = useBvModal();
+
 const fields = computed(() => {
   const tableFields = [
     {
@@ -368,34 +388,58 @@ const fields = computed(() => {
   ];
   return tableFields;
 });
-const tabItems = [
-  {
-    displayName: i18n.global.t('governance.agents.tabs.all'),
-    key: 'all',
-    queryFilter: '',
-  },
-  ...Object.values(agentConstants.AGENT_TEMPLATES).map((template) => ({
-    displayName: i18n.global.t(`governance.agents.tabs.${template.replace(/\./g, '-')}`),
-    key: template,
-    queryFilter: `application.templateName sw "${template}"`,
-  })),
-  {
-    displayName: i18n.global.t('governance.agents.tabs.custom'),
-    key: 'custom',
-    queryFilter: `!(${Object.values(agentConstants.AGENT_TEMPLATES).map((template) => `application.templateName sw "${template}"`).join(' or ')})`,
-  },
-];
-const counts = ref({
-  all: 0,
-  custom: 0,
-  noCustodians: 0,
-  recentlyDiscovered: 0,
-  unreviewed: 0,
-  ...Object.values(agentConstants.AGENT_TEMPLATES).reduce((acc, template) => {
-    acc[template] = 0;
-    return acc;
-  }, {}),
-});
+const { loadConfig, agentTemplateIcons, agentTemplateSources } = useAgentConfig();
+
+/**
+ * Tab queryFilter: templateName OR aiAgentSource (discovered agents may lack
+ * the templateName); templates without a source fall back to the template id.
+ */
+function buildTemplateQueryFilter(template, templateSources) {
+  const templateNameFilter = `application.templateName sw "${template}"`;
+  const sourceName = templateSources[template] || template;
+  return `(${templateNameFilter} or application.aiAgentSource eq "${sourceName}")`;
+}
+
+function buildTabItems(templates, templateSources = {}, templateDisplayNames = {}) {
+  const namedTemplates = templates.filter((t) => t !== 'default');
+  return [
+    {
+      displayName: i18n.global.t('governance.agents.tabs.all'),
+      key: 'all',
+      queryFilter: '',
+    },
+    ...namedTemplates.map((template) => ({
+      displayName: getAgentTemplateLabel({ id: template, displayName: templateDisplayNames[template] }),
+      key: template,
+      queryFilter: buildTemplateQueryFilter(template, templateSources),
+    })),
+    {
+      displayName: i18n.global.t('governance.agents.tabs.custom'),
+      key: 'custom',
+      queryFilter: namedTemplates.length
+        ? `!(${namedTemplates.map((template) => buildTemplateQueryFilter(template, templateSources)).join(' or ')})`
+        : '',
+    },
+  ];
+}
+
+function buildCounts(templates) {
+  const namedTemplates = templates.filter((t) => t !== 'default');
+  return {
+    all: 0,
+    custom: 0,
+    noCustodians: 0,
+    recentlyDiscovered: 0,
+    unreviewed: 0,
+    ...namedTemplates.reduce((acc, template) => {
+      acc[template] = 0;
+      return acc;
+    }, {}),
+  };
+}
+
+const tabItems = ref(buildTabItems(Object.values(agentConstants.AGENT_TEMPLATES)));
+const counts = ref(buildCounts(Object.values(agentConstants.AGENT_TEMPLATES)));
 const noCustodiansPercentage = computed(() => {
   if (chartTotalAll.value === 0) return 0;
   const percentage = Math.round((counts.value.noCustodians / chartTotalAll.value) * 100);
@@ -443,11 +487,9 @@ function getQueryFilterForAgents(tab, additionalFilters = []) {
     ? `(${selectedApplications.value.map((app) => `application.id eq '${app}'`).join(' or ')})`
     : '';
 
-  const tabQueryFilter = tabItems[tab]?.queryFilter || '';
+  const tabQueryFilter = tabItems.value[tab]?.queryFilter || '';
 
-  const agentFilter = `(glossary.idx./account.accountType eq "${agentConstants.ACCOUNT_TYPES.AGENT}")`;
-
-  const filters = [searchQueryFilter, selectedApplicationQueryFilter, tabQueryFilter, agentFilter, ...additionalFilters].filter(Boolean);
+  const filters = [searchQueryFilter, selectedApplicationQueryFilter, tabQueryFilter, ...additionalFilters].filter(Boolean);
   return filters.length > 0 ? filters.join(' and ') : 'true';
 }
 
@@ -457,8 +499,8 @@ function getQueryFilterForAgents(tab, additionalFilters = []) {
  */
 function setCounts(results) {
   const newCounts = {};
-  for (let i = 0; i < tabItems.length; i += 1) {
-    const tab = tabItems[i];
+  for (let i = 0; i < tabItems.value.length; i += 1) {
+    const tab = tabItems.value[i];
     if (queryAll.value || i === selectedTab.value) {
       newCounts[tab.key] = results[i]?.data?.totalCount || 0;
     } else {
@@ -503,12 +545,12 @@ async function search(page = null) {
   }
 
   try {
-    const agentPromises = tabItems.map((tab, index) => {
+    const agentPromises = tabItems.value.map((tab, index) => {
       if (index === selectedTab.value) {
-        return getAccounts(searchParameters);
+        return getAgents(searchParameters);
       }
       if (queryAll.value) {
-        return getAccounts({
+        return getAgents({
           pageSize: 0,
           queryFilter: getQueryFilterForAgents(index),
         });
@@ -516,9 +558,9 @@ async function search(page = null) {
       return null;
     });
     if (!chartTotalsSet.value) {
-      agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, [`metadata.createdDate gt '${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}'`]) })); // Get the recently discovered count for the chart display
-      agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(glossary.idx./account.actors co '')"]) })); // Get the no custodians count for the chart display
-      agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(item.decision.certification.status eq 'signed-off')"]) })); // Get the unreviewed count for the chart display
+      agentPromises.push(getAgents({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, [`metadata.createdDate gt '${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}'`]) })); // Get the recently discovered count for the chart display
+      agentPromises.push(getAgents({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(glossary.idx./account.actors co '')"]) })); // Get the no custodians count for the chart display
+      agentPromises.push(getAgents({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(item.decision.certification.status eq 'signed-off')"]) })); // Get the unreviewed count for the chart display
     }
     const agentResults = await Promise.all(agentPromises);
     const { data } = agentResults[selectedTab.value];
@@ -526,7 +568,12 @@ async function search(page = null) {
       const processedItem = {
         ...item,
       };
-      const applicationIcon = item?.application?.icon || getApplicationLogo(item.application);
+      // application.icon -> template config icon -> app-template image lookup
+      const applicationIcon = resolveAgentIcon(
+        item?.application,
+        agentTemplateIcons.value,
+        agentTemplateSources.value,
+      ) || getApplicationLogo(item.application);
       if (applicationIcon) processedItem.application.icon = applicationIcon;
       if (processedItem.user) {
         const fullName = i18n.global.t('common.userFullName', {
@@ -663,7 +710,10 @@ async function queryProvisionedCount() {
 }
 
 onMounted(async () => {
-  await loadAppTemplates();
+  const [config] = await Promise.all([loadConfig(), loadAppTemplates()]);
+  tabItems.value = buildTabItems(config.agentTemplates, config.agentTemplateSources, config.agentTemplateDisplayNames);
+  counts.value = buildCounts(config.agentTemplates);
+  selectedTab.value = 0;
   queryProvisionedCount();
   search();
 });

@@ -7,6 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import AgentTable from './AgentTable';
@@ -66,6 +67,9 @@ describe('AgentTable', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     AccountApi.getAccounts = jest.fn().mockResolvedValue(createData());
+    // Reject like the real axios mock does on un-mocked calls, so the component
+    // keeps its static fallback templates without console-error snapshot noise.
+    AgentApi.getAgentConfig = jest.fn().mockRejectedValue(new Error('config unavailable'));
   });
 
   it('queries agents scoped to the embedding application', async () => {

@@ -91,6 +91,8 @@ describe('GovAssignResourceModal Component', () => {
       expect.objectContaining({
         queryFilter: expect.stringContaining('!(application.isDisconnected eq "true")'),
       }),
+      false,
+      'createEntitlement',
     );
   });
 
@@ -103,6 +105,8 @@ describe('GovAssignResourceModal Component', () => {
       expect.objectContaining({
         queryFilter: expect.not.stringContaining('!(application.isDisconnected eq "true")'),
       }),
+      false,
+      'createEntitlement',
     );
   });
 
@@ -119,6 +123,20 @@ describe('GovAssignResourceModal Component', () => {
       expect.objectContaining({
         queryFilter: expect.stringContaining('application.name co "myapp"'),
       }),
+      false,
+      'createEntitlement',
+    );
+  });
+
+  it('passes the scopePermission prop through to getApplicationList', async () => {
+    mountComponent({ parentResourceName: 'role', scopePermission: 'view' });
+    await flushPromises();
+
+    expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
+      'application',
+      expect.anything(),
+      false,
+      'view',
     );
   });
 

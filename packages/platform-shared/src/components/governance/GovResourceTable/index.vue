@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BButton
             v-if="allowAdd"
             variant="primary"
-            @click="addEvent ? this.$emit(addEvent) : $bvModal.show(`${modalId}-show`)">
+            @click="addEvent ? $emit(addEvent, $event) : $bvModal.show(`${modalId}-show`)">
             <FrIcon
               icon-class="mr-2"
               name="add">
@@ -177,7 +177,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="text-truncate"
               vertical-align="center">
               <h2 class="h5 text-truncate">
-                {{ item.role.name }}
+                {{ item.role?.name }}
               </h2>
             </BMediaBody>
           </BMedia>
@@ -300,6 +300,7 @@ of the MIT license. See the LICENSE file for details. -->
       :parent-resource-name="parentResourceName"
       :require-request-justification="requireRequestJustification"
       :resource-type="pluralizedGrantType"
+      :scope-permission="scopePermission"
       :show-justification="showJustification"
       :user-id="userId"
       @assign-resources="$emit('assign-resources', $event)"
@@ -513,6 +514,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    externalViewDetails: {
+      type: Boolean,
+      default: false,
+    },
     showRequest: {
       type: Boolean,
       default: false,
@@ -520,6 +525,10 @@ export default {
     showJustification: {
       type: Boolean,
       default: true,
+    },
+    scopePermission: {
+      type: String,
+      default: 'createEntitlement',
     },
     totalCount: {
       type: Number,
@@ -662,8 +671,15 @@ export default {
           return this.grantTypeLabel(membership);
         case 'entitlementGrant':
           return this.grantTypeLabel(membership);
-        case 'roleMembership':
-          return membership?.relationship?.conditional ? this.ruleBasedAssignment : this.directAssignment;
+        case 'roleMembership': {
+          // Newer memberships carry grantTypes[] with per-grant conditional flags;
+          // older ones a flat relationship.conditional.
+          const grantTypes = membership?.relationship?.properties?.grantTypes;
+          const isConditional = Array.isArray(grantTypes)
+            ? grantTypes.some((gt) => gt.conditional === true)
+            : membership?.relationship?.conditional === true;
+          return isConditional ? this.ruleBasedAssignment : this.directAssignment;
+        }
         default:
           return '';
       }
@@ -735,7 +751,7 @@ export default {
         item._showDetails = !item._showDetails;
         return;
       }
-      if (this.showViewDetails && this.grantType === 'entitlement') {
+      if (this.showViewDetails && this.grantType === 'entitlement' && !this.externalViewDetails) {
         this.grantDetails = { ...item };
         this.grantDisplayData = {};
         this.grantDisplayDataLoading = !!(this.userId && item.compositeId);
@@ -753,6 +769,8 @@ export default {
             if (this._viewDetailsRequestId === requestId) this.grantDisplayDataLoading = false;
           });
         }
+      } else if (this.showViewDetails) {
+        this.$emit('row-clicked', item);
       } else if (this.$slots['row-details']) {
         item._showDetails = !item._showDetails;
       }
@@ -817,6 +835,10 @@ export default {
      * @param {Object} item The table row clicked
      */
     onRowClicked(item) {
+      if (this.showViewDetails) {
+        this.handleRowClick(item);
+        return;
+      }
       if (this.$slots['row-details']) {
         item._showDetails = !item._showDetails;
       }

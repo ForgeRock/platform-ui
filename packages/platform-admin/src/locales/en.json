@@ -5556,7 +5556,7 @@
         "delete": "deleted",
         "noProperties": "There are no events to show",
         "orchestration": "Workflow",
-        "subtitle": "Trigger workflows or certifications based on user events.",
+        "subtitle": "Trigger workflows or certifications based on identity events.",
         "title": "Governance Events",
         "update": "updated",
         "actions": {
@@ -5571,23 +5571,19 @@
         }
       },
       "newEventModal": {
+        "actionFallback": "Trigger this action when an event occurs.",
         "certification": "Certification",
         "chooseAction": "Choose action to perform when event is triggered.",
         "chooseEvent": "Choose event to trigger action.",
+        "entityTrigger": "Trigger an action when {entity} is {action}.",
         "eventAction": "Event Action",
         "eventTrigger": "Event Trigger",
         "triggerCertification": "Trigger a certification campaign when an event occurs.",
         "triggerWorkflow": "Trigger a workflow when an event occurs.",
-        "userAction": "User {action}",
-        "userTrigger": "Trigger an action when a user is {userAction}.",
         "workflow": "Workflow"
       },
-      "types": {
-        "userCreate": "User Created",
-        "userUpdate": "User Updated"
-      },
       "edit": {
-        "allUsers": "All users",
+        "allEntityTypes": "All {entityTypes}",
         "editWorkflowEvent": "Edit Workflow Event",
         "eventDescription": "Event Description",
         "eventDetails": "Event Details",
@@ -5597,7 +5593,7 @@
         "newWorkflowEvent": "New Workflow Event",
         "saveError": "Error Saving Event",
         "saveSuccess": "Event Saved Successfully",
-        "subsetUsers": "A subset of users",
+        "subsetEntityTypes": "A subset of {entityTypes}",
         "triggerFor": "Trigger for",
         "workflowHelp": "Workflow to run when event is triggered.",
         "workflowDescription": "Define the workflow to run when the event is triggered.",
@@ -5606,8 +5602,10 @@
         "workflowVariablesDescription": "Optionally, specify variables to pass to the workflow."
       },
       "errors": {
+        "getConfigError": "There was an error retrieving the event configuration",
         "getEventError": "There was an error retrieving event",
         "getPropertiesError": "There was an error retrieving properties",
+        "unsupportedActionType": "Unsupported event action type.",
         "filterError": "Filter must contain minimum of one before and after condition for each property at same level."
       }
     },
@@ -5641,7 +5639,6 @@
       "organization": "Organization",
       "picklist": "Picklist",
       "picklistDesc": "Picklist containing the attribute with which to populate enumerated values.",
-      "queryAttrError": "Failed to load {resourceType} attributes",
       "role": "Role",
       "string": "String",
       "subtitle": "Create, view, or update items within the identity glossary.",
@@ -5825,7 +5822,8 @@
       "lcmTypes": {
         "user": "User",
         "typeLcm": "{type} LCM",
-        "typeOperations": "{type} Operations"
+        "typeOperations": "{type} Operations",
+        "agent": "Agent"
       },
       "lcmAssignments": {
         "title": "Operations for which this form will be used",

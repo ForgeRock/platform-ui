@@ -12,14 +12,19 @@ import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { useBreadcrumbStore } from '@forgerock/platform-shared/src/stores/breadcrumb';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import * as resourceUtil from '@forgerock/platform-shared/src/utils/governance/resource';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
-import * as AccountsApi from '@/api/governance/AccountApi';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import AgentsDetails from './AgentsDetails';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
+}));
+
+jest.mock('@forgerock/platform-shared/src/composables/bvModal', () => ({
+  __esModule: true,
+  default: jest.fn().mockReturnValue({ bvModal: { value: { show: jest.fn(), hide: jest.fn() } } }),
 }));
 
 jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: false } });
@@ -51,6 +56,11 @@ const testAgent = {
       },
     },
   },
+  account: {
+    tools: ['tool-1', 'tool-2'],
+    knowledgeBases: ['kb-1'],
+    toolCredentialIds: ['cred-1', 'cred-2', 'cred-3'],
+  },
   descriptor: {
     idx: {
       '/account': {
@@ -60,20 +70,37 @@ const testAgent = {
   },
 };
 
-function mountComponent(props = {}, { uncorrelated = false } = {}) {
-  const agent = cloneDeep(testAgent);
-  if (uncorrelated) {
-    delete agent.user;
-  }
-  AccountsApi.getAccountById = jest.fn().mockReturnValue(Promise.resolve({
+function mountComponent(props = {}, agentOverrides = {}) {
+  const agent = { ...cloneDeep(testAgent), ...cloneDeep(agentOverrides) };
+  AgentApi.getAgentById = jest.fn().mockReturnValue(Promise.resolve({
     data: agent,
   }));
-  AccountsApi.getAccountEntitlements = jest.fn().mockReturnValue(Promise.resolve({
+  AgentApi.getAgentConfig = jest.fn().mockReturnValue(Promise.resolve({
     data: {
-      result: [],
+      templates: [{
+        id: 'aws.bedrock',
+        resources: [
+          { type: 'tools', accountAttribute: 'tools' },
+          { type: 'knowledge', accountAttribute: 'knowledgeBases' },
+          { type: 'toolCredentials', accountAttribute: 'toolCredentialIds' },
+        ],
+      }],
+      applicationProps: [],
     },
   }));
-  AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockReturnValue(Promise.resolve({}));
+  AgentApi.getAgentGrants = jest.fn().mockReturnValue(Promise.resolve({
+    data: {
+      result: [],
+      totalCount: 0,
+    },
+  }));
+  AgentApi.getAgentGlossaryAttributesData = jest.fn().mockReturnValue(Promise.resolve({}));
+  // DetailsTab always mounts CustodiansTab, whose loadPage fires on mount;
+  // un-mocked it flaps console-error snapshots across adjacent tests.
+  AgentApi.getAgentCustodians = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } }));
+  // ResourceTab (Data & Tools / Security group tabs) calls getAgentResources on mount
+  // for each of its resource types.
+  AgentApi.getAgentResources = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } }));
   CommonsApi.getGlossarySchema = jest.fn().mockReturnValue(Promise.resolve({}));
 
   setupTestPinia();
@@ -152,7 +179,8 @@ describe('AgentsDetails', () => {
     const tabContainer = wrapper.find('.tabs');
     const tabs = tabContainer.findAll('li');
 
-    expect(tabs.length).toBe(3);
+    // Details, Access, Data & Tools, Security, Activity
+    expect(tabs.length).toBe(5);
   });
 
   it('should not display the activity tab for end users', async () => {
@@ -162,12 +190,83 @@ describe('AgentsDetails', () => {
     const tabContainer = wrapper.find('.tabs');
     const tabs = tabContainer.findAll('li');
 
-    expect(tabs.length).toBe(2);
+    // Details, Access, Data & Tools, Security
+    expect(tabs.length).toBe(4);
   });
 
-  async function activateEntitlementsTab() {
+  it('should display the group tab count badge from account attribute lengths', async () => {
+    mountComponent({ isEndUser: false });
+    await flushPromises();
+
+    const tabs = wrapper.find('.tabs').findAll('li');
+
+    // Data & Tools: tools (2) + knowledge (1) = 3; Security: toolCredentials (3).
+    // Group labels resolve via the real shared i18n instance, not the template's $t mock.
+    expect(tabs[2].text()).toContain('Data & Tools');
+    expect(tabs[2].text()).toContain('3');
+    expect(tabs[3].text()).toContain('Security');
+    expect(tabs[3].text()).toContain('3');
+  });
+
+  it('should show a group tab without a count badge when its resource attributes are absent from the account', async () => {
+    // Account carries no Security resources: toolCredentials, identity bindings,
+    // service accounts and connections. The tab set still comes from the template.
+    mountComponent(
+      { isEndUser: false },
+      { account: { tools: ['tool-1'], knowledgeBases: ['kb-1'] } },
+    );
+    await flushPromises();
+
+    const tabs = wrapper.find('.tabs').findAll('li');
+
+    // Details, Access, Data & Tools, Security, Activity
+    expect(tabs.length).toBe(5);
+    // Data & Tools keeps its badge (tools 1 + knowledge 1); Security shows none.
+    expect(tabs[2].text()).toContain('Data & Tools');
+    expect(tabs[2].text()).toContain('2');
+    expect(tabs[3].text()).toContain('Security');
+    expect(tabs[3].text()).not.toMatch(/\d/);
+  });
+
+  it('should derive tabs from the default template for a custom agent with no template match', async () => {
+    // A custom agent falls back to the default template — its groups must
+    // still render regardless of the account's attributes.
+    mountComponent(
+      { isEndUser: false },
+      {
+        application: { name: 'app name', templateName: 'custom.thing', icon: 'test' },
+        account: {},
+      },
+    );
+    await flushPromises();
+
+    const tabs = wrapper.find('.tabs').findAll('li');
+
+    // Details, Access, Data & Tools, Security, Activity
+    expect(tabs.length).toBe(5);
+    expect(tabs[2].text()).toContain('Data & Tools');
+    expect(tabs[3].text()).toContain('Security');
+  });
+
+  it('should activate the group tab matching a legacy resource-type deep link', async () => {
+    // query must be provided: the breadcrumb logic reads route.query whenever isEndUser is false
+    mockRouter({ params: { agentId: 'system/Target/User/102', tab: 'toolCredentials' }, query: {} });
+    mountComponent({ isEndUser: false });
+    await flushPromises();
+
+    // Legacy toolCredentials link maps to the Security group tab (index 3)
+    expect(wrapper.vm.tabIndex).toBe(3);
+  });
+
+  async function activateAccessTab() {
+    // Access tab is index 1 (Details=0, Access=1)
     const tabLink = wrapper.find('.tabs').findAll('li')[1].find('a');
     await tabLink.trigger('click');
+    await flushPromises();
+    // AccessTab renders vertical sub-tabs (Accounts, Entitlements, Roles) that are lazy,
+    // so exactly one table is mounted at a time. Activate Entitlements (index 1).
+    const accessTab = wrapper.findComponent({ name: 'AccessTab' });
+    await accessTab.findAll('a.nav-link')[1].trigger('click');
     await flushPromises();
     return wrapper.findComponent(FrGovResourceTable);
   }
@@ -177,8 +276,16 @@ describe('AgentsDetails', () => {
     mountComponent();
     await flushPromises();
 
-    const itemsToRevoke = [{ assignmentId: 'assignment-1' }];
-    const govResourceTable = await activateEntitlementsTab();
+    const itemsToRevoke = [{
+      assignmentId: 'assignment-1',
+      user: {
+        id: testAgent.user.id,
+      },
+      keys: {
+        accountId: testAgent.keys.accountId,
+      },
+    }];
+    const govResourceTable = await activateAccessTab();
     govResourceTable.vm.$emit('revoke-items', { itemsToRevoke });
     await flushPromises();
 
@@ -196,30 +303,14 @@ describe('AgentsDetails', () => {
     mountComponent();
     await flushPromises();
 
-    const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }, { entitlementId: 'a/b/entitlement-2' }], justification: '' });
-    await flushPromises();
-
-    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
-      common: expect.objectContaining({
-        entitlementId: 'entitlement-1',
-        userId: testAgent.user.id,
-        accountId: testAgent.keys.accountId,
-      }),
-    });
-  });
-
-  it('calls submitCustomRequest with entitlementGrant on assign-resources emit with { entitlementId } objects', async () => {
-    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
-    mountComponent();
-    await flushPromises();
-
-    const govResourceTable = await activateEntitlementsTab();
+    // Payload shape matches GovAssignResourceModal's submitAssignment emit
+    const govResourceTable = await activateAccessTab();
     govResourceTable.vm.$emit('assign-resources', {
       entitlements: [
-        { entitlementId: 'a/b/entitlement-1', assignmentId: 'assignment-1' },
-        { entitlementId: 'a/b/entitlement-2', assignmentId: 'assignment-2' },
+        { entitlementId: 'managed/alpha_assignment/entitlement-1' },
+        { entitlementId: 'managed/alpha_assignment/entitlement-2' },
       ],
+      accountId: null,
       justification: '',
     });
     await flushPromises();
@@ -233,111 +324,103 @@ describe('AgentsDetails', () => {
     });
   });
 
-  it('submits entitlementGrant without userId when the agent has no correlated user', async () => {
-    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
-    mountComponent({}, { uncorrelated: true });
-    await flushPromises();
-
-    const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: '' });
-    await flushPromises();
-
-    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
-      common: expect.objectContaining({
-        entitlementId: 'entitlement-1',
-        accountId: testAgent.keys.accountId,
-      }),
-    });
-    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
-      common: expect.not.objectContaining({ userId: expect.anything() }),
-    });
-  });
-
-  it('includes justification in common when assign-resources payload has a non-empty justification', async () => {
-    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
+  it('calls submitCustomRequest with roleGrant when roles are saved from the add roles modal', async () => {
+    // Regression: the save handler read the agent's user id from keys.userId, a field
+    // absent from the agent record, so the guard silently returned and no request fired.
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
     mountComponent();
     await flushPromises();
 
-    const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: 'business reason' });
+    // activateAccessTab lands on the Entitlements sub-tab; Roles is the next sub-tab (index 2)
+    const govResourceTable = await activateAccessTab();
+    const accessTab = wrapper.findComponent({ name: 'AccessTab' });
+    await accessTab.findAll('a.nav-link')[2].trigger('click');
     await flushPromises();
 
-    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
-      common: expect.objectContaining({
-        entitlementId: 'entitlement-1',
+    govResourceTable.vm.$emit('open-add-role');
+    await flushPromises();
+
+    // Select roles as the multiselect would, then invoke the save handler bound to the modal's save button
+    accessTab.vm.selectedRoles = ['role-1', 'role-2'];
+    await flushPromises();
+    accessTab.vm.assignRoles();
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('roleGrant', {
+      common: {
         userId: testAgent.user.id,
-        justification: 'business reason',
-      }),
+        roleId: 'role-1',
+      },
+    });
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('roleGrant', {
+      common: {
+        userId: testAgent.user.id,
+        roleId: 'role-2',
+      },
     });
   });
 
-  it('does not include justification in common when assign-resources payload justification is empty', async () => {
-    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
-    mountComponent();
-    await flushPromises();
+  describe('add modal → success modal focus chain', () => {
+    // GovResourceTable's add button emits its click event (added so AccessTab can
+    // re-arm the success modal's return-focus target); these tests pin the chain.
+    async function openRolesModalAndAssign() {
+      mountComponent();
+      await flushPromises();
 
-    const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: '' });
-    await flushPromises();
+      // Access tab is index 1 (Details=0, Access=1); Roles is sub-tab index 2
+      const tabLink = wrapper.find('.tabs').findAll('li')[1].find('a');
+      await tabLink.trigger('click');
+      await flushPromises();
 
-    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
-      common: expect.not.objectContaining({ justification: expect.anything() }),
+      const accessTab = wrapper.findComponent({ name: 'AccessTab' });
+      await accessTab.findAll('a.nav-link')[2].trigger('click');
+      await flushPromises();
+
+      const govResourceTable = wrapper.findComponent(FrGovResourceTable);
+      const triggerButton = document.createElement('button');
+      govResourceTable.vm.$emit('open-add-role', { currentTarget: triggerButton });
+      await flushPromises();
+
+      const { bvModal } = useBvModal.mock.results[0].value;
+      return { accessTab, triggerButton, bvModal };
+    }
+
+    it('opens the add-roles modal and re-arms the success modal return-focus to the page trigger', async () => {
+      const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
+      const { accessTab, triggerButton, bvModal } = await openRolesModalAndAssign();
+
+      expect(bvModal.value.show).toHaveBeenCalledWith('addRolesModal');
+
+      accessTab.vm.selectedRoles = ['role-1'];
+      await flushPromises();
+      accessTab.vm.assignRoles();
+      await flushPromises();
+
+      // The trigger element captured from the add button must be handed to the
+      // success modal so focus returns to it, not into the closed add-roles modal.
+      expect(submitCustomRequestSpy).toHaveBeenCalled();
+      expect(bvModal.value.show).toHaveBeenLastCalledWith('successful-submit', triggerButton);
     });
-  });
 
-  it('does not include justification in common when assign-resources payload justification is whitespace only', async () => {
-    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
-    mountComponent();
-    await flushPromises();
+    it('clears the stashed trigger after the chain so a later success modal has no stale target', async () => {
+      jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
+      const { accessTab, triggerButton, bvModal } = await openRolesModalAndAssign();
 
-    const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: '   ' });
-    await flushPromises();
+      accessTab.vm.selectedRoles = ['role-1'];
+      await flushPromises();
+      accessTab.vm.assignRoles();
+      await flushPromises();
 
-    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
-      common: expect.not.objectContaining({ justification: expect.anything() }),
+      // A subsequent non-chained success-modal show must not carry the old trigger.
+      wrapper.findComponent({ name: 'AccessTab' }).vm.submittedRequestId = 'request-2';
+      const { show } = bvModal.value;
+      show.mockClear();
+      wrapper.findComponent({ name: 'AccessTab' }).vm.revokeRole({ itemsToRevoke: [{ user: { id: testAgent.user.id }, role: { id: 'role-1' } }] });
+      await flushPromises();
+
+      expect(show).toHaveBeenCalledWith('successful-submit');
+      expect(show.mock.calls[0]).toHaveLength(1);
+      expect(triggerButton).toBeDefined();
     });
-  });
-
-  it('passes requireRequestJustification true to FrGovResourceTable when API returns true', async () => {
-    jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: true } });
-    mountComponent();
-    await flushPromises();
-
-    const govResourceTable = await activateEntitlementsTab();
-    expect(govResourceTable.props('requireRequestJustification')).toBe(true);
-  });
-
-  it('passes requireRequestJustification false to FrGovResourceTable when API returns false', async () => {
-    jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: false } });
-    mountComponent();
-    await flushPromises();
-
-    const govResourceTable = await activateEntitlementsTab();
-    expect(govResourceTable.props('requireRequestJustification')).toBe(false);
-  });
-
-  it('calls getEntitlements on get-entitlements emit', async () => {
-    const getEntitlementsSpy = jest.spyOn(resourceUtil, 'getEntitlements').mockResolvedValue([]);
-    mountComponent();
-    await flushPromises();
-
-    const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('get-entitlements', { searchValue: 'test', selectedApplicationId: 'app-1' });
-    await flushPromises();
-
-    expect(getEntitlementsSpy).toHaveBeenCalledWith(false, 'test', 'app-1', expect.stringContaining('_assignment'), true);
-  });
-
-  it('calls getEntitlements on get-entitlements emit even when the agent has no correlated user', async () => {
-    const getEntitlementsSpy = jest.spyOn(resourceUtil, 'getEntitlements').mockResolvedValue([]);
-    mountComponent({}, { uncorrelated: true });
-    await flushPromises();
-
-    const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('get-entitlements', { searchValue: '', selectedApplicationId: 'app-1' });
-    await flushPromises();
-
-    expect(getEntitlementsSpy).toHaveBeenCalledWith(false, '', 'app-1', expect.stringContaining('_assignment'), true);
   });
 });

@@ -226,6 +226,22 @@ const AGENT_APPLICATION_PROPS = {
   },
 };
 
+// Backup schema for the Agent Properties display (used when /agent/config has
+// no top-level "schema"); entries render in array order, keys support dotted paths.
+const AGENT_SCHEMA = [
+  { key: 'agentName', displayName: 'Agent Name', type: 'string' },
+  { key: 'agentId', displayName: 'Agent ID', type: 'string' },
+  { key: 'createdAt', displayName: 'Created On', type: 'date' },
+  { key: 'updatedAt', displayName: 'Updated On', type: 'date' },
+  { key: 'provider.platform', displayName: 'Platform', type: 'string' },
+  { key: 'status', displayName: 'Status', type: 'string' },
+  { key: 'description', displayName: 'Description', type: 'string' },
+  { key: 'model.id', displayName: 'Foundation Model', type: 'string' },
+  { key: 'locators', displayName: 'Locators', type: 'string[]' },
+  { key: 'provider.tenant', displayName: 'Tenant', type: 'string' },
+  { key: 'disabled', displayName: 'Disabled', type: 'boolean' },
+];
+
 const AGENT_ICONS = {
   [APPLICATION_PROPS.GUARDRAILS]: {
     icon: 'lock',
@@ -262,5 +278,6 @@ export default {
   APPLICATION_PROPS,
   AGENT_APPLICATION_PROPS,
   AGENT_ICONS,
+  AGENT_SCHEMA,
   AGENT_TEMPLATES,
 };

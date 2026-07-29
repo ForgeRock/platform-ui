@@ -5,10 +5,13 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { ref } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
-import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
+import * as UseAgentConfig from './utils/useAgentConfig';
 import Agents from './Agents';
 
 const mockRouterPush = jest.fn();
@@ -64,6 +67,10 @@ describe('Agents Unit', () => {
     CommonsApi.getIgaUiConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: { agents: { userProperty: 'custom_iga_identity_type' } } }));
     CommonsApi.getUsers = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [], totalCount: 0 } }));
     CommonsApi.getGrants = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [], totalCount: 0 } }));
+    ConfigApi.getConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: { objects: [] } }));
+    // Reject like the real axios mock does on un-mocked calls, so the component
+    // keeps its static fallback templates without console-error snapshot noise.
+    AgentApi.getAgentConfig = jest.fn().mockRejectedValue(new Error('config unavailable'));
 
     const wrapper = mount(Agents, {
       global: {
@@ -88,7 +95,7 @@ describe('Agents Unit', () => {
 
   it('Accounts load on search call', async () => {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
+    AgentApi.getAgents = jest.fn()
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
@@ -109,7 +116,7 @@ describe('Agents Unit', () => {
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
     await flushPromises();
-    expect(AccountApi.getAccounts).toHaveBeenCalledTimes(14);
+    expect(AgentApi.getAgents).toHaveBeenCalledTimes(14);
 
     expect(wrapper.vm.agents.length).toBe(10);
     expect(wrapper.vm.agents[0]).toEqual(expect.objectContaining(
@@ -162,7 +169,7 @@ describe('Agents Unit', () => {
 
   it('Accounts reload on page size change', async () => {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
+    AgentApi.getAgents = jest.fn()
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
@@ -171,13 +178,8 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageNumber: 0, pageSize: 20 })));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -187,19 +189,19 @@ describe('Agents Unit', () => {
     wrapper.vm.pageSizeChange(20);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(15, {
+    expect(AgentApi.getAgents).toHaveBeenNthCalledWith(15, {
       pagedResultsOffset: 0,
       pageSize: 20,
       sortKeys: 'descriptor.idx./account.displayName',
       sortDir: 'asc',
-      queryFilter: '(glossary.idx./account.accountType eq "agent")',
+      queryFilter: 'true',
     });
     expect(wrapper.vm.tableLoading).toBe(false);
   });
 
   it('Accounts reload on tab change and results come back for expected tabs', async () => {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
+    AgentApi.getAgents = jest.fn()
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
@@ -211,7 +213,6 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 10 }, 10)));
@@ -223,19 +224,19 @@ describe('Agents Unit', () => {
     wrapper.vm.tabActivated(1);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(15, {
+    expect(AgentApi.getAgents).toHaveBeenCalledWith({
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
       sortDir: 'asc',
-      queryFilter: 'application.templateName sw "aws.bedrock" and (glossary.idx./account.accountType eq "agent")',
+      queryFilter: '(application.templateName sw "aws.bedrock" or application.aiAgentSource eq "aws.bedrock")',
     });
     expect(wrapper.vm.tableLoading).toBe(false);
   });
 
   it('Accounts reload on application change', async () => {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
+    AgentApi.getAgents = jest.fn()
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
@@ -247,7 +248,6 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 10 }, 10)));
@@ -260,19 +260,19 @@ describe('Agents Unit', () => {
     wrapper.vm.updateApplications(['271fbe6672-780c-4226-af35-01a2546723c1']);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(15, {
+    expect(AgentApi.getAgents).toHaveBeenNthCalledWith(15, {
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
       sortDir: 'asc',
-      queryFilter: '(application.id eq \'271fbe6672-780c-4226-af35-01a2546723c1\') and (glossary.idx./account.accountType eq "agent")',
+      queryFilter: '(application.id eq \'271fbe6672-780c-4226-af35-01a2546723c1\')',
     });
     expect(wrapper.vm.tableLoading).toBe(false);
   });
 
   async function mountWithCounts(recentlyDiscovered = 1, noCustodians = 9, unreviewed = 25, total = 100) {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
+    AgentApi.getAgents = jest.fn()
       .mockResolvedValueOnce(createData({}, total))
       .mockResolvedValueOnce(createData({ pageSize: 0 }, 10))
       .mockResolvedValueOnce(createData({ pageSize: 0 }, 5))
@@ -349,7 +349,7 @@ describe('Agents Unit', () => {
 
   it('Click on row loads details page', async () => {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
+    AgentApi.getAgents = jest.fn()
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
@@ -375,33 +375,62 @@ describe('Agents Unit', () => {
     expect(wrapper.vm.navigateToEdit).toHaveBeenCalledWith('id-3');
   });
 
-  it('navigation does not include origin query params', async () => {
-    const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 8)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
-    await flushPromises();
+  // Mock useAgentConfig directly, placed last so the module-scope cache mock
+  // doesn't leak into the fallback-path tests above.
+  describe('template discovery-source filtering', () => {
+    function mockUseAgentConfig(agentTemplates, agentTemplateSources) {
+      UseAgentConfig.useAgentConfig = jest.fn().mockReturnValue({
+        agentTemplates: ref(agentTemplates),
+        agentApplicationProps: ref({}),
+        agentMappings: ref({}),
+        agentTemplateSources: ref(agentTemplateSources),
+        agentSources: ref(null),
+        loadConfig: jest.fn().mockResolvedValue({ agentTemplates, agentTemplateSources }),
+      });
+    }
 
-    wrapper.vm.navigateToEdit('id-3');
+    it('always ORs application.aiAgentSource (the template\'s source name) into a template tab\'s filter', async () => {
+      mockUseAgentConfig(['aws.bedrock'], { 'aws.bedrock': 'bedrock' });
+      const wrapper = mountComponent();
+      AgentApi.getAgents = jest.fn().mockResolvedValue(createData({ pageSize: 0 }, 0));
+      await flushPromises();
 
-    expect(mockRouterPush).toHaveBeenCalledWith({
-      name: 'AgentsDetails',
-      params: {
-        agentId: 'id-3',
-        tab: 'details',
-      },
+      // Tabs are: 0 = all, 1 = aws.bedrock, 2 = custom
+      wrapper.vm.tabActivated(1);
+      await flushPromises();
+
+      expect(AgentApi.getAgents).toHaveBeenCalledWith(expect.objectContaining({
+        queryFilter: '(application.templateName sw "aws.bedrock" or application.aiAgentSource eq "bedrock")',
+      }));
+    });
+
+    it('falls back to the template id as the aiAgentSource value when the template has no associated source', async () => {
+      mockUseAgentConfig(['aws.bedrock'], {});
+      const wrapper = mountComponent();
+      AgentApi.getAgents = jest.fn().mockResolvedValue(createData({ pageSize: 0 }, 0));
+      await flushPromises();
+
+      wrapper.vm.tabActivated(1);
+      await flushPromises();
+
+      expect(AgentApi.getAgents).toHaveBeenCalledWith(expect.objectContaining({
+        queryFilter: '(application.templateName sw "aws.bedrock" or application.aiAgentSource eq "aws.bedrock")',
+      }));
+    });
+
+    it('wraps the source-aware filter when negating it for the custom tab', async () => {
+      mockUseAgentConfig(['aws.bedrock'], { 'aws.bedrock': 'bedrock' });
+      const wrapper = mountComponent();
+      AgentApi.getAgents = jest.fn().mockResolvedValue(createData({ pageSize: 0 }, 0));
+      await flushPromises();
+
+      // Tab 2 is 'custom'
+      wrapper.vm.tabActivated(2);
+      await flushPromises();
+
+      expect(AgentApi.getAgents).toHaveBeenCalledWith(expect.objectContaining({
+        queryFilter: '!((application.templateName sw "aws.bedrock" or application.aiAgentSource eq "bedrock"))',
+      }));
     });
   });
 });

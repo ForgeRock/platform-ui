@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       :class="{ 'section-header': enableCollapse }"
       @click="emit('toggle-collapse')">
       <h1 class="h5">
-        {{ i18n.global.t(`governance.${object}.details.objectPropertiesTab.title`) }}
+        {{ title || i18n.global.t(`governance.${object}.details.objectPropertiesTab.title`) }}
       </h1>
       <FrIcon
         v-if="enableCollapse"
@@ -72,12 +72,23 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  title: {
+    type: String,
+    default: '',
+  },
+  preserveOrder: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['toggle-collapse']);
 
-const sortedProperties = computed(() => Object.entries(props.objectProperties)
-  .sort(([a], [b]) => (props.schema[a] || a).localeCompare(props.schema[b] || b)));
+const sortedProperties = computed(() => {
+  const entries = Object.entries(props.objectProperties);
+  if (props.preserveOrder) return entries;
+  return entries.sort(([a], [b]) => (props.schema[a] || a).localeCompare(props.schema[b] || b));
+});
 </script>
 <style lang="scss" scoped>
 

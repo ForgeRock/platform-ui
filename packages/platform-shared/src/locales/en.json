@@ -225,6 +225,8 @@
     "host": "Host",
     "hosts": "Hosts",
     "id": "ID",
+    "agentProfile": "Agent Profile",
+    "agentAccess": "Agent Access",
     "identityProfile": "Identity Profile",
     "implicit": "Implicit",
     "import": "Import",
@@ -348,6 +350,7 @@
     "remove": "Remove",
     "removed": "Removed",
     "removeObject": "Remove {object}",
+    "refresh": "Refresh",
     "report": "Report",
     "request": "Request",
     "requestSubmitted": "Request Submitted",
@@ -1382,7 +1385,8 @@
       "realmRoles": "Realm - Roles",
       "realmUsers": "Realm - Users",
       "tasks": "Tasks",
-      "violations": "Violations"
+      "violations": "Violations",
+      "lcmAgents": "Agents"
     },
     "headerNavigation": "Header navigation",
     "pipelines": "Pipelines",
@@ -1865,7 +1869,10 @@
         "modifyUser": "Modify User",
         "roleGrant": "Grant Role",
         "roleRemove": "Remove Role",
-        "extendEndDate": "Extend End Date"
+        "extendEndDate": "Extend End Date",
+        "createAgent": "Create Agent",
+        "modifyAgent": "Modify Agent",
+        "deleteAgent": "Delete Agent"
       },
       "priorities": {
         "priorities": "Priorities",
@@ -2058,6 +2065,9 @@
       "users": {
         "title": "Users",
         "subtitle": "Create and manage your user identities."
+      },
+      "agents": {
+        "title": "Agents"
       }
     },
     "application": {
@@ -2129,7 +2139,7 @@
           "objectTypeDescriptionAccountTaken": "Choose if this object type will be for accounts or resources. Note that only one account object type is supported per application.",
           "agentClassification": {
             "title": "Classification",
-            "description": "One classification rule per object type — criteria, action and schedule together. Each rule is saved as its own bulk operation.",
+            "description": "One classification rule per object type \u2014 criteria, action and schedule together. Each rule is saved as its own bulk operation.",
             "targetFilter": {
               "title": "Target Filter",
               "description": "Define which accounts to classify. Each row is a condition on an account attribute. Leave blank to target all accounts."
@@ -2258,7 +2268,11 @@
       "identityProfileCertification": "Identity Profile Certification",
       "identityProfileCertificationMessage": "Certify the technical details of user attributes based on filters you define.",
       "roleCompositionCertification": "Role Composition Certification",
-      "roleCompositionCertificationMessage": "Certify the technical details and glossary metadata of roles."
+      "roleCompositionCertificationMessage": "Certify the technical details and glossary metadata of roles.",
+      "agentProfileCertification": "AI Agent Profile Certification",
+      "agentProfileCertificationMessage": "Certify the technical details and ownership metadata of AI agents registered in your tenant.",
+      "agentAccessCertification": "AI Agent Access Certification",
+      "agentAccessCertificationMessage": "Certify the applications, entitlements, and data scopes granted to AI agents."
     },
     "certification": {
       "accessReviewHistory": "Access Review History",
@@ -2279,7 +2293,9 @@
         "application": "Application",
         "roleMembership": "Role Membership",
         "identityProfile": "Identity Profile",
-        "roleComposition": "Role Composition"
+        "roleComposition": "Role Composition",
+        "agentProfile": "AI Agent Profile",
+        "agentAccess": "AI Agent Access"
       },
       "campaignType": "Campaign Type",
       "campaignsByStatusLabels": {
@@ -2292,6 +2308,7 @@
       "campaignsByType": "Campaigns By Type",
       "certificationType": "{type} Certification",
       "certifyUserType": "Certify User {type}",
+      "certifyAgentType": "Certify Agent {type}",
       "errors": {
         "errorDeadline": "Deadline must be a future date"
       },
@@ -2317,7 +2334,10 @@
         "updateCampaignDeadline": "Update Campaign Deadline",
         "chooseNewDeadline": "Choose a new deadline for this campaign"
       },
-      "getFilterSchemaError": "There was an error loading the filter configuration."
+      "getFilterSchemaError": "There was an error loading the filter configuration.",
+      "certifyAgentAccounts": "Certify Agent Accounts",
+      "certifyAgentEntitlements": "Certify Agent Entitlements",
+      "certifyAgentRoles": "Certify Agent Roles"
     },
     "certificationDetails": {
       "accessReviewsLink": "View Access Reviews",
@@ -2529,6 +2549,7 @@
     },
     "agents": {
       "agent": "agent",
+      "agentDetails": "Agent Details",
       "agentId": "Agent ID",
       "agentName": "Agent Name",
       "accountSubType": "Agent Subtype",
@@ -2545,18 +2566,39 @@
         "button": "+ Add Credential"
       },
       "custodians": "Custodians",
+      "accessTab": {
+        "noIdentity": "No identity is associated with this agent. Access cannot be managed until an identity is linked.",
+        "selectRoles": "Select Roles",
+        "selectApplications": "Select Applications"
+      },
+      "custodiansTab": {
+        "addCustodians": "Add Custodians",
+        "addCustodianSuccess": "Custodian added successfully",
+        "addCustodianError": "Failed to add custodian",
+        "noCustodians": "No custodians assigned",
+        "removeCustodianSuccess": "Custodian removed successfully",
+        "removeCustodianError": "Failed to remove custodian",
+        "removeConfirm": "Are you sure you want to remove the selected custodian(s)?",
+        "loadError": "Failed to load custodians",
+        "selectUsers": "Select Users"
+      },
       "description": "Description",
       "entitlement": "entitlement",
       "failedToLoad": "Failed to load agents",
+      "managed": "Managed",
+      "unmanaged": "Unmanaged",
       "failedToLoadCustodians": "Failed to load custodians",
       "default": "Default",
       "details": {
         "detailsTab": {
+          "aboutThisAgent": "About This Agent",
+          "noDescription": "No description",
           "agentSaved": "Agent saved successfully",
           "agentSaveErrorMessage": "Error saving agent, please try again",
           "notLoadErrorMessage": "Error loading the details of the agent",
           "title": "Agent Details",
-          "user": "User"
+          "user": "User",
+          "linkedAgentIdentity": "Linked Identity"
         },
         "entitlementsTab": {
           "title": "Users",
@@ -2566,13 +2608,24 @@
         },
         "noAssociatedEntities": "No associated {entities} found on this agent.",
         "objectPropertiesTab": {
-          "title": "Agent Properties"
+          "title": "Agent Properties",
+          "technicalDetails": "Technical Details"
         },
         "tabs": {
           "details": "Details",
           "activity": "Activity",
-          "entitlements": "Entitlements"
+          "entitlements": "Entitlements",
+          "custodians": "Custodians",
+          "modify": "Modify"
+        },
+        "modifyFormTab": {
+          "modifySuccess": "Your request to modify this agent has been submitted.",
+          "noFormAssigned": "No modify form has been assigned for agents yet."
         }
+      },
+      "resourceGroups": {
+        "data-tools": "Data & Tools",
+        "security": "Security"
       },
       "editAgent": "Edit Agent",
       "errors": {
@@ -2582,6 +2635,24 @@
         "errorSearchingAgents": "There was an error searching agents."
       },
       "guardrails": "Guardrails",
+      "mappingKeys": {
+        "agentId": "Agent ID",
+        "agentName": "Agent Name",
+        "alias": "Alias",
+        "aliasId": "Alias ID",
+        "collaboration": "Collaboration",
+        "created": "Created",
+        "idleSessionTTL": "Idle Session TTL",
+        "model": "Model",
+        "platform": "Platform",
+        "prepared": "Prepared",
+        "recordId": "Record ID",
+        "region": "Region",
+        "runtimeIdentity": "Runtime Identity",
+        "status": "Status",
+        "updated": "Updated",
+        "version": "Version"
+      },
       "guardrailsDetails": "Guardrail Details",
       "identity": "Identity Bindings",
       "identityDetails": "Identity Binding Details",
@@ -2615,7 +2686,6 @@
         "azure-aifoundry": "Azure AI Foundry",
         "databricks": "Databricks",
         "google-vertexai": "Google Vertex AI",
-        "m365-copilot": "Microsoft Copilot",
         "ms365-copilot": "Microsoft Copilot",
         "sf-agentforce": "Salesforce AgentForce",
         "ping-aiagent": "Ping AI Agents",
@@ -2623,6 +2693,7 @@
         "custom": "Custom"
       },
       "title": "Agents",
+      "agentLabel": "Agents",
       "tools": "Tools",
       "toolsDetails": "Tool Details",
       "toolCredentials": "Tool Credentials",
@@ -2632,7 +2703,90 @@
       "unreviewedAgentsText": "Have never been reviewed",
       "user": "User",
       "viewAgentAccess": "View Agent Access",
-      "withoutCustodians": "Without assigned custodians"
+      "withoutCustodians": "Without assigned custodians",
+      "discovery": {
+        "title": "Discover Agents",
+        "tabTitle": "Discovery",
+        "button": "Discover",
+        "selectSource": "Select data source",
+        "selectSourceDescription": "Choose the source of agents to discover.",
+        "pingAicSource": "Select specific application",
+        "sources": {
+          "privilege": "PingOne Agent Privilege"
+        },
+        "sourceSectionDescription": "These are the available agent sources from {source} and their status in IGA. Set up unconfigured sources from the {source} integration card to run discovery for them.",
+        "sourceDisabledHint": "Not set up",
+        "selectApplication": "Select an application",
+        "selectApplicationDescription": "Choose the agent application to run discovery for.",
+        "runDiscovery": "Run Discovery",
+        "lastRunTitle": "Most Recent Discovery",
+        "noResultsYet": "No discovery has been run for this application yet.",
+        "notConfigured": "Discovery has not been run for this application yet. Click run discovery to begin.",
+        "columns": {
+          "objectType": "Object",
+          "status": "Status",
+          "lastRun": "Last Run",
+          "created": "Created",
+          "updated": "Updated",
+          "total": "Total"
+        },
+        "status": {
+          "pending": "Pending",
+          "active": "In Progress",
+          "complete": "Complete",
+          "failed": "Failed"
+        },
+        "errors": {
+          "loadError": "Failed to load discovery status",
+          "runError": "Failed to start discovery",
+          "runSuccess": "Discovery started successfully",
+          "syncSuccess": "Discovery started successfully",
+          "syncError": "Failed to start discovery"
+        }
+      },
+      "integration": {
+        "sources": {
+          "privilege": "PingOne Agent Privilege"
+        },
+        "cardTitle": "PingOne Agent Privilege",
+        "subtitle": "Discover and govern agents from {source}. Turn on to configure the agent types and owners.",
+        "turnOn": "Turn on",
+        "configure": "Configure",
+        "configureTitle": "Set up {source}",
+        "status": {
+          "notSetUp": "Not set up",
+          "partial": "{configured} of {total} set up",
+          "setUp": "Enabled"
+        },
+        "connectionInstructions": "Please enter the following information in order to set up integration between {source} and IGA.",
+        "connection": {
+          "controllerUrlLabel": "Controller URL",
+          "controllerUrlDescription": "Base URL of the connector service's controller (e.g. https://privilege.pingone.com)",
+          "envIdLabel": "Environment ID",
+          "envIdDescription": "The PingOne environment ID the connector operates on",
+          "userIdLabel": "User ID",
+          "userIdDescription": "The service or user identity used for API authentication to the controller",
+          "apiKeyLabel": "API key",
+          "apiKeyDescription": "API key for controller authentication",
+          "namespaceLabel": "Namespace",
+          "namespaceDescription": "Connector service namespace to walk",
+          "apiSecretLabel": "API secret",
+          "apiSecretDescription": "Secret for controller authentication. Stored securely and never shown again",
+          "apiSecretRefLabel": "Stored API secret",
+          "apiSecretRefDescription": "The reference to the stored secret credential. This value is managed automatically and treated as read-only"
+        },
+        "apiSecretLabel": "API secret",
+        "ownersLabel": "Owners",
+        "ownersDescription": "The selected owner(s) are the default users responsible for standard IGA operations like approvals",
+        "saveConfiguration": "Save configuration",
+        "errors": {
+          "loadError": "Failed to load integration status",
+          "configureSuccess": "Applications created successfully",
+          "createAppError": "Failed to create the application for {name}",
+          "createTaskError": "Failed to configure classification for {name}",
+          "updateAppError": "Failed to update the application {name}"
+        }
+      }
     },
     "certificationTask": {
       "caption": "Certification tasks",
@@ -2694,6 +2848,8 @@
         "groupByAccount": "group by account",
         "identityProfile": "identity profile",
         "ownAccess": "Review My Access",
+        "agentProfile": "agent profile",
+        "agentAccess": "agent access",
         "roleComposition": "role composition"
       },
       "columns": {
@@ -2701,7 +2857,8 @@
         "user": "User",
         "application": "Application",
         "entitlement": "Entitlement",
-        "account": "Account"
+        "account": "Account",
+        "agent": "Agent Attributes"
       },
       "actionsModal": {
         "certifyTitle": "Certify Access",
@@ -2936,7 +3093,9 @@
         "ROLEMEMBERSHIP": "Role Membership",
         "ENTITLEMENTCOMPOSITION": "Entitlement Composition",
         "IDENTITYPROFILE": "Identity Profile",
-        "ROLECOMPOSITION": "Role Composition"
+        "ROLECOMPOSITION": "Role Composition",
+        "AGENTPROFILE": "AI Agent Profile",
+        "AGENTACCESS": "AI Agent Access"
       },
       "templateType": {
         "identity": "Identity Certification",
@@ -2944,8 +3103,31 @@
         "roleMembership": "Role Membership Certification",
         "entitlementComposition": "Entitlement Composition Certification",
         "identityProfile": "Identity Profile Certification",
-        "roleComposition": "Role Composition Certification"
+        "roleComposition": "Role Composition Certification",
+        "agentProfile": "AI Agent Profile Certification",
+        "agentAccess": "AI Agent Access Certification"
       },
+      "whichAgents": "Which agents",
+      "whichAgentsDescription": "Select the agents to include, based on platform and attributes.",
+      "accessToCertify": "Access to certify",
+      "accessToCertifyDescription": "Select the type of access granted to these agents that reviewers will certify.",
+      "platform": {
+        "label": "Platform",
+        "allPlatforms": "All Platforms",
+        "awsBedrock": "AWS Bedrock",
+        "googleVertexAI": "Google Vertex AI",
+        "m365Copilot": "Microsoft 365 Copilot",
+        "azureOpenAI": "Microsoft Azure AI Foundry",
+        "servicenowNowAssist": "ServiceNow Now Assist"
+      },
+      "agentType": {
+        "label": "Agent Type",
+        "allTypes": "All",
+        "workload": "Workload",
+        "personal": "Personal",
+        "nhi": "NHI"
+      },
+      "custodian": "Custodian",
       "accounts": "Accounts",
       "additionalOptions": "Additional Options",
       "addComment": "Add comment",
@@ -3121,7 +3303,10 @@
       "whenToCertify": "When to Certify",
       "whenToCertifyDescription": "Specify when to run the certification campaign and what to do when campaign expires",
       "whoWillCertify": "Who will Certify",
-      "whoWillCertifyDescription": "Define who must complete the access reviews generated by this campaign."
+      "whoWillCertifyDescription": "Define who must complete the access reviews generated by this campaign.",
+      "errors": {
+        "agentConfigError": "Failed to load agent platform configuration. Platform options are unavailable."
+      }
     },
     "entitlements": {
       "chooseApplication": "Choose the application for which to create the entitlement.",
@@ -3492,6 +3677,12 @@
     "toolbar": {
       "hideFilters": "Hide Filters",
       "showFilters": "Show Filters"
+    },
+    "glossary": {
+      "queryAttrError": "Failed to load {resourceType} attributes"
+    },
+    "requestForm": {
+      "errorSubmittingRequest": "Error submitting request"
     }
   },
   "reports": {

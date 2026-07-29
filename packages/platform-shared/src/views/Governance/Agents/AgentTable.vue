@@ -133,6 +133,7 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { escapeQueryFilterValue } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import { getAgentDisplayName } from './utils/agentUtility';
+import { resolveAgentIcon, useAgentConfig } from './utils/useAgentConfig';
 import agentConstants from './utils/agentConstants';
 import i18n from '@/i18n';
 
@@ -160,6 +161,7 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const { agentTemplateIcons, agentTemplateSources, loadConfig } = useAgentConfig();
 const currentPage = ref(1);
 const entriesPerPage = ref(10);
 const totalPagedResults = ref(0);
@@ -247,7 +249,12 @@ async function search(page = null) {
     });
     agents.value = (data?.result || []).map((item) => {
       const processedItem = { ...item };
-      const applicationIcon = item?.application?.icon || getApplicationLogo(item.application);
+      // application.icon -> template config icon -> app-template image lookup
+      const applicationIcon = resolveAgentIcon(
+        item?.application,
+        agentTemplateIcons.value,
+        agentTemplateSources.value,
+      ) || getApplicationLogo(item.application);
       if (applicationIcon && processedItem.application) processedItem.application.icon = applicationIcon;
       processedItem.displayName = getAgentDisplayName(processedItem);
       processedItem.description = item.account?.description || blankValueIndicator;
@@ -308,6 +315,7 @@ function pageSizeChange(pageSize) {
 }
 
 onMounted(() => {
+  loadConfig();
   search();
 });
 </script>
