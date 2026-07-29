@@ -10,6 +10,9 @@ const path = require('path');
 process.env.VUE_APP_AM_URL = 'https://default.iam.example.com/am';
 
 const babelTransform = path.join(__dirname, 'config', 'jest', 'babel-transform.js');
+// Wraps @vue/vue3-jest to re-attach its source map inline, so debugger
+// breakpoints bind in .vue files. See the file header for detail.
+const vueTransform = path.join(__dirname, 'config', 'jest', 'vue-transform.js');
 
 module.exports = {
   moduleFileExtensions: [
@@ -29,7 +32,7 @@ module.exports = {
     },
   },
   transform: {
-    '^.+\\.vue$': '@vue/vue3-jest',
+    '^.+\\.vue$': vueTransform,
     '^.+\\.js$': babelTransform,
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
   },
