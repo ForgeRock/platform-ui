@@ -56,6 +56,7 @@ export function getSessionTimeoutInfo() {
     { params },
   ).post(
     '',
+    null,
     { withCredentials: true },
   );
 }
