@@ -230,6 +230,7 @@
       "expand": "Expand",
       "expandChart": "Expand chart",
       "failedToRetrieveMessages": "Failed to retrieve messages from AI assistant",
+      "pageNotAvailable": "This page is not yet available. Please navigate sequentially.",
       "failedToSendMessage": "Failed to send message to AI assistant",
       "failedToStartConversation": "Failed to start conversation with AI assistant",
       "failedToSubmitFeedback": "Failed to submit feedback",
