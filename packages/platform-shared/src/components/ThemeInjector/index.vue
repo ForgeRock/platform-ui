@@ -711,6 +711,7 @@ of the MIT license. See the LICENSE file for details. -->
       #app .badge.badge-secondary {
         color: {{ getContrastColor(theme.secondaryColor) }};
         background-color: {{ theme.secondaryColor }};
+        box-shadow: none;
       }
 
       #app .badge.badge-success {

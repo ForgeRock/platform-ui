@@ -66,6 +66,7 @@
   /* Badge */
 	--badge-primary-text-color: #{$fr-badge-primary-text-color};
 	--badge-secondary-text-color: #{$fr-badge-secondary-text-color};
+	--badge-secondary-border-color: transparent;
 	--badge-outline-secondary-text-color: #{$fr-badge-outline-secondary-text-color};
 	--badge-info-text-color: #{$fr-badge-info-text-color};
 	--badge-success-text-color: #{$fr-badge-success-text-color};
@@ -407,6 +408,7 @@
   /* Badge */
 	--badge-primary-text-color: #{$dk-fr-badge-primary-text-color};
 	--badge-secondary-text-color: #{$dk-fr-badge-secondary-text-color};
+	--badge-secondary-border-color: #{$gray-600};
 	--badge-outline-secondary-text-color: #{$dk-fr-badge-outline-secondary-text-color};
 	--badge-info-text-color: #{$dk-fr-badge-info-text-color};
 	--badge-success-text-color: #{$dk-fr-badge-success-text-color};
@@ -1738,6 +1740,7 @@ label {
 .badge-secondary {
   color: var(--badge-secondary-text-color);
   background-color: var(--badge-secondary-background-color);
+  box-shadow: inset 0 0 0 1px var(--badge-secondary-border-color);
 }
 
 .badge-outline-secondary {
