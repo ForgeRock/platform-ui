@@ -1,8 +1,7 @@
-<!-- Copyright 2026 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <VeeForm as="span">
     <BContainer
@@ -51,7 +50,6 @@ to such license between the licensee and ForgeRock AS. -->
               :is-saving="isSaving"
               @update:model="updateModel"
               @update:glossary-model="updateGlossaryModel"
-              @update:glossary-create-flag="setGlossaryFlag"
               @save-app="saveApp" />
             <FrDeletePanel
               v-if="applicationDetails"
@@ -117,10 +115,7 @@ import {
   getApplication,
   updateApplication,
 } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
-import {
-  saveGlossaryAttributesByAppId,
-  updateGlossaryAttributesByAppId,
-} from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
+import { updateGlossaryAttributesByAppId } from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrApplicationDetailsPanel from '@forgerock/platform-shared/src/components/governance/Applications/ApplicationDetailsPanel';
 import FrAccounts from '@forgerock/platform-shared/src/views/Governance/Accounts/Accounts';
@@ -185,7 +180,6 @@ const applicationDetails = ref(null);
 const isLoading = ref(true);
 const isSaving = ref(false);
 const isDeleting = ref(false);
-const isGlossaryCreate = ref(false);
 const glossaryData = ref(null);
 const loadError = ref('');
 const activeTabIndex = ref(Math.max(0, tabs.indexOf(props.tab)));
@@ -202,19 +196,13 @@ function updateGlossaryModel(data) {
   glossaryData.value = data ?? {};
 }
 
-function setGlossaryFlag(flag) {
-  isGlossaryCreate.value = flag;
-}
-
 async function saveApp() {
   isSaving.value = true;
   try {
     const { metadata, ...appPayload } = applicationDetails.value;
     const savePromises = [updateApplication(props.applicationId, appPayload)];
     if (glossaryData.value !== null) {
-      const glossarySave = isGlossaryCreate.value
-        ? saveGlossaryAttributesByAppId(props.applicationId, glossaryData.value).then((r) => { isGlossaryCreate.value = false; return r; })
-        : updateGlossaryAttributesByAppId(props.applicationId, glossaryData.value);
+      const glossarySave = updateGlossaryAttributesByAppId(props.applicationId, glossaryData.value);
       savePromises.push(glossarySave);
     }
     await Promise.all(savePromises);

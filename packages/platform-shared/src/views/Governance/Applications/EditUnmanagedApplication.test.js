@@ -128,27 +128,15 @@ describe('EditUnmanagedApplication', () => {
       expect(call[1].metadata).toBeUndefined();
     });
 
-    it('saveApp also saves glossary when glossaryData is set', async () => {
+    it('saveApp always uses PUT (updateGlossaryAttributesByAppId) when glossaryData is set', async () => {
       const wrapper = setup();
       await flushPromises();
 
       wrapper.vm.glossaryData = { department: 'Engineering' };
-      wrapper.vm.isGlossaryCreate = true;
       await wrapper.vm.saveApp();
       await flushPromises();
 
-      expect(GlossaryApi.saveGlossaryAttributesByAppId).toHaveBeenCalledWith('app-1', { department: 'Engineering' });
-    });
-
-    it('saveApp uses updateGlossaryAttributesByAppId when not a create', async () => {
-      const wrapper = setup();
-      await flushPromises();
-
-      wrapper.vm.glossaryData = { department: 'Engineering' };
-      wrapper.vm.isGlossaryCreate = false;
-      await wrapper.vm.saveApp();
-      await flushPromises();
-
+      expect(GlossaryApi.saveGlossaryAttributesByAppId).not.toHaveBeenCalled();
       expect(GlossaryApi.updateGlossaryAttributesByAppId).toHaveBeenCalledWith('app-1', { department: 'Engineering' });
     });
 
