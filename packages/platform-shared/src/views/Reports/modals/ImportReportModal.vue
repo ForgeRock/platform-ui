@@ -363,7 +363,8 @@ async function handleImport() {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background-color: $black;
+  background-color: var(--bg-dark);
+  color: $white;
   margin: 8px 0 16px;
 }
 
