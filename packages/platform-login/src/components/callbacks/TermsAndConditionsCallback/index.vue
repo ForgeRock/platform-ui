@@ -22,6 +22,8 @@ of the MIT license. See the LICENSE file for details. -->
 
       <BModal
         ref="terms-modal"
+        footer-tag="div"
+        header-tag="div"
         hide-footer
         title-tag="h2"
         title-class="h5"

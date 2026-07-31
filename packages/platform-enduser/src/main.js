@@ -111,7 +111,14 @@ router.beforeEach((to, from, next) => {
 
 const loadApp = () => {
   const app = createApp(App);
-  app.use(BootstrapVue);
+  app.use(BootstrapVue, {
+    BModal: {
+      // BModal's default <header>/<footer> tags get implicit ARIA banner/contentinfo roles
+      // when appended to <body>, creating duplicate page landmarks. (WCAG 4.1.2)
+      headerTag: 'div',
+      footerTag: 'div',
+    },
+  });
   app.use(router);
   app.use(store);
   app.use(i18n);
