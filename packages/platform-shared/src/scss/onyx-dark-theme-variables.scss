@@ -87,6 +87,7 @@ $dk-input-bg: $gray-900;
 $dk-input-disabled-bg: lighten($gray-900, 6%);
 $dk-input-color: $dk-body-color;
 $dk-input-border-color: $gray-500;
+$dk-input-icon-color: $gray-400;
 $dk-input-placeholder-color: $gray-400;
 $dk-input-focus-bg: $dk-input-bg;
 $dk-input-focus-border-color: $primary;
@@ -107,16 +108,17 @@ $dk-progress-bg: $dk-input-bg;
 $dk-fr-btn-primary-color: $black;
 $dk-fr-btn-danger-color: $black;
 $dk-fr-btn-outline-primary-color: $dk-link-color;
-$dk-fr-btn-icon-color: $dk-dark;
+$dk-fr-btn-text-color: $gray-100;
+$dk-fr-btn-icon-color: $dk-fr-btn-text-color;
 
-$dk-fr-btn-secondary-color: $dk-dark;
-$dk-fr-btn-secondary-hover-color: $dk-dark;
+$dk-fr-btn-secondary-color: $dk-fr-btn-text-color;
+$dk-fr-btn-secondary-hover-color: $dk-fr-btn-text-color;
 $dk-fr-btn-secondary-border-color: $dk-input-border-color;
 $dk-fr-btn-secondary-hover-border-color: $dk-input-border-color;
 $dk-fr-btn-secondary-bg-color: transparent;
 $dk-fr-btn-secondary-hover-bg-color: lighten($gray-900, 6%);
 
-$dk-fr-btn-light-color: $dk-dark;
+$dk-fr-btn-light-color: $dk-fr-btn-text-color;
 $dk-fr-btn-light-bg-color: $dk-light;
 $dk-fr-btn-light-hover-bg-color: darken($dk-light, 3.5%);
 $dk-fr-btn-light-border-color: $dk-light;
@@ -128,7 +130,7 @@ $dk-fr-btn-dark-hover-bg-color: darken($dark, 3.5%);
 $dk-fr-btn-dark-border-color: $dark;
 $dk-fr-btn-dark-hover-border-color: darken($dark, 3.5%);
 
-$dk-fr-btn-none-color: $dk-dark;
+$dk-fr-btn-none-color: $dk-fr-btn-text-color;
 $dk-fr-btn-none-bg-color: transparent;
 $dk-fr-btn-none-hover-bg-color: $dk-component-active-bg;
 $dk-fr-btn-none-border-color: transparent;

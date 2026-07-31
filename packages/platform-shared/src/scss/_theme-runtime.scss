@@ -101,6 +101,7 @@
 	--input-bg: #{$input-bg};
 	--input-bg-disabled: #{$input-disabled-bg};
 	--input-border-color: #{$input-border-color};
+	--input-icon-color: #{$input-icon-color};
 	--input-color: #{$input-color};
 	--input-placeholder-color: #{$input-placeholder-color};
 	--input-bg-active: #{$fr-input-tag-bg};
@@ -441,6 +442,7 @@
 	--input-bg: #{$dk-input-bg};
 	--input-bg-disabled: #{$dk-input-disabled-bg};
 	--input-border-color: #{$dk-input-border-color};
+	--input-icon-color: #{$dk-input-icon-color};
 	--input-color: #{$dk-input-color};
 	--input-placeholder-color: #{$dk-input-placeholder-color};
 	--input-bg-active: #{$dk-component-active-bg};
@@ -1634,12 +1636,12 @@ a.text-light-on-dark,
   .multiselect__tags {
     border: 1px solid var(--input-border-color) !important;
     .multiselect__tag-icon::after {
-        color: var(--input-border-color)!important;
+        color: var(--input-icon-color)!important;
     }
   }
   .multiselect__select {
     &:before {
-      color: var(--input-border-color) !important;
+      color: var(--input-icon-color) !important;
     }
   }
   .multiselect__content-wrapper {
