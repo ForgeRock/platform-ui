@@ -632,7 +632,7 @@ const searchStatusMessage = ref('');
 const updateSearchStatusMessage = debounce((value) => {
   searchStatusMessage.value = value;
 }, 1400);
-onUnmounted(() => { updateSearchStatusMessage.cancel(); });
+onUnmounted(() => { if (updateSearchStatusMessage.cancel) updateSearchStatusMessage.cancel(); });
 watch([search, filteredOptions, isOpen], () => {
   if (!search.value || !isOpen.value || props.loading) {
     updateSearchStatusMessage('');

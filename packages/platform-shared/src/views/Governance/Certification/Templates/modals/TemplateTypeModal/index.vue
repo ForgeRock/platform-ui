@@ -130,6 +130,7 @@ of the MIT license. See the LICENSE file for details. -->
               </BMedia>
             </FrCardRadioInput>
             <FrCardRadioInput
+              v-if="governanceDevEnabled"
               class="mb-3"
               :radio-value="types.ROLECOMPOSITION"
               name="selectedCampaignTemplateType"
