@@ -48,10 +48,10 @@ of the MIT license. See the LICENSE file for details. -->
           -->
         <FrButtonWithSpinner
           id="app-submit"
-          :disabled="!isFormValid || isFormValidating || isSaving"
+          :disabled="!isFormValid || isSaving"
           variant="primary"
-          :show-spinner="isSaving || isFormValidating"
-          :spinner-text="isFormValidating ? $t('common.validating') : $t('common.saving')"
+          :show-spinner="isSaving"
+          :spinner-text="$t('common.saving')"
           @mousedown.native.prevent="emit('save-app')"
           @keydown.native.enter.prevent="emit('save-app')"
           @keydown.native.space.prevent="emit('save-app')"
@@ -62,12 +62,11 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted } from 'vue';
+import { computed } from 'vue';
 import {
   BCard,
   BImg,
 } from 'bootstrap-vue';
-import { useForm } from 'vee-validate';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGenerator';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
@@ -123,13 +122,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:model', 'update:glossaryModel', 'update:glossaryCreateFlag', 'save-app']);
 
-const { meta, validate } = useForm();
-
-onMounted(async () => {
-  await nextTick();
-  validate();
-});
-
 function addTranslationsToSchema(schema) {
   return schema.map((row) => row.map((formField) => {
     const field = { ...formField };
@@ -154,8 +146,12 @@ function addTranslationsToSchema(schema) {
 }
 
 const schemaWithTranslations = computed(() => addTranslationsToSchema(props.schema));
-const isFormValidating = computed(() => meta.pending);
-const isFormValid = computed(() => !meta.invalid);
+const isFormValid = computed(() => {
+  if (props.relationshipProperty && Object.keys(props.relationshipProperty).length) {
+    return Array.isArray(props.relationshipProperty.value) && props.relationshipProperty.value.length > 0;
+  }
+  return true;
+});
 </script>
 
 <style lang="scss" scoped>

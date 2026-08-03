@@ -47,6 +47,8 @@ of the MIT license. See the LICENSE file for details. -->
               :schema="schema"
               :model="applicationDetails"
               :app-id="applicationDetails.id"
+              :parent-resource="parentResource"
+              :relationship-property="relationshipProperty"
               :is-saving="isSaving"
               :user-resource-name="userResourceName"
               :role-resource-name="roleResourceName"
@@ -107,6 +109,7 @@ import {
   BTab,
   BTabs,
 } from 'bootstrap-vue';
+import { has } from 'lodash';
 import { Form as VeeForm } from 'vee-validate';
 import FrDeletePanel from '@forgerock/platform-shared/src/components/DeletePanel';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
@@ -120,6 +123,7 @@ import {
   updateApplication,
 } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import {
   saveGlossaryAttributesByAppId,
   updateGlossaryAttributesByAppId,
@@ -130,6 +134,7 @@ import FrApplicationDetailsPanel from '@forgerock/platform-shared/src/components
 import FrAccounts from '@forgerock/platform-shared/src/views/Governance/Accounts/Accounts';
 import FrObjectTypes from '@forgerock/platform-shared/src/components/governance/Applications/ObjectType/ObjectTypes';
 import FrUnmanagedApplicationImport from '@forgerock/platform-shared/src/components/governance/Applications/UnmanagedApplicationImport';
+import store from '@/store';
 import i18n from '@/i18n';
 
 const schema = [
@@ -145,6 +150,14 @@ const schema = [
       model: 'description',
       label: i18n.global.t('governance.applications.addUnmanagedAppModal.descriptionLabel'),
       type: 'string',
+    },
+  ],
+  [
+    {
+      model: 'ownerIds',
+      label: i18n.global.t('governance.unmanagedApplications.addUnmanagedAppModal.ownersLabel'),
+      customSlot: 'application-owners',
+      type: 'multiselect',
     },
   ],
   [
@@ -196,11 +209,22 @@ const activeTabIndex = ref(Math.max(0, tabs.indexOf(props.tab)));
 const userResourceName = ref('user');
 const roleResourceName = ref('role');
 const orgResourceName = ref('organization');
+const relationshipProperty = ref(null);
+const parentResource = ref('managed/application');
 
 const logoSource = computed(() => applicationDetails.value?.icon || resolveImage('custom.svg'));
 
 function updateModel({ value, path }) {
-  if (applicationDetails.value) {
+  if (!applicationDetails.value) return;
+  if (path === 'ownerIds' && Array.isArray(value)) {
+    // RelationshipEdit emits full relationship objects; keep them in sync on the property
+    // and store the plain IDs on applicationDetails for the save payload
+    relationshipProperty.value = { ...relationshipProperty.value, value };
+    applicationDetails.value = {
+      ...applicationDetails.value,
+      ownerIds: value.map(({ _ref }) => _ref.split('/').slice(2).join('/')),
+    };
+  } else {
     applicationDetails.value = { ...applicationDetails.value, [path]: value };
   }
 }
@@ -246,14 +270,62 @@ async function deleteApp() {
   }
 }
 
+async function loadOwnerRelationshipProperty(currentOwnerIds) {
+  try {
+    const { data } = await getConfig('managed');
+    if (!data?.objects) return;
+    const { isFraas, realm } = store.state;
+    const appManagedObject = data.objects.find((obj) => (!isFraas || obj.name.startsWith(realm)) && obj.name.endsWith('application'));
+    if (!appManagedObject || !has(appManagedObject, 'schema.properties.owners')) return;
+
+    const userManagedObject = data.objects.find((obj) => (!isFraas || obj.name.startsWith(realm)) && obj.name.endsWith('user'));
+    const userObjectName = userManagedObject?.name || `${realm}_user`;
+    parentResource.value = `managed/${appManagedObject.name}`;
+
+    const ownersProperty = appManagedObject.schema.properties.owners;
+    const resourceCollection = ownersProperty.items?.resourceCollection?.[0];
+    const displayFields = resourceCollection?.query?.fields || ['userName', 'givenName', 'sn'];
+
+    const ids = (currentOwnerIds || []);
+    let userMap = {};
+    if (ids.length) {
+      const queryFilter = ids.map((id) => `_id eq "${id}"`).join(' or ');
+      const { data: usersData } = await getManagedResourceList(userObjectName, {
+        queryFilter,
+        fields: ['_id', ...displayFields].join(','),
+      });
+      userMap = Object.fromEntries((usersData.result || []).map((u) => [u._id, u]));
+    }
+
+    const owners = ids.map((id) => ({
+      _ref: `managed/${userObjectName}/${id}`,
+      _refResourceCollection: `managed/${userObjectName}`,
+      _refResourceId: id,
+      _refProperties: {},
+      ...userMap[id],
+    }));
+
+    relationshipProperty.value = {
+      ...ownersProperty,
+      value: owners,
+      key: 'owners',
+      options: [],
+    };
+  } catch {
+    // Non-fatal: owners field will simply not render
+  }
+}
+
 async function loadApplication() {
   try {
     const { data } = await getApplication(props.applicationId, { disconnected: true });
     applicationDetails.value = data;
+    await loadOwnerRelationshipProperty(data.ownerIds);
   } catch {
     // Temporary fallback
     if (props.baseApplication) {
       applicationDetails.value = props.baseApplication;
+      await loadOwnerRelationshipProperty(props.baseApplication.ownerIds);
     } else {
       loadError.value = i18n.global.t('governance.application.errorRetrievingApplication');
     }

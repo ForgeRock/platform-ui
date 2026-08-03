@@ -10,6 +10,7 @@ import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import EditUnmanagedApplication from './EditUnmanagedApplication';
@@ -17,9 +18,13 @@ import EditUnmanagedApplication from './EditUnmanagedApplication';
 jest.mock('@/i18n', () => ({
   global: { t: (k) => k },
 }));
+jest.mock('@/store', () => ({
+  state: { isFraas: false, realm: 'alpha' },
+}));
 jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
 jest.mock('@forgerock/platform-shared/src/api/ConfigApi');
+jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
   showErrorMessage: jest.fn(),
   displayNotification: jest.fn(),
@@ -42,6 +47,7 @@ const appData = {
   description: 'Test app',
   icon: '',
   objectTypes: [],
+  ownerIds: ['user-1'],
 };
 
 function setup(props = {}) {
@@ -65,6 +71,7 @@ describe('EditUnmanagedApplication', () => {
     GlossaryApi.saveGlossaryAttributesByAppId.mockResolvedValue({});
     GlossaryApi.updateGlossaryAttributesByAppId.mockResolvedValue({});
     ConfigApi.getConfig.mockResolvedValue({ data: { objects: [] } });
+    ManagedResourceApi.getManagedResourceList.mockResolvedValue({ data: { result: [] } });
     compareRealmSpecificResourceName.mockReturnValue(false);
   });
 
@@ -244,6 +251,72 @@ describe('EditUnmanagedApplication', () => {
       ApplicationsApi.getApplication.mockResolvedValue({ data: { ...appData, name: 'Refreshed' } });
       await wrapper.vm.loadApplication();
       expect(wrapper.vm.applicationDetails.name).toBe('Refreshed');
+    });
+
+    it('populates relationshipProperty.value from ownerIds on load, including user display fields', async () => {
+      ConfigApi.getConfig.mockResolvedValue({
+        data: {
+          objects: [
+            { name: 'alpha_application', schema: { properties: { owners: {} } } },
+            { name: 'alpha_user' },
+          ],
+        },
+      });
+      ManagedResourceApi.getManagedResourceList.mockResolvedValue({
+        data: {
+          result: [{
+            _id: 'user-1', userName: 'jdoe', givenName: 'Jane', sn: 'Doe',
+          }],
+        },
+      });
+
+      const wrapper = setup();
+      await flushPromises();
+
+      const [owner] = wrapper.vm.relationshipProperty.value;
+      expect(owner._ref).toBe('managed/alpha_user/user-1');
+      expect(owner._refResourceCollection).toBe('managed/alpha_user');
+      expect(owner.userName).toBe('jdoe');
+      expect(owner.givenName).toBe('Jane');
+      expect(owner.sn).toBe('Doe');
+    });
+
+    it('updateModel with ownerIds updates ownerIds as plain IDs and syncs relationshipProperty', async () => {
+      const wrapper = setup();
+      await flushPromises();
+
+      wrapper.vm.updateModel({
+        path: 'ownerIds',
+        value: [{
+          _ref: 'managed/alpha_user/user-2',
+          _refResourceCollection: 'managed/alpha_user',
+          _refResourceId: 'user-2',
+          _refProperties: {},
+        }],
+      });
+
+      expect(wrapper.vm.applicationDetails.ownerIds).toEqual(['user-2']);
+      expect(wrapper.vm.relationshipProperty.value[0]._ref).toBe('managed/alpha_user/user-2');
+    });
+
+    it('saveApp sends ownerIds as plain IDs in the payload', async () => {
+      const wrapper = setup();
+      await flushPromises();
+
+      await wrapper.vm.saveApp();
+      await flushPromises();
+
+      const call = ApplicationsApi.updateApplication.mock.calls[0];
+      expect(call[1].ownerIds).toEqual(['user-1']);
+    });
+
+    it('gracefully handles getConfig failure — relationshipProperty stays null', async () => {
+      ConfigApi.getConfig.mockRejectedValue(new Error('network error'));
+      const wrapper = setup();
+      await flushPromises();
+
+      expect(wrapper.vm.relationshipProperty).toBeNull();
+      expect(wrapper.vm.applicationDetails.name).toBe('My App');
     });
   });
 

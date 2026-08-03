@@ -9,13 +9,6 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ApplicationDetailsPanel from './ApplicationDetailsPanel';
 
-jest.mock('vee-validate', () => ({
-  useForm: jest.fn(() => ({
-    meta: { invalid: false, pending: false },
-    validate: jest.fn(),
-  })),
-}));
-
 jest.mock('@/i18n', () => ({
   global: { t: (k) => k },
 }));
@@ -118,6 +111,34 @@ describe('ApplicationDetailsPanel', () => {
       const fg = wrapper.findComponent({ name: 'FormGenerator' });
       const translatedSchema = fg.props('schema');
       expect(translatedSchema[0][0].label).toBe('field');
+    });
+
+    it('disables save button when relationshipProperty has an empty value array', async () => {
+      const wrapper = setup({
+        relationshipProperty: { _id: 'rel-1', value: [] },
+      });
+      await flushPromises();
+      const btn = wrapper.find('button');
+      expect(btn.attributes('disabled')).toBeDefined();
+    });
+
+    it('enables save button when relationshipProperty has owners', async () => {
+      const wrapper = setup({
+        relationshipProperty: {
+          _id: 'rel-1',
+          value: [{ _ref: 'managed/alpha_user/user-1' }],
+        },
+      });
+      await flushPromises();
+      const btn = wrapper.find('button');
+      expect(btn.attributes('disabled')).toBeUndefined();
+    });
+
+    it('enables save button when no relationshipProperty is provided', async () => {
+      const wrapper = setup();
+      await flushPromises();
+      const btn = wrapper.find('button');
+      expect(btn.attributes('disabled')).toBeUndefined();
     });
 
     it('does not mutate original schema prop objects', async () => {
