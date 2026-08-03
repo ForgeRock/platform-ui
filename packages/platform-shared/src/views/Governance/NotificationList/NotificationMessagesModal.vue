@@ -52,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </template>
         <template #cell(message)="{ item }">
-          <div class="media-body my-2 pr-5 border-bottom">
+          <div class="media-body my-2 pr-5">
             <div class="text-muted mb-1 small">
               {{ formatDate(item.date) }}
             </div>
@@ -163,13 +163,15 @@ function formatDate(date) {
     margin-left: 0.875rem;
   }
 
+  tr:not(:last-child) {
+    .media-body {
+      border-bottom: 1px solid $gray-200;
+    }
+  }
+
   tr:last-child {
     .thread-line {
       display: none;
-    }
-
-    .media-body {
-      border-bottom: none !important;
     }
   }
 }

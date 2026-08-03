@@ -50,6 +50,7 @@ const testRecords = [
 
 function mountComponent(props = {}) {
   CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({ data: {} });
+  CommonsApi.getIgaAccessRequest = jest.fn().mockResolvedValue({ data: {} });
   AuditApi.getAuditLogs = jest.fn().mockResolvedValue({
     data: {
       result: testRecords,
@@ -85,7 +86,7 @@ describe('AuditLogTable', () => {
       expect(AuditApi.getAuditLogs).toHaveBeenCalled();
     });
 
-    it('transforms records — formats timestamp and startCases eventType', async () => {
+    it('transforms records — formats timestamp; keeps raw eventType for filtering', async () => {
       const wrapper = mountComponent();
       await flushPromises();
 
@@ -94,7 +95,24 @@ describe('AuditLogTable', () => {
 
       const items = wrapper.findComponent({ name: 'GovResourceTable' }).props('items');
       expect(items[0].timestamp).toBe('Jun 03, 2026 1:20:22 PM');
-      expect(items[0].eventType).toBe('Grant Entitlement');
+      // Raw value preserved so API filter matches; startCase is applied in the cell template only
+      expect(items[0].eventType).toBe('grant-entitlement');
+    });
+
+    it('renders eventType cell with startCase formatting', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      wrapper.findComponent({ name: 'GovResourceTable' }).vm.$emit('load-data', {});
+      await flushPromises();
+
+      // The cell slot receives the raw item and must render the startCased value
+      const table = wrapper.findComponent({ name: 'GovResourceTable' });
+      const slotFn = table.vm.$slots['cell(eventType)'];
+      expect(slotFn).toBeDefined();
+      const vnodes = slotFn({ item: { eventType: 'grant-entitlement' } });
+      const text = vnodes[0]?.children?.trim?.() ?? vnodes[0]?.el?.textContent?.trim();
+      expect(text).toBe('Grant Entitlement');
     });
 
     it('passes totalCount to GovResourceTable', async () => {

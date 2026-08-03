@@ -3,10 +3,10 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="p-4 bg-light border-top">
+  <div class="p-5 bg-light border-top">
     <BRow class="mb-3">
       <BCol>
-        <BCard body-class="event-card-body">
+        <BCard body-class="event-card-body p-4">
           <p class="section-header mb-3">
             {{ $t('governance.audit.details.event') }}
           </p>
@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BRow>
     <BRow class="mb-3">
       <BCol>
-        <BCard body-class="changes-card-body">
+        <BCard body-class="changes-card-body p-4">
           <p class="section-header mb-3">
             {{ $t('governance.audit.details.changes') }}
           </p>

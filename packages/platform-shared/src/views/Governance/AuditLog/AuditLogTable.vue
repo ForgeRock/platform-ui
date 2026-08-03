@@ -163,7 +163,7 @@ of the MIT license. See the LICENSE file for details. -->
             icon-class="mr-lg-2"
             name="filter_list">
             <span class="d-none d-lg-inline">
-              {{ filtersExpanded ? $t('governance.hideFilters') : $t('governance.showFilters') }}
+              {{ filtersExpanded ? $t('governance.toolbar.hideFilters') : $t('governance.toolbar.showFilters') }}
             </span>
           </FrIcon>
         </BButton>
@@ -228,7 +228,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ item.actorDisplayName ?? (item.actor === 'system' ? $t('governance.audit.actorTypes.system') : item.actor) ?? blankValueIndicator }}
       </template>
       <template #cell(eventType)="{ item }">
-        {{ item.eventType ?? blankValueIndicator }}
+        {{ item.eventType ? startCase(item.eventType) : blankValueIndicator }}
       </template>
       <template #row-details="{ item }">
         <FrAuditLogDetails :log="item" />
@@ -313,6 +313,7 @@ const emit = defineEmits(['filter-change']);
 const filterEventType = ref('');
 const filterActorType = ref('all');
 const filterActorId = ref('');
+const suppressNextActorIdWatch = ref(false);
 const filtersExpanded = ref(false);
 const filterParamMode = ref('actor');
 const lastTableParams = ref({});
@@ -412,7 +413,6 @@ function transformAuditRecord(record) {
   return {
     ...record,
     timestamp: formatTimestamp(record.timestamp),
-    eventType: record.eventType ? startCase(record.eventType) : null,
   };
 }
 
@@ -573,7 +573,7 @@ async function exportLogs(format) {
     const rows = records.map((r) => ({
       [i18n.global.t('governance.audit.timestamp')]: r.timestamp,
       [i18n.global.t('governance.audit.actor')]: r.actorDisplayName ?? r.actor ?? '',
-      [i18n.global.t('governance.audit.eventType')]: r.eventType ?? '',
+      [i18n.global.t('governance.audit.eventType')]: r.eventType ? startCase(r.eventType) : '',
       [i18n.global.t('common.displayName')]: r.displayName ?? '',
       [i18n.global.t('governance.audit.details.fields.path')]: r.objectDisplayName ?? '',
       [i18n.global.t('governance.audit.details.fields.objectType')]: r.objectType ?? '',
@@ -594,9 +594,6 @@ watch([() => props.externalFromDate, () => props.externalToDate], ([newFrom, new
   if (newTo) filterToDate.value = formatLocalDatetime(new Date(newTo));
 });
 
-// When actorType changes, clear the selected actor ID so stale filters don't carry over
-watch(filterActorType, () => { filterActorId.value = ''; });
-
 function buildFilterChangePayload() {
   const payload = { fromDate: filterFromDate.value, toDate: filterToDate.value };
   if (filterActorType.value === 'system') {
@@ -611,7 +608,23 @@ function buildFilterChangePayload() {
   return payload;
 }
 
-watch([filterFromDate, filterToDate, filterEventType, filterActorType, filterActorId, filterParamMode], () => {
+// When actorType changes, clear the selected actor ID so stale filters don't carry over.
+// Suppress the filterActorId watcher during the internal clear to avoid a spurious re-query.
+// Only re-query immediately for types that don't require a specific actor selection (all/system).
+watch(filterActorType, (newType) => {
+  suppressNextActorIdWatch.value = true;
+  filterActorId.value = '';
+  if (initialLoadDone.value && (newType === 'all' || newType === 'system')) {
+    emit('filter-change', buildFilterChangePayload());
+    onFilterChanged();
+  }
+});
+
+watch([filterFromDate, filterToDate, filterEventType, filterActorId, filterParamMode], () => {
+  if (suppressNextActorIdWatch.value) {
+    suppressNextActorIdWatch.value = false;
+    return;
+  }
   emit('filter-change', buildFilterChangePayload());
   if (initialLoadDone.value) onFilterChanged();
 });
