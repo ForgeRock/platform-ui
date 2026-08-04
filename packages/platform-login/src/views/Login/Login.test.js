@@ -583,22 +583,26 @@ describe('Login.vue', () => {
     });
   });
 
+  // Note: NameCallback is used for both username and OTP fields; they cannot be distinguished by type alone.
+  // For journeys where OTP also uses a NameCallback, per-step theme configuration (journeyRememberMeEnabled)
+  // must be used to control checkbox visibility on the OTP step.
   describe('setRememberedUsername', () => {
     afterEach(() => {
       localStorage.clear();
     });
 
-    it('shows rememberMe checkbox when journeyRememberMeEnabled is true', async () => {
+    it('shows rememberMe checkbox when journeyRememberMeEnabled is true and NameCallback is present', async () => {
+      wrapper.setData({ componentList: [{ callback: { getType: () => 'NameCallback' }, callbackSpecificProps: { value: '' } }] });
       await wrapper.setProps({ journeyRememberMeEnabled: true });
       wrapper.vm.setRememberedUsername();
       expect(wrapper.vm.rememberMeVisible).toBe(true);
     });
 
-    it('shows rememberMe checkbox even when no NameCallback is present', async () => {
+    it('hides rememberMe checkbox when journeyRememberMeEnabled is true but no NameCallback is present', async () => {
       wrapper.setData({ componentList: [{ callback: { getType: () => 'PasswordCallback' }, callbackSpecificProps: { value: '' } }] });
       await wrapper.setProps({ journeyRememberMeEnabled: true });
       wrapper.vm.setRememberedUsername();
-      expect(wrapper.vm.rememberMeVisible).toBe(true);
+      expect(wrapper.vm.rememberMeVisible).toBe(false);
     });
 
     it('hides rememberMe checkbox when journeyRememberMeEnabled is false', async () => {
