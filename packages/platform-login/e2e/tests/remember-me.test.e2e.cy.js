@@ -158,6 +158,32 @@ describe('Check Remember Me theme feature functionality', { tags: ['@forgeops', 
     cy.findByRole('checkbox', { name: 'Remember my username but with a really longer text here!' }).should('be.checked');
   });
 
+  it('[TC-12166] Username is not saved to localStorage when Remember Me is disabled at the theme level', () => {
+    // Switch to the testing page node using a theme with Remember Me disabled
+    cy.findByRole('radio', { name: 'Username - Empty' }).click({ force: true });
+
+    // Proceed to the next page
+    proceedToNextJourneyPage();
+
+    // Wait for a page to load
+    waitForJourneyPageLoad();
+
+    // Remember Me checkbox should not be visible on a theme with Remember Me disabled
+    cy.findByRole('checkbox').should('not.exist');
+
+    // Fill in a Username on the page node using a theme without Remember Me
+    cy.findByLabelText('User Name').type(userName);
+
+    // Proceed to the next page
+    proceedToNextJourneyPage();
+
+    // Wait for a page to load
+    waitForJourneyPageLoad();
+
+    // Verify that Username was not saved to localStorage — Remember Me is inert when disabled by the theme
+    cy.window().its('localStorage').invoke('getItem', 'frUsername').should('be.null');
+  });
+
   it('[TC-12167] Username is remembered after failed login when Remember Me option is checked', () => {
     // Switch to the other testing page node with Remember Me feature enabled and working Login page
     cy.findByRole('radio', { name: 'Login - Remember Me' }).click({ force: true });
