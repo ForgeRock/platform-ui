@@ -2427,6 +2427,7 @@
         "getAppDataFail": "Unable to retrieve application data",
         "getManagedAppFail": "Unable to retrieve managed application",
         "schemaFail": "Unable to get application properties",
+        "consumerSchemaFail": "Unable to validate application template against AM",
         "updateSuccess": "Application updated",
         "updateFail": "Application update failed",
         "deleteFail": "Unable to delete application",
