@@ -413,6 +413,14 @@ export default {
           eventName: this.forms.FrEventDetails?.eventName,
           eventOwners: this.forms.FrEventDetails?.eventOwners,
         },
+        who: {
+          certType: this.forms.FrWho.certType,
+          certUserInfo: this.forms.FrWho.certUserInfo,
+          certRoleInfo: this.forms.FrWho.certRoleInfo,
+          certifierPath: this.forms.FrWho.certifierPath,
+          enableDefaultCertifier: this.forms.FrWho.enableDefaultCertifier,
+          defaultCertifierInfo: this.forms.FrWho.defaultCertifierInfo,
+        },
       };
     },
     title() {

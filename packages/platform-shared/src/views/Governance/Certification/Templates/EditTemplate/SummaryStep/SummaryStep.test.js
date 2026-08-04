@@ -50,6 +50,14 @@ const summary = {
   enableAccountGrant: true,
   enableEntitlementGrant: true,
   notifications,
+  who: {
+    certType: 'user',
+    certUserInfo: { givenName: 'John', sn: 'Doe', userName: 'jdoe' },
+    certRoleInfo: {},
+    certifierPath: '',
+    enableDefaultCertifier: false,
+    defaultCertifierInfo: {},
+  },
 };
 
 describe('SummaryStep Component', () => {
@@ -212,6 +220,95 @@ describe('SummaryStep Component', () => {
       expect(findByTestId(wrapper, 'summary-role-count').exists()).toBeFalsy();
     });
   });
+  describe('who will certify in summaryStep', () => {
+    it('renders certifier type label', () => {
+      expect(findByTestId(wrapper, 'summary-who-certifier-type-value').text()).toBe('governance.editTemplate.user');
+    });
+
+    it('renders certifier name for user type', () => {
+      expect(findByTestId(wrapper, 'summary-who-certifier-name').text()).toBe('common.userFullName');
+    });
+
+    it('renders certifier type label for manager type', async () => {
+      await wrapper.setProps({
+        summary: {
+          ...summary,
+          who: {
+            certType: 'manager',
+            certUserInfo: {},
+            certRoleInfo: {},
+            certifierPath: '',
+            enableDefaultCertifier: false,
+            defaultCertifierInfo: {},
+          },
+        },
+      });
+      expect(findByTestId(wrapper, 'summary-who-certifier-type-value').text()).toBe('governance.editTemplate.manager');
+      expect(findByTestId(wrapper, 'summary-who-certifier-name').exists()).toBeFalsy();
+    });
+
+    it('renders certifier path for custom type', async () => {
+      await wrapper.setProps({
+        summary: {
+          ...summary,
+          who: {
+            certType: 'custom',
+            certUserInfo: {},
+            certRoleInfo: {},
+            certifierPath: 'frEmail',
+            enableDefaultCertifier: false,
+            defaultCertifierInfo: {},
+          },
+        },
+      });
+      expect(findByTestId(wrapper, 'summary-who-certifier-path').text()).toBe('frEmail');
+    });
+
+    it('renders role name for role type', async () => {
+      await wrapper.setProps({
+        summary: {
+          ...summary,
+          who: {
+            certType: 'role',
+            certUserInfo: {},
+            certRoleInfo: { name: 'Admin Role' },
+            certifierPath: '',
+            enableDefaultCertifier: false,
+            defaultCertifierInfo: {},
+          },
+        },
+      });
+      expect(findByTestId(wrapper, 'summary-who-certifier-name').text()).toBe('Admin Role');
+    });
+
+    it('renders default certifier when enabled', async () => {
+      await wrapper.setProps({
+        summary: {
+          ...summary,
+          who: {
+            certType: 'user',
+            certUserInfo: { givenName: 'John', sn: 'Doe' },
+            certRoleInfo: {},
+            certifierPath: '',
+            enableDefaultCertifier: true,
+            defaultCertifierInfo: { givenName: 'Jane', sn: 'Smith' },
+          },
+        },
+      });
+      expect(findByTestId(wrapper, 'summary-who-default-certifier').text()).toBe('common.userFullName');
+    });
+
+    it('does not render who section when summary.who is absent', async () => {
+      await wrapper.setProps({
+        summary: {
+          ...summary,
+          who: undefined,
+        },
+      });
+      expect(findByTestId(wrapper, 'summary-who-certifier-type').exists()).toBeFalsy();
+    });
+  });
+
   describe('notifications in summaryStep', () => {
     it('render correctly initial notification', async () => {
       await wrapper.setProps({

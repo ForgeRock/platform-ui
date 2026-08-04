@@ -175,6 +175,55 @@ of the MIT license. See the LICENSE file for details. -->
           </dl>
         </BCol>
       </BRow>
+      <BRow
+        v-if="summary.who"
+        class="border-bottom mb-4 pb-4">
+        <BCol lg="3">
+          <h5>{{ $t('governance.editTemplate.whoWillCertify') }}</h5>
+        </BCol>
+        <BCol lg="4">
+          <dl>
+            <dt
+              class="mb-1"
+              data-testid="summary-who-certifier-type">
+              <small>{{ $t('governance.editTemplate.certifierType') }}</small>
+            </dt>
+            <dd
+              class="mb-4"
+              data-testid="summary-who-certifier-type-value">
+              {{ certifierTypeLabel }}
+            </dd>
+            <template v-if="summary.who.certType === 'user' || summary.who.certType === 'role'">
+              <dt class="mb-1">
+                <small>{{ $t('governance.editTemplate.certifier') }}</small>
+              </dt>
+              <dd
+                class="mb-4"
+                data-testid="summary-who-certifier-name">
+                {{ certifierName }}
+              </dd>
+            </template>
+            <template v-if="summary.who.certType === 'custom'">
+              <dt class="mb-1">
+                <small>{{ $t('governance.editTemplate.certifierPath') }}</small>
+              </dt>
+              <dd
+                class="mb-4"
+                data-testid="summary-who-certifier-path">
+                {{ summary.who.certifierPath || blankValueIndicator }}
+              </dd>
+            </template>
+            <template v-if="summary.who.enableDefaultCertifier">
+              <dt class="mb-1">
+                <small>{{ $t('governance.editTemplate.defaultCertifier') }}</small>
+              </dt>
+              <dd data-testid="summary-who-default-certifier">
+                {{ defaultCertifierName }}
+              </dd>
+            </template>
+          </dl>
+        </BCol>
+      </BRow>
       <BRow class="border-bottom mb-4 pb-4">
         <BCol lg="3">
           <h5>{{ $t('governance.editTemplate.notifications') }}</h5>
@@ -484,6 +533,36 @@ export default {
       if (values.expireOption === 1) return this.$t('governance.editTemplate.reassignTo', { givenName: values.reassignUser.givenName, sn: values.reassignUser.sn });
       if (values.expireOption === 2) return this.$t('governance.editTemplate.doNothing');
       return '';
+    },
+    certifierTypeLabel() {
+      if (!this.summary.who) return blankValueIndicator;
+      const certTypeKeyMap = {
+        user: 'governance.editTemplate.user',
+        role: 'governance.editTemplate.role',
+        manager: 'governance.editTemplate.manager',
+        organizationAdmin: 'governance.editTemplate.organizationAdmin',
+        entitlementOwner: 'governance.editTemplate.entitlementOwner',
+        roleOwner: 'governance.editTemplate.roleOwner',
+        custom: 'governance.editTemplate.custom',
+      };
+      const key = certTypeKeyMap[this.summary.who.certType];
+      return key ? this.$t(key) : blankValueIndicator;
+    },
+    certifierName() {
+      if (!this.summary.who) return blankValueIndicator;
+      const { certType, certUserInfo, certRoleInfo } = this.summary.who;
+      if (certType === 'user' && certUserInfo?.givenName) {
+        return this.$t('common.userFullName', { givenName: certUserInfo.givenName, sn: certUserInfo.sn });
+      }
+      if (certType === 'role' && certRoleInfo?.name) {
+        return certRoleInfo.name;
+      }
+      return blankValueIndicator;
+    },
+    defaultCertifierName() {
+      const info = this.summary.who?.defaultCertifierInfo;
+      if (!info?.givenName) return blankValueIndicator;
+      return this.$t('common.userFullName', { givenName: info.givenName, sn: info.sn });
     },
     isEntitlementComposition() {
       return this.summary.type === types.ENTITLEMENTCOMPOSITION;

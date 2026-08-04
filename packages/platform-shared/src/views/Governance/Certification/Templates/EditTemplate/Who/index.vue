@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-4 flex-grow-1 overflow-auto h-100">
     <BContainer
@@ -30,7 +29,8 @@ to such license between the licensee and ForgeRock AS. -->
         data-testid="cert-type-user"
         role="role-selector"
         class="mb-5"
-        resource-path="user" />
+        resource-path="user"
+        @get-user-info="formFields.certUserInfo = $event" />
       <FrGovResourceSelect
         v-if="formFields.certType === 'role'"
         v-model="formFields.certRole"
@@ -38,7 +38,8 @@ to such license between the licensee and ForgeRock AS. -->
         name="certRole"
         class="mb-5"
         data-testid="cert-type-role"
-        resource-path="role" />
+        resource-path="role"
+        @get-role-info="handleRoleInfo" />
       <FrField
         v-if="formFields.certType === 'custom'"
         v-model="formFields.certifierPath"
@@ -62,7 +63,8 @@ to such license between the licensee and ForgeRock AS. -->
           :initial-data="formFields.defaultCertifierInfo"
           name="defaultCertifier"
           class="mb-5"
-          resource-path="user" />
+          resource-path="user"
+          @get-user-info="formFields.defaultCertifierInfo = $event" />
       </BCollapse>
     </BContainer>
   </div>
@@ -154,6 +156,11 @@ export default {
       const arr = map(values, (property) => ({ text: get(property, 'displayName', property.key), value: property.key }));
       arr.push({ text: 'id', value: 'id' });
       return sortBy(arr, 'text');
+    },
+  },
+  methods: {
+    handleRoleInfo(roleInfo) {
+      if (roleInfo?.name) this.formFields.certRoleInfo = roleInfo;
     },
   },
   watch: {
