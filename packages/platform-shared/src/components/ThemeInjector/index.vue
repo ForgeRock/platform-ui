@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
         background-color: {{ theme.primaryColor }} !important;
         outline-color: {{ theme.primaryColor }} !important;
         border-color: {{ theme.primaryColor }} !important;
-        color: {{ theme.textColor }} !important;
+        color: {{ theme.textColor }} <template v-if="mock">!important</template>;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-primary:disabled {
@@ -50,22 +50,22 @@ of the MIT license. See the LICENSE file for details. -->
 
       <template v-if="mock">.fr-theme-preview</template> a {
         font-weight: {{ theme.boldLinks ? 700 : 400 }};
-        color: {{ journeyLinkColor }} !important;
+        color: {{ journeyLinkColor }} <template v-if="mock">!important</template>;
       }
 
       <template v-if="mock">.fr-theme-preview</template> a:hover {
-        color: {{ journeyLinkActiveColor }} !important;
+        color: {{ journeyLinkActiveColor }} <template v-if="mock">!important</template>;
       }
 
       <!-- Darkens linkColor only as far as needed to meet WCAG AA 4.5:1 on the card background; preserves it unchanged if it already passes -->
       <template v-if="mock">.fr-theme-preview</template> .btn-link,
       <template v-if="mock">.fr-theme-preview</template> .nav-link {
-        color: {{ journeyLinkColor }} !important;
+        color: {{ journeyLinkColor }} <template v-if="mock">!important</template>;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-link:hover,
       .nav-link:hover {
-        color: {{ journeyLinkActiveColor }} !important;
+        color: {{ journeyLinkActiveColor }} <template v-if="mock">!important</template>;
       }
 
       <!-- Styles floating action bar's text elements in dark bg  -->
@@ -112,7 +112,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       h1 {
-        color: {{ theme.pageTitle }} !important;
+        color: {{ theme.pageTitle }} <template v-if="mock">!important</template>;
       }
 
       .btn-primary:focus {
