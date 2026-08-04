@@ -316,7 +316,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrExtendRequestModal
       :current-item="itemToExtendRequest" />
     <BModal
-      id="revoke-from-role-modal"
+      :id="`${modalId}-revoke-from-role`"
       no-close-on-backdrop
       :title="$t('governance.access.revokeEntitlement', itemsToRevoke.length)">
       {{ $t('governance.access.confirmRevokeEntitlement', itemsToRevoke.length) }}
@@ -837,7 +837,7 @@ export default {
       this.$nextTick(() => {
         this.itemsToRevoke = itemsToRevoke;
         if (this.resourceIsRole) {
-          this.$bvModal.show('revoke-from-role-modal');
+          this.$bvModal.show(`${this.modalId}-revoke-from-role`);
         } else {
           this.$bvModal.show(this.revokeModalId);
         }
@@ -884,7 +884,7 @@ export default {
         this.$bvModal.hide(this.revokeModalId);
       } else if (status === 'resourcesRevoked') {
         this.onToggleSelectAll(false);
-        this.$bvModal.hide('revoke-from-role-modal');
+        this.$bvModal.hide(`${this.modalId}-revoke-from-role`);
         this.loadData();
       } else if (status === 'error') {
         this.$bvModal.hide(`${this.modalId}-request`);
