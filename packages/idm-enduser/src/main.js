@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@ import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue';
 import Vue3Sanitize from 'vue-3-sanitize';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { DEPLOYMENT_TYPES } from '@forgerock/platform-shared/src/constants/deploymentConstants';
 import App from './App';
 import i18n from './i18n';
 import router from './router';
@@ -44,8 +45,9 @@ try {
 const { initializeLogout } = useAuth();
 initializeLogout();
 
-/* When the data is loaded, we can mount the app */
+store.commit('SharedStore/setDeploymentType', DEPLOYMENT_TYPES.IDM);
 
+/* When the data is loaded, we can mount the app */
 function loadApp() {
   const app = createApp(App);
   app.use(BootstrapVue);

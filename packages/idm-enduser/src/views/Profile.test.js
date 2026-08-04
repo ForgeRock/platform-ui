@@ -163,7 +163,7 @@ describe('Profile', () => {
   const patchResetPasswordSpy = jest.fn();
   const axiosCreateSpy = jest.fn();
 
-  function setup(patchResetPassword = patchResetPasswordSpy.mockResolvedValue(resetPasswordSuccessMock)) {
+  function setup(patchResetPassword = patchResetPasswordSpy.mockResolvedValue(resetPasswordSuccessMock), enduserStoreState = {}) {
     axios.CancelToken = {
       source: jest.fn().mockReturnValue({
         token: {},
@@ -190,6 +190,7 @@ describe('Profile', () => {
         userId: '1234',
         managedResource: 'user',
       },
+      enduser: enduserStoreState,
     });
 
     return mount(Profile, {
@@ -259,5 +260,42 @@ describe('Profile', () => {
     await saveButton.trigger('click');
 
     expect(NotificationMixin.methods.showErrorMessage).toHaveBeenCalledWith(error, undefined);
+  });
+
+  it('shows the preferences section when the managed resource schema defines preferences', async () => {
+    const wrapper = setup(undefined, {
+      preferences: { marketing: true },
+      managedResourceSchema: {
+        properties: {
+          preferences: {
+            properties: {
+              marketing: { description: 'Send me special offers and services', type: 'boolean' },
+            },
+          },
+        },
+      },
+    });
+    await flushPromises();
+
+    const preferencesSection = wrapper.find('section[aria-label="Preferences"]');
+    expect(preferencesSection.exists()).toBe(true);
+    expect(preferencesSection.findAll('input[type="checkbox"]').length).toBe(1);
+  });
+
+  it('hides the preferences section when the managed resource schema defines no preferences', async () => {
+    const wrapper = setup(undefined, {
+      preferences: {},
+      managedResourceSchema: { properties: { preferences: { properties: {} } } },
+    });
+    await flushPromises();
+
+    expect(wrapper.find('section[aria-label="Preferences"]').exists()).toBe(false);
+  });
+
+  it('hides the preferences section when the managed resource schema has not loaded', async () => {
+    const wrapper = setup(undefined, {});
+    await flushPromises();
+
+    expect(wrapper.find('section[aria-label="Preferences"]').exists()).toBe(false);
   });
 });

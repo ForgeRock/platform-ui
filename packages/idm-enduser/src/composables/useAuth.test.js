@@ -102,29 +102,6 @@ describe('useAuth composable', () => {
     });
   });
 
-  it('should redirect to admin url if user is openidm-admin', async () => {
-    process.env.VUE_APP_ADMIN_URL = 'http://openidm.com';
-    Object.defineProperty(window, 'location', {
-      value: {
-        href: 'http://idm-enduser.com',
-      },
-      writable: true,
-    });
-    AuthenticationApi.login = jest.fn().mockResolvedValue({
-      data: {
-        authorization: {
-          id: 'openidm-admin',
-          component: 'managed/user',
-        },
-      },
-    });
-
-    const { loginIdmEnduser } = useAuth();
-    await loginIdmEnduser('test', 'test');
-
-    expect(window.location.href).toBe('http://openidm.com');
-  });
-
   it('should restore the idm session correctly', async () => {
     AuthenticationApi.getAccessToken = jest.fn().mockResolvedValue({
       data: {

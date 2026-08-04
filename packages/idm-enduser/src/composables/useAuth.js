@@ -75,13 +75,6 @@ export function useAuth() {
    * loadIdmEnduserInfo(data);
    */
   async function loadIdmEnduserInfo(data) {
-    if (data.authorization.id === 'openidm-admin') {
-      // amadmin/openidm-admin don't need access to end user,
-      // so send them back to the admin to avoid problems.
-      window.location.href = process.env.VUE_APP_ADMIN_URL;
-      return;
-    }
-
     const userStore = getUserStore();
     userStore.userId = data.authorization.id;
     userStore.authenticationId = data.authenticationId;
