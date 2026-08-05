@@ -19,7 +19,7 @@ Feature: Admin Login
   @cloud @forgeops
   Scenario: Cannot login with empty admin password
     When user types the stored value of "AM_USERNAME" in "User Name" field
-    And user clicks on "Next" button
+    And user clicks on "Next" button after waiting for 0.1 seconds
     Then page title is "Sign In"
     And the value of the "User Name" field is the stored value of "AM_USERNAME"
     And the value of the "Password" field is ""
@@ -90,13 +90,11 @@ Feature: Admin Login
     When user types the stored value of "AM_USERNAME" in "User Name" field
     And user types the stored value of "AM_PASSWORD" in "Password" field
     And user clicks on "Next" button
-    And user clicks on "Skip for now" button after waiting for 0.1 seconds
+    And user clicks on "Skip for now" button after waiting for 0.5 seconds
     Then admin dashboard is loaded
 
   @C29568
   @cloud @forgeops
-  # Skipping due to flakiness in CI to stabilize it later
-  @skip
   Scenario: Admin logs out successfully
     When admin logs into the tenant with fresh session
     And user clicks on "Sign out" menu item from top right user menu

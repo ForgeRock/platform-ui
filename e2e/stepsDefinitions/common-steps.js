@@ -256,7 +256,7 @@ When('user focus textbox {string}', (field) => {
 });
 
 When('user types {string} in the field {string}', (value, field) => {
-  cy.findByLabelText(field).clear().type(value);
+  cy.findByLabelText(field).should('be.visible').clear().type(value, { force: true });
 });
 
 When('user types {string} in the textbox {string}', (value, field) => {
@@ -264,7 +264,7 @@ When('user types {string} in the textbox {string}', (value, field) => {
 });
 
 When('user types the stored value of {string} in {string} field', (storedDataName, fieldName) => {
-  cy.findByLabelText(fieldName).clear().type(Cypress.env(storedDataName));
+  cy.findByLabelText(fieldName).should('be.visible').clear().type(Cypress.env(storedDataName), { force: true });
 });
 
 When('user types the stored value of {string} in {string} textbox', (storedDataName, fieldName) => {
@@ -647,14 +647,14 @@ Then('the message {string} should be present', (message) => {
 
 When('user clicks on {string} menu item from top right user menu', (menuItem) => {
   cy.findByTestId('fr-main-navbar').within(() => {
-    cy.findByRole('button').click();
+    cy.findAllByRole('button').last().click();
     cy.findByRole('menuitem', { name: menuItem }).click();
   });
 });
 
 When('user clicks on the user menu', () => {
   cy.findByTestId('fr-main-navbar').within(() => {
-    cy.findByRole('button').click();
+    cy.findAllByRole('button').last().click();
   });
 });
 

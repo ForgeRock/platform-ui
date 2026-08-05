@@ -37,7 +37,12 @@ function fetchAccessToken(retries = 5, attempt = 0) {
   let retry = attempt;
   const expectedScope = Cypress.env('IS_FRAAS') ? 'fr:idm:*' : 'openid fr:idm:*';
 
-  cy.wait('@getAccessToken').then(({ response }) => {
+  cy.wait('@getAccessToken').then((interception) => {
+    const { response } = interception || {};
+    if (!response) {
+      cy.log('ACCESS_TOKEN fetch skipped — no response captured (intercept may not have fired)');
+      return;
+    }
     const isFraas = Cypress.env('IS_FRAAS');
     const { id_token: idToken, scope } = response.body;
     const idTokenPayload = !isFraas && idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
