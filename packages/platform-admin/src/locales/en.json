@@ -4911,6 +4911,8 @@
         "prefetchDescription": "Prefetch each link in the database before processing each source or target object.",
         "allowEmptySource": "Allow reconciliations from an Empty Source",
         "emptySourceDescription": "Allow reconciliations from an empty source to delete all data in a target resource.",
+        "runTargetPhase": "Run Target Phase",
+        "runTargetPhaseDescription": "<code>Default</code> will run target phase for full reconciliation, but not for reconciliation by ID",
         "threadsPerRecon": "Threads Per Reconciliation",
         "threadsDescription": "Tune performance by adjusting the number of concurrent threads dedicated to reconciliation.",
         "syncToken": "Sync Token",
