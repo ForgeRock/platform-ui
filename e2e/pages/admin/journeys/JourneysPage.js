@@ -40,4 +40,28 @@ export default class JourneysPage {
   static get defaultJourneyBadge() {
     return cy.get('.tab-content').findByText('Default');
   }
+
+  static journeyRowCard(treeTitle) {
+    return cy.findByRole('button', { name: new RegExp(`^${treeTitle}`) })
+      .parents('[data-testid="accordion-item-wrapper"]')
+      .find('.card-header');
+  }
+
+  static detailPanel(treeTitle) {
+    return cy.findByRole('button', { name: new RegExp(`^${treeTitle}`) })
+      .parents('[data-testid="accordion-item-wrapper"]')
+      .find('[role="tabpanel"]');
+  }
+
+  static detailPanelPreviewUrl(treeTitle) {
+    return JourneysPage.detailPanel(treeTitle).findByLabelText('Preview URL');
+  }
+
+  static detailPanelTreeId(treeTitle) {
+    return JourneysPage.detailPanel(treeTitle).findByLabelText('Tree ID');
+  }
+
+  static detailPanelEditButton(treeTitle) {
+    return JourneysPage.detailPanel(treeTitle).findByRole('button', { name: 'Edit' });
+  }
 }
