@@ -467,3 +467,17 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+:deep(.within-input-button) {
+  z-index: 51;
+  position: absolute;
+  top: -1px;
+  right: 36px;
+}
+
+:deep(.within-input-button .btn) {
+  padding: 0.75rem 1rem !important;
+  border-color: rgba(0, 0, 0, 0) !important;
+  background: transparent !important;
+}
+</style>

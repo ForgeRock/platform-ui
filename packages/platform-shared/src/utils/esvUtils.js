@@ -52,6 +52,7 @@ const SUPPORTED_PLACEHOLDER_FIELDS = [
   'integer',
   'select',
   'selectWithActions',
+  'multiselect',
 ];
 
 /**
@@ -145,6 +146,8 @@ export function determineEsvTypeForField(fieldType) {
     case 'object':
       return 'object';
     case 'array':
+      return 'array';
+    case 'multiselect':
       return 'array';
     default:
       throw new Error(`Unable to determine ESVs to show for the field type ${fieldType}`);

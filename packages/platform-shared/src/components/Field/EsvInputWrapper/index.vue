@@ -153,6 +153,7 @@ export default {
         case 'password':
         case 'number':
         case 'integer':
+        case 'multiselect':
         case 'select':
         case 'selectWithActions':
         case 'tag':
@@ -233,10 +234,12 @@ export default {
   top: 1rem;
 }
 
+:deep(.field-type-multiselect),
 :deep(.field-type-select) {
   top: 12px;
 }
 
+:deep(.field-type-multiselect .btn),
 :deep(.field-type-selectWithActions .btn),
 :deep(.field-type-select .btn) {
   padding: 0 0.25rem !important;
@@ -244,12 +247,12 @@ export default {
 }
 
 .form-label-group:focus-within {
-   .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-array) :deep(.btn) {
+   .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-multiselect):not(.field-type-array) :deep(.btn) {
         border-color: $primary !important;
         clip-path: inset(-1px 0px -1px 0px) !important;
         box-shadow: 0 0 0 0.0625rem $primary !important;
    }
-   &.fr-field-error .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-array) :deep(.btn) {
+   &.fr-field-error .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-multiselect):not(.field-type-array) :deep(.btn) {
         border-color: $danger !important;
         clip-path: inset(-1px 0px -1px 0px) !important;
         box-shadow: 0 0 0 0.0625rem $danger !important;
