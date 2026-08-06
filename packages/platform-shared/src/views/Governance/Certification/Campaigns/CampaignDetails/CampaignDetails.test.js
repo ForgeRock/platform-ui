@@ -18,9 +18,11 @@ describe('CampaignDetails Component', () => {
   let wrapper;
   beforeEach(() => {
     CampaignApi.getCampaignDetails.mockImplementation(() => Promise.resolve({
+      id: 'camp-1',
       name: 'Test Cert',
       certificationType: 'identity',
       deadline: '2022-12-19T22:51:51+00:00',
+      status: 'in-progress',
       systemMessages: { errors: [], info: [] },
     }));
     setupTestPinia();
@@ -71,12 +73,14 @@ describe('CampaignDetails Component', () => {
     expect(campaignOverview.exists()).toBe(true);
     expect(campaignOverview.attributes('campaign')).toBeDefined();
   });
+
   it('does not update tabIndex if tab is not found', () => {
     const selectTabSpy = jest.spyOn(wrapper.vm, 'selectTab');
     wrapper.vm.handleRouteUpdate('');
     expect(wrapper.vm.tabIndex).toBe(-1);
     expect(selectTabSpy).toHaveBeenCalledWith(-1);
   });
+
   it('update tabIndex when the tab route param changes', () => {
     const selectTabSpy = jest.spyOn(wrapper.vm, 'selectTab');
     wrapper.vm.tabs = ['details', 'access-reviews'];
@@ -84,6 +88,7 @@ describe('CampaignDetails Component', () => {
     expect(wrapper.vm.tabIndex).toBe(1);
     expect(selectTabSpy).toHaveBeenCalledWith(1);
   });
+
   it('system-messages tab exists with correct title and renders FrSystemMessages with prop', async () => {
     await flushPromises();
 
@@ -95,11 +100,54 @@ describe('CampaignDetails Component', () => {
     expect(systemMessages.exists()).toBe(true);
     expect(systemMessages.props('systemMessages')).toEqual({ errors: [], info: [] });
   });
+
   it('handleRouteUpdate sets tabIndex to 2 for system-messages', () => {
     const selectTabSpy = jest.spyOn(wrapper.vm, 'selectTab');
     wrapper.vm.tabs = ['details', 'access-reviews', 'system-messages'];
     wrapper.vm.handleRouteUpdate('system-messages');
     expect(wrapper.vm.tabIndex).toBe(2);
     expect(selectTabSpy).toHaveBeenCalledWith(2);
+  });
+
+  it('refreshCampaign re-fetches campaign details and updates campaignDetails', async () => {
+    await flushPromises();
+    expect(wrapper.vm.campaignDetails.name).toBe('Test Cert');
+
+    CampaignApi.getCampaignDetails.mockImplementationOnce(() => Promise.resolve({
+      id: 'camp-1',
+      name: 'Updated Campaign',
+      certificationType: 'identity',
+      deadline: '2023-01-15T00:00:00+00:00',
+      status: 'in-progress',
+      systemMessages: { errors: [], info: [] },
+    }));
+
+    wrapper.vm.refreshCampaign();
+    await flushPromises();
+
+    expect(CampaignApi.getCampaignDetails).toHaveBeenCalledWith('af7d9cb8-0f34-4007-898b-03bd08dbd029');
+    expect(wrapper.vm.campaignDetails.name).toBe('Updated Campaign');
+  });
+
+  it('update:name event from CampaignOverview updates campaignDetails.name', async () => {
+    await flushPromises();
+    expect(wrapper.vm.campaignDetails.name).toBe('Test Cert');
+
+    wrapper.vm.campaignDetails = { ...wrapper.vm.campaignDetails, name: 'New Title' };
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.campaignDetails.name).toBe('New Title');
+  });
+
+  it('update:ownerInfo handler updates campaignDetails.ownerInfo', async () => {
+    await flushPromises();
+    const newOwner = {
+      id: 'user-456', givenName: 'Jane', sn: 'Doe', userName: 'jdoe', profileImage: '',
+    };
+
+    wrapper.vm.campaignDetails = { ...wrapper.vm.campaignDetails, ownerInfo: newOwner };
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.vm.campaignDetails.ownerInfo).toEqual(newOwner);
   });
 });

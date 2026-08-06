@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { createAppContainer, findByTestId, toggleActionsMenu } from '@forgerock/platform-shared/src/utils/testHelpers';
@@ -82,6 +81,7 @@ describe('CampaignOverview Component', () => {
             show: jest.fn(),
             hide: jest.fn(),
           },
+          $store: { state: { SharedStore: { governanceDevEnabled: true } } },
         },
       },
       props: {
@@ -119,6 +119,71 @@ describe('CampaignOverview Component', () => {
     await updateDeadlineButton.trigger('click');
     await flushPromises();
     expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('UpdateDeadlineModal');
+  });
+
+  it('update deadline successfully', async () => {
+    jest.spyOn(CampaignApi, 'updateCampaignDeadline').mockImplementation(() => Promise.resolve({
+      deadline: '2022-12-29',
+    }));
+    const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+
+    wrapper.vm.updateDeadline('2022-12-29');
+    await flushPromises();
+
+    expect(wrapper.vm.campaignDeadline).toBe('2022-12-29');
+    expect(displayNotificationSpy).toBeCalledWith('success', 'Campaign deadline updated');
+    expect(wrapper.vm.isUpdateDeadlineInProgress).toBe(false);
+    expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('UpdateDeadlineModal');
+
+    jest.clearAllMocks();
+  });
+
+  it('update deadline fails', async () => {
+    const error = new Error({ response: { message: 'Error message' } });
+    jest.spyOn(CampaignApi, 'updateCampaignDeadline').mockImplementation(() => Promise.reject(error));
+    const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+
+    wrapper.vm.updateDeadline('2022-12-29');
+
+    await flushPromises();
+
+    expect(wrapper.vm.campaignDeadline).toBe('2022-12-19');
+    expect(showErrorMessageSpy).toBeCalledWith(error, 'Error updating the deadline for the campaign');
+    expect(wrapper.vm.isUpdateDeadlineInProgress).toBe(false);
+
+    jest.clearAllMocks();
+  });
+
+  it('edit details button shown when campaign is in-progress', async () => {
+    await wrapper.setProps({ campaign: { ...campaign, status: 'in-progress' } });
+    const btn = findByTestId(wrapper, 'edit-details-button');
+    expect(btn.exists()).toBe(true);
+    expect(btn.text()).toBe('Edit Details');
+  });
+
+  it('edit details button shown when campaign is expiring', () => {
+    // default fixture has status: 'expiring'
+    const btn = findByTestId(wrapper, 'edit-details-button');
+    expect(btn.exists()).toBe(true);
+  });
+
+  it('edit details button not shown for staging status', async () => {
+    await wrapper.setProps({ campaign: { ...campaign, status: 'staging' } });
+    expect(findByTestId(wrapper, 'edit-details-button').exists()).toBe(false);
+  });
+
+  it('edit details button opens modal', async () => {
+    await findByTestId(wrapper, 'edit-details-button').trigger('click');
+    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('EditDetailsModal');
+  });
+
+  it('edit details button dropdown opens modal', async () => {
+    await toggleActionsMenu(wrapper);
+    const btn = findByTestId(domWrapper, 'edit-details-button-dropdown');
+    expect(btn.exists()).toBe(true);
+    await btn.trigger('click');
+    await flushPromises();
+    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('EditDetailsModal');
   });
 
   it('cancel campaign button works correctly', async () => {
@@ -465,39 +530,6 @@ describe('CampaignOverview Component', () => {
     ]);
   });
 
-  it('update deadline successfully', async () => {
-    jest.spyOn(CampaignApi, 'updateCampaignDeadline').mockImplementation(() => Promise.resolve({
-      deadline: '2022-12-29',
-    }));
-    const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
-
-    wrapper.vm.updateDeadline('2022-12-29');
-    await flushPromises();
-
-    expect(wrapper.vm.campaignDeadline).toBe('2022-12-29');
-    expect(displayNotificationSpy).toBeCalledWith('success', 'Campaign deadline updated');
-    expect(wrapper.vm.isUpdateDeadlineInProgress).toBe(false);
-    expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('UpdateDeadlineModal');
-
-    jest.clearAllMocks();
-  });
-
-  it('update deadline fails', async () => {
-    const error = new Error({ response: { message: 'Error message' } });
-    jest.spyOn(CampaignApi, 'updateCampaignDeadline').mockImplementation(() => Promise.reject(error));
-    const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
-
-    wrapper.vm.updateDeadline('2022-12-29');
-
-    await flushPromises();
-
-    expect(wrapper.vm.campaignDeadline).toBe('2022-12-19');
-    expect(showErrorMessageSpy).toBeCalledWith(error, 'Error updating the deadline for the campaign');
-    expect(wrapper.vm.isUpdateDeadlineInProgress).toBe(false);
-
-    jest.clearAllMocks();
-  });
-
   it('cancel campaign successfully', async () => {
     jest.spyOn(CampaignApi, 'cancelCampaign').mockImplementation(() => Promise.resolve({}));
     const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
@@ -603,16 +635,12 @@ describe('CampaignOverview Component', () => {
 
     const cancelCampaignBtn = findByTestId(domWrapper, 'cancel-campaign-button');
     const cancelCampaignBtnDropdown = findByTestId(domWrapper, 'cancel-campaign-button-dropdown');
-    const updateDeadlineBtn = findByTestId(domWrapper, 'update-deadline-button');
-    const updateDeadlineBtnDropdown = findByTestId(domWrapper, 'update-deadline-button-dropdown');
 
     expect(cancelCampaignBtn.exists()).toBe(true);
     expect(cancelCampaignBtnDropdown.exists()).toBe(true);
-    expect(updateDeadlineBtn.exists()).toBe(true);
-    expect(updateDeadlineBtnDropdown.exists()).toBe(true);
   });
 
-  it('should not show campaigns actions when status is different than excludedStatuses', async () => {
+  it('should not show campaigns actions when status is staging', async () => {
     wrapper.setProps({
       campaign: {
         ...campaign,
@@ -623,13 +651,9 @@ describe('CampaignOverview Component', () => {
 
     const cancelCampaignBtn = findByTestId(wrapper, 'cancel-campaign-button');
     const cancelCampaignBtnDropdown = findByTestId(wrapper, 'cancel-campaign-button-dropdown');
-    const updateDeadlineBtn = findByTestId(wrapper, 'update-deadline-button');
-    const updateDeadlineBtnDropdown = findByTestId(wrapper, 'update-deadline-button-dropdown');
 
     expect(cancelCampaignBtn.exists()).toBe(false);
     expect(cancelCampaignBtnDropdown.exists()).toBe(false);
-    expect(updateDeadlineBtn.exists()).toBe(false);
-    expect(updateDeadlineBtnDropdown.exists()).toBe(false);
   });
 
   it('previous decision for pie chart data loaded correctly', () => {
@@ -678,5 +702,108 @@ describe('CampaignOverview Component', () => {
     const cards = wrapper.findAllComponents({ name: 'FrVisualizationCard' });
     const previousDecisionCard = cards.find((card) => card.props('title') === wrapper.vm.$t('governance.certificationDetails.previousDecisionChartLabel'));
     expect(previousDecisionCard).toBeTruthy();
+  });
+
+  describe('IGA-4702: Edit Details modal', () => {
+    it('saveEditDetails with only title calls updateCampaign and emits update:name', async () => {
+      jest.spyOn(CampaignApi, 'updateCampaign').mockResolvedValue({});
+      const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+
+      await wrapper.setProps({
+        campaign: {
+          ...campaign, id: 'camp-1', name: 'Old Title', status: 'in-progress',
+        },
+      });
+      wrapper.vm.saveEditDetails({ title: 'New Title', ownerInfo: null });
+      await flushPromises();
+
+      expect(CampaignApi.updateCampaign).toHaveBeenCalledWith('camp-1', { name: 'New Title' });
+      expect(wrapper.emitted('update:name')).toBeTruthy();
+      expect(wrapper.emitted('update:name')[0]).toEqual(['New Title']);
+      expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Campaign details updated');
+      expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('EditDetailsModal');
+      expect(wrapper.emitted('refresh-campaign')).toBeTruthy();
+
+      jest.clearAllMocks();
+    });
+
+    it('saveEditDetails with only owner calls updateCampaign and emits update:ownerInfo', async () => {
+      jest.spyOn(CampaignApi, 'updateCampaign').mockResolvedValue({});
+      const newOwner = {
+        id: 'user-456',
+        givenName: 'Jane',
+        sn: 'Doe',
+        userName: 'jdoe',
+        profileImage: '',
+      };
+
+      await wrapper.setProps({ campaign: { ...campaign, id: 'camp-1', status: 'in-progress' } });
+      wrapper.vm.saveEditDetails({ title: null, ownerInfo: newOwner });
+      await flushPromises();
+
+      expect(CampaignApi.updateCampaign).toHaveBeenCalledWith('camp-1', { ownerId: 'user-456' });
+      expect(wrapper.emitted('update:ownerInfo')).toBeTruthy();
+      expect(wrapper.emitted('update:ownerInfo')[0]).toEqual([newOwner]);
+
+      jest.clearAllMocks();
+    });
+
+    it('saveEditDetails with both title and owner sends a single combined PATCH', async () => {
+      jest.spyOn(CampaignApi, 'updateCampaign').mockResolvedValue({});
+      const newOwner = {
+        id: 'user-456',
+        givenName: 'Jane',
+        sn: 'Doe',
+        userName: 'jdoe',
+        profileImage: '',
+      };
+
+      await wrapper.setProps({
+        campaign: {
+          ...campaign, id: 'camp-1', name: 'Old Title', status: 'in-progress',
+        },
+      });
+      wrapper.vm.saveEditDetails({ title: 'New Title', ownerInfo: newOwner });
+      await flushPromises();
+
+      expect(CampaignApi.updateCampaign).toHaveBeenCalledTimes(1);
+      expect(CampaignApi.updateCampaign).toHaveBeenCalledWith('camp-1', { name: 'New Title', ownerId: 'user-456' });
+      expect(wrapper.emitted('update:name')[0]).toEqual(['New Title']);
+      expect(wrapper.emitted('update:ownerInfo')[0]).toEqual([newOwner]);
+
+      jest.clearAllMocks();
+    });
+
+    it('saveEditDetails with no changes just hides modal', async () => {
+      jest.spyOn(CampaignApi, 'updateCampaign').mockResolvedValue({});
+
+      await wrapper.setProps({ campaign: { ...campaign, id: 'camp-1', status: 'in-progress' } });
+      wrapper.vm.saveEditDetails({ title: null, ownerInfo: null });
+      await flushPromises();
+
+      expect(CampaignApi.updateCampaign).not.toHaveBeenCalled();
+      expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('EditDetailsModal');
+
+      jest.clearAllMocks();
+    });
+
+    it('saveEditDetails shows error on failure', async () => {
+      const error = new Error('API error');
+      jest.spyOn(CampaignApi, 'updateCampaign').mockRejectedValue(error);
+      const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+
+      await wrapper.setProps({
+        campaign: {
+          ...campaign, id: 'camp-1', name: 'Old', status: 'in-progress',
+        },
+      });
+      wrapper.vm.saveEditDetails({ title: 'New', ownerInfo: null });
+      await flushPromises();
+
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'Error updating campaign details');
+      expect(wrapper.vm.isEditDetailsInProgress).toBe(false);
+
+      jest.clearAllMocks();
+    });
   });
 });

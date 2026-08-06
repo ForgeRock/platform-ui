@@ -29,6 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="campaignDetails"
             :campaign="campaignDetails"
             @update:status="campaignDetails.status = $event"
+            @update:ownerInfo="campaignDetails.ownerInfo = $event"
+            @update:name="campaignDetails.name = $event"
+            @refresh-campaign="refreshCampaign"
           />
         </BTab>
         <BTab
@@ -117,6 +120,11 @@ export default {
         this.$route.params.tab = tab;
         window.history.replaceState(window.history.state, '', `#/certification/campaigns/${this.campaignDetails.id}/${tab}`);
       }
+    },
+    refreshCampaign() {
+      getCampaignDetails(this.$route.params.campaignId).then((campaignDetails) => {
+        this.campaignDetails = campaignDetails;
+      });
     },
   },
 };

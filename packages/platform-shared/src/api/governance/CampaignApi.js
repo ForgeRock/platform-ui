@@ -196,6 +196,17 @@ export function activateCampaign(campaignId) {
 }
 
 /**
+ * Updates a certification campaign's editable fields (name, ownerId)
+ * @param campaignId - The ID of the campaign to update.
+ * @param payload - Object with fields to update (e.g. { name } or { ownerId })
+ * @returns The updated campaign data.
+ */
+export function updateCampaign(campaignId, payload) {
+  const resourceUrl = `${governanceBaseUrl}/certification/${campaignId}`;
+  return generateIgaApi().patch(resourceUrl, payload).then((response) => response.data);
+}
+
+/**
    * It gets the tasks for a given campaign
    * @param campaignId - The id of the campaign you want to get the tasks for.
    * @param [aditionalParams] - This is an object that contains the parameters that you want to pass to the API.

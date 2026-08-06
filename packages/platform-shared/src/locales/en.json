@@ -2178,10 +2178,17 @@
         "errorActivatingCampaignDefault": "Error activating the campaign",
         "errorCancelingCampaignDefault": "Error canceling the campaign",
         "errorDeletingCampaignDefault": "Error deleting the campaign",
-        "errorUpdatingDeadlineDefault": "Error updating the deadline for the campaign"
+        "errorUpdatingDeadlineDefault": "Error updating the deadline for the campaign",
+        "errorUpdatingCampaignDetailsDefault": "Error updating campaign details"
       },
       "ownerNameLabel": "{givenName} {sn}",
+      "editDetailsButtonText": "Edit Details",
       "updateDeadlineButtonText": "Update Deadline",
+      "editDetailsModal": {
+        "title": "Edit Campaign Details",
+        "titleLabel": "Campaign Title"
+      },
+      "campaignDetailsUpdated": "Campaign details updated",
       "updateDeadlineModal": {
         "deadlinePlaceholder": "Deadline",
         "title": "Update Deadline"

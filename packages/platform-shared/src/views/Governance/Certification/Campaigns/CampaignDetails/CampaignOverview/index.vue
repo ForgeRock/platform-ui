@@ -33,6 +33,15 @@ of the MIT license. See the LICENSE file for details. -->
         >
           <div class="d-flex justify-content-end align-items-center">
             <BButton
+              v-if="canEditCampaign"
+              class="text-nowrap d-none d-xl-block"
+              data-testid="edit-details-button"
+              variant="link"
+              @click="$bvModal.show('EditDetailsModal')"
+            >
+              {{ $t('governance.certificationDetails.editDetailsButtonText') }}
+            </BButton>
+            <BButton
               v-if="showCampaignsActions"
               class="text-nowrap d-none d-xl-block"
               data-testid="update-deadline-button"
@@ -69,13 +78,20 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('common.activate') }}
             </BButton>
             <FrActionsCell
-              v-if="showCampaignsActions || campaign.status === CampaignStates.STAGING"
+              v-if="canEditCampaign || showCampaignsActions || campaign.status === CampaignStates.STAGING"
               class="d-xl-none"
               :edit-option="false"
               :delete-option="false"
               :divider="false"
             >
               <template #custom-top-actions>
+                <BDropdownItem
+                  v-if="canEditCampaign"
+                  data-testid="edit-details-button-dropdown"
+                  @click="$bvModal.show('EditDetailsModal')"
+                >
+                  {{ $t('governance.certificationDetails.editDetailsButtonText') }}
+                </BDropdownItem>
                 <BDropdownItem
                   v-if="showCampaignsActions"
                   data-testid="update-deadline-button-dropdown"
@@ -347,6 +363,12 @@ of the MIT license. See the LICENSE file for details. -->
       :loading="isUpdateDeadlineInProgress"
       @update-deadline="updateDeadline"
     />
+    <FrEditDetailsModal
+      :loading="isEditDetailsInProgress"
+      :current-title="campaign.name"
+      :current-owner="campaign.ownerInfo"
+      @save="saveEditDetails"
+    />
     <FrActivateCampaignModal @activate-campaign="activateCampaign" />
     <FrCancelCampaignModal @cancel-campaign="cancelCampaign" />
     <FrDeleteCampaignModal @delete-campaign="deleteCampaign" />
@@ -389,6 +411,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import {
   updateCampaignDeadline,
+  updateCampaign,
   activateCampaign,
   cancelCampaign,
   deleteCampaign,
@@ -399,6 +422,7 @@ import { uiTypeMap } from '../../../Templates/templateTypes';
 import FrActivateCampaignModal from './ActivateCampaignModal';
 import FrCancelCampaignModal from './CancelCampaignModal';
 import FrDeleteCampaignModal from './DeleteCampaignModal';
+import FrEditDetailsModal from './EditDetailsModal';
 import FrUpdateDeadlineModal from './UpdateDeadlineModal';
 
 export default {
@@ -413,9 +437,10 @@ export default {
     BModal,
     BRow,
     FrActionsCell,
+    FrEditDetailsModal,
     FrIcon,
-    FrPieChart,
     FrUpdateDeadlineModal,
+    FrPieChart,
     FrVisualizationCard,
     FrActivateCampaignModal,
     FrCancelCampaignModal,
@@ -439,6 +464,7 @@ export default {
       isActivateCamapignInProgress: false,
       isCancelCamapignInProgress: false,
       isDeleteCamapignInProgress: false,
+      isEditDetailsInProgress: false,
       isUpdateDeadlineInProgress: false,
       noDataLabel: this.$t('governance.certificationDetails.decisionsBreakdownChartNoDecisionsLabel'),
       statusVariant: null,
@@ -551,6 +577,10 @@ export default {
     isRoleComposition() {
       return this.campaign.certificationType === uiTypeMap.ROLECOMPOSITION;
     },
+    canEditCampaign() {
+      return this.$store.state.SharedStore.governanceDevEnabled
+        && (this.campaign.status === CampaignStates.IN_PROGRESS || this.campaign.status === CampaignStates.EXPIRING);
+    },
     previousDecisionChart() {
       const colors = [this.styles.green, this.styles.blue];
       const stats = this.campaign.statistics?.previousDecision || {};
@@ -583,6 +613,29 @@ export default {
         this.showErrorMessage(error, this.$t('governance.certificationDetails.errors.errorUpdatingDeadlineDefault'));
       }).finally(() => {
         this.isUpdateDeadlineInProgress = false;
+      });
+    },
+    saveEditDetails({ title, ownerInfo }) {
+      const payload = {};
+      if (title) payload.name = title;
+      if (ownerInfo) payload.ownerId = ownerInfo.id || ownerInfo._id;
+
+      if (!Object.keys(payload).length) {
+        this.$bvModal.hide('EditDetailsModal');
+        return;
+      }
+
+      this.isEditDetailsInProgress = true;
+      updateCampaign(this.campaign.id, payload).then(() => {
+        if (title) this.$emit('update:name', title);
+        if (ownerInfo) this.$emit('update:ownerInfo', ownerInfo);
+        this.displayNotification('success', this.$t('governance.certificationDetails.campaignDetailsUpdated'));
+        this.$bvModal.hide('EditDetailsModal');
+        this.$emit('refresh-campaign');
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('governance.certificationDetails.errors.errorUpdatingCampaignDetailsDefault'));
+      }).finally(() => {
+        this.isEditDetailsInProgress = false;
       });
     },
     activateCampaign() {
