@@ -67,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
                         <div class="mb-1 text-dark">
                           {{ option.title }}
                         </div>
-                        <div class="text-muted">
+                        <div class="fr-tag-secondary-text">
                           {{ option.subtitle }}
                         </div>
                       </BMediaBody>
@@ -93,7 +93,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <div class="mb-1 text-dark">
                         {{ option.title }}
                       </div>
-                      <div class="text-muted">
+                      <div class="fr-tag-secondary-text">
                         {{ option.subtitle }}
                       </div>
                     </BMediaBody>

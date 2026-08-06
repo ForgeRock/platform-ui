@@ -721,6 +721,9 @@
   --close-color: #{$dk-close-color};
   --close-text-shadow: #{$dk-close-color};
 
+  .fr-tag-secondary-text {
+    color: rgba($gray-400, 0.7) !important;
+  }
 }
 
 

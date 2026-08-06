@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
               <div class="mb-1 text-dark">
                 {{ $t('common.userFullName', { givenName: option.value.givenName, sn: option.value.sn }) }}
               </div>
-              <small class="text-muted">
+              <small class="fr-tag-secondary-text">
                 {{ option.value.userName }}
               </small>
             </BMediaBody>
@@ -65,7 +65,7 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ $t('common.userFullName', { givenName: option.value.givenName, sn: option.value.sn }) }}
                 </div>
                 <div>
-                  <small class="text-muted">
+                  <small class="fr-tag-secondary-text">
                     {{ option.value.userName }}
                   </small>
                 </div>

@@ -93,7 +93,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :aria-label="$t('common.remove')"
                   @click.prevent.stop="remove(option)" />
               </div>
-              <small class="text-muted">
+              <small class="fr-tag-secondary-text">
                 {{ option.resource[option.displayFields[0]] }}
               </small>
             </BMediaBody>
@@ -113,7 +113,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ option.resource[displayField] }}
               </span>
             </div>
-            <small class="text-muted">
+            <small class="fr-tag-secondary-text">
               {{ option.resource[option.displayFields[0]] }}
             </small>
           </div>

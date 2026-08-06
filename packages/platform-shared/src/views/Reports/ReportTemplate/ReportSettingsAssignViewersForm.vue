@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <div class="mb-1 text-dark d-block text-truncate">
                   {{ `${option?.meta.givenName} ${option?.meta.sn}` }}
                 </div>
-                <small class="text-muted d-block text-truncate">
+                <small class="fr-tag-secondary-text d-block text-truncate">
                   {{ option?.meta.userName }}
                 </small>
               </BMediaBody>
