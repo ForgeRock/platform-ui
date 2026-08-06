@@ -162,6 +162,7 @@
   --dropdown-header-color: #{$dropdown-header-color};
   --dropdown-link-border-radius: #{$fr-dropdown-link-border-radius};
   --dropdown-link-hover-bg: #{$dropdown-link-hover-bg};
+  --dropdown-link-disabled-color: #{$dropdown-link-disabled-color};
 
   /* List Group */
   --list-group-bg: #{$list-group-bg};
@@ -500,6 +501,7 @@
   --dropdown-header-color: #{$dk-dropdown-header-color};
   --dropdown-link-border-radius: #{$dk-fr-dropdown-link-border-radius};
   --dropdown-link-hover-bg: #{$dk-dropdown-link-hover-bg};
+  --dropdown-link-disabled-color: #{$dk-dropdown-link-disabled-color};
 
   /* List Group */
   --list-group-bg: #{$dk-list-group-bg};
@@ -887,11 +889,15 @@ hr, dd {
 
   .dropdown-item {
     color: var(--body-color)!important;
-    &:hover, 
+    &:hover,
     &:focus,
     &.active {
         color: var(--nav-color) !important;
         background: var(--sidemenu-active-bg) !important;
+    }
+    &.disabled {
+      color: var(--dropdown-link-disabled-color) !important;
+      background: transparent !important;
     }
   }
 }
