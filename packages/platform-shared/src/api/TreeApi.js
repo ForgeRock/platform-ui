@@ -323,6 +323,7 @@ export function actionNodeGetType(nodeType, nodeVersion) {
   const path = `/nodes/${nodeType}/${nodeVersion}?_action=getType`;
   return generateAmApi(getTreeApiConfig(undefined, true)).post(
     path,
+    {},
     { withCredentials: true },
   );
 }

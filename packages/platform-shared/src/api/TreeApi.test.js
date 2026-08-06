@@ -222,4 +222,9 @@ describe('Tree API', () => {
     TreeApi.actionNodeConfigProviderScript('mockNodeType', '1.0');
     expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0?_action=configProviderScript', {}, withCreds);
   });
+
+  it('actionNodeGetType should call api with correct parameters in the correct order', async () => {
+    TreeApi.actionNodeGetType('mockNodeType', '1.0');
+    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0?_action=getType', {}, withCreds);
+  });
 });
