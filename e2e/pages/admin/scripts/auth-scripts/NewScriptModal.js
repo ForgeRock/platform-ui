@@ -16,6 +16,11 @@ export default class NewScriptModal {
     return cy.findByRole('tab', { name: categoryName });
   }
 
+  // Active tab for the given category — bootstrap-vue sets aria-selected="true" on the active tab
+  static scriptCategoryActive(categoryName) {
+    return cy.findByRole('tab', { name: categoryName, selected: true });
+  }
+
   // typeName: e.g. 'Journey Decision Node', 'Configuration Provider Node'
   static scriptType(typeName) {
     return cy.findByRole('radio', { name: new RegExp(`^${typeName}`) });
