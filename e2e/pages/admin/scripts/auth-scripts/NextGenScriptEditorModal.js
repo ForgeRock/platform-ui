@@ -28,6 +28,14 @@ export default class NextGenScriptEditorModal {
     return cy.findByRole('button', { name: 'Save and Close' });
   }
 
+  static get cancelButton() {
+    return cy.findByRole('button', { name: 'Cancel' });
+  }
+
+  static get learnMoreLink() {
+    return cy.findByRole('link', { name: 'Learn more' });
+  }
+
   static get sidePanel() {
     return cy.get('.side-panel', { timeout: 10000 });
   }

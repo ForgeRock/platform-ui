@@ -1,5 +1,5 @@
 /**
- * Copyright 2021-2024 ForgeRock AS. All Rights Reserved
+ * Copyright 2021-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -56,8 +56,11 @@ export function deleteScript(scriptId) {
   return cy.request({
     method: 'DELETE',
     url: `https://${Cypress.env('FQDN')}/am/json${scriptRealmUrl}/scripts/${scriptId}`,
+    failOnStatusCode: false,
     headers: {
       'Accept-API-Version': 'protocol=2.0,resource=1.0',
     },
+  }).then((response) => {
+    expect(response.status, `deleteScript ${scriptId}`).to.be.oneOf([200, 404]);
   });
 }
