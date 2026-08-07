@@ -17,7 +17,14 @@ of the MIT license. See the LICENSE file for details. -->
       :static="isTesting"
       :title="componentComputed.title"
       @hidden="$emit('modal-closed')">
-      <template v-if="loading">
+      <div
+        class="sr-only"
+        role="status">
+        {{ loading ? componentComputed.loadingText : '' }}
+      </div>
+      <div
+        v-if="loading"
+        aria-hidden="true">
         <FrSpinner
           class="py-5"
           data-testid="loading-modal" />
@@ -26,7 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
           data-testid="loading-text">
           {{ componentComputed.loadingText }}
         </div>
-      </template>
+      </div>
       <Component
         v-else
         v-bind="componentComputed.props"

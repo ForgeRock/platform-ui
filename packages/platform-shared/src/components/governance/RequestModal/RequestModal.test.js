@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -221,6 +221,62 @@ describe('RequestModal', () => {
     expect(loader.exists()).toBeTruthy();
     const loadingText = findByTestId(wrapper, 'loading-text');
     expect(loadingText.text()).toEqual('Completing Task...');
+  });
+  it('sr-only status region exists and is empty when not loading', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    await flushPromises();
+
+    const statusRegion = wrapper.find('[role="status"]');
+    expect(statusRegion.exists()).toBeTruthy();
+    expect(statusRegion.text()).toEqual('');
+  });
+  it('sr-only status region announces loading text for approve type', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.APPROVE });
+    wrapper.vm.loading = true;
+    await flushPromises();
+
+    const statusRegion = wrapper.find('[role="status"]');
+    expect(statusRegion.text()).toEqual('Approving Request...');
+  });
+  it('sr-only status region announces loading text for comment type', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.COMMENT });
+    wrapper.vm.loading = true;
+    await flushPromises();
+
+    const statusRegion = wrapper.find('[role="status"]');
+    expect(statusRegion.text()).toEqual('Adding Comment...');
+  });
+  it('sr-only status region announces loading text for reassign type', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REASSIGN });
+    wrapper.vm.loading = true;
+    await flushPromises();
+
+    const statusRegion = wrapper.find('[role="status"]');
+    expect(statusRegion.text()).toEqual('Forwarding Request...');
+  });
+  it('sr-only status region announces loading text for reject type', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REJECT });
+    wrapper.vm.loading = true;
+    await flushPromises();
+
+    const statusRegion = wrapper.find('[role="status"]');
+    expect(statusRegion.text()).toEqual('Rejecting Request...');
+  });
+  it('sr-only status region announces loading text for deny type', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.DENY });
+    wrapper.vm.loading = true;
+    await flushPromises();
+
+    const statusRegion = wrapper.find('[role="status"]');
+    expect(statusRegion.text()).toEqual('Rejecting Task...');
+  });
+  it('sr-only status region announces loading text for fulfill type', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.FULFILL });
+    wrapper.vm.loading = true;
+    await flushPromises();
+
+    const statusRegion = wrapper.find('[role="status"]');
+    expect(statusRegion.text()).toEqual('Completing Task...');
   });
   it('closing comment modal should call cancel and emit update-item event', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.COMMENT });
