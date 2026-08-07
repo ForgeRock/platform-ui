@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="p-3">
     <div class="position-relative filter-builder-row">
       <div class="pr-lg-3">
-        <BFormRow>
+        <BFormRow class="align-items-center">
           <slot
             name="property-field"
             :rule-property="ruleProperty"

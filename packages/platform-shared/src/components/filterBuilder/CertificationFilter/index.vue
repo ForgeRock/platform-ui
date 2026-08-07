@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       :hide-group="hideGroup"
       :index="0"
       :operator-options="operatorOptions"
-      :condition-options="defaultConditionOptions"
+      :condition-options="conditionOptions"
       :properties="properties"
       @add-rule="updateFilter('add-rule', $event)"
       @remove-rule="updateFilter('remove-rule', $event)"
@@ -92,7 +92,6 @@ export default {
       queryFilter: {},
       uniqueIndex: 0,
       operatorOptions,
-      defaultConditionOptions,
     };
   },
   props: {
@@ -119,6 +118,10 @@ export default {
     properties: {
       default: () => [],
       type: Array,
+    },
+    conditionOptions: {
+      type: Object,
+      default: () => defaultConditionOptions,
     },
     filter: {
       type: Object,
@@ -292,6 +295,28 @@ export default {
 
   &.depth-3 {
     border-left: 2px solid $yellow;
+  }
+}
+
+// Normalize all field heights within filter rows so selects and text inputs
+// render at the same height. The multiselect's default 1.1rem top padding and
+// 42px min-height on .multiselect__single make it ~62px, while text inputs are
+// ~50px. Override both to match Bootstrap's standard $input-padding-y.
+.queryfilter-row {
+  .form-row {
+    row-gap: 0.5rem;
+  }
+
+  .multiselect__tags {
+    padding-top: $input-padding-y !important;
+    padding-bottom: $input-padding-y !important;
+    min-height: 0 !important;
+  }
+
+  .multiselect__single,
+  .multiselect__input {
+    min-height: 0 !important;
+    margin-top: 0 !important;
   }
 }
 </style>

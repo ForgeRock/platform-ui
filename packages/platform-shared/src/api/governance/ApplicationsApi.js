@@ -192,6 +192,16 @@ export function detectApplicationDeletes(applicationId, objectTypeId, { uploadId
 }
 
 /**
+ * Fetches all tasks for a given application.
+ *
+ * @param {string} applicationId - The application ID.
+ * @returns {Promise} - A promise that resolves to the list of tasks.
+ */
+export function getApplicationTasks(applicationId) {
+  return generateIgaApi().get(`${applicationUrl}/${applicationId}/task`);
+}
+
+/**
  * Fetches a task by name for a given application.
  *
  * @param {string} applicationId - The application ID.

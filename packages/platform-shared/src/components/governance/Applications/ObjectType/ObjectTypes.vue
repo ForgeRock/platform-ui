@@ -161,6 +161,11 @@ of the MIT license. See the LICENSE file for details. -->
             :application-id="applicationId"
             :object-type="loadedObjectType" />
         </BTab>
+        <BTab v-if="loadedObjectType.type === 'account' && governanceDevEnabled">
+          <FrAgentClassification
+            :application-id="applicationId"
+            :object-type="loadedObjectType" />
+        </BTab>
       </BTabs>
     </div>
   </BCard>
@@ -177,6 +182,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   computed, ref, watch,
 } from 'vue';
+import { useStore } from 'vuex';
 import {
   BButton,
   BButtonToolbar,
@@ -205,6 +211,7 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { createObjectType, deleteObjectType, getObjectType } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import FrAgentClassification from './AgentClassification';
 import FrObjectTypeCorrelation from './ObjectTypeCorrelation';
 import FrObjectTypeDataList from './ObjectTypeDataList';
 import FrObjectTypePropertyList from './ObjectTypePropertyList';
@@ -226,6 +233,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['object-type-added', 'object-type-deleted']);
+
+const store = useStore();
+const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 
 const { bvModal } = useBvModal();
 
@@ -251,6 +261,9 @@ const navItems = computed(() => {
   ];
   if (loadedObjectType.value?.type === 'account') {
     items.push({ displayName: i18n.global.t('governance.unmanagedApplications.correlationTab.navLabel') });
+    if (governanceDevEnabled.value) {
+      items.push({ displayName: i18n.global.t('governance.applications.edit.objectTypesTab.agentClassification.title') });
+    }
   }
   return items;
 });

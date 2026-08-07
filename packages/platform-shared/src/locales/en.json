@@ -1953,7 +1953,60 @@
           "deleteObjectTypeSuccess": "Object type deleted successfully",
           "deleteObjectTypeError": "There was an error deleting the object type",
           "objectTypeDescription": "Choose Account for user identity data or Resource for additional object types.",
-          "objectTypeDescriptionAccountTaken": "Choose if this object type will be for accounts or resources. Note that only one account object type is supported per application."
+          "objectTypeDescriptionAccountTaken": "Choose if this object type will be for accounts or resources. Note that only one account object type is supported per application.",
+          "agentClassification": {
+            "title": "Classification",
+            "description": "One classification rule per object type — criteria, action and schedule together. Each rule is saved as its own bulk operation.",
+            "targetFilter": {
+              "title": "Target Filter",
+              "description": "Define which accounts to classify. Each row is a condition on an account attribute. Leave blank to target all accounts."
+            },
+            "ruleName": "Rule Name",
+            "errorLoadingAttributes": "Unable to load glossary attributes",
+            "errorLoadingTask": "Unable to load classification task",
+            "createTitle": "New Classification Rule",
+            "editTitle": "Edit Classification Rule",
+            "runNow": "Run Now",
+            "createNew": "New classification",
+            "noTasks": "No classifications",
+            "noTasksSubtitle": "Create a classification rule to automatically update account attributes.",
+            "runDate": "Run Date",
+            "conditionalUpdates": "Conditional updates",
+            "condition": {
+              "attribute": "Attribute",
+              "operator": "Operator",
+              "value": "Value"
+            },
+            "runSuccess": "Classification task started successfully",
+            "runError": "There was an error running the classification task",
+            "saveSuccess": "Agent classification saved successfully",
+            "saveError": "There was an error saving the agent classification",
+            "overwrite": "Overwrite existing values",
+            "overwriteDescription": "Re-classify accounts that have already been classified. When unchecked, only unclassified accounts are updated.",
+            "recurring": "Run on a schedule",
+            "recurringDescription": "Automatically re-run this classification at a fixed interval.",
+            "interval": "Interval",
+            "customInterval": "Custom interval (ms)",
+            "customIntervalDescription": "Minimum 3,600,000 ms (1 hour).",
+            "intervals": {
+              "hourly": "Hourly",
+              "daily": "Daily",
+              "weekly": "Weekly",
+              "custom": "Custom"
+            },
+            "action": {
+              "title": "Action",
+              "description": "Update glossary attributes on every matching object.",
+              "targetAttribute": "Target attribute",
+              "source": "Source",
+              "value": "Value",
+              "sourceTypes": {
+                "static": "Static value",
+                "sourcePath": "Object attribute"
+              }
+            },
+            "isNot": "Is not"
+          }
         }
       },
       "addUnmanagedAppModal": {
