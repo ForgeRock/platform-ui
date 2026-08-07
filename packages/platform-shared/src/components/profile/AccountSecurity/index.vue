@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
               md="2">
               <a
                 :aria-label="item.ariaLabel"
-                v-if="item.shouldHideLink === false && item.linkUrl"
+                v-if="!item.shouldHideLink && item.linkUrl"
                 :href="item.linkUrl">
                 {{ item.linkText }}
               </a>
