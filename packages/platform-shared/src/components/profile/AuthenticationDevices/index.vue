@@ -157,13 +157,17 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrRelativeTime from '@forgerock/platform-shared/src/components/RelativeTime';
+import {
+  AUTH_TYPES,
+  classifyAuthenticationDeviceResponses,
+} from '@forgerock/platform-shared/src/utils/authenticationDeviceUtils';
 
 /**
  * @description If fullstack (AM/IDM) is configured will work with authorized devices endpoiint (AM) and display a list of currently of authorized devices for the current
  * user. This will also allow a user to remove an authorized device, causing the next login session of that device to trigger the appropriate device authorization flow from AM.
  */
 
-const AUTH_TYPES = ['oath', 'push', 'webauthn'];
+const RENAMEABLE_AUTH_TYPES = ['webauthn', 'recognize'];
 
 export default {
   name: 'AuthenticationDevices',
@@ -244,7 +248,7 @@ export default {
           text: this.$t('common.delete'),
           action: () => this.setModalData('delete', { ...item }),
         };
-        const dropdown = item.authType === 'webauthn' ? [dropdownEdit, dropdownDelete] : [dropdownDelete];
+        const dropdown = RENAMEABLE_AUTH_TYPES.includes(item.authType) ? [dropdownEdit, dropdownDelete] : [dropdownDelete];
         return {
           ...item,
           dropdown,
@@ -252,28 +256,38 @@ export default {
       });
     },
     /**
-     * Get all authentication devices for all types for a user
+     * Get all authentication devices for all types for a user.
+     * Each auth type is queried independently so that an unsupported or failing
+     * type (e.g. an AM without the Recognize route) doesn't prevent the other
+     * types from loading.
      */
     async loadAuthenticationDevices() {
-      const authPromises = AUTH_TYPES.map((authType) => getAuthenticationDevices(this.forceRoot ? 'root' : this.$store.state.realm, this.userSearchAttribute, authType));
-      try {
-        const responseArray = await Promise.all(authPromises);
-        const flattenedArray = responseArray.reduce((acc, response, index) => {
-          const devicesWithAuthType = response.data.result.map((device) => ({ ...device, authType: AUTH_TYPES[index] }));
-          return acc.concat(devicesWithAuthType);
-        }, []);
-        if (!flattenedArray.length) {
-          this.$router.push({ path: '/profile' });
-        }
-        this.authenticationDevicesArray = this.addDropdown(flattenedArray);
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('pages.authenticationDevices.loadError'));
+      const realm = this.forceRoot ? 'root' : this.$store.state.realm;
+      const authPromises = AUTH_TYPES.map((authType) => getAuthenticationDevices(realm, this.userSearchAttribute, authType));
+      const responseArray = await Promise.allSettled(authPromises);
+      const {
+        validFulfilledResponses,
+        unexpectedResponses,
+      } = classifyAuthenticationDeviceResponses(responseArray);
+
+      if (unexpectedResponses.length) {
+        this.displayNotification('danger', this.$t('pages.authenticationDevices.loadError'));
       }
+
+      const flattenedArray = validFulfilledResponses.reduce((acc, { authType, response }) => {
+        const devicesWithAuthType = response.value.data.result.map((device) => ({ ...device, authType }));
+        return acc.concat(devicesWithAuthType);
+      }, []);
+      if (!flattenedArray.length && !unexpectedResponses.length) {
+        this.$router.push({ path: '/profile' });
+        return;
+      }
+      this.authenticationDevicesArray = this.addDropdown(flattenedArray);
     },
     /**
      * Delete an authentication device from a user
      *
-     * @param {String} authType 'oauth', 'push', or 'webauthn'
+     * @param {String} authType 'oath', 'push', 'webauthn', or 'recognize'
      * @param {String} id device id to remove
      */
     async deleteDevice(authType, id) {
@@ -293,7 +307,7 @@ export default {
     /**
      * Update a device with a new name
      *
-     * @param {String} authType 'oauth', 'push', or 'webauthn'
+     * @param {String} authType 'oath', 'push', 'webauthn', or 'recognize'
      * @param {String} id device id to update
      * @param {String} newName new device name
      */

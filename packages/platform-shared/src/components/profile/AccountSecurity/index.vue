@@ -88,6 +88,10 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import {
+  AUTH_TYPES,
+  classifyAuthenticationDeviceResponses,
+} from '@forgerock/platform-shared/src/utils/authenticationDeviceUtils';
 import FrEditKba from '@forgerock/platform-shared/src/components/profile/EditKBA';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import store from '@/store';
@@ -257,21 +261,34 @@ export default {
       this.$emit('updateKBA', payload, config);
     },
     /**
-     * Get authentication device information used for mfa
+     * Get authentication device information used for mfa.
+     * Each auth type is queried independently so that an unsupported or failing
+     * type (e.g. an AM without the Recognize route) doesn't prevent the other
+     * types from being counted.
      */
     loadAuthenticationDevices() {
       const query = '_queryId=*&_fields=_id';
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
-      const authTypes = ['oath', 'push', 'webauthn'];
 
-      const authPromises = authTypes.map((authType) => {
+      const authPromises = AUTH_TYPES.map((authType) => {
         const url = `/users/${this.userSearchAttribute}/devices/2fa/${authType}?${query}`;
         return selfServiceInstance.get(url, { withCredentials: true });
       });
-      Promise.all(authPromises)
+      Promise.allSettled(authPromises)
         .then((responseArray) => {
-          const collapsedResponseArray = responseArray.reduce((acc, response) => acc.concat(response.data.result), []);
+          const {
+            validFulfilledResponses,
+            unexpectedResponses,
+          } = classifyAuthenticationDeviceResponses(responseArray);
+
+          if (unexpectedResponses.length) {
+            this.displayNotification('danger', this.$t('pages.authenticationDevices.loadError'));
+          }
+
+          const collapsedResponseArray = validFulfilledResponses.reduce((acc, { response }) => (
+            acc.concat(response.value.data.result)
+          ), []);
           if (collapsedResponseArray.length) {
             const removeDeviceUrl = this.mfaJourneys.removeDevice;
             this.mfaItem = {
@@ -283,7 +300,7 @@ export default {
               linkPath: !removeDeviceUrl ? '/auth-devices' : '',
               linkUrl: removeDeviceUrl || '',
             };
-          } else if (this.mfaJourneys.addDevice) {
+          } else if (!unexpectedResponses.length && this.mfaJourneys.addDevice) {
             this.mfaItem = {
               title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
               text: this.$t('common.off'),
