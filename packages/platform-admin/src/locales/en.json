@@ -106,6 +106,7 @@
     "pageTitle": "Platform Admin - {page}",
     "PasswordPolicy": "Password Policy",
     "PingOneIntegrations": "PingOne Integrations",
+    "ProcessInstanceDetail": "Process Instance",
     "Promotion": "Promotion",
     "PromotionAuthentication": "Promotion Authentication",
     "PromotionHistory": "Promotion History",
@@ -6434,11 +6435,14 @@
     "noTasksSubtitle": "No workflow tasks match the current filter.",
     "noTasksTitle": "No tasks found",
     "reassignError": "Failed to reassign workflow task.",
+    "reassignRefreshError": "Task reassigned, but the task list failed to refresh.",
     "reassignSuccess": "Task reassigned successfully.",
     "subtitle": "View workflow tasks assigned to users.",
     "taskDetails": "Task Details",
+    "taskDetailsLoadError": "Failed to load task details.",
     "title": "Workflow Tasks",
-    "viewModalTitle": "Task Details"
+    "viewModalTitle": "Task Details",
+    "viewProcess": "View Process"
   },
   "workflowSettings": {
     "title": "Workflow Settings",
