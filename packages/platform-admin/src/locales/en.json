@@ -5060,7 +5060,10 @@
         "liveSyncError": "Error triggering LiveSync.",
         "loggedIgnore": "Log and ignore failure",
         "deadLetterQueue": "Send to dead-letter queue",
-        "runScriptFailure": "Run script on failure"
+        "runScriptFailure": "Run script on failure",
+        "clusteredSourceReconEnabled": "Clustered Reconciliation",
+        "clusteredSourceReconEnabledDescription": "Runs reconciliation across multiple cluster nodes.",
+        "reconSourceQueryPageSize": "Source Query Page Size"
       }
     },
     "eventHooks": {
