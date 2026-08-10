@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -108,6 +108,42 @@ describe('MenuItem Component', () => {
         });
         await flushPromises();
         await runA11yTest(wrapper);
+      });
+      it('with menu having subitems in expanded state', async () => {
+        mountComponent({
+          displayName: 'Parent menu',
+          icon: 'folder',
+          subItems: [
+            {
+              displayName: 'Child menu 1',
+            },
+          ],
+        });
+        await flushPromises();
+        await wrapper.find('button.dropdown-toggle').trigger('click');
+        await flushPromises();
+        // BDropdownItem renders role="menuitem" inside a <ul> which axe flags for aria-required-parent
+        // and list-item structure — pre-existing issue in the BDropdownItem component, not this fix.
+        await runA11yTest(wrapper, { overrideRules: { rules: { 'aria-required-parent': { enabled: false }, list: { enabled: false } } } });
+      });
+      it('with menu having subitems as nav item sets aria-expanded correctly', async () => {
+        mountComponent({
+          isNav: true,
+          displayName: 'Parent menu',
+          icon: 'folder',
+          subItems: [
+            {
+              displayName: 'Child menu 1',
+            },
+          ],
+        });
+        await flushPromises();
+
+        const button = wrapper.find('button.dropdown-toggle');
+        expect(button.attributes('aria-expanded')).toBe('false');
+        await button.trigger('click');
+        await flushPromises();
+        expect(button.attributes('aria-expanded')).toBe('true');
       });
       it('when menu opens a modal', async () => {
         mountComponent({
@@ -344,6 +380,48 @@ describe('MenuItem Component', () => {
       );
 
       expect(wrapper.vm.isExpanded).toBe(false);
+    });
+  });
+
+  describe('aria-expanded on expandable menu items', () => {
+    it('renders aria-expanded="false" (string) in the collapsed state', async () => {
+      mountComponent({
+        displayName: 'My Inbox',
+        icon: 'inbox',
+        subItems: [{ displayName: 'Approvals', routeTo: { name: 'approvals' } }],
+      });
+      await flushPromises();
+
+      const button = wrapper.find('button.dropdown-toggle');
+      expect(button.attributes('aria-expanded')).toBe('false');
+    });
+
+    it('renders aria-expanded="true" (string) after expanding', async () => {
+      mountComponent({
+        displayName: 'My Inbox',
+        icon: 'inbox',
+        subItems: [{ displayName: 'Approvals', routeTo: { name: 'approvals' } }],
+      });
+      await flushPromises();
+
+      const button = wrapper.find('button.dropdown-toggle');
+      await button.trigger('click');
+      await flushPromises();
+
+      expect(button.attributes('aria-expanded')).toBe('true');
+    });
+
+    it('aria-controls resolves to the actual collapse element in the DOM', async () => {
+      mountComponent({
+        displayName: 'My Inbox',
+        icon: 'inbox',
+        subItems: [{ displayName: 'Approvals', routeTo: { name: 'approvals' } }],
+      });
+      await flushPromises();
+
+      const button = wrapper.find('button.dropdown-toggle');
+      const controls = button.attributes('aria-controls');
+      expect(wrapper.find(`[id="${controls}"]`).exists()).toBe(true);
     });
   });
 

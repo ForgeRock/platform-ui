@@ -20,11 +20,11 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Item opens a modal -->
     <li
       v-else-if="modal && showItemForPrivileges"
-      :role="isNav ? '' : 'presentation'">
+      :role="isNav ? null : 'presentation'">
       <BButton
         :aria-label="$t(displayName)"
         :class="[{ 'nav-link': isNav, 'dropdown-item': !isNav }, 'd-flex align-items-center rounded-0']"
-        :role="isNav ? '' : 'menuitem'"
+        :role="isNav ? null : 'menuitem'"
         tag="a"
         @click="$root.$emit('bv::show::modal', modal)">
         <FrIcon
@@ -84,13 +84,14 @@ of the MIT license. See the LICENSE file for details. -->
     <li
       v-else-if="subItems.length"
       class="fr-menu-item-group"
-      :role="isNav ? '' : 'presentation'">
+      :role="isNav ? null : 'presentation'">
       <BButton
         @click="isExpanded = !isExpanded"
         class="dropdown-toggle d-flex align-items-center rounded-0"
-        :aria-expanded="isExpanded"
+        :aria-controls="collapseId"
+        :aria-expanded="isExpanded.toString()"
         :aria-label="$t(displayName)"
-        :role="isNav ? '' : 'menuitem'">
+        :role="isNav ? null : 'menuitem'">
         <div class="w-100 d-flex justify-content-between align-items-center pr-3">
           <FrIcon
             :icon-class="icon ? 'mr-3' : ''"
@@ -109,7 +110,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </BButton>
       <BCollapse
-        :id="`collapse-${displayName.split(' ').join('-')}`"
+        :id="collapseId"
         class="fr-menu-item-submenuitems"
         tag="ul"
         v-model="isExpanded">
@@ -306,6 +307,9 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['allRoles', 'privileges', 'amAdmin']),
+    collapseId() {
+      return `collapse-${this.displayName.split(' ').join('-')}`;
+    },
     showItemForPrivileges() {
       const emptyShowForPrivilegesProp = !this.showForPrivileges.length;
       const showForPrivilegesInUserStore = this.showForPrivileges.some((userPrivilege) => !!get(this.privileges, userPrivilege, false));
