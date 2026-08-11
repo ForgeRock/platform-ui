@@ -184,13 +184,13 @@ export default {
           label: this.$t('governance.certificationTask.certificationTabs.entitlementComposition'),
         });
       }
-      if (this.governanceDevEnabled && this.isIdentityProfileTargetFilter) {
+      if (this.isIdentityProfileTargetFilter) {
         tabs.push({
           key: 'identityProfile',
           label: this.$t('governance.certificationTask.certificationTabs.identityProfile'),
         });
       }
-      if (this.governanceDevEnabled && this.isRoleCompositionTargetFilter) {
+      if (this.isRoleCompositionTargetFilter) {
         tabs.push({
           key: 'roleComposition',
           label: this.$t('governance.certificationTask.certificationTabs.roleComposition'),
@@ -221,9 +221,6 @@ export default {
     },
     isRoleCompositionTargetFilter() {
       return this.isGrantType('role');
-    },
-    governanceDevEnabled() {
-      return this.$store.state.SharedStore.governanceDevEnabled;
     },
     showGroupByField() {
       return this.isAccountTargetFilter && this.isEntitlementTargetFilter && !this.isRoleTargetFilter && this.showGroupByAccount;

@@ -111,7 +111,6 @@ of the MIT license. See the LICENSE file for details. -->
               </BMedia>
             </FrCardRadioInput>
             <FrCardRadioInput
-              v-if="governanceDevEnabled"
               :radio-value="types.IDENTITYPROFILE"
               name="selectedCampaignTemplateType"
               v-model="selectedCampaignTemplateType">
@@ -130,7 +129,6 @@ of the MIT license. See the LICENSE file for details. -->
               </BMedia>
             </FrCardRadioInput>
             <FrCardRadioInput
-              v-if="governanceDevEnabled"
               class="mb-3"
               :radio-value="types.ROLECOMPOSITION"
               name="selectedCampaignTemplateType"
@@ -189,11 +187,6 @@ export default {
       selectedCampaignTemplateType: null,
       types,
     };
-  },
-  computed: {
-    governanceDevEnabled() {
-      return this.$store.state.SharedStore.governanceDevEnabled;
-    },
   },
   methods: {
     nextStep() {
