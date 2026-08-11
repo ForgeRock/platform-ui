@@ -8,6 +8,7 @@
 import { mount, shallowMount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import i18n from '@/i18n';
 
@@ -174,5 +175,26 @@ describe('KbaCreateCallback.vue (mount)', () => {
     await flushPromises();
     expect(inputs[1].attributes('disabled')).toBeUndefined();
     expect(inputs[1].attributes('aria-invalid')).toBe('true');
+  });
+
+  it('hides all decorative hr elements from assistive technology when showHeader is true', () => {
+    const hrElements = wrapper.findAll('hr');
+
+    expect(hrElements.length).toBe(3);
+    hrElements.forEach((hr) => {
+      expect(hr.attributes('aria-hidden')).toBe('true');
+    });
+  });
+
+  it('hides the trailing decorative hr element from assistive technology when showHeader is false', async () => {
+    await wrapper.setProps({ showHeader: false });
+    const hrElements = wrapper.findAll('hr');
+
+    expect(hrElements.length).toBe(1);
+    expect(hrElements[0].attributes('aria-hidden')).toBe('true');
+  });
+
+  it('has no accessibility violations', async () => {
+    await runA11yTest(wrapper);
   });
 });

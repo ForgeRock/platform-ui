@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,13 +8,13 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="showHeader"
       class="row kbaHeaderText">
       <div class="col pr-0">
-        <hr>
+        <hr aria-hidden="true">
       </div>
       <div class="col-auto pt-1">
         <FrIcon name="lock" />
       </div>
       <div class="col pl-0">
-        <hr>
+        <hr aria-hidden="true">
       </div>
     </div>
 
@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
           :is-required-aria="true" />
       </fieldset>
     </VeeForm>
-    <hr>
+    <hr aria-hidden="true">
   </div>
 </template>
 
