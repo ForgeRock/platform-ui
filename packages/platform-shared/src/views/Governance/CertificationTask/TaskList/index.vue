@@ -291,8 +291,7 @@ of the MIT license. See the LICENSE file for details. -->
                   icon-class="md-24 mr-3"
                   :id="`flags-${item.id}-${index}`"
                   :name="flagIcons[flag]"
-                  role="img"
-                  tabindex="-1" />
+                  tabindex="0" />
                 <BTooltip
                   :target="`flags-${item.id}-${index}`"
                   triggers="focus hover"
