@@ -121,6 +121,64 @@ describe('AccessReviews', () => {
     });
   });
 
+  describe('status dropdown', () => {
+    it('marks the current statusSort item as active and aria-current', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      // Open the dropdown so items are rendered
+      await wrapper.findComponent({ ref: 'statusDropdown' }).vm.$emit('show');
+      wrapper.vm.$refs.statusDropdown.visible = true;
+      await nextTick();
+
+      const activeItems = wrapper.findAll('.dropdown-item.active');
+      expect(activeItems).toHaveLength(1);
+      expect(activeItems[0].text()).toContain(wrapper.vm.statusSort.text);
+      expect(activeItems[0].attributes('aria-current')).toBe('true');
+    });
+
+    it('updates the active item when handleStatusSort is called', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      wrapper.vm.$refs.statusDropdown.visible = true;
+      await nextTick();
+
+      const expiredStatus = wrapper.vm.statuses.get('expired');
+      wrapper.vm.handleStatusSort(expiredStatus);
+      await nextTick();
+
+      const activeItems = wrapper.findAll('.dropdown-item.active');
+      expect(activeItems).toHaveLength(1);
+      expect(activeItems[0].text()).toContain(expiredStatus.text);
+      expect(activeItems[0].attributes('aria-current')).toBe('true');
+    });
+
+    it('focuses the active dropdown item when the shown event fires', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      wrapper.vm.$refs.statusDropdown.visible = true;
+      await nextTick();
+
+      const activeItem = wrapper.find('.dropdown-item.active');
+      const focusSpy = jest.spyOn(activeItem.element, 'focus');
+
+      await wrapper.findComponent({ ref: 'statusDropdown' }).vm.$emit('shown');
+      await nextTick();
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('does not throw when no active dropdown item is in the DOM', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      // Dropdown is closed — no items rendered — null guard must hold
+      await expect(wrapper.vm.focusActiveStatusItem()).resolves.toBeUndefined();
+    });
+  });
+
   describe('row keyboard accessibility', () => {
     const mockRow = {
       campaignId: 'campaign-1',

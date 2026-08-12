@@ -20,8 +20,10 @@ of the MIT license. See the LICENSE file for details. -->
             <div>
               <BDropdown
                 id="dropdown-status"
+                ref="statusDropdown"
                 variant="link"
-                class="ml-2 text-decoration-none">
+                class="ml-2 text-decoration-none"
+                @shown="focusActiveStatusItem">
                 <template #button-content>
                   <span
                     class="font-weight-bold mr-1"
@@ -32,8 +34,10 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
                 <template v-for="([key, statusObj]) in Array.from(statuses)">
                   <BDropdownItem
-                    :key="key"
                     v-if="!statusObj.sortHide && !statusObj.sortAccessReviewHide"
+                    :key="key"
+                    :active="statusObj.type === statusSort.type"
+                    :aria-current="statusObj.type === statusSort.type ? 'true' : undefined"
                     @click="handleStatusSort(statusObj)"
                   >
                     <span
@@ -144,6 +148,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { mapState } from 'pinia';
+import { nextTick } from 'vue';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BBadge,
@@ -272,6 +277,17 @@ export default {
   },
 
   methods: {
+    /**
+     * Moves focus to the currently active status dropdown item after the dropdown opens.
+     * BV's BDropdown focuses the <ul> container synchronously before emitting `shown`,
+     * so a nextTick is required to let that focus settle before redirecting to the active
+     * item — this ensures the screen reader announces the selected option on open.
+     */
+    async focusActiveStatusItem() {
+      await nextTick();
+      const activeItem = this.$refs.statusDropdown?.$el?.querySelector('.dropdown-item.active');
+      if (activeItem) activeItem.focus();
+    },
     pageSizeChange(newPageSize) {
       this.pageSize = newPageSize;
       this.currentPage = 1;
