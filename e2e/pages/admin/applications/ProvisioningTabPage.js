@@ -6,6 +6,8 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
+import { startCase } from 'lodash';
+
 const RECON_JOB_TYPES = {
   full: 'Full Reconciliation',
   incremental: 'Incremental Reconciliation',
@@ -119,5 +121,60 @@ export default class ProvisioningTabPage {
   static scheduleJobNextRunCell(type) {
     // The next run renders inside the Type cell as a muted "Next run: <date>" line
     return ProvisioningTabPage.scheduleJobRow(type).contains(/next run:/i);
+  }
+
+  // ── Object-type editor (non-account object type, Reconciliation tab) ─────────
+
+  /**
+   * Opens the object-type dropdown and picks the given type. The dropdown toggle shows
+   * the current type's startCased name (not the target's), so locate it structurally;
+   * items render startCased too (startCase(selectedObjectTypeName) in ObjectTypeEditor).
+   * @param {string} objectTypeName - Connector object type name, e.g. 'group'
+   */
+  static objectTypeDropdownItem(objectTypeName) {
+    const startCased = startCase(objectTypeName);
+    return cy.get('.btn-toolbar')
+      .find('.dropdown-toggle')
+      .click()
+      .parents('.btn-toolbar')
+      .find('.dropdown-menu')
+      .contains('li', new RegExp(`^${startCased}$`, 'i'))
+      .click();
+  }
+
+  static get nonAccountReconciliationNavItem() {
+    return cy.contains('.fr-simple-nav a', 'Reconciliation', { timeout: 15000 });
+  }
+
+  static get nonAccountReconContainer() {
+    return cy.get('[data-testid="obj-recon-non-account"]', { timeout: 15000 });
+  }
+
+  static nonAccountReconHeading(appName, objectTypeName) {
+    // "Reconcile <AppName> <ObjectType>" — the object type is startCased for display
+    return ProvisioningTabPage.nonAccountReconContainer.findByRole('heading', { name: new RegExp(`Reconcile ${appName} ${objectTypeName}`, 'i') });
+  }
+
+  static get nonAccountReconNowButton() {
+    return ProvisioningTabPage.nonAccountReconContainer.findByRole('button', { name: /reconcile now/i });
+  }
+
+  // The non-account Schedules card reuses the same BTable/modal structure as the
+  // account-level Schedule Jobs table — the getters above (scheduleJobTypeCell,
+  // scheduleJobRow, scheduleJobSetUpEditButton, scheduleReconJobModal, runEveryInput,
+  // repeatCountInput, saveButton) resolve against it unchanged.
+
+  // ── Advanced Settings (nonAccountObject context) ─────────────────────────────
+
+  static get advancedSettingsSyncNowButton() {
+    return cy.findByRole('button', { name: 'Sync Now' });
+  }
+
+  static get advancedSettingsSyncTokenInput() {
+    return cy.get('[data-testid="sync-token"]').find('textarea');
+  }
+
+  static get advancedSettingsLiveSyncFailureOptions() {
+    return cy.findByRole('checkbox', { name: 'LiveSync Failure Options' });
   }
 }

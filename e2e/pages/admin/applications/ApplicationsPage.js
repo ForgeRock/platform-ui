@@ -53,7 +53,7 @@ export default class ApplicationsPage {
   }
 
   static searchFor(term) {
-    ApplicationsPage.searchInput.clear().type(term);
+    ApplicationsPage.searchInput.clear().type(`${term}{enter}`);
   }
 
   // Back link rendered by the shared Navbar on application detail pages
