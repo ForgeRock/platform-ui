@@ -194,7 +194,8 @@ export default {
 <!-- non-scoped slot to allow button css to apply to all slot usage -->
 <style lang="scss">
 .multiselect__single > .collapsed-option .action-buttons button {
-  display: none;
+  visibility: hidden;
+  pointer-events: none;
   padding: 0.22rem 0.5rem;
 }
 
@@ -202,17 +203,22 @@ export default {
 .multiselect:focus-within .multiselect__single,
 .esv-input-wrapper:hover .multiselect__single,
 .esv-input-wrapper:focus-within .multiselect__single {
-  > .collapsed-option.can-edit {
-    .action-buttons button {
-      display: block;
-      border-radius: $btn-border-radius;
-      background-color: $gray-200;
+  > .collapsed-option.can-edit .action-buttons button {
+    visibility: visible;
+    pointer-events: auto;
+    border-radius: $btn-border-radius;
+    background-color: $gray-200;
 
-      &:hover {
-        background-color: $gray-300;
-      }
+    &:hover {
+      background-color: $gray-300;
     }
   }
+}
+
+.esv-input-wrapper .has-append-button .multiselect__tags:has(.collapsed-option) {
+  /* 36px (.within-input-button right) + 8px (ESV btn padding 0 0.25rem) + 24px (icon) + 4px = 72px; keeps __single content left of ESV button.
+     :has(.collapsed-option) targets selectWithActions only — plain select/string/etc fields are unaffected. */
+  padding-right: 72px !important;
 }
 </style>
 
@@ -228,14 +234,6 @@ export default {
 .multiselect__single > .collapsed-option {
   /* .multiselect__single already provides top spacing; no additional offset needed here */
   margin-top: 0;
-}
-
-.multiselect__single:hover > .collapsed-option.can-edit,
-.multiselect:focus-within .multiselect__single > .collapsed-option.can-edit,
-.esv-input-wrapper:hover .multiselect__single > .collapsed-option.can-edit,
-.esv-input-wrapper:focus-within .multiselect__single > .collapsed-option.can-edit {
-  /* reserves space for the sm icon button (padding: 0.22rem 0.5rem + ~16px icon ≈ 32px) to prevent text overlap with action buttons*/
-  padding-right: 32px;
 }
 
 .row-before-list {

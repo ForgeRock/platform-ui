@@ -434,12 +434,8 @@ export default {
 
 <style lang="scss" scoped>
 .polyfill-placeholder {
-  :deep(.multiselect__tags) {
-    padding: 1.1rem 50px 0.1rem 0.75rem;
-  }
   :deep(.multiselect__single) {
     margin-top: 4px;
-    min-height: 26px;
   }
 }
 /* The below styles were copied from SelectInputDeprecated and adapted for the new component */

@@ -229,8 +229,8 @@ export default {
 }
 
 :deep(.field-type-selectWithActions) {
-  /* SelectInput sets top: -1px on .within-input-button and margin-top: 4px on .multiselect__single, net offset is 10px */
-  top: 10px;
+  /* display:flex → inline-block on __single shifts content down; visually tuned to align ESV icon with collapsed edit button */
+  top: 1rem;
 }
 
 :deep(.field-type-select) {
@@ -240,7 +240,7 @@ export default {
 :deep(.field-type-selectWithActions .btn),
 :deep(.field-type-select .btn) {
   padding: 0 0.25rem !important;
-  margin-right: 0.75rem;
+  margin-right: 0.5rem;
 }
 
 .form-label-group:focus-within {

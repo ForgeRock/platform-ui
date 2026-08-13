@@ -113,11 +113,11 @@ of the MIT license. See the LICENSE file for details. -->
         :description="$t('governance.editTemplate.allowExceptionsDescription')"
         :label="$t('governance.editTemplate.allowExceptions')" />
       <BCollapse :visible="formFields.allowExceptions">
-        <div class="p-4 rounded bg-light mb-4">
+        <div class="p-4 rounded bg-light mb-4 d-flex align-items-center">
           <span>{{ $t('governance.editTemplate.allowExceptionsFor') }}</span>
           <FrField
             v-model="formFields.exceptionDuration"
-            class="mb-0 mr-3 d-inline-block maxWidth70"
+            class="mb-0 ml-2 mr-3 d-inline-block maxWidth70"
             name="exceptionDuration"
             testid="exception-duration"
             type="number" />
