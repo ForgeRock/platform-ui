@@ -3098,6 +3098,7 @@ __metadata:
   dependencies:
     "@badeball/cypress-cucumber-preprocessor": 24.0.1
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
+    "@braintree/sanitize-url": 6.0.2
     "@cypress/grep": 5.1.0
     "@forgerock/platform-shared": 1.0.0
     "@neuralegion/cypress-har-generator": 5.16.4
