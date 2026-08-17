@@ -27,6 +27,24 @@ describe('setFeatureFlags', () => {
     expect(state.roleRequestMembersEnabled).toBe(false);
     expect(state.governanceEnabled).toBe(true);
   });
+
+  it('sets pingOneRecognizeEnabled when VUE_APP_ENABLE_PING_ONE_RECOGNIZE is true', () => {
+    const state = { pingOneRecognizeEnabled: false };
+    shared.mutations.setFeatureFlags(state, { VUE_APP_ENABLE_PING_ONE_RECOGNIZE: 'true' });
+    expect(state.pingOneRecognizeEnabled).toBe(true);
+  });
+
+  it('does not set pingOneRecognizeEnabled when VUE_APP_ENABLE_PING_ONE_RECOGNIZE is absent', () => {
+    const state = { pingOneRecognizeEnabled: false };
+    shared.mutations.setFeatureFlags(state, {});
+    expect(state.pingOneRecognizeEnabled).toBe(false);
+  });
+
+  it('does not set pingOneRecognizeEnabled when VUE_APP_ENABLE_PING_ONE_RECOGNIZE is false', () => {
+    const state = { pingOneRecognizeEnabled: false };
+    shared.mutations.setFeatureFlags(state, { VUE_APP_ENABLE_PING_ONE_RECOGNIZE: 'false' });
+    expect(state.pingOneRecognizeEnabled).toBe(false);
+  });
 });
 
 describe('should handle relative paths for FRaaS urls', () => {

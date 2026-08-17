@@ -984,6 +984,10 @@ export default {
           type = 'PingOneProtectCallback';
         }
 
+        if (type === 'PingOneRecognizeCallback' && !this.$store.state.SharedStore.pingOneRecognizeEnabled) {
+          return;
+        }
+
         if (type === this.FrCallbackType.RedirectCallback) {
           this.nextButtonVisible = false;
           this.handleRedirectCallback(callback);
