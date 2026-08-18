@@ -140,7 +140,10 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
 }
 
 /**
- * Loads a list goverance grants (accounts/entitlements/roles) based on the current path
+ * Loads a list of governance grants (accounts/entitlements/roles) based on the current path.
+ * _displayData enrichment is intentionally omitted here — it is fetched lazily in
+ * GovResourceTable.handleRowClick when the user opens the detail modal, avoiding N+1 requests
+ * on every pagination, sort, and search event.
  * @param {String} grantType - specific grant type queried, used in error message
  * @param {String} resourceId - Id of resource to get grants related to
  * @param {object} params - Parameters to be plugged into query string

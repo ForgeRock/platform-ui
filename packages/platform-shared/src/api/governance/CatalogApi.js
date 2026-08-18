@@ -50,6 +50,19 @@ export function getCatalogFilterSchema(objectType) {
   return generateIgaApi().get(url);
 }
 
+/**
+ * Get a single catalog item by type and ID, optionally expanding glossary display data.
+ *
+ * @param {string} managedObjectType - The catalog object type: 'application', 'role', or 'entitlement'.
+ * @param {string} id - The catalog item ID.
+ * @param {string[]} [expandPaths=['glossary.idx']] - Paths to expand in the response.
+ * @returns {Promise} A promise that resolves to the catalog item with optional expanded paths.
+ */
+export function getCatalogObjectById(managedObjectType, id, expandPaths = ['glossary.idx']) {
+  const query = expandPaths?.length ? `?expandPaths=${expandPaths.join(',')}` : '';
+  return generateIgaApi().get(`/governance/catalog/${managedObjectType}/${id}${query}`);
+}
+
 export function searchCatalogEntitlements(resource, params = {}) {
   const queryParams = {
     fields: 'descriptor,assignment',

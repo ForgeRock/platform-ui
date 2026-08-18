@@ -86,6 +86,29 @@ export function getUserGrants(userId = '', params = {}) {
 }
 
 /**
+ * Get a single user grant by ID, optionally expanding paths for _displayData
+ * @param {String} userId ID of the user
+ * @param {String} grantId ID of the grant
+ * @param {String[]} expandPaths paths to expand (default includes glossary.idx for _displayData)
+ * @returns {Promise} Grant with optional _displayData
+ */
+export function getUserGrantById(userId = '', grantId = '', expandPaths = ['glossary.idx']) {
+  const query = expandPaths?.length ? `?expandPaths=${expandPaths.join(',')}` : '';
+  return generateIgaApi().get(`/governance/user/${userId}/grants/${grantId}${query}`);
+}
+
+/**
+ * Get a single grant by ID, optionally expanding paths for _displayData
+ * @param {String} grantId ID of the grant
+ * @param {String[]} expandPaths paths to expand (default includes glossary.idx for _displayData)
+ * @returns {Promise} Grant with optional _displayData
+ */
+export function getGrantById(grantId = '', expandPaths = ['glossary.idx']) {
+  const query = expandPaths?.length ? `?expandPaths=${expandPaths.join(',')}` : '';
+  return generateIgaApi().get(`/governance/grants/${grantId}${query}`);
+}
+
+/**
  * get schema of the glossary attributes for application, role, entitlement
  * @returns {Promise} Glossary schema for application, role, entitlement
  */

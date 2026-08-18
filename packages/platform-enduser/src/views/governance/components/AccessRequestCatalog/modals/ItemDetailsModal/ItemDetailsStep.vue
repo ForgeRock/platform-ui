@@ -65,6 +65,10 @@ import { getResourceDisplayData } from '@forgerock/platform-shared/src/utils/gov
 const glossaryValues = ref({});
 
 const props = defineProps({
+  displayData: {
+    type: Object,
+    default: () => ({}),
+  },
   glossarySchema: {
     type: Array,
     default: () => [],
@@ -110,8 +114,20 @@ async function setGlossaryValues(glossarySchema, values) {
     }
     // look up value for managed object types
     if (glossaryItem.type === 'managedObject') {
-      const value = await getResourceDisplayData(glossaryItem.managedObjectType, values[propertyName]);
-      setGlossaryValue(propertyName, value);
+      const rawValue = values[propertyName];
+      const refs = Array.isArray(rawValue) ? rawValue : [rawValue];
+      const preresolved = refs.map((refId) => {
+        const entry = props.displayData?.[refId];
+        if (!entry) return null;
+        if (entry.givenName || entry.sn) return `${entry.givenName || ''} ${entry.sn || ''}`.trim();
+        return entry.name || null;
+      }).filter(Boolean);
+      if (preresolved.length === refs.length) {
+        setGlossaryValue(propertyName, preresolved.join(', '));
+      } else {
+        const value = await getResourceDisplayData(glossaryItem.managedObjectType, rawValue);
+        setGlossaryValue(propertyName, value);
+      }
     } else {
       // set value for non-managed object types
       setGlossaryValue(propertyName, values[propertyName] || blankValueIndicator);

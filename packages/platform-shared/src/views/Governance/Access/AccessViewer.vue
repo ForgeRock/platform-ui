@@ -112,10 +112,12 @@ of the MIT license. See the LICENSE file for details. -->
       :grant="modalNode"
       modal-id="access-accountGrant" />
     <FrEntitlementModal
+      :display-data="modalDisplayData"
       :entitlement="modalNode"
       :glossary-schema="glossarySchema[modalNode?.item?.type] || []"
       modal-id="access-entitlementGrant" />
     <FrRoleModal
+      :display-data="modalDisplayData"
       :glossary-schema="glossarySchema[modalNode?.item?.type] || []"
       :role-details="modalNode"
       modal-id="access-roleMembership" />
@@ -148,7 +150,7 @@ import FrAccessFilter from '@forgerock/platform-shared/src/components/governance
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { useRoute } from 'vue-router';
 import {
-  getUserGrants, getGlossarySchema, getFilterSchema, getIgaAutoIdConfig,
+  getUserGrants, getUserGrantById, getGlossarySchema, getFilterSchema, getIgaAutoIdConfig,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrAccountModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal';
@@ -189,6 +191,7 @@ const userGrants = ref({});
 const refreshPanel = ref(false);
 const zoomValue = ref(80);
 const modalNode = ref({});
+const modalDisplayData = ref({});
 const glossarySchema = ref({});
 const filterSchema = ref({});
 const autoIdSettings = ref({});
@@ -446,7 +449,15 @@ async function getGrantForUser(compositeId) {
       _queryFilter: `compositeId eq "${compositeId}"`,
     };
     const { data } = await getUserGrants(userId.value, params);
-    return data.result[0];
+    const grant = data.result[0];
+    let displayData = {};
+    try {
+      const { data: grantData } = await getUserGrantById(userId.value, compositeId);
+      displayData = grantData._displayData || {};
+    } catch {
+      // _displayData enhancement is optional — fall back to empty
+    }
+    return { grant, displayData };
   } catch (err) {
     showErrorMessage(err, i18n.global.t('governance.access.errorGettingData', { grantType: i18n.global.t('governance.access.access') }));
     return null;
@@ -473,7 +484,10 @@ function clearAccessFilters() {
 async function openGrantDetailsModal() {
   if (selectedNode.value) {
     try {
-      modalNode.value = await getGrantForUser(selectedNode.value.compositeId);
+      const result = await getGrantForUser(selectedNode.value.compositeId);
+      if (!result?.grant) return;
+      modalNode.value = result.grant;
+      modalDisplayData.value = result.displayData;
       bvModal.value.show(`access-${modalNode.value.item.type}`);
     } catch (e) {
       // Error message handled in getGrantForUser

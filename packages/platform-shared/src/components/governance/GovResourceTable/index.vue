@@ -358,8 +358,10 @@ of the MIT license. See the LICENSE file for details. -->
     </BModal>
     <FrUserEntitlementModal
       :show-account-tab="!resourceIsRole"
+      :display-data="grantDisplayData"
       :grant="grantDetails"
       :glossary-schema="glossarySchema"
+      :is-loading="grantDisplayDataLoading"
       :modal-id="modalId" />
     <FrFloatingActionBar
       v-if="!showRemoveButton"
@@ -389,7 +391,7 @@ import {
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getGlossarySchema, getGrantById, getUserGrantById } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
@@ -561,6 +563,8 @@ export default {
       directAssignment: this.$t('common.direct'),
       glossarySchema: [],
       grantDetails: {},
+      grantDisplayData: {},
+      grantDisplayDataLoading: false,
       isLoading: true,
       isNoResultsFirstLoad: null,
       paginationPage: 1,
@@ -745,7 +749,22 @@ export default {
       }
       if (this.showViewDetails && this.grantType === 'entitlement') {
         this.grantDetails = { ...item };
+        this.grantDisplayData = {};
+        this.grantDisplayDataLoading = !!(this.userId && item.compositeId);
         this.$bvModal.show(this.modalId);
+        if (this.userId && item.compositeId) {
+          const requestId = Symbol('viewDetailsRequest');
+          this._viewDetailsRequestId = requestId;
+          getUserGrantById(this.userId, item.compositeId).then(({ data }) => {
+            if (this._viewDetailsRequestId !== requestId) return;
+            this.grantDisplayData = data?._displayData || {};
+          }).catch(() => getGrantById(item.id).then(({ data }) => {
+            if (this._viewDetailsRequestId !== requestId) return;
+            this.grantDisplayData = data?._displayData || {};
+          }).catch(() => {})).finally(() => {
+            if (this._viewDetailsRequestId === requestId) this.grantDisplayDataLoading = false;
+          });
+        }
       } else if (this.$slots['row-details']) {
         item._showDetails = !item._showDetails;
       }

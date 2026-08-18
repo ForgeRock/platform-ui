@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -485,6 +485,19 @@ export function resetAllItems(certId, actorId) {
 /**
  * Certification Item Details
  */
+
+/**
+ * Get a single certification line item by ID, optionally expanding glossary display data.
+ *
+ * @param {string} certId - The certification campaign ID.
+ * @param {string} itemId - The line item ID.
+ * @param {string[]} [expandPaths=['glossary.idx']] - Paths to expand in the response.
+ * @returns {Promise} A promise that resolves to the line item with optional expanded paths.
+ */
+export function getCertificationItemById(certId, itemId, expandPaths = ['glossary.idx']) {
+  const query = expandPaths?.length ? `?expandPaths=${expandPaths.join(',')}` : '';
+  return generateIgaApi().get(`${governanceCertificationBaseUrl}/${certId}/items/${itemId}${query}`);
+}
 
 /**
  * Obtains the entitlement details of a specific line item

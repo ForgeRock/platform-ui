@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -62,6 +62,34 @@ describe('GovResourceMultiselect', () => {
       { text: 'App 1', value: 'app1' },
       { text: 'App 2', value: 'app2' },
     ]);
+  });
+
+  it('uses preloadedOptions to skip getInitialValues when all refs are pre-resolved', async () => {
+    const preloaded = [
+      { text: 'App 1', value: 'app1' },
+      { text: 'App 2', value: 'app2' },
+    ];
+    const resourceSpy = jest.spyOn(CommonsApi, 'getResource');
+    const callCountBefore = resourceSpy.mock.calls.length;
+
+    wrapper = mountComponent({
+      value: ['app1', 'app2'],
+      preloadedOptions: preloaded,
+    });
+    await flushPromises();
+
+    // Only the search-options call should have fired, not one per pre-existing ref
+    const searchOnlyCalls = resourceSpy.mock.calls.slice(callCountBefore);
+    expect(searchOnlyCalls.length).toBe(1);
+    expect(wrapper.vm.selectOptions).toEqual(expect.arrayContaining(preloaded));
+  });
+
+  it('falls back to getInitialValues when preloadedOptions is empty', async () => {
+    wrapper = mountComponent({ value: ['app3'], preloadedOptions: [] });
+    await flushPromises();
+
+    const options = wrapper.vm.selectOptions;
+    expect(options).toEqual(expect.arrayContaining([{ text: 'App 3', value: 'app3' }]));
   });
 
   it('retrieves options when the customQuery changes', async () => {

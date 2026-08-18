@@ -85,6 +85,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BRow>
         <FrGlossaryDisplayForm
           data-testid="role-glossary"
+          :display-data="displayData"
           :glossary-schema="filteredGlossarySchema"
           :glossary-values="glossaryValues" />
       </BTab>
@@ -108,6 +109,10 @@ import { computed } from 'vue';
 import FrApplicationsTab from './ApplicationTab/ApplicationTab';
 
 const props = defineProps({
+  displayData: {
+    type: Object,
+    default: () => ({}),
+  },
   glossarySchema: {
     type: Array,
     default: () => [],

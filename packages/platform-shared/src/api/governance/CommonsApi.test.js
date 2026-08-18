@@ -95,6 +95,34 @@ describe('Commons API', () => {
     expect(res).toEqual(data);
   });
 
+  it('getGrantById fetches grant with default expandPaths', async () => {
+    const grantId = 'grant-xyz';
+    const res = await CommonsApi.getGrantById(grantId);
+    expect(get).toBeCalledWith(`/governance/grants/${grantId}?expandPaths=glossary.idx`);
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('getGrantById omits expandPaths when passed empty array', async () => {
+    const grantId = 'grant-xyz';
+    await CommonsApi.getGrantById(grantId, []);
+    expect(get).toBeCalledWith(`/governance/grants/${grantId}`);
+  });
+
+  it('getUserGrantById fetches grant with default expandPaths', async () => {
+    const grantId = 'grant-abc';
+    const res = await CommonsApi.getUserGrantById(userId, grantId);
+    expect(get).toBeCalledWith(`/governance/user/${userId}/grants/${grantId}?expandPaths=glossary.idx`);
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('getUserGrantById omits expandPaths when passed empty array', async () => {
+    const grantId = 'grant-abc';
+    await CommonsApi.getUserGrantById(userId, grantId, []);
+    expect(get).toBeCalledWith(`/governance/user/${userId}/grants/${grantId}`);
+  });
+
   it('should call getIgaAutoIdConfig', async () => {
     const res = await CommonsApi.getIgaAutoIdConfig();
     expect(get).toBeCalledWith('commons/config/iga_autoid_integration');

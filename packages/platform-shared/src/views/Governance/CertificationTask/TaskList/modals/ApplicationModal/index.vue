@@ -92,6 +92,7 @@ of the MIT license. See the LICENSE file for details. -->
             </dd>
           </dl>
           <FrGlossaryDisplayForm
+            :display-data="displayData"
             :glossary-schema="glossarySchema"
             :glossary-values="glossaryValues" />
         </div>
@@ -136,6 +137,10 @@ export default {
   },
   props: {
     application: {
+      type: Object,
+      default: () => ({}),
+    },
+    displayData: {
       type: Object,
       default: () => ({}),
     },

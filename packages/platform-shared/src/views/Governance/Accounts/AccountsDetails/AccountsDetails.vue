@@ -56,6 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
             :saving-status="savingGovernanceResourcesStatus"
             show-view-details
             :total-count="entitlementTotalCount"
+            :user-id="account?.user?.id"
             @assign-resources="assignGovernanceResources"
             @get-entitlements="getGovernanceEntitlements"
             @load-data="queryAccountEntitlements"

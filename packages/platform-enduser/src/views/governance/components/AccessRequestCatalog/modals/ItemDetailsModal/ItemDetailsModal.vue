@@ -57,8 +57,12 @@ of the MIT license. See the LICENSE file for details. -->
       </BButtonClose>
     </template>
 
+    <FrSpinner
+      v-if="currentStep === 0 && !displayDataReady"
+      class="my-3" />
     <FrItemDetailsStep
-      v-if="currentStep === 0"
+      v-else-if="currentStep === 0"
+      :display-data="displayData"
       :glossary-schema="glossarySchema"
       :item="item" />
 
@@ -116,7 +120,9 @@ import {
   ref,
 } from 'vue';
 import { getApplicationRequestForm } from '@forgerock/platform-shared/src/utils/governance/requestFormAssignments';
+import { getCatalogObjectById } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrItemDetailsStep from './ItemDetailsStep';
 import FrItemFormStep from './ItemFormStep';
 import i18n from '@/i18n';
@@ -145,6 +151,8 @@ defineEmits(['toggle-item', 'modal-closed']);
 // Data
 const modalRef = ref(null);
 const currentStep = ref(0);
+const displayData = ref({});
+const displayDataReady = ref(false);
 const isValidForm = ref(false);
 const form = ref({});
 const requestData = ref({});
@@ -177,6 +185,8 @@ const modalProps = computed(() => {
  */
 function resetModal() {
   currentStep.value = 0;
+  displayData.value = {};
+  displayDataReady.value = false;
   form.value = {};
   requestData.value = {};
 }
@@ -234,6 +244,35 @@ function focusFirstModalElement() {
   if (closeBtn) closeBtn.focus();
 }
 
+const catalogTypeMap = {
+  application: 'accountGrant',
+  entitlement: 'entitlementGrant',
+  role: 'roleMembership',
+};
+
+/**
+ * Fetches _displayData for the current catalog item so managedObject glossary
+ * fields can be resolved without per-UUID lookup calls.
+ *
+ * @param {Object} item - The catalog item.
+ * @param {string} itemType - One of 'application', 'role', or 'entitlement'.
+ */
+async function fetchDisplayData(item, itemType) {
+  const managedObjectType = catalogTypeMap[itemType];
+  if (!managedObjectType) {
+    displayDataReady.value = true;
+    return;
+  }
+  try {
+    const { data } = await getCatalogObjectById(managedObjectType, item.id);
+    displayData.value = data?._displayData || {};
+  } catch {
+    displayData.value = {};
+  } finally {
+    displayDataReady.value = true;
+  }
+}
+
 /**
  * Initializes the modal for displaying item details.
  */
@@ -241,6 +280,7 @@ function initializeModal() {
   form.value = {};
   if (isEmpty(props.item)) return;
 
+  fetchDisplayData(props.item, props.itemType);
   getForm(props.item, props.itemType);
 }
 

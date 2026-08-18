@@ -113,26 +113,32 @@ of the MIT license. See the LICENSE file for details. -->
               </template>
             </dd>
           </dl>
-          <FrGlossaryDisplayForm
-            data-testid="glossary"
-            :glossary-schema="filteredGlossarySchema"
-            :glossary-values="glossaryValues" />
-          <div
-            v-if="!isNil(grant.entitlement)"
-            class="p-4 bg-light rounded"
-            data-testid="entitlement">
-            <dl
-              v-for="item in Object.keys(grant.entitlement)"
-              :key="item"
-              class="row">
-              <dt class="col-lg-4">
-                {{ item }}
-              </dt>
-              <dd class="col-lg-8 mb-4">
-                {{ !isNil(grant.entitlement[item]) ? grant.entitlement[item] : blankValueIndicator }}
-              </dd>
-            </dl>
-          </div>
+          <FrSpinner
+            v-if="isLoading"
+            class="py-3" />
+          <template v-else>
+            <FrGlossaryDisplayForm
+              data-testid="glossary"
+              :display-data="displayData"
+              :glossary-schema="filteredGlossarySchema"
+              :glossary-values="glossaryValues" />
+            <div
+              v-if="!isNil(grant.entitlement)"
+              class="p-4 bg-light rounded"
+              data-testid="entitlement">
+              <dl
+                v-for="item in Object.keys(grant.entitlement)"
+                :key="item"
+                class="row">
+                <dt class="col-lg-4">
+                  {{ item }}
+                </dt>
+                <dd class="col-lg-8 mb-4">
+                  {{ !isNil(grant.entitlement[item]) ? grant.entitlement[item] : blankValueIndicator }}
+                </dd>
+              </dl>
+            </div>
+          </template>
         </div>
       </BTab>
       <BTab
@@ -163,8 +169,17 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import FrContentDetailsTab from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal/ContentDetailsTab';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 
 const props = defineProps({
+  displayData: {
+    type: Object,
+    default: () => ({}),
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
   grant: {
     type: Object,
     default: () => ({}),

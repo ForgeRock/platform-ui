@@ -10,11 +10,14 @@ import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/moc
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
+import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import { BModal, BButton } from 'bootstrap-vue';
 import ItemDetailsModal from './ItemDetailsModal';
 import i18n from '@/i18n';
 
 mockValidation(['required']);
+
+jest.spyOn(CatalogApi, 'getCatalogObjectById').mockResolvedValue({ data: { _displayData: {} } });
 
 describe('ItemDetailsModal', () => {
   let wrapper;

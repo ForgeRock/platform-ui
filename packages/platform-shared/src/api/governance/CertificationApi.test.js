@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -236,5 +236,25 @@ describe('Governace API', () => {
     await CertificationApi.getCertificationCounts(campaignId, actorId, isAdmin, taskStatus);
 
     expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&taskStatus=${taskStatus}&actorId=${actorId}`);
+  });
+
+  it('getCertificationItemById fetches item with default expandPaths', async () => {
+    const campaignId = 'camp-1';
+    const itemId = 'item-1';
+    const mockResponse = { data: { id: itemId, _displayData: {} } };
+    get.mockReturnValue(Promise.resolve(mockResponse));
+
+    const result = await CertificationApi.getCertificationItemById(campaignId, itemId);
+
+    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}?expandPaths=glossary.idx`);
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('getCertificationItemById omits expandPaths when passed empty array', async () => {
+    get.mockReturnValue(Promise.resolve({}));
+
+    await CertificationApi.getCertificationItemById('camp-1', 'item-1', []);
+
+    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/camp-1/items/item-1`);
   });
 });

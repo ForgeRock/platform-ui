@@ -216,7 +216,7 @@ of the MIT license. See the LICENSE file for details. -->
           <template #cell(application)="{ item }">
             <div class="d-flex justify-content-between align-items-center">
               <BButton
-                @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary)"
+                @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary, item.id)"
                 class="text-dark"
                 variant="link">
                 <BMedia
@@ -465,15 +465,18 @@ of the MIT license. See the LICENSE file for details. -->
     <FrApplicationModal
       v-if="currentApplicationSelectedModal"
       :application="currentApplicationSelectedModal"
+      :display-data="currentApplicationDisplayData"
       :glossary-schema="glossarySchema.application" />
     <FrAccountModal
       v-if="currentAccountSelectedModal"
       :grant="currentAccountSelectedModal" />
     <FrEntitlementModal
+      :display-data="currentEntitlementDisplayData"
       :entitlement="currentEntitlementSelected"
       :glossary-schema="glossarySchema.entitlement"
       :modal-id="getModalId('entitlement')" />
     <FrRoleModal
+      :display-data="currentRoleDisplayData"
       :glossary-schema="glossarySchema.role"
       :role-details="currentRoleSelected"
       :modal-id="getModalId('role')" />
@@ -526,6 +529,7 @@ import {
   forwardAllItems,
   getCertificationCounts,
   getCertificationTasksListByCampaign,
+  getCertificationItemById,
   getEntitlementDetails,
   getUserDetails,
   getUserDetailsByType,
@@ -816,9 +820,12 @@ export default {
       bulkRevokeModalProps,
       confirmActionModalProps: {},
       currentAccountSelectedModal: null,
+      currentApplicationDisplayData: {},
       currentApplicationSelectedModal: null,
       currentCommentsSelectedModal: [],
+      currentEntitlementDisplayData: {},
       currentEntitlementSelected: null,
+      currentRoleDisplayData: {},
       currentFilters: {},
       currentItemId: '',
       currentLineItemActivity: [],
@@ -1860,36 +1867,53 @@ export default {
         this.$bvModal.show('CertificationTaskAccountModal');
       });
     },
-    async openApplicationModal(application, applicationOwners, glossary) {
+    async openApplicationModal(application, applicationOwners, glossary, itemId) {
+      this.currentApplicationDisplayData = {};
       this.currentApplicationSelectedModal = {
         ...application,
         applicationOwners,
         glossary,
       };
-      this.$nextTick(() => {
-        this.$bvModal.show('CertificationTaskApplicationModal');
-      });
+      try {
+        const { data } = await getCertificationItemById(this.campaignId, itemId);
+        this.currentApplicationDisplayData = data?._displayData || {};
+      } catch {
+        // displayData is optional — fall back to per-UUID API calls in GlossaryDisplayForm
+      }
+      this.$bvModal.show('CertificationTaskApplicationModal');
     },
     async openEntitlementModal(item) {
+      this.currentEntitlementDisplayData = {};
       try {
-        const { data } = await getEntitlementDetails(this.campaignId, item.id);
+        const [entitlementRes, certItemRes] = await Promise.all([
+          getEntitlementDetails(this.campaignId, item.id),
+          getCertificationItemById(this.campaignId, item.id),
+        ]);
         this.currentApplicationSelectedModal = item.application;
         this.currentEntitlementSelected = {
-          entitlement: data,
+          entitlement: entitlementRes.data,
           ...item,
         };
+        this.currentEntitlementDisplayData = certItemRes.data?._displayData || {};
         this.$bvModal.show(this.getModalId('entitlement'));
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.certificationTask.entitlementModal.loadErrorMessage'));
       }
     },
-    openRoleModal(item) {
+    async openRoleModal(item) {
+      this.currentRoleDisplayData = {};
       this.currentRoleSelected = {
         role: item.role,
         glossary: item.glossary,
         roleOwner: item.roleOwner,
         applications: item.role?.applications || [],
       };
+      try {
+        const { data } = await getCertificationItemById(this.campaignId, item.id);
+        this.currentRoleDisplayData = data?._displayData || {};
+      } catch {
+        // displayData is optional — fall back to per-UUID API calls in GlossaryDisplayForm
+      }
       this.$bvModal.show(this.getModalId('role'));
     },
     isTruncated(id) {

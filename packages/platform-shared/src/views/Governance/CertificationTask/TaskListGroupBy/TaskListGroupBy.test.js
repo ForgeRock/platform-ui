@@ -519,6 +519,7 @@ describe('Glossary', () => {
         __NAME__: 'Zoran User', _id: '0fcfd73c-6c0a-4ad3-a580-95795af493c5', description: 'Zoran User', id: '0fcfd73c-6c0a-4ad3-a580-95795af493c5', linkQualifier: 'default', mailEnabled: false, metadata: { entityType: '/openidm/reconciliation', created: '2023-04-27T17:51:04.804Z' }, proxyAddresses: [], securityEnabled: true,
       },
     }));
+    jest.spyOn(CertificationApi, 'getCertificationItemById').mockResolvedValue({ data: {} });
     jest.spyOn(CertificationApi, 'certifyItems').mockReturnValue(Promise.resolve());
     jest.spyOn(CertificationApi, 'getCertificationUserFilter').mockReturnValue(Promise.resolve({
       data: [{

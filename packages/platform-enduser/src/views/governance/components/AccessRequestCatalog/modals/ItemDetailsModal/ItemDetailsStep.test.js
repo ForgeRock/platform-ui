@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -210,6 +210,88 @@ describe('ItemDetailsStep', () => {
       await flushPromises();
 
       expect(findByTestId(wrapper, 'glossary-item-singleOrg').text()).toBe('resolved-organization-org1');
+    });
+
+    describe('displayData short-circuit', () => {
+      it('uses displayData to resolve a user ref using givenName + sn without an API call', async () => {
+        const managedResourceSpy = jest.spyOn(ManagedResourceApi, 'getManagedResourceList');
+        const callCountBefore = managedResourceSpy.mock.calls.length;
+
+        wrapper = setup({
+          item: { ...propsData.item, glossary: { singleUser: 'managed/user/id1' } },
+          glossarySchema: [{
+            displayName: 'Single User',
+            name: 'singleUser',
+            type: 'managedObject',
+            managedObjectType: 'openidm/managed/user',
+          }],
+          displayData: { 'managed/user/id1': { id: 'id1', givenName: 'Alice', sn: 'Smith' } },
+        });
+        await flushPromises();
+
+        expect(findByTestId(wrapper, 'glossary-item-singleUser').text()).toBe('Alice Smith');
+        expect(managedResourceSpy.mock.calls.length).toBe(callCountBefore);
+      });
+
+      it('uses displayData to resolve a non-user ref using name without an API call', async () => {
+        const managedResourceSpy = jest.spyOn(ManagedResourceApi, 'getManagedResourceList');
+        const callCountBefore = managedResourceSpy.mock.calls.length;
+
+        wrapper = setup({
+          item: { ...propsData.item, glossary: { singleOrg: 'managed/organization/org1' } },
+          glossarySchema: [{
+            displayName: 'Single Org',
+            name: 'singleOrg',
+            type: 'managedObject',
+            managedObjectType: 'openidm/managed/organization',
+          }],
+          displayData: { 'managed/organization/org1': { id: 'org1', name: 'Demo Org' } },
+        });
+        await flushPromises();
+
+        expect(findByTestId(wrapper, 'glossary-item-singleOrg').text()).toBe('Demo Org');
+        expect(managedResourceSpy.mock.calls.length).toBe(callCountBefore);
+      });
+
+      it('uses displayData to resolve multiple refs without API calls', async () => {
+        const managedResourceSpy = jest.spyOn(ManagedResourceApi, 'getManagedResourceList');
+        const callCountBefore = managedResourceSpy.mock.calls.length;
+
+        wrapper = setup({
+          item: { ...propsData.item, glossary: { multipleRoles: ['managed/role/role1', 'managed/role/role2'] } },
+          glossarySchema: [{
+            displayName: 'Multiple Roles',
+            name: 'multipleRoles',
+            type: 'managedObject',
+            managedObjectType: 'openidm/managed/role',
+            isMultiValue: true,
+          }],
+          displayData: {
+            'managed/role/role1': { id: 'role1', name: 'Admin' },
+            'managed/role/role2': { id: 'role2', name: 'Viewer' },
+          },
+        });
+        await flushPromises();
+
+        expect(findByTestId(wrapper, 'glossary-item-multipleRoles').text()).toBe('Admin, Viewer');
+        expect(managedResourceSpy.mock.calls.length).toBe(callCountBefore);
+      });
+
+      it('falls back to API when displayData does not contain the ref', async () => {
+        wrapper = setup({
+          item: { ...propsData.item, glossary: { singleUser: 'managed/user/id1' } },
+          glossarySchema: [{
+            displayName: 'Single User',
+            name: 'singleUser',
+            type: 'managedObject',
+            managedObjectType: 'openidm/managed/user',
+          }],
+          displayData: {},
+        });
+        await flushPromises();
+
+        expect(findByTestId(wrapper, 'glossary-item-singleUser').text()).toBe('resolved-user-id1');
+      });
     });
 
     it('displays org names for multiple managed orgs', async () => {

@@ -63,6 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <FrGlossaryDisplayForm
           v-if="isVisible.glossary"
+          :display-data="displayData"
           :glossary-schema="glossarySchema"
           :glossary-values="glossaryValues" />
       </BCard>
@@ -120,6 +121,10 @@ export default {
     FrIcon,
   },
   props: {
+    displayData: {
+      type: Object,
+      default: () => ({}),
+    },
     entitlement: {
       type: Object,
       default: () => {},

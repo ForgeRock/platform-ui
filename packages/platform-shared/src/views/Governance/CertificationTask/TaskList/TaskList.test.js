@@ -1557,6 +1557,7 @@ describe('TaskList', () => {
           name: 'test',
         },
       }));
+      CertificationApi.getCertificationItemById.mockResolvedValue({ data: {} });
       const lineItem = {
         id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
         application: {
@@ -1800,6 +1801,7 @@ describe('TaskList', () => {
           name: 'test',
         },
       }));
+      CertificationApi.getCertificationItemById.mockResolvedValue({ data: {} });
       const lineItem = {
         id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
         application: {

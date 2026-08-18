@@ -376,6 +376,53 @@ describe('GlossaryEditForm', () => {
 
       expect(wrapper.find('div[label="Single Role"]').find(multiselectSingle).text()).toContain('IT Analyst');
     });
+
+    it('populates initialData on single managedObject field from displayData', async () => {
+      const wrapper = setup({
+        glossarySchema: userGlossarySchema,
+        'model-value': { singleUser: 'managed/user/test1' },
+        displayData: {
+          'managed/user/test1': { id: 'test1', displayName: 'Alice' },
+        },
+      });
+
+      await flushPromises();
+
+      const govObjectSelect = wrapper.findComponent(FrGovObjectSelect);
+      expect(govObjectSelect.props('property').initialData).toMatchObject({ _id: 'test1', displayName: 'Alice' });
+    });
+
+    it('populates initialData on multi-value managedObject field from displayData', async () => {
+      const wrapper = setup({
+        glossarySchema: userGlossarySchema,
+        'model-value': { multiUser: ['managed/user/test1', 'managed/user/test2'] },
+        displayData: {
+          'managed/user/test1': { id: 'test1', displayName: 'Alice' },
+          'managed/user/test2': { id: 'test2', displayName: 'Bob' },
+        },
+      });
+
+      await flushPromises();
+
+      const govObjectMultiselect = wrapper.findComponent(FrGovObjectMultiselect);
+      const { initialData } = govObjectMultiselect.props('property');
+      expect(initialData).toHaveLength(2);
+      expect(initialData[0]).toMatchObject({ _id: 'test1', displayName: 'Alice' });
+      expect(initialData[1]).toMatchObject({ _id: 'test2', displayName: 'Bob' });
+    });
+
+    it('leaves initialData null when displayData does not contain the ref', async () => {
+      const wrapper = setup({
+        glossarySchema: userGlossarySchema,
+        'model-value': { singleUser: 'managed/user/unknown' },
+        displayData: {},
+      });
+
+      await flushPromises();
+
+      const govObjectSelect = wrapper.findComponent(FrGovObjectSelect);
+      expect(govObjectSelect.props('property').initialData).toBeNull();
+    });
   });
   describe('@actions', () => {
     it('should emit update event on string fields', async () => {

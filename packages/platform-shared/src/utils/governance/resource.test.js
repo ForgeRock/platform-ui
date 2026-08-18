@@ -125,6 +125,7 @@ describe('getGovernanceGrants', () => {
 
   it('displays an error notifcation if API fails', async () => {
     jest.spyOn(CommonsApi, 'getUserGrants').mockRejectedValue('test');
+    jest.spyOn(CommonsApi, 'getGrantById').mockResolvedValue({ data: {} });
     const errorSpy = jest.spyOn(notification, 'showErrorMessage');
 
     getGovernanceGrants('account', 'testId', {});
@@ -134,7 +135,7 @@ describe('getGovernanceGrants', () => {
   });
 
   it('gets my access that match a query string', async () => {
-    const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants').mockReturnValue([]);
+    const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({ data: { result: [], totalCount: 0 } });
     const params = {
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'asc', queryString: 'test',
     };
@@ -143,7 +144,7 @@ describe('getGovernanceGrants', () => {
   });
 
   it('gets my access based on page number', () => {
-    const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants').mockReturnValue([]);
+    const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({ data: { result: [], totalCount: 0 } });
     const params = {
       pageNumber: 1, pageSize: 10, sortBy: 'application.name', sortDir: 'asc',
     };
@@ -152,12 +153,35 @@ describe('getGovernanceGrants', () => {
   });
 
   it('gets my access based on page size', async () => {
-    const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants').mockReturnValue([]);
+    const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({ data: { result: [], totalCount: 0 } });
     const params = {
       pageNumber: 0, pageSize: 20, sortBy: 'application.name', sortDir: 'asc',
     };
     getGovernanceGrants('account', 'testId', params);
     expect(getMyAccess).toBeCalledWith('testId', params);
+  });
+
+  it('returns grants from the API without eagerly fetching _displayData', async () => {
+    const getGrantByIdSpy = jest.spyOn(CommonsApi, 'getGrantById');
+    jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({
+      data: {
+        result: [
+          { id: 'grant-1', application: { name: 'App A' } },
+          { id: 'grant-2', application: { name: 'App B' } },
+        ],
+        totalCount: 2,
+      },
+    });
+
+    const result = await getGovernanceGrants('account', 'testId', {});
+    await flushPromises();
+
+    expect(getGrantByIdSpy).not.toHaveBeenCalled();
+    expect(result.items).toEqual([
+      { id: 'grant-1', application: { name: 'App A' } },
+      { id: 'grant-2', application: { name: 'App B' } },
+    ]);
+    expect(result.totalCount).toBe(2);
   });
 
   it('queries resource', async () => {

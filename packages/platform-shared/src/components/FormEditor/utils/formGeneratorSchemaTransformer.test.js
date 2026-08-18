@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -891,6 +891,97 @@ describe('formGeneratorSchemaTransformer', () => {
     expect(result[0][0].customSlot).toBe('section');
     expect(result[0][0].fields[0][0].type).toBe('string');
     expect(result[0][0].fields[0][0].model).toBe('field1');
+  });
+
+  describe('displayData → initialData population', () => {
+    const baseLayout = { columns: 6, offset: 0 };
+
+    it('populates initialData on a select/objectSelect field from displayData', () => {
+      const schema = [{
+        id: 'row1',
+        fields: [{
+          type: 'select',
+          model: 'owner',
+          label: 'Owner',
+          options: { object: 'user' },
+          layout: baseLayout,
+        }],
+      }];
+      const displayData = { 'managed/user/abc': { id: 'abc', displayName: 'Alice' } };
+      const modelValues = { owner: 'managed/user/abc' };
+
+      const result = transformSchemaToFormGenerator(schema, false, false, null, displayData, modelValues);
+      expect(result[0][0].initialData).toMatchObject({ _id: 'abc', displayName: 'Alice' });
+    });
+
+    it('populates initialData on a multiselect/objectMultiselect field from displayData', () => {
+      const schema = [{
+        id: 'row1',
+        fields: [{
+          type: 'multiselect',
+          model: 'owners',
+          label: 'Owners',
+          options: { object: 'user' },
+          layout: baseLayout,
+        }],
+      }];
+      const displayData = {
+        'managed/user/abc': { id: 'abc', displayName: 'Alice' },
+        'managed/user/def': { id: 'def', displayName: 'Bob' },
+      };
+      const modelValues = { owners: ['managed/user/abc', 'managed/user/def'] };
+
+      const result = transformSchemaToFormGenerator(schema, false, false, null, displayData, modelValues);
+      expect(result[0][0].initialData).toHaveLength(2);
+      expect(result[0][0].initialData[0]).toMatchObject({ _id: 'abc', displayName: 'Alice' });
+      expect(result[0][0].initialData[1]).toMatchObject({ _id: 'def', displayName: 'Bob' });
+    });
+
+    it('omits initialData when displayData does not contain the ref', () => {
+      const schema = [{
+        id: 'row1',
+        fields: [{
+          type: 'select',
+          model: 'owner',
+          label: 'Owner',
+          options: { object: 'user' },
+          layout: baseLayout,
+        }],
+      }];
+      const result = transformSchemaToFormGenerator(schema, false, false, null, {}, { owner: 'managed/user/unknown' });
+      expect(result[0][0].initialData).toBeUndefined();
+    });
+
+    it('omits initialData when displayData is empty', () => {
+      const schema = [{
+        id: 'row1',
+        fields: [{
+          type: 'multiselect',
+          model: 'owners',
+          label: 'Owners',
+          options: { object: 'user' },
+          layout: baseLayout,
+        }],
+      }];
+      const result = transformSchemaToFormGenerator(schema, false, false, null, {}, { owners: ['managed/user/abc'] });
+      expect(result[0][0].initialData).toBeUndefined();
+    });
+
+    it('uses _id from entry if present, otherwise falls back to id', () => {
+      const schema = [{
+        id: 'row1',
+        fields: [{
+          type: 'select',
+          model: 'owner',
+          label: 'Owner',
+          options: { object: 'user' },
+          layout: baseLayout,
+        }],
+      }];
+      const displayData = { 'managed/user/abc': { _id: 'abc', displayName: 'Alice' } };
+      const result = transformSchemaToFormGenerator(schema, false, false, null, displayData, { owner: 'managed/user/abc' });
+      expect(result[0][0].initialData._id).toBe('abc');
+    });
   });
 
   describe('convertRelationshipPropertiesToFormBuilder', () => {
