@@ -48,8 +48,12 @@ of the MIT license. See the LICENSE file for details. -->
               :model="applicationDetails"
               :app-id="applicationDetails.id"
               :is-saving="isSaving"
+              :user-resource-name="userResourceName"
+              :role-resource-name="roleResourceName"
+              :org-resource-name="orgResourceName"
               @update:model="updateModel"
               @update:glossary-model="updateGlossaryModel"
+              @update:glossary-create-flag="setGlossaryCreateFlag"
               @save-app="saveApp" />
             <FrDeletePanel
               v-if="applicationDetails"
@@ -115,8 +119,13 @@ import {
   getApplication,
   updateApplication,
 } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
-import { updateGlossaryAttributesByAppId } from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
+import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import {
+  saveGlossaryAttributesByAppId,
+  updateGlossaryAttributesByAppId,
+} from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import FrApplicationDetailsPanel from '@forgerock/platform-shared/src/components/governance/Applications/ApplicationDetailsPanel';
 import FrAccounts from '@forgerock/platform-shared/src/views/Governance/Accounts/Accounts';
 import FrObjectTypes from '@forgerock/platform-shared/src/components/governance/Applications/ObjectType/ObjectTypes';
@@ -181,8 +190,12 @@ const isLoading = ref(true);
 const isSaving = ref(false);
 const isDeleting = ref(false);
 const glossaryData = ref(null);
+const isGlossaryCreate = ref(false);
 const loadError = ref('');
 const activeTabIndex = ref(Math.max(0, tabs.indexOf(props.tab)));
+const userResourceName = ref('user');
+const roleResourceName = ref('role');
+const orgResourceName = ref('organization');
 
 const logoSource = computed(() => applicationDetails.value?.icon || resolveImage('custom.svg'));
 
@@ -196,13 +209,21 @@ function updateGlossaryModel(data) {
   glossaryData.value = data ?? {};
 }
 
+function setGlossaryCreateFlag(flag) {
+  isGlossaryCreate.value = flag;
+}
+
 async function saveApp() {
   isSaving.value = true;
   try {
     const { metadata, ...appPayload } = applicationDetails.value;
     const savePromises = [updateApplication(props.applicationId, appPayload)];
     if (glossaryData.value !== null) {
-      const glossarySave = updateGlossaryAttributesByAppId(props.applicationId, glossaryData.value);
+      // Reset inside .then() so the flag only clears on success; a failed POST
+      // leaves it true so the next save retries with POST rather than PUT.
+      const glossarySave = isGlossaryCreate.value
+        ? saveGlossaryAttributesByAppId(props.applicationId, glossaryData.value).then(() => { isGlossaryCreate.value = false; })
+        : updateGlossaryAttributesByAppId(props.applicationId, glossaryData.value);
       savePromises.push(glossarySave);
     }
     await Promise.all(savePromises);
@@ -241,8 +262,21 @@ async function loadApplication() {
   }
 }
 
+async function fetchManagedNames() {
+  try {
+    const { data } = await getConfig('managed');
+    const objects = data.objects || [];
+    const find = (type) => objects.find((o) => compareRealmSpecificResourceName(o.name, type))?.name;
+    userResourceName.value = find('user') || 'user';
+    roleResourceName.value = find('role') || 'role';
+    orgResourceName.value = find('organization') || 'organization';
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.application.errorLoadingConfig'));
+  }
+}
+
 onMounted(async () => {
   setBreadcrumb('/applications', i18n.global.t('sideMenu.applications'));
-  await loadApplication();
+  await Promise.all([loadApplication(), fetchManagedNames()]);
 });
 </script>

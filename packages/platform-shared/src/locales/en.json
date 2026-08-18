@@ -1910,7 +1910,8 @@
       }
     },
     "application": {
-      "errorRetrievingApplication": "Error retrieving this application"
+      "errorRetrievingApplication": "Error retrieving this application",
+      "errorLoadingConfig": "There was an error loading the application configuration"
     },
     "applications": {
       "edit": {
