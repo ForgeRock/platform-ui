@@ -1013,6 +1013,13 @@ export default {
           type = this.FrCallbackType.PushChallengeNumber;
         }
 
+        // When "Validate Password" is off in AM, the server returns PasswordCallback instead of
+        // ValidatedCreatePasswordCallback. Promote it so that stage config (e.g. confirmPassword)
+        // is honoured — ValidatedCreatePasswordCallback handles the no-policies path safely.
+        if (type === this.FrCallbackType.PasswordCallback && clonedStage?.ValidatedCreatePasswordCallback?.[0]?.confirmPassword) {
+          type = this.FrCallbackType.ValidatedCreatePasswordCallback;
+        }
+
         // IAM-2936 MetadataCallback is not a callback that is displayed
         if (type === this.FrCallbackType.MetadataCallback) return;
 

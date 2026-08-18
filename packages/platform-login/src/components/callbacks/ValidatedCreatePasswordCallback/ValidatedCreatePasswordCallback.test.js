@@ -46,6 +46,7 @@ describe('ValidatedCreatePasswordCallback', () => {
       callback: {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
+        getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
       step: {
         getCallbackOfType: () => ({
@@ -74,6 +75,7 @@ describe('ValidatedCreatePasswordCallback', () => {
       callback: {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
+        getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
       step: {
         getCallbackOfType: () => ({
@@ -106,6 +108,7 @@ describe('ValidatedCreatePasswordCallback', () => {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
         setPassword: (value) => value,
+        getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
       step: {
         getCallbackOfType: () => ({
@@ -186,6 +189,7 @@ describe('ValidatedCreatePasswordCallback', () => {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
         setPassword: (value) => value,
+        getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
       step: {
         getCallbackOfType: () => ({
@@ -218,6 +222,7 @@ describe('ValidatedCreatePasswordCallback', () => {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
         setPassword: (value) => value,
+        getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
       step: {
         getCallbackOfType: () => ({
@@ -267,6 +272,7 @@ describe('ValidatedCreatePasswordCallback', () => {
         getPrompt: () => 'Password',
         setValidateOnly: (value) => value,
         setPassword: (value) => value,
+        getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
       },
       step: {
         getCallbackOfType: () => ({
@@ -299,6 +305,146 @@ describe('ValidatedCreatePasswordCallback', () => {
     await confirmInput.trigger('blur');
 
     expect(confirmInput.attributes('aria-invalid')).toBe('false');
+  });
+
+  describe('confirm password without validate password (no policies)', () => {
+    function mountNoPolicy(extraProps = {}) {
+      return mountComponent({
+        callback: {
+          getPrompt: () => 'Password',
+          setValidateOnly: jest.fn(),
+          setPassword: jest.fn(),
+          getPolicies: () => ({ policies: [] }),
+          getFailedPolicies: () => [],
+        },
+        step: {
+          getCallbackOfType: () => ({ setInputValue: () => {} }),
+          payload: { authId: 'auth-id' },
+        },
+        realm: 'alpha',
+        ...extraProps,
+      });
+    }
+
+    it('renders the confirm password field when confirmPassword is true and there are no policies', () => {
+      const w = mountNoPolicy({ stage: { confirmPassword: true } });
+      expect(w.find('input[name="login.password.confirmPassword"]').exists()).toBe(true);
+    });
+
+    it('does not render the confirm password field when confirmPassword is false and there are no policies', () => {
+      const w = mountNoPolicy();
+      expect(w.find('input[name="login.password.confirmPassword"]').exists()).toBe(false);
+    });
+
+    it('does not call setValidateOnly when there are no policies', () => {
+      const setValidateOnly = jest.fn();
+      mountComponent({
+        callback: {
+          getPrompt: () => 'Password',
+          setValidateOnly,
+          setPassword: jest.fn(),
+          getPolicies: () => ({ policies: [] }),
+          getFailedPolicies: () => [],
+        },
+        step: {
+          getCallbackOfType: () => ({ setInputValue: () => {} }),
+          payload: { authId: 'auth-id' },
+        },
+        realm: 'alpha',
+      });
+      expect(setValidateOnly).not.toHaveBeenCalled();
+    });
+
+    it('does not make backend round-trips when typing a password with no policies', async () => {
+      const w = mountNoPolicy({ stage: { confirmPassword: true } });
+      const input = w.find('input[name="Password"]');
+      await input.setValue('anyPassword');
+      expect(SDK.FRAuth.next).not.toHaveBeenCalled();
+    });
+
+    it('disables next button until passwords match when confirmPassword is true and no policies', async () => {
+      const w = mountNoPolicy({ stage: { confirmPassword: true } });
+
+      const input = w.find('input[name="Password"]');
+      await input.setValue('MyPassword1');
+
+      const confirmInput = w.find('input[name="login.password.confirmPassword"]');
+      await confirmInput.setValue('different');
+
+      const disableEvents = w.emitted('disable-next-button');
+      const lastEvent = disableEvents[disableEvents.length - 1];
+      expect(lastEvent[0]).toBe(true);
+    });
+
+    it('enables next button when passwords match and there are no policies', async () => {
+      const w = mountNoPolicy({ stage: { confirmPassword: true } });
+
+      const input = w.find('input[name="Password"]');
+      await input.setValue('MyPassword1');
+
+      const confirmInput = w.find('input[name="login.password.confirmPassword"]');
+      await confirmInput.setValue('MyPassword1');
+
+      const disableEvents = w.emitted('disable-next-button');
+      const lastEvent = disableEvents[disableEvents.length - 1];
+      expect(lastEvent[0]).toBe(false);
+    });
+
+    it('next-step-callback resolves immediately when there are no policies', async () => {
+      const w = mountNoPolicy();
+      const nextStepEvent = w.emitted('next-step-callback');
+      expect(nextStepEvent).toBeTruthy();
+      const callback = nextStepEvent[0][0];
+      await expect(callback()).resolves.toBeUndefined();
+    });
+  });
+
+  describe('type-promoted PasswordCallback (setValidateOnly absent)', () => {
+    function mountPromotedCallback(extraProps = {}) {
+      // Simulates Login/index.vue promoting PasswordCallback → ValidatedCreatePasswordCallback
+      // when "Validate Password" is off in AM. The callback is a PasswordCallback SDK instance
+      // with no setValidateOnly method. Before the fix this crashed with TypeError.
+      return mountComponent({
+        callback: {
+          getPrompt: () => 'Password',
+          setPassword: jest.fn(),
+          getPolicies: () => ({ policies: [] }),
+          getFailedPolicies: () => [],
+          // no setValidateOnly — mirrors PasswordCallback SDK instance
+        },
+        step: {
+          getCallbackOfType: () => ({ setInputValue: () => {} }),
+          payload: { authId: 'auth-id' },
+        },
+        realm: 'alpha',
+        overrideInitialPolicies: true,
+        ...extraProps,
+      });
+    }
+
+    it('does not throw and resolves next-step-callback immediately', async () => {
+      const w = mountPromotedCallback();
+
+      expect(w.emitted('disable-next-button')?.[0]?.[0]).toBe(false);
+      const nextStepEvent = w.emitted('next-step-callback');
+      expect(nextStepEvent).toBeTruthy();
+      await expect(nextStepEvent[0][0]()).resolves.toBeUndefined();
+    });
+
+    it('renders the confirm field, disables Next on mount, and re-enables when passwords match', async () => {
+      const w = mountPromotedCallback({ stage: { confirmPassword: true } });
+
+      expect(w.find('input[name="login.password.confirmPassword"]').exists()).toBe(true);
+
+      const disableEvents = w.emitted('disable-next-button');
+      expect(disableEvents[disableEvents.length - 1][0]).toBe(true);
+
+      await w.find('input[name="Password"]').setValue('MyPassword1');
+      await w.find('input[name="login.password.confirmPassword"]').setValue('MyPassword1');
+
+      const latestDisable = w.emitted('disable-next-button');
+      expect(latestDisable[latestDisable.length - 1][0]).toBe(false);
+    });
   });
 
   it('next-step-callback promise should resolve only after validation is fully complete with updated authId', async () => {
@@ -337,7 +483,7 @@ describe('ValidatedCreatePasswordCallback', () => {
         getPrompt: () => 'Password',
         setValidateOnly: jest.fn(),
         setPassword: jest.fn(),
-        getPolicies: () => ({ policies: [] }),
+        getPolicies: () => ({ policies: [{ policyRequirements: ['MIN_LENGTH'] }] }),
         getFailedPolicies: () => [],
       },
       step,

@@ -142,45 +142,60 @@ export default {
     };
   },
   mounted() {
-    // Need to set validateOnly flag to true so that tree does not advance when validating input
-    this.callback.setValidateOnly(true);
-    this.$emit('next-step-callback', () => {
-      this.debounceValidatePassword.flush();
-      return new Promise((resolve) => {
-        /**
-         * We need to ensure that the password validation has finished before we
-         * proceed to the next step. If we don't, the next step will be called
-         * with an old authId and the allowlisting will fail.
-         */
-        const checkValidation = () => {
-          if (!this.isValidating && this.curPass === this.lastPass) {
-            this.callback.setValidateOnly(false);
-            /**
-             * We directly mutate the step object here to ensure that the
-             * next step is called with the correct authId. This is necessary
-             * because the component may be unmounted before the update-auth-id
-             * event is processed by the parent.
-             */
-            if (this.latestAuthId) {
-              // eslint-disable-next-line vue/no-mutating-props
-              this.step.payload.authId = this.latestAuthId;
-            }
-            resolve();
-          } else {
-            setTimeout(checkValidation, 50);
-          }
-        };
-        checkValidation();
-      });
-    });
+    const supportsValidation = typeof this.callback.setValidateOnly === 'function';
+    const hasPolicies = supportsValidation && (this.overrideInitialPolicies || (this.callback.getPolicies()?.policies?.length ?? 0) > 0);
 
-    if (this.overrideInitialPolicies) {
-      this.setPoliciesFromFailures(this.step);
+    if (hasPolicies) {
+      // Need to set validateOnly flag to true so that tree does not advance when validating input
+      this.callback.setValidateOnly(true);
+      this.$emit('next-step-callback', () => {
+        this.debounceValidatePassword.flush();
+        return new Promise((resolve) => {
+          /**
+           * We need to ensure that the password validation has finished before we
+           * proceed to the next step. If we don't, the next step will be called
+           * with an old authId and the allowlisting will fail.
+           */
+          const checkValidation = () => {
+            if (!this.isValidating && this.curPass === this.lastPass) {
+              this.callback.setValidateOnly(false);
+              /**
+               * We directly mutate the step object here to ensure that the
+               * next step is called with the correct authId. This is necessary
+               * because the component may be unmounted before the update-auth-id
+               * event is processed by the parent.
+               */
+              if (this.latestAuthId) {
+                // eslint-disable-next-line vue/no-mutating-props
+                this.step.payload.authId = this.latestAuthId;
+              }
+              resolve();
+            } else {
+              setTimeout(checkValidation, 50);
+            }
+          };
+          checkValidation();
+        });
+      });
+
+      if (this.overrideInitialPolicies) {
+        this.setPoliciesFromFailures(this.step);
+      } else {
+        this.setPolicies(this.callback.getPolicies().policies);
+        const failingPolicies = this.callback.getFailedPolicies();
+        const normalizedFailures = this.normalizePolicies(failingPolicies);
+        this.setFailingPolicies(normalizedFailures);
+      }
     } else {
-      this.setPolicies(this.callback.getPolicies().policies);
-      const failingPolicies = this.callback.getFailedPolicies();
-      const normalizedFailures = this.normalizePolicies(failingPolicies);
-      this.setFailingPolicies(normalizedFailures);
+      // No policies to validate (e.g. "Validate Password" is off in AM).
+      // Skip validateOnly round-trips entirely — they would fail or reload the page.
+      // Resolve immediately so the tree can advance once the user clicks Next.
+      this.$emit('next-step-callback', () => Promise.resolve());
+      if (this.confirmPassword) {
+        this.checkConfirmPasswordMatch();
+      } else {
+        this.$emit('disable-next-button', false);
+      }
     }
   },
   methods: {
@@ -290,7 +305,14 @@ export default {
         this.setFailingPolicies(this.policies);
         return;
       }
-      this.debounceValidatePassword(value);
+
+      if (this.policies.length > 0) {
+        this.debounceValidatePassword(value);
+      } else if (this.confirmPassword) {
+        this.checkConfirmPasswordMatch();
+      } else {
+        this.$emit('disable-next-button', false);
+      }
     },
     /**
      * Sends input to backend to be validated and updates the failing policies.
