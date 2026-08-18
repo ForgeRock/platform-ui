@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,20 +16,19 @@ import encodeQueryString from '../utils/encodeQueryString';
 import { generateIdmApi } from './BaseApi';
 import { getConfig } from './ConfigApi';
 
-const setSchemaProperties = (schema) => {
-  if (has(schema, 'properties') && !isEmpty(schema.properties)) {
-    schema.order.forEach((propName) => {
-      const prop = schema.properties[propName];
-
-      if (prop) {
-        // If the property is nullable type will be an array so we need to grab the first array item that is not null to determine property type
-        if (isArray(prop.type)) {
-          prop.isNullable = true;
-          [prop.type] = reject(prop.type, 'null');
-        }
-      }
-    });
-  }
+export const setSchemaProperties = (schema) => {
+  if (!has(schema, 'properties') || isEmpty(schema.properties)) return;
+  const order = schema.order || Object.keys(schema.properties);
+  order.forEach((propName) => {
+    const prop = schema.properties[propName];
+    if (prop && isArray(prop.type)) {
+      // stored as metadata so consumers can distinguish nullable from non-nullable
+      // without re-inspecting the original type array (which is flattened below)
+      prop.isNullable = true;
+      const nonNullTypes = reject(prop.type, (t) => t === 'null');
+      prop.type = nonNullTypes.length ? nonNullTypes[0] : prop.type[0];
+    }
+  });
 };
 
 /**
@@ -49,6 +48,9 @@ export function getSchema(obj, requestOverride) {
       if (response.data.connectorRef) {
         schema.connectorRef = response.data.connectorRef;
       }
+      // safe to call unconditionally: setSchemaProperties is a no-op when no
+      // property has an array type, so connector schemas without nullable types are unaffected
+      setSchemaProperties(schema);
       return {
         data: schema,
       };
