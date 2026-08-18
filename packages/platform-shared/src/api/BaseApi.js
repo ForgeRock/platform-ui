@@ -10,6 +10,19 @@ import store from '@/store';
 import getFQDN from '../utils/getFQDN';
 
 /**
+ * Determines whether the current user's access is governed by evaluated UI
+ * policies (e.g. Tenant Auditor or Brand Admin in the admin package). Such
+ * users are expected to hit 403s on resources their policy does not cover,
+ * so the API interceptors must not bounce them to the Forbidden page and
+ * callers can use this to suppress error UI for those expected failures.
+ * Evaluated per call because userPermissions are set at runtime.
+ * @returns {Boolean} whether the current user is policy-evaluated
+ */
+export function isPolicyEvaluatedUser() {
+  return store.state.SharedStore?.currentPackage === 'admin' && !!store.state.userPermissions;
+}
+
+/**
   * Generates an IDM Axios API instance
   * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
   * on extra information or override default properties https://github.com/axios/axios#request-config
@@ -48,7 +61,7 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
     // in that scenario. This check should be removed when a workaround has been found.
     const { pathname } = new URL(getFQDN(error.response?.config.url));
     const { currentPackage } = store.state.SharedStore;
-    if (pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys' && currentPackage !== 'enduser') {
+    if (pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys' && currentPackage !== 'enduser' && !isPolicyEvaluatedUser()) {
       if (routeToForbidden && error.response?.status === 403) {
         window.location.hash = '#/forbidden';
         window.location.replace(window.location);
@@ -98,7 +111,7 @@ export function generateAmApi(resource, requestOverride = {}, routeToForbidden =
   const request = axios.create(requestDetails);
 
   request.interceptors.response.use(null, (error) => {
-    if (routeToForbidden && error?.response?.status === 403) {
+    if (routeToForbidden && error?.response?.status === 403 && !isPolicyEvaluatedUser()) {
       window.location.hash = '#/forbidden';
       window.location.replace(window.location);
     }

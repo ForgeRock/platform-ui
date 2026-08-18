@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+width: 550px;<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -48,7 +48,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
-import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BButton,
@@ -76,21 +75,13 @@ export default {
     BContainer,
     BImg,
   },
-  computed: {
-    ...mapState(useUserStore, ['amAdmin', 'realmAdmin']),
-  },
   methods: {
     redirectToDashboard() {
-      // When a user selects to go 'back to Dashboard' they are directed/redirected to the correct 'package' Dashboard, according to what type of user they are.
-      if ((this.$store.state.SharedStore.currentPackage === 'admin') && (!this.amAdmin && !this.realmAdmin)) {
-        if (this.$store.state.defaultRoute) {
-          this.$router.push({ name: this.$store.state.defaultRoute?.name });
-          return;
-        }
-        window.location.href = this.$store.state.enduserURL;
-      } else {
-        this.$router.push({ name: this.$store.state.defaultRoute?.name || 'Dashboard' });
-      }
+      // 'Return to Dashboard' always stays inside the current admin app.
+      // Policy-evaluated admins (e.g. Tenant Auditor, Brand Admin) may have no
+      // defaultRoute recorded; they are still admin users, so they should never
+      // be sent to the end-user portal.
+      this.$router.push({ name: this.$store.state.defaultRoute?.name || 'Dashboard' });
     },
   },
   mixins: [LoginMixin],
