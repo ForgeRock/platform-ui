@@ -8,6 +8,7 @@
 import { shallowMount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as ThemeApi from '@forgerock/platform-shared/src/api/ThemeApi';
+import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import i18n from '@/i18n';
 import App from '@/App';
 
@@ -37,6 +38,10 @@ describe('App.vue', () => {
           RouterLink: true,
           RouterView: true,
           Notifications: true,
+          ThemeInjector: {
+            name: 'ThemeInjector',
+            template: '<div id="theme-injector" />',
+          },
         },
       },
     });
@@ -153,14 +158,115 @@ describe('App.vue', () => {
       });
       it('sets themeLoading to false after attempting to set up theme', async () => {
         const wrapper = shallowMountComponent();
-        // setting themeLoading to true to test that it gets set to false after setupTheme is called
-        wrapper.vm.themeLoading = true;
+        // Set the store value directly because themeLoading is exposed as a readonly computed.
+        const themeStore = useThemeStore();
+        themeStore.themeLoading = true;
         await flushPromises();
 
         await wrapper.vm.setupTheme('/testRealm', null, null);
         await flushPromises();
 
         expect(wrapper.vm.themeLoading).toBe(false);
+      });
+    });
+
+    describe('SSO callback suppression behavior', () => {
+      it('does not render ThemeInjector before the initial theme setup completes', () => {
+        const wrapper = shallowMountComponent();
+
+        expect(wrapper.vm.themeLoading).toBe(true);
+        expect(wrapper.vm.themeReady).toBe(false);
+        expect(wrapper.findComponent({ name: 'ThemeInjector' }).exists()).toBe(false);
+      });
+
+      it('renders ThemeInjector after the initial theme setup completes', async () => {
+        const wrapper = shallowMountComponent();
+
+        await wrapper.vm.setupTheme('/testRealm', null, null);
+        await flushPromises();
+
+        expect(wrapper.vm.themeReady).toBe(true);
+        expect(wrapper.findComponent({ name: 'ThemeInjector' }).exists()).toBe(true);
+        expect(wrapper.find('#theme-injector').exists()).toBe(true);
+      });
+
+      it('keeps ThemeInjector mounted during subsequent theme loading', async () => {
+        const wrapper = shallowMountComponent();
+        const themeStore = useThemeStore();
+
+        await wrapper.vm.setupTheme('/testRealm', null, null);
+        await flushPromises();
+        expect(wrapper.find('#theme-injector').exists()).toBe(true);
+
+        // nextStep sets themeLoading to true for subsequent journey steps.
+        themeStore.themeLoading = true;
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.themeReady).toBe(true);
+        expect(wrapper.find('#theme-injector').exists()).toBe(true);
+      });
+
+      it('setupTheme success path: hideAppOnTransition is false after themeLoading is cleared', async () => {
+        ThemeApi.getThemes.mockReturnValue(Promise.resolve({
+          data: {
+            result: [
+              {
+                _id: 'defaultThemeId',
+                name: 'defaultTheme',
+                isDefault: true,
+                primaryColor: '#aabbcc',
+              },
+            ],
+          },
+        }));
+        const wrapper = shallowMountComponent();
+        wrapper.vm.hideAppOnTransition = true;
+        await flushPromises();
+
+        await wrapper.vm.setupTheme('/testRealm', null, null);
+        await flushPromises();
+
+        expect(wrapper.vm.themeLoading).toBe(false);
+        expect(wrapper.vm.themeReady).toBe(true);
+        expect(wrapper.find('#theme-injector').exists()).toBe(true);
+        expect(wrapper.vm.hideAppOnTransition).toBe(false);
+      });
+
+      it('keeps the app usable when the theme API request fails', async () => {
+        ThemeApi.getThemes.mockReturnValue(Promise.reject(new Error('API error')));
+        const wrapper = shallowMountComponent();
+
+        await wrapper.vm.setupTheme('/testRealm', null, null);
+        await flushPromises();
+
+        expect(wrapper.vm.themeLoading).toBe(false);
+        expect(wrapper.vm.themeReady).toBe(true);
+        expect(wrapper.vm.hideAppOnTransition).toBe(false);
+      });
+
+      it('setupTheme catch path clears loading and restores the fallback logo', async () => {
+        localStorage.clear();
+        const wrapper = shallowMountComponent();
+        wrapper.vm.hideAppOnTransition = true;
+        wrapper.vm.loadTheme = jest.fn().mockRejectedValue(new Error('Theme setup error'));
+
+        await wrapper.vm.setupTheme('/testRealm', null, null);
+
+        expect(wrapper.vm.themeLoading).toBe(false);
+        expect(wrapper.vm.themeReady).toBe(true);
+        expect(wrapper.vm.hideAppOnTransition).toBe(false);
+        expect(wrapper.vm.localizedLogo).toBe('images/ping-logo-square-color.svg');
+      });
+
+      it('FraaS root-realm path: loadStaticTheme sets themeLoading to false and app becomes visible', async () => {
+        const wrapper = shallowMountComponent({}, { isFraas: true });
+        wrapper.vm.hideAppOnTransition = true;
+
+        await wrapper.vm.setupTheme('root', null, null);
+        await flushPromises();
+
+        expect(wrapper.vm.themeLoading).toBe(false);
+        expect(wrapper.vm.hideAppOnTransition).toBe(false);
       });
     });
   });

@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :class="{ invisible: hideAppOnTransition }">
     <ThemeInjector
       :theme="theme"
-      v-if="validTheme" />
+      v-if="themeReady" />
     <div
       id="appContentWrapper"
       class="h-100">
@@ -76,7 +76,6 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import { removeThemeIdFromLocalStorage, rewriteThemeCdnUrl, rewriteThemeCdnUrlsInHtml } from '@forgerock/platform-shared/src/utils/themeUtils';
-import { computed } from 'vue';
 import i18n from './i18n';
 import './scss/main.scss';
 
@@ -101,8 +100,6 @@ export default {
       themeLoading,
     } = useTheme();
 
-    const validTheme = computed(() => theme.value !== null && theme.value !== undefined && Object.keys(theme.value).length > 0);
-
     return {
       setThemeLoading,
       loadStaticTheme,
@@ -111,13 +108,13 @@ export default {
       localizedFavicon,
       theme,
       themeLoading,
-      validTheme,
     };
   },
   data() {
     return {
       buildNumber: process.env.VUE_APP_BUILD_NUMBER,
       hideAppOnTransition: false,
+      themeReady: false,
       localizedFooter: '',
       localizedHeader: '',
       localizedJustifiedContent: '',
@@ -196,6 +193,9 @@ export default {
       } finally {
         // Fallback clear themeLoading in case of any errors to prevent spinner from showing indefinitely
         this.setThemeLoading(false);
+        this.themeReady = true;
+        // ThemeInjector mounts and #app becomes visible in the same Vue render flush, so the
+        // browser paints once with the correct theme already in the DOM.
         this.hideAppOnTransition = false;
       }
     },
