@@ -3147,6 +3147,7 @@
       "pending": "Pending",
       "staging": "Staged",
       "suspend": "Suspended",
+      "suspended": "Suspended",
       "overdue": "Overdue"
     },
     "templates": {

@@ -174,6 +174,64 @@ describe('RequestToolbar', () => {
         }],
       });
     });
+
+    it('filters for a single status passed as an array', () => {
+      expect(getRequestFilter({}, ['complete'])).toEqual({
+        operator: 'AND',
+        operand: [{
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'decision.status',
+            targetValue: 'complete',
+          },
+        }],
+      });
+    });
+
+    it('filters for multiple statuses using OR', () => {
+      expect(getRequestFilter({}, ['in-progress', 'complete'])).toEqual({
+        operator: 'AND',
+        operand: [{
+          operator: 'OR',
+          operand: [
+            {
+              operator: 'EQUALS',
+              operand: {
+                targetName: 'decision.status',
+                targetValue: 'in-progress',
+              },
+            },
+            {
+              operator: 'EQUALS',
+              operand: {
+                targetName: 'decision.status',
+                targetValue: 'complete',
+              },
+            },
+          ],
+        }],
+      });
+    });
+
+    it('filters for draft status', () => {
+      expect(getRequestFilter({}, ['draft'])).toEqual({
+        operator: 'AND',
+        operand: [{
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'request.common.isDraft',
+            targetValue: true,
+          },
+        }],
+      });
+    });
+
+    it('returns no status filter when statuses array is empty', () => {
+      expect(getRequestFilter({}, [])).toEqual({
+        operator: 'AND',
+        operand: [],
+      });
+    });
   });
 
   describe('getStatusText', () => {
@@ -741,13 +799,13 @@ describe('useRequestTypeOptions', () => {
 
 describe('getAccessFilterConfig requestType field', () => {
   const components = {
-    BFormRadioGroup: {},
+    BFormCheckboxGroup: {},
     FrPriorityFilter: {},
     FrSelectInput: {},
     FrField: {},
   };
   const filterData = {
-    status: { value: 'in-progress' },
+    status: { value: ['in-progress'] },
     priorities: {
       value: {
         high: true, medium: true, low: true, none: true,

@@ -85,9 +85,9 @@ of the MIT license. See the LICENSE file for details. -->
               </template>
               <template #actions="{ item }">
                 <FrRequestActionsCell
-                  v-if="status === 'pending'"
+                  v-if="!['complete', 'cancelled'].includes(item.rawData.decision?.status)"
                   :allow-self-approval="allowSelfApproval"
-                  :status="status"
+                  :status="item.rawData.decision?.status || 'pending'"
                   :item="item"
                   :type="detailTypes.APPROVAL"
                   @action="handleAction($event, item)" />
@@ -124,7 +124,7 @@ import {
   BButton,
   BButtonToolbar,
   BBadge,
-  BFormRadioGroup,
+  BFormCheckboxGroup,
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
 import { mapState } from 'pinia';
@@ -138,6 +138,7 @@ import { getIgaAccessRequest, getFilterSchema } from '@forgerock/platform-shared
 import {
   detailTypes,
   getAccessFilterConfig,
+  getActorStatus,
   getInitialRequestFilterData,
   getNumFilters,
   getRequestFilter,
@@ -196,7 +197,7 @@ export default {
     const filterData = getInitialRequestFilterData(statusOptions[0].value);
     const accessFilter = getAccessFilterConfig(
       {
-        BFormRadioGroup,
+        BFormCheckboxGroup,
         FrPriorityFilter,
         FrSelectInput,
         FrField,
@@ -232,7 +233,7 @@ export default {
       sortDir: 'desc',
       sortField: 'date',
       sortKeys: 'date',
-      status: 'pending',
+      status: ['pending'],
       statusOptions,
       totalCount: 0,
     };
@@ -269,7 +270,7 @@ export default {
           requester,
           user,
         } = this.filterData;
-        this.status = statusField.value;
+        this.status = Array.isArray(statusField.value) ? statusField.value : [statusField.value];
         this.filter = {
           priorities: priorities.value,
           requestType: requestType.value !== 'all' ? requestType.value : null,
@@ -340,6 +341,13 @@ export default {
      * @param {boolean} loadFromFilter If true, indicates the data is being loaded from a filter change.
      */
     async loadRequests(goToFirstPage, loadFromFilter) {
+      if (this.status.length === 0) {
+        this.accessRequests = [];
+        this.totalCount = 0;
+        this.isLoading = false;
+        return;
+      }
+
       this.isLoading = true;
 
       if (goToFirstPage) this.currentPage = 1;
@@ -350,7 +358,7 @@ export default {
         _pageSize: this.pageSize,
         _sortKeys: sortKeysMap[this.sortKeys],
         _sortDir: this.sortDir,
-        actorStatus: this.status === 'pending' ? 'active' : 'inactive',
+        actorStatus: getActorStatus(this.status),
       };
 
       if (this.sortKeys === 'date') params._sortType = 'date';
@@ -392,7 +400,9 @@ export default {
      * @param {Object} item - The item to view.
      */
     viewDetails(item) {
-      this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id, status: this.status === 'pending' ? 'active' : this.status } });
+      const itemStatus = item.rawData.decision?.status;
+      const routeStatus = itemStatus === 'pending' || !itemStatus ? 'active' : itemStatus;
+      this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id, status: routeStatus } });
     },
     /**
      * Handles filtering requests as well as updates to pagination

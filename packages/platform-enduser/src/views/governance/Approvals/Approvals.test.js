@@ -348,7 +348,7 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    wrapper.vm.filterData.status.value = 'complete';
+    wrapper.vm.filterData.status.value = ['complete'];
     // flush the debounced watcher (300ms)
     await new Promise((resolve) => setTimeout(resolve, 350));
     await flushPromises();

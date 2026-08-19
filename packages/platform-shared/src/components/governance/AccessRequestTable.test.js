@@ -149,7 +149,7 @@ describe('AccessRequestTable', () => {
     it('uses default in-progress status when no storageKey is provided', async () => {
       const { wrapper } = setup();
       await flushPromises();
-      expect(wrapper.vm.status).toBe('in-progress');
+      expect(wrapper.vm.status).toEqual(['in-progress']);
     });
 
     it('hydrates state from sessionStorage when storageKey is provided', async () => {
@@ -178,7 +178,7 @@ describe('AccessRequestTable', () => {
       const { wrapper } = setup({ storageKey: 'test.requests' });
       await flushPromises();
 
-      expect(wrapper.vm.status).toBe('complete');
+      expect(wrapper.vm.status).toEqual(['complete']);
       expect(wrapper.vm.currentPage).toBe(3);
       expect(wrapper.vm.pageSize).toBe(25);
       expect(wrapper.vm.sortDir).toBe('asc');
@@ -191,7 +191,7 @@ describe('AccessRequestTable', () => {
       sessionStorage.setItem('test.requests', '{not valid json');
       const { wrapper } = setup({ storageKey: 'test.requests' });
       await flushPromises();
-      expect(wrapper.vm.status).toBe('in-progress');
+      expect(wrapper.vm.status).toEqual(['in-progress']);
       expect(wrapper.vm.currentPage).toBe(1);
     });
 
@@ -207,7 +207,7 @@ describe('AccessRequestTable', () => {
 
       const stored = JSON.parse(sessionStorage.getItem('test.requests'));
       expect(stored.filterData.status.value).toBe('complete');
-      expect(stored.status).toBe('complete');
+      expect(stored.status).toEqual(['complete']);
       expect(stored.currentPage).toBe(1);
       expect(stored.pageSize).toBe(10);
       expect(stored.sortDir).toBe('desc');
@@ -218,7 +218,7 @@ describe('AccessRequestTable', () => {
       const { wrapper } = setup({ storageKey: 'test.requests' });
       await flushPromises();
 
-      expect(wrapper.vm.status).toBe('in-progress');
+      expect(wrapper.vm.status).toEqual(['in-progress']);
       expect(wrapper.vm.currentPage).toBe(1);
       expect(wrapper.vm.pageSize).toBe(10);
       expect(wrapper.vm.sortDir).toBe('desc');
@@ -250,7 +250,7 @@ describe('AccessRequestTable', () => {
       await flushPromises();
 
       // status and currentPage would be hydrated from storage if the read was not skipped
-      expect(wrapper.vm.status).toBe('in-progress');
+      expect(wrapper.vm.status).toEqual(['in-progress']);
       expect(wrapper.vm.currentPage).toBe(1);
 
       wrapper.vm.filterData.status.value = 'cancelled';

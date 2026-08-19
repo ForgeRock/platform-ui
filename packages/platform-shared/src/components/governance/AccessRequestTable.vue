@@ -79,10 +79,10 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
             <template #actions="{ item }">
               <FrRequestActionsCell
-                v-if="status === 'in-progress' || status === 'suspended'"
+                v-if="item.rawData.decision?.status === 'in-progress' || item.rawData.decision?.status === 'suspended'"
                 class="mr-3"
                 :item="item"
-                :status="status"
+                :status="item.rawData.decision?.status"
                 :type="props.isAdmin ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
                 @action="handleAction($event, item)" />
             </template>
@@ -116,7 +116,7 @@ import {
   BButton,
   BBadge,
   BButtonToolbar,
-  BFormRadioGroup,
+  BFormCheckboxGroup,
 } from 'bootstrap-vue';
 import {
   computed, getCurrentInstance, nextTick, onMounted, ref, watch,
@@ -215,7 +215,8 @@ const resumeDate = ref(null);
 const sortDir = ref(storedState.sortDir ?? 'desc');
 const sortField = ref(storedState.sortField ?? 'date');
 const sortKeys = ref(storedState.sortKeys ?? 'date');
-const status = ref(storedState.status ?? 'in-progress');
+const rawStoredStatus = storedState.status ?? ['in-progress'];
+const status = ref(Array.isArray(rawStoredStatus) ? rawStoredStatus : [rawStoredStatus]);
 const isSaving = ref(false);
 const showFilters = ref(false);
 const filterPanelId = `access-request-filter-panel-${getCurrentInstance().uid}`;
@@ -253,7 +254,7 @@ const filterData = ref(storedState.filterData ?? getInitialRequestFilterData(sta
 const numFilters = computed(() => getNumFilters(filterData.value));
 const accessFilter = ref(getAccessFilterConfig(
   {
-    BFormRadioGroup,
+    BFormCheckboxGroup,
     FrPriorityFilter,
     FrSelectInput,
     FrField,
@@ -269,6 +270,7 @@ const accessFilter = ref(getAccessFilterConfig(
  * Get current users access requests based on query params and target filter
  */
 async function loadRequests(goToFirstPage) {
+  if (status.value.length === 0) return;
   if (goToFirstPage) currentPage.value = 1;
   const payload = getRequestFilter(filter.value, status.value);
   const params = {
@@ -277,7 +279,7 @@ async function loadRequests(goToFirstPage) {
     sortKeys: sortKeysMap[sortKeys.value],
     sortDir: sortDir.value,
   };
-  if (status.value === 'draft') {
+  if (status.value.length === 1 && status.value[0] === 'draft') {
     params.sortKeys = 'metadata.modifiedDate';
   } else if (sortKeys.value === 'date') {
     params.sortType = 'date';
@@ -298,7 +300,7 @@ const syncFilterDataAndReload = debounce(() => {
     requester,
     user,
   } = filterData.value;
-  status.value = statusField.value;
+  status.value = Array.isArray(statusField.value) ? statusField.value : [statusField.value];
   filter.value = {
     priorities: priorities.value,
     requestType: requestType.value !== 'all' ? requestType.value : null,

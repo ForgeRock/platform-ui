@@ -79,7 +79,9 @@ of the MIT license. See the LICENSE file for details. -->
         </small>
       </template>
       <template #cell(status)="{ item }">
-        <div class="d-flex align-items-center">
+        <div
+          v-if="item.rawData.decision?.status === 'complete' || (!item.rawData.decision?.status && isExclusivelyComplete())"
+          class="d-flex align-items-center">
           <FrIcon
             v-if="item.rawData.decision?.decision === 'approved'"
             icon-class="text-success mr-1"
@@ -97,6 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
             :name="outcomeDisplay(item.rawData.decision?.outcome).icon" />
           <span>{{ $t(outcomeDisplay(item.rawData.decision?.outcome).labelKey) }}</span>
         </div>
+        <span v-else>{{ getStatusLabel(item.rawData.decision?.status) }}</span>
       </template>
       <template #cell(date)="{ item }">
         <small class="text-muted">
@@ -147,7 +150,7 @@ const prop = defineProps({
     default: false,
   },
   requestStatus: {
-    type: String,
+    type: [String, Array],
     default: '',
   },
   requests: {
@@ -184,8 +187,25 @@ function outcomeDisplay(outcome) {
 
 const items = ref([]);
 const isAutoIdEnabled = computed(() => prop.autoIdSettings?.enableAutoId);
+
+function hasStatus(status) {
+  const rs = prop.requestStatus;
+  return Array.isArray(rs) ? rs.includes(status) : rs === status;
+}
+
+function isExclusivelyComplete() {
+  const rs = prop.requestStatus;
+  if (Array.isArray(rs)) return rs.length === 1 && rs[0] === 'complete';
+  return rs === 'complete';
+}
+
+function getStatusLabel(decisionStatus) {
+  if (!decisionStatus) return '';
+  return i18n.global.t(`governance.status.${decisionStatus}`);
+}
+
 const fields = computed(() => {
-  const isComplete = prop.requestStatus === 'complete';
+  const isComplete = hasStatus('complete');
   const fieldList = [
     {
       key: 'details',
@@ -211,21 +231,31 @@ const fields = computed(() => {
     });
   }
 
-  if (prop.requestStatus === 'suspended') {
+  if (hasStatus('suspended')) {
     fieldList.splice(1, 0, {
       key: 'resumeDate',
       label: i18n.global.t('governance.accessRequest.resumeDate'),
     });
   }
 
-  if (prop.requestStatus === 'draft') {
-    fieldList.splice(1, 1, {
-      key: 'createdDate',
-      label: i18n.global.t('common.created'),
-    });
+  if (hasStatus('draft')) {
+    const dateIdx = fieldList.findIndex((f) => f.key === 'date');
+    if (dateIdx !== -1) {
+      fieldList.splice(dateIdx, 1, {
+        key: 'createdDate',
+        label: i18n.global.t('common.created'),
+      });
+    }
   }
 
-  if (isComplete) {
+  let statusCount;
+  if (Array.isArray(prop.requestStatus)) {
+    statusCount = prop.requestStatus.length;
+  } else {
+    statusCount = prop.requestStatus ? 1 : 0;
+  }
+  const showStatusColumn = isComplete || statusCount > 1;
+  if (showStatusColumn) {
     fieldList.splice(1, 0, {
       key: 'status',
       label: i18n.global.t('common.status'),

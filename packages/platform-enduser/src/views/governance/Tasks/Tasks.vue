@@ -73,9 +73,9 @@ of the MIT license. See the LICENSE file for details. -->
               </template>
               <template #actions="{ item }">
                 <FrRequestActionsCell
-                  v-if="status === 'pending'"
+                  v-if="!['complete', 'cancelled'].includes(item.rawData.decision?.status)"
                   :item="item"
-                  :status="status"
+                  :status="item.rawData.decision?.status || 'pending'"
                   :type="detailTypes.FULFILLMENT"
                   @action="handleAction($event, item)" />
               </template>
@@ -110,7 +110,7 @@ import {
   BCard,
   BButtonToolbar,
   BButton,
-  BFormRadioGroup,
+  BFormCheckboxGroup,
 } from 'bootstrap-vue';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
@@ -128,6 +128,7 @@ import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/govern
 // import FrTaskFilter from './TaskFilter';
 import {
   detailTypes,
+  getActorStatus,
   getInitialTaskFilterData,
   getNumFilters,
   getTaskFilterConfig,
@@ -159,7 +160,7 @@ const modalType = ref('');
 const pageSize = ref(10);
 const sortDir = ref('desc');
 const sortKeys = ref('date');
-const status = ref('pending');
+const status = ref(['pending']);
 const totalCount = ref(0);
 const showFilters = ref(false);
 
@@ -181,7 +182,7 @@ const sortField = ref('date');
 const filterData = ref(getInitialTaskFilterData(statusOptions[0].value));
 const numFilters = computed(() => getNumFilters(filterData.value));
 const accessFilter = ref(getTaskFilterConfig(
-  { BFormRadioGroup, FrPriorityFilter, FrField },
+  { BFormCheckboxGroup, FrPriorityFilter, FrField },
   { statusOptions, filterData: filterData.value },
 ));
 
@@ -206,6 +207,12 @@ async function updateBadge() {
  * @param {boolean} goToFirstPage - A flag indicating whether to navigate to the first page after loading tasks.
  */
 async function loadTasks(goToFirstPage) {
+  if (status.value.length === 0) {
+    fulfillmentTasks.value = [];
+    totalCount.value = 0;
+    return;
+  }
+
   isLoading.value = true;
 
   if (goToFirstPage) currentPage.value = 1;
@@ -216,7 +223,7 @@ async function loadTasks(goToFirstPage) {
     _pageSize: pageSize.value,
     _sortKeys: sortKeysMap[sortKeys.value],
     _sortDir: sortDir.value,
-    actorStatus: status.value === 'pending' ? 'active' : 'inactive',
+    actorStatus: getActorStatus(status.value),
   };
   if (sortKeys.value === 'date') params._sortType = 'date';
 
@@ -239,7 +246,7 @@ const syncFilterDataAndReload = debounce(() => {
   const {
     status: statusField, priorities, query, assignee,
   } = filterData.value;
-  status.value = statusField.value;
+  status.value = Array.isArray(statusField.value) ? statusField.value : [statusField.value];
   filter.value = {
     priorities: priorities.value,
     query: query.value || null,

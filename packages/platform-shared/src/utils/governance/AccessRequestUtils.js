@@ -185,7 +185,14 @@ export const sortByOptions = [
   },
 ];
 
-export function getRequestFilter(filter, status) {
+function getStatusFilter(status) {
+  if (status === 'draft') {
+    return getBasicFilter('EQUALS', 'request.common.isDraft', true);
+  }
+  return getBasicFilter('EQUALS', 'decision.status', status);
+}
+
+export function getRequestFilter(filter, statuses) {
   const allFilters = [];
 
   if (filter.query) {
@@ -228,26 +235,21 @@ export function getRequestFilter(filter, status) {
 
   // status for requests is handled in the filter
   // status for approvals is handled in query param
-  if (status) {
-    switch (status) {
-      case 'in-progress':
-        allFilters.push(getBasicFilter('EQUALS', 'decision.status', status));
-        break;
-      case 'draft':
-        allFilters.push(getBasicFilter('EQUALS', 'request.common.isDraft', true));
-        break;
-      case 'suspended':
-        allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'suspended'));
-        break;
-      case 'cancelled':
-        allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'cancelled'));
-        break;
-      case 'complete':
-        allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'complete'));
-        break;
-      default:
-        break;
-    }
+  let statusArray;
+  if (Array.isArray(statuses)) {
+    statusArray = statuses;
+  } else if (statuses) {
+    statusArray = [statuses];
+  } else {
+    statusArray = [];
+  }
+  if (statusArray.length === 1) {
+    allFilters.push(getStatusFilter(statusArray[0]));
+  } else if (statusArray.length > 1) {
+    allFilters.push({
+      operator: 'OR',
+      operand: statusArray.map(getStatusFilter),
+    });
   }
 
   return {
@@ -258,6 +260,21 @@ export function getRequestFilter(filter, status) {
 
 export function getStatusText(statusOptions, status) {
   return statusOptions.find((option) => option.value === status)?.text;
+}
+
+/**
+ * Maps an array of selected statuses to an actorStatus query param value.
+ * Returns 'active' for pending-only, 'inactive' for complete-only, undefined for mixed or empty.
+ * @param {string[]} statuses
+ * @param {string} [pendingValue='pending'] - the status value that maps to actorStatus 'active'
+ * @returns {string|undefined}
+ */
+export function getActorStatus(statuses, pendingValue = 'pending') {
+  const hasPending = statuses.includes(pendingValue);
+  const hasOther = statuses.some((s) => s !== pendingValue);
+  if (hasPending && !hasOther) return 'active';
+  if (!hasPending && hasOther) return 'inactive';
+  return undefined;
 }
 /**
  * Get the base object type of the access request
@@ -591,7 +608,7 @@ export function getRequestTypeOptions() {
 export function getInitialRequestFilterData(defaultStatus) {
   return {
     status: {
-      value: defaultStatus,
+      value: Array.isArray(defaultStatus) ? defaultStatus : [defaultStatus],
     },
     priorities: {
       value: {
@@ -627,7 +644,18 @@ export function getNumFilters(filterData) {
   const {
     status, priorities, requestType, query,
   } = filterData;
-  if (status?.value && status.value !== 'in-progress') count += 1;
+  if (status?.value) {
+    let statusArr;
+    if (Array.isArray(status.value)) {
+      statusArr = status.value;
+    } else {
+      statusArr = status.value ? [status.value] : [];
+    }
+    if (statusArr.length > 0) {
+      const isDefault = statusArr.length === 1 && statusArr[0] === 'in-progress';
+      if (!isDefault) count += 1;
+    }
+  }
   if (priorities) {
     const p = priorities.value;
     if (!p.high) count += 1;
@@ -643,13 +671,13 @@ export function getNumFilters(filterData) {
 /**
  * Builds the accessFilter config object for FrAccessFilter.
  * Accepts Vue component classes and reactive options so the utility stays framework-agnostic.
- * @param {Object} components - Vue component references: { BFormRadioGroup, FrPriorityFilter, FrSelectInput, FrField, FrGovResourceSelect }
+ * @param {Object} components - Vue component references: { BFormCheckboxGroup, FrPriorityFilter, FrSelectInput, FrField, FrGovResourceSelect }
  * @param {Object} options - Reactive data: { statusOptions, filterData }
  * @returns {Object} accessFilter config
  */
 export function getAccessFilterConfig(components, options) {
   const {
-    BFormRadioGroup, FrPriorityFilter, FrSelectInput, FrField,
+    BFormCheckboxGroup, FrPriorityFilter, FrSelectInput, FrField,
   } = components;
   const { statusOptions, filterData } = options;
 
@@ -659,7 +687,7 @@ export function getAccessFilterConfig(components, options) {
       components: [
         {
           id: 'statuses',
-          component: BFormRadioGroup,
+          component: BFormCheckboxGroup,
           modelKey: 'statuses',
           props: {
             value: filterData.status.value,
@@ -745,7 +773,7 @@ export function getAccessFilterConfig(components, options) {
 export function getInitialTaskFilterData(defaultStatus) {
   return {
     status: {
-      value: defaultStatus,
+      value: Array.isArray(defaultStatus) ? defaultStatus : [defaultStatus],
     },
     priorities: {
       value: {
@@ -766,12 +794,12 @@ export function getInitialTaskFilterData(defaultStatus) {
 
 /**
  * Builds the filter config for the task filter panel (status, priorities, query, assignee).
- * @param {Object} components - Vue component references: { BFormRadioGroup, FrPriorityFilter, FrField }
+ * @param {Object} components - Vue component references: { BFormCheckboxGroup, FrPriorityFilter, FrField }
  * @param {Object} options - { statusOptions, filterData }
  * @returns {Object} task filter config
  */
 export function getTaskFilterConfig(components, options) {
-  const { BFormRadioGroup, FrPriorityFilter, FrField } = components;
+  const { BFormCheckboxGroup, FrPriorityFilter, FrField } = components;
   const { statusOptions, filterData } = options;
 
   return {
@@ -780,7 +808,7 @@ export function getTaskFilterConfig(components, options) {
       components: [
         {
           id: 'statuses',
-          component: BFormRadioGroup,
+          component: BFormCheckboxGroup,
           props: {
             value: filterData.status.value,
             stacked: true,
