@@ -8,6 +8,8 @@ of the MIT license. See the LICENSE file for details. -->
     ok-only
     ok-variant="outline-primary"
     size="lg"
+    title-tag="h2"
+    title-class="h5"
     :ok-title="$t('common.done')"
     :static="isTesting"
     :title="$t('governance.violations.viewViolation')">
@@ -16,16 +18,16 @@ of the MIT license. See the LICENSE file for details. -->
     </p>
     <BRow>
       <BCol lg="6">
-        <h5 class="mb-3">
+        <h3 class="h5 mb-3">
           {{ $t('common.entitlements') }}
-        </h5>
+        </h3>
         <BListGroup>
           <BListGroupItem
             v-for="entitlement in setOneEntitlements"
             :key="`setOne-${entitlement.name}`">
-            <h5 class="text-truncate">
+            <h4 class="h5 text-truncate">
               {{ entitlement.name }}
-            </h5>
+            </h4>
             <BMedia no-body>
               <BMediaAside class="mr-2">
                 <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
@@ -49,16 +51,16 @@ of the MIT license. See the LICENSE file for details. -->
         </BListGroup>
       </BCol>
       <BCol lg="6">
-        <h5 class="mb-3">
+        <h3 class="h5 mb-3">
           {{ $t('governance.violations.conflictingEntitlements') }}
-        </h5>
+        </h3>
         <BListGroup>
           <BListGroupItem
             v-for="entitlement in setTwoEntitlements"
             :key="`setTwo-${entitlement.name}`">
-            <h5 class="text-truncate">
+            <h4 class="h5 text-truncate">
               {{ entitlement.name }}
-            </h5>
+            </h4>
             <BMedia no-body>
               <BMediaAside class="mr-2">
                 <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">

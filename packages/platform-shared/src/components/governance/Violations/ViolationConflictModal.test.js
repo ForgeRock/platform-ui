@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -67,6 +67,23 @@ describe('Violation Conflict Modal', () => {
     });
     return wrapper;
   }
+
+  it('uses the expected heading hierarchy', () => {
+    const wrapper = mountComponent();
+
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    expect(modal.props('titleTag')).toBe('h2');
+    expect(modal.props('titleClass')).toBe('h5');
+    expect(wrapper.findAll('h3')).toHaveLength(2);
+    expect(wrapper.findAll('h4')).toHaveLength(3);
+    expect(wrapper.findAll('h5')).toHaveLength(3);
+
+    wrapper.findAll('.list-group-item').forEach((item) => {
+      const headings = item.findAll('h4, h5');
+      expect(headings[0].element.tagName).toBe('H4');
+      expect(headings[1].element.tagName).toBe('H5');
+    });
+  });
 
   it('has one column for the first set of entitlements', () => {
     const wrapper = mountComponent();

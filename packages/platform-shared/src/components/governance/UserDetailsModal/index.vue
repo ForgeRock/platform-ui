@@ -26,9 +26,9 @@ of the MIT license. See the LICENSE file for details. -->
           :src="(user && user.profileImage) || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
           fluid />
         <div class="media-body">
-          <h5 class="m-0">
+          <h2 class="h5 m-0">
             {{ userFullName }}
-          </h5>
+          </h2>
           <small class="text-muted">
             {{ user && user.userName }}
           </small>

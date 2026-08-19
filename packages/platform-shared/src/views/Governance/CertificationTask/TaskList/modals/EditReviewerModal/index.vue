@@ -22,9 +22,9 @@ of the MIT license. See the LICENSE file for details. -->
           icon-class="md-24 mr-3 text-muted"
           name="arrow_back" />
       </BButton>
-      <h5 class="modal-title">
+      <h2 class="h5 modal-title">
         {{ $t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title') }}
-      </h5>
+      </h2>
       <BButtonClose
         variant="link"
         class="ml-auto"
@@ -56,9 +56,9 @@ of the MIT license. See the LICENSE file for details. -->
                   :src="reviewer.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
               </BMediaAside>
               <BMediaBody class="text-truncate">
-                <h5 class="mb-0 text-truncate">
+                <p class="h5 mb-0 text-truncate">
                   {{ reviewer.givenName + ' ' + reviewer.sn }}
-                </h5>
+                </p>
                 <small class="text-muted text-truncate">
                   {{ reviewer.userName }}
                 </small>
@@ -75,9 +75,9 @@ of the MIT license. See the LICENSE file for details. -->
                 </div>
               </BMediaAside>
               <BMediaBody class="text-truncate">
-                <h5 class="mb-0 text-truncate">
+                <p class="h5 mb-0 text-truncate">
                   {{ reviewer.name }}
-                </h5>
+                </p>
                 <small class="text-muted text-truncate">
                   {{ $t('governance.certificationTask.lineItemReviewersModal.role') }}
                 </small>

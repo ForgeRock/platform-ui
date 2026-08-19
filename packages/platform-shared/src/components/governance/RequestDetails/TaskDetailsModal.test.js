@@ -50,6 +50,8 @@ describe('TaskDetailsModal', () => {
 
   it('renders task details correctly', () => {
     wrapper = setup();
+    expect(wrapper.find('.modal-title').element.tagName).toBe('H2');
+    expect(wrapper.find('.modal-title').classes()).toContain('h5');
     expect(wrapper.find('.modal-title').text()).toBe(TASK_DETAILS.name);
     expect(wrapper.find('[data-testid="status-badge"]').text()).toBe(TASK_DETAILS.status);
     expect(wrapper.find('[data-testid="task-name"]').text()).toBe(TASK_DETAILS.name);

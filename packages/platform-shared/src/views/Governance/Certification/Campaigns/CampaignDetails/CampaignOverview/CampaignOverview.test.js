@@ -282,7 +282,9 @@ describe('CampaignOverview Component', () => {
   it('campaign details card loaded correctly', () => {
     const campaignDetailsCard = findByTestId(wrapper, 'campaign-details-card');
     expect(campaignDetailsCard.exists()).toBe(true);
-    expect(campaignDetailsCard.find('h5').text()).toBe('Campaign Details');
+    const heading = campaignDetailsCard.find('h2');
+    expect(heading.text()).toBe('Campaign Details');
+    expect(heading.classes()).toContain('h5');
   });
 
   it('campaign progress should load with the given parameters correctly', () => {

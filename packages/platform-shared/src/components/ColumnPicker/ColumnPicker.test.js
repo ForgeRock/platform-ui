@@ -45,7 +45,7 @@ function mountComponent(props = {}) {
         BModal: {
           name: 'BModal',
           template: '<div><slot /><slot name="modal-footer" /></div>',
-          props: ['visible', 'ok-disabled'],
+          props: ['visible', 'ok-disabled', 'titleTag', 'titleClass'],
         },
         [FrIcon]: true,
         [FrField]: {
@@ -72,6 +72,22 @@ function mountComponent(props = {}) {
 }
 
 describe('ColumnPicker', () => {
+  it('uses an h2 modal title with h5 styling', () => {
+    const wrapper = mountComponent();
+    const modal = wrapper.findComponent({ name: 'BModal' });
+
+    expect(modal.props('titleTag')).toBe('h2');
+    expect(modal.props('titleClass')).toBe('h5');
+  });
+
+  it('renders section headings as h3 with h5 styling', () => {
+    const wrapper = mountComponent();
+    const headings = wrapper.findAll('.column-picker-header h3');
+
+    expect(headings).toHaveLength(2);
+    headings.forEach((heading) => expect(heading.classes()).toContain('h5'));
+  });
+
   it('renders correctly in category mode', async () => {
     const wrapper = mountComponent({ show: false });
     await wrapper.setProps({ show: true });

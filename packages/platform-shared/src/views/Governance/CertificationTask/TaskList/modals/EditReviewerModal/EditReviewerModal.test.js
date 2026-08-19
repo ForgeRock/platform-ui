@@ -19,6 +19,15 @@ describe('EditReviewerModal', () => {
         mocks: {
           $t: (t) => t,
         },
+        stubs: {
+          BModal: {
+            inheritAttrs: false,
+            template: '<div v-bind="$attrs"><slot name="modal-header" :close="close" /><slot /><slot name="modal-footer" /></div>',
+            methods: {
+              close() {},
+            },
+          },
+        },
       },
       props: {
         currentUserPermissions: {
@@ -286,6 +295,13 @@ describe('EditReviewerModal', () => {
     expect(wrapper.vm.footerClass).toBe('justify-content-between');
   });
 
+  it('should render an h2 modal title with h5 styling', () => {
+    const title = wrapper.find('.modal-title');
+
+    expect(title.element.tagName).toBe('H2');
+    expect(title.classes()).toContain('h5');
+  });
+
   it('should render default modalId', () => {
     expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').exists()).toBeTruthy();
   });
@@ -305,7 +321,7 @@ describe('EditReviewerModal', () => {
   });
 
   it('sets an accessible aria-label on the modal', () => {
-    expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').attributes('arialabel')).toBe('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title');
+    expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').attributes('aria-label')).toBe('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title');
   });
 
   it('getMappedPermissions method should map correctly reviewer permissions when reviewer change', async () => {

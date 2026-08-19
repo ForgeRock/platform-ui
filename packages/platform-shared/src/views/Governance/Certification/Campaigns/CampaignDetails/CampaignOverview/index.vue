@@ -131,9 +131,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       data-testid="campaign-details-card"
     >
-      <h5 class="mb-4">
+      <h2 class="h5 mb-4">
         {{ $t('governance.certificationDetails.campaingDetailsCardTitle') }}
-      </h5>
+      </h2>
       <BRow class="align-items-stretch">
         <BCol
           class="d-flex align-items-center justify-content-center"

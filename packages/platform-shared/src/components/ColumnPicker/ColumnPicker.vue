@@ -18,15 +18,17 @@ of the MIT license. See the LICENSE file for details. -->
     no-close-on-backdrop
     ok-variant="primary"
     scrollable
-    size="lg">
+    size="lg"
+    title-tag="h2"
+    title-class="h5">
     <BRow class="m-0">
       <BCol
         class="p-0"
         cols="5">
         <div class="column-picker-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
-          <h6 class="mb-0 h5">
+          <h3 class="mb-0 h5">
             {{ $t('columnPicker.availableColumns') }}
-          </h6>
+          </h3>
           <BFormRadioGroup
             v-if="allowViewModeToggle"
             v-model="viewMode"
@@ -118,12 +120,12 @@ of the MIT license. See the LICENSE file for details. -->
         class="p-0 border-left"
         cols="7">
         <div class="column-picker-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
-          <h6
+          <h3
             ref="activeColumnsHeader"
             class="mb-0 h5"
             tabindex="-1">
             {{ $t('columnPicker.activeColumns') }}
-          </h6>
+          </h3>
           <BButton
             v-if="defaultColumns.length"
             variant="link"

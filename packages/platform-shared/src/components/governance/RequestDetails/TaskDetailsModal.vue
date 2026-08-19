@@ -21,9 +21,9 @@ of the MIT license. See the LICENSE file for details. -->
           <small class="mb-0">
             {{ $t('governance.requestModal.titles.taskDetails') }}
           </small>
-          <h1 class="h5 modal-title text-capitalize">
+          <h2 class="h5 modal-title text-capitalize">
             {{ taskDetails.name }}
-          </h1>
+          </h2>
         </div>
         <BButtonClose
           variant="link"

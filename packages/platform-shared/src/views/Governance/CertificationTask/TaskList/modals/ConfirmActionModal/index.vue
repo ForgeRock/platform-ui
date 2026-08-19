@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,6 +13,8 @@ of the MIT license. See the LICENSE file for details. -->
       cancel-variant="link"
       :title="$t(`governance.certificationTask.actionsModal.${step === STEPS.DETAILS ? modalOptions.title : modalOptions.confirmTitle}`)"
       :static="isTesting"
+      title-tag="h2"
+      title-class="h5"
       @hidden="reset">
       <div class="modal-container">
         <template v-if="step === STEPS.DETAILS">
