@@ -8,6 +8,7 @@
 import * as ThemeApi from '@forgerock/platform-shared/src/api/ThemeApi';
 import { flushPromises } from '@vue/test-utils';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
+import store from '@/store';
 import { setupTestPinia } from '../utils/testPiniaHelpers';
 import useTheme from './theme';
 import i18n from '@/i18n';
@@ -18,6 +19,15 @@ describe('theme composable', () => {
   function setupTestStore(theme = null, realmThemes = {}) {
     setupTestPinia({ theme, realmThemes });
   }
+
+  beforeEach(() => {
+    process.env.BASE_URL = '/';
+  });
+
+  afterEach(() => {
+    store.state.SharedStore.isAirGapped = false;
+    delete process.env.BASE_URL;
+  });
 
   describe('retrieving themes - getTheme', () => {
     it('Should retrieve a theme', async () => {
@@ -93,6 +103,43 @@ describe('theme composable', () => {
       i18n.global.locale = null;
       await flushPromises();
       expect(localizedFavicon.value).toBe(favicon.fr);
+    });
+
+    it('rewrites the default theme fallback asset fields to local paths when air-gapped and the store is empty', () => {
+      store.state.SharedStore.isAirGapped = true;
+      setupTestStore();
+      const { theme } = useTheme();
+      expect(theme.value.favicon).toBe('/themes/starter/logo-starter.svg');
+      expect(theme.value.logo).toBe('/themes/starter/logo-starter.svg');
+      expect(theme.value.logoProfile).toBe('/themes/starter/logo-starter-full.svg');
+      expect(theme.value.logoProfileCollapsed).toBe('/themes/starter/logo-starter.svg');
+    });
+
+    it('keeps the default theme fallback asset fields pointed at the CDN when not air-gapped', () => {
+      store.state.SharedStore.isAirGapped = false;
+      setupTestStore();
+      const { theme } = useTheme();
+      expect(theme.value.favicon).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
+      expect(theme.value.logo).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
+      expect(theme.value.logoProfile).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter-full.svg');
+      expect(theme.value.logoProfileCollapsed).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
+    });
+
+    it('rewrites localizedFavicon to a local path when the theme favicon is a CDN URL and air-gapped', async () => {
+      store.state.SharedStore.isAirGapped = true;
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({
+        data: {
+          result: [{
+            _id: 'testTheme',
+            primaryColor: '#dddddd',
+            favicon: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
+          }],
+        },
+      }));
+      setupTestStore();
+      const { loadTheme, localizedFavicon } = useTheme();
+      await loadTheme('testRealm', 'testTheme');
+      expect(localizedFavicon.value).toBe('/themes/starter/logo-starter.svg');
     });
   });
 

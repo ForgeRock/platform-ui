@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       .fr-body-image {
-        background-image: url('{{ theme.backgroundImage }}');
+        background-image: url('{{ backgroundImageUrl }}');
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
@@ -748,6 +748,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { rewriteThemeCdnUrl } from '@forgerock/platform-shared/src/utils/themeUtils';
 import i18n from '@/i18n';
 import store from '@/store';
 /**
@@ -845,6 +846,9 @@ export default {
     };
   },
   computed: {
+    backgroundImageUrl() {
+      return rewriteThemeCdnUrl(this.theme.backgroundImage);
+    },
     backgroundColor() {
       let tempBackground = 'inherit';
 

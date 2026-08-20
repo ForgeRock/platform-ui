@@ -20,10 +20,12 @@ import { getLocalizedString } from '@forgerock/platform-shared/src/utils/transla
 import i18n from '@/i18n';
 import {
   addDefaultsToTheme,
+  applyThemeAssetRewrites,
   decodeThemes,
   decodeThemeScripts,
   encodeThemes,
   removeThemeIdFromLocalStorage,
+  rewriteThemeCdnUrl,
   updateThemerealmObject,
 } from '../utils/themeUtils';
 
@@ -33,11 +35,11 @@ import {
  */
 export default function useTheme() {
   const themeStore = useThemeStore();
-  const theme = computed(() => themeStore.theme || themeConstants.DEFAULT_THEME_PARAMS);
+  const theme = computed(() => themeStore.theme || applyThemeAssetRewrites(themeConstants.DEFAULT_THEME_PARAMS));
   const themeLoading = computed(() => themeStore.themeLoading);
   const previouslyQueriedTreeId = computed(() => themeStore.previouslyQueriedTreeId);
   const realmThemes = computed(() => themeStore.realmThemes);
-  const localizedFavicon = computed(() => getLocalizedString(theme.value.favicon, i18n.global.locale, i18n.global.fallbackLocale));
+  const localizedFavicon = computed(() => rewriteThemeCdnUrl(getLocalizedString(theme.value.favicon, i18n.global.locale, i18n.global.fallbackLocale)));
 
   /**
    * Sets the theme loading state in the store

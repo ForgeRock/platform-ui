@@ -46,7 +46,7 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import useRouteFocus from '@forgerock/platform-shared/src/composables/useRouteFocus';
-import { removeThemeIdFromLocalStorage } from '@forgerock/platform-shared/src/utils/themeUtils';
+import { removeThemeIdFromLocalStorage, rewriteThemeCdnUrlsInHtml } from '@forgerock/platform-shared/src/utils/themeUtils';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import {
   buildMenuItemsFromTheme,
@@ -91,7 +91,7 @@ export default {
   computed: {
     accountFooter() {
       if (this.theme?.accountFooterEnabled) {
-        return this.$sanitize(this.getLocalizedString(this.theme.accountFooter, i18n.global.locale, i18n.global.fallbackLocale));
+        return this.$sanitize(rewriteThemeCdnUrlsInHtml(this.getLocalizedString(this.theme.accountFooter, i18n.global.locale, i18n.global.fallbackLocale)));
       }
       return '';
     },

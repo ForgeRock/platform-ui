@@ -72,7 +72,7 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
-import { removeThemeIdFromLocalStorage } from '@forgerock/platform-shared/src/utils/themeUtils';
+import { removeThemeIdFromLocalStorage, rewriteThemeCdnUrl, rewriteThemeCdnUrlsInHtml } from '@forgerock/platform-shared/src/utils/themeUtils';
 import { computed } from 'vue';
 import i18n from './i18n';
 import './scss/main.scss';
@@ -207,10 +207,10 @@ export default {
     theme: {
       deep: true,
       handler(theme) {
-        this.localizedFooter = this.getLocalizedString(theme.journeyFooter, i18n.global.locale, i18n.global.fallbackLocale);
-        this.localizedHeader = this.getLocalizedString(theme.journeyHeader, i18n.global.locale, i18n.global.fallbackLocale);
-        this.localizedJustifiedContent = this.getLocalizedString(theme.journeyJustifiedContent, i18n.global.locale, i18n.global.fallbackLocale);
-        this.localizedLogo = this.getLocalizedString(theme.logo, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedFooter = rewriteThemeCdnUrlsInHtml(this.getLocalizedString(theme.journeyFooter, i18n.global.locale, i18n.global.fallbackLocale));
+        this.localizedHeader = rewriteThemeCdnUrlsInHtml(this.getLocalizedString(theme.journeyHeader, i18n.global.locale, i18n.global.fallbackLocale));
+        this.localizedJustifiedContent = rewriteThemeCdnUrlsInHtml(this.getLocalizedString(theme.journeyJustifiedContent, i18n.global.locale, i18n.global.fallbackLocale));
+        this.localizedLogo = rewriteThemeCdnUrl(this.getLocalizedString(theme.logo, i18n.global.locale, i18n.global.fallbackLocale));
         this.localizedLogoAltText = this.getLocalizedString(theme.logoAltText, i18n.global.locale, i18n.global.fallbackLocale);
         // Adds the given script tags to the script container
         if (!theme.journeyFooterScriptTagEnabled || !theme.journeyFooterScriptTag) return;

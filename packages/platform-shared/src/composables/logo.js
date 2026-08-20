@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@ import {
 } from 'vue';
 import { getLocalizedString } from '@forgerock/platform-shared/src/utils/translations';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
+import { rewriteThemeCdnUrl } from '@forgerock/platform-shared/src/utils/themeUtils';
 import i18n from '@/i18n';
 
 export default function useLogo() {
@@ -19,12 +20,12 @@ export default function useLogo() {
   const i18nArguments = [i18n.global.locale, i18n.global.fallbackLocale];
 
   function getHorizontalLogoSrc() {
-    return getLocalizedString(theme.value.logoProfile, ...i18nArguments)
+    return rewriteThemeCdnUrl(getLocalizedString(theme.value.logoProfile, ...i18nArguments))
     || require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg');
   }
 
   function getSquareLogoSrc() {
-    return getLocalizedString(theme.value.logoProfileCollapsed, ...i18nArguments)
+    return rewriteThemeCdnUrl(getLocalizedString(theme.value.logoProfileCollapsed, ...i18nArguments))
     || require('@forgerock/platform-shared/src/assets/images/placeholder.svg');
   }
 

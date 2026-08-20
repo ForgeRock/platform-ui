@@ -11,6 +11,58 @@ import themeConstants from '@forgerock/platform-shared/src/constants/themeConsta
 import { v4 as uuid } from 'uuid';
 import store from '@/store';
 
+const THEME_CDN_PREFIX = 'https://cdn.forgerock.com/platform/themes/';
+const THEME_ASSET_FIELDS = ['backgroundImage', 'favicon', 'logo', 'logoProfile', 'logoProfileCollapsed'];
+// Matches any cdn.forgerock.com/platform/themes/ URL embedded in HTML or CSS strings.
+// Excludes whitespace, quotes, angle brackets and closing parenthesis to avoid over-matching
+// in attribute values (src="..."), CSS url(...) contexts, and adjacent HTML tags.
+const THEME_CDN_URL_RE = /https:\/\/cdn\.forgerock\.com\/platform\/themes\/[^\s"'<>)]+/g;
+
+/**
+ * Rewrites a cdn.forgerock.com/platform/themes/* URL to the static local asset served from
+ * public/themes/ when air-gapped. The CDN sub-path (e.g. 'starter/logo-starter.svg') maps
+ * directly to the directory structure under each package's public/themes/ directory, served
+ * at BASE_URL + 'themes/'. Non-string values and values that don't match the theme CDN prefix
+ * are returned unchanged.
+ * @param {*} value the theme field value to potentially rewrite
+ * @returns {*} the local asset URL, or the original value unchanged
+ */
+export function rewriteThemeCdnUrl(value) {
+  if (!store.state.SharedStore.isAirGapped || typeof value !== 'string' || !value.startsWith(THEME_CDN_PREFIX)) {
+    return value;
+  }
+  return `${process.env.BASE_URL}themes/${value.slice(THEME_CDN_PREFIX.length)}`;
+}
+
+/**
+ * Rewrites all cdn.forgerock.com/platform/themes/* URLs embedded inside an HTML string
+ * to their local static path equivalents when air-gapped. Handles URLs in src attributes,
+ * CSS background-image: url(...), and any other embedded form. Non-string values and
+ * non-air-gapped environments are returned unchanged.
+ * @param {*} html the HTML string to rewrite
+ * @returns {*} the HTML string with CDN URLs replaced, or the original value unchanged
+ */
+export function rewriteThemeCdnUrlsInHtml(html) {
+  if (!store.state.SharedStore.isAirGapped || typeof html !== 'string' || html === '') {
+    return html;
+  }
+  return html.replace(THEME_CDN_URL_RE, (match) => rewriteThemeCdnUrl(match));
+}
+
+/**
+ * Returns a shallow copy of the given theme with its CDN-hosted asset fields
+ * (favicon, logo, logoProfile, logoProfileCollapsed) rewritten to local paths when air-gapped.
+ * @param {Object} theme the theme object to apply rewrites to
+ * @returns {Object} a shallow copy of the theme with asset fields rewritten
+ */
+export function applyThemeAssetRewrites(theme) {
+  const rewrittenTheme = { ...theme };
+  THEME_ASSET_FIELDS.forEach((field) => {
+    rewrittenTheme[field] = rewriteThemeCdnUrl(rewrittenTheme[field]);
+  });
+  return rewrittenTheme;
+}
+
 /**
  * Base64 decode any script content in the passed theme
  * @param {Object} themeToDecode - details of theme
