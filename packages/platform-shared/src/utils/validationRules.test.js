@@ -29,6 +29,18 @@ describe('numeric validators', () => {
   });
 });
 
+describe('secret label identifier validator', () => {
+  it('should validate secret label identifiers', () => {
+    ['identifier', 'identifier.value', 'a1.b2'].forEach((value) => {
+      expect(rules.secret_label_identifier(value)).toBe(true);
+    });
+
+    ['', '.identifier', 'identifier.', 'identifier value', 'identifier_value'].forEach((value) => {
+      expect(rules.secret_label_identifier(value)).toBe('Can only contain characters a-z, 0-9, and periods. Cannot start or end with a period');
+    });
+  });
+});
+
 describe('number validators', () => {
   it('should validate single number value', () => {
     expect(rules.number('123')).toBe(true);

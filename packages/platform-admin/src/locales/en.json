@@ -1418,7 +1418,14 @@
           "defaultValues": "Default Values",
           "provideDefaultValueDesc": "Provide a default value for this property.",
           "provideDefaultValuesDesc": "Provide a list of default values for this property.",
-          "descriptionFieldDesc": "Description to appear in the property's help popover."
+          "descriptionFieldDesc": "Description to appear in the property's help popover.",
+          "secretType": "Secret Type",
+          "secretTypeDesc": "The type of secret stored in the Secret Store.",
+          "labelTemplate": "Secret Label Template",
+          "labelTemplateDesc": "Secret label used to look up secrets at runtime. Must contain exactly one <code>*</code> wildcard. Resolved as: <code>{resolved}</code>",
+          "labelTemplateValidation": "Must contain exactly one * and use only alphanumerics and periods",
+          "secretDefaultValueDesc": "The variable segment substituted for * in the label template.",
+          "secretPropertyDescription": "Used to identify the secret value at runtime. Use only alphanumeric characters and periods; do not start or end with a period."
         }
       },
       "settings": {
