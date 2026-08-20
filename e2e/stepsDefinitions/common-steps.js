@@ -226,8 +226,10 @@ When('user clicks on {string} {role} with exact accessible name', (name, role) =
 });
 
 When('user fills the following fields', (dataTable) => {
-  dataTable.hashes().forEach((row) => {
-    typeIntoField(row.Field, row.Value);
+  cy.findByRole('dialog').within(() => {
+    dataTable.hashes().forEach((row) => {
+      typeIntoField(row.Field, row.Value);
+    });
   });
 });
 

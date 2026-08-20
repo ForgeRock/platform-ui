@@ -477,20 +477,21 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
       }).click();
 
       // fill in fields, ensuring that Save button only enabled when all fields filled in with no errors
-      cy.findByLabelText('Username')
-        .should('be.visible')
-        .should('be.focused')
-        .type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
-      cy.findByLabelText('First Name').type('First');
-      cy.findByLabelText('Last Name').type('Last');
-      cy.findByRole('button', { name: 'Save' }).should('be.disabled');
-      cy.findByLabelText('Email Address').type('badEmail@email').blur();
-      cy.findByRole('button', { name: 'Save' }).should('be.disabled');
-      cy.findAllByRole('alert').contains(
-        'Invalid email format (example@example.com)',
-      );
-      cy.findByLabelText('Email Address').type('.com').blur();
-      cy.findByRole('button', { name: 'Save' }).click();
+      cy.findByRole('dialog').within(() => {
+        cy.findByLabelText('Username')
+          .should('be.visible').focus()
+          .type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
+        cy.findByLabelText('First Name').focus().type('First');
+        cy.findByLabelText('Last Name').focus().type('Last');
+        cy.findByRole('button', { name: 'Save' }).should('be.disabled');
+        cy.findByLabelText('Email Address').type('badEmail@email').blur();
+        cy.findByRole('button', { name: 'Save' }).should('be.disabled');
+        cy.findAllByRole('alert').contains(
+          'Invalid email format (example@example.com)',
+        );
+        cy.findByLabelText('Email Address').type('.com').blur();
+        cy.findByRole('button', { name: 'Save' }).click();
+      });
       cy.wait('@saveManagedUser').then(({ response }) => {
         testUserId = response.body._id;
 
