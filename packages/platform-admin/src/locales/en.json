@@ -4653,6 +4653,7 @@
     "advancedSync": {
       "addSyncData": "Sync Data",
       "errors": {
+        "errorGettingConnectors": "Error retrieving connectors",
         "errorGettingSyncData": "Error retrieving advanced sync data",
         "errorGettingDefaultData": "Error retrieving default mappings data",
         "mappingUnavailable": "Mapping Unavailable",
@@ -4682,8 +4683,13 @@
         "scriptDescription": "Define a script to determine how account types should be identified."
       },
       "addModal": {
+        "applications": "Applications",
         "flipSyncIconLabel": "Flip sync direction",
+        "noObjectTypesAvailable": "This provisioner has no object types available to sync.",
+        "noProvisionersAvailable": "This realm has no provisioners available to sync.",
         "objectType": "Object Type",
+        "provisioner": "Provisioner",
+        "provisioners": "Provisioners",
         "linkedMapping": "Linked Mapping",
         "linkedMappingDescription": "Choose from existing relationship(s) between source and target.",
         "linkMapping": "Link Mapping",
@@ -5846,6 +5852,7 @@
       },
       "creation": {
         "applicationDesc": "Choose an application for which this request form applies.",
+        "noApplicationsAvailable": "This realm has no applications available to sync.",
         "applicationRequestType": "Application Request Form",
         "applicationRequestTypeDesc": "Create a form for creating or modifying an application object.",
         "customRequestForm": "Custom Request Form",
@@ -5865,6 +5872,7 @@
         "operationDescription": "Select the operation that you want this form to be associated with.",
         "optionalDescription": "Description (optional)",
         "objectType": "Object type",
+        "noObjectTypesAvailable": "This application has no object types available to sync.",
         "requestTypeAlreadyAssigned": "Request type already assigned to a form",
         "requestTypeDescription": "Choose a request type for which this request form applies.",
         "requestTypeLabel": "Request Type",
