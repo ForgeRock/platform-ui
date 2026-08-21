@@ -8,6 +8,7 @@
 
 import AdminsApiSteps from './api/AdminsApiSteps';
 import ApplicationApiSteps from './api/ApplicationApiSteps';
+import AssignmentApiSteps from './api/AssignmentApiSteps';
 import EmailProviderApiSteps from './api/EmailProviderApiSteps';
 import ManagedObjectApiSteps from './api/ManagedObjectApiSteps';
 import AuthScriptApiSteps from './api/AuthScriptApiSteps';
@@ -30,6 +31,7 @@ export default {
   admins: AdminsApiSteps,
   application: ApplicationApiSteps,
   applications: ApplicationApiSteps,
+  assignments: AssignmentApiSteps,
   authScripts: AuthScriptApiSteps,
   csp: CspApiSteps,
   customDomain: CustomDomainApiSteps,
