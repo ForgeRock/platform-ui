@@ -5,12 +5,16 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { defineComponent, h } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 import * as AuditApi from '@forgerock/platform-shared/src/api/governance/AuditApi';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import AuditLogHistogram from './AuditLogHistogram';
 
 jest.mock('vue-i18n', () => ({
-  useI18n: () => ({ t: (key) => key }),
+  useI18n: () => ({
+    t: (key, params) => (params ? `${key}:${params.label}:${params.count}` : key),
+  }),
 }));
 
 jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
@@ -25,13 +29,29 @@ const makeRecords = (count) => Array.from({ length: count }, (_, i) => ({
   timestamp: new Date(twelveHoursAgo.getTime() + i * 1000).toISOString(),
 }));
 
+const chart = {
+  on: jest.fn(),
+  off: jest.fn(),
+};
+
+const VChartStub = defineComponent({
+  name: 'VChart',
+  setup(_, { expose }) {
+    expose({ chart });
+    return () => h('div');
+  },
+});
+
 function mountComponent(props = {}) {
   AuditApi.getAuditLogs = jest.fn().mockResolvedValue({
     data: { result: makeRecords(3), totalCount: 3 },
   });
 
   return mount(AuditLogHistogram, {
-    global: { mocks: { $t: (t) => t } },
+    global: {
+      mocks: { $t: (t, params) => (params ? `${t}:${params.label}:${params.count}` : t) },
+      stubs: { VChart: VChartStub },
+    },
     props: {
       fromDate: twelveHoursAgo.toISOString(),
       toDate: now.toISOString(),
@@ -41,6 +61,10 @@ function mountComponent(props = {}) {
 }
 
 describe('AuditLogHistogram', () => {
+  beforeEach(() => {
+    chart.on.mockClear();
+    chart.off.mockClear();
+  });
   it('calls getAuditLogs on mount with the fromDate/toDate as a filter', async () => {
     mountComponent();
     await flushPromises();
@@ -93,6 +117,64 @@ describe('AuditLogHistogram', () => {
     await flushPromises();
 
     expect(AuditApi.getAuditLogs.mock.calls[0][0].queryFilter).toBe("actor eq 'user-123'");
+  });
+
+  it('registers a click handler on the chart instance', async () => {
+    mountComponent();
+    await flushPromises();
+
+    expect(chart.off).toHaveBeenCalledWith('click', expect.any(Function));
+    expect(chart.on).toHaveBeenCalledWith('click', expect.any(Function));
+    expect(chart.off.mock.calls[0][1]).toBe(chart.on.mock.calls[0][1]);
+  });
+
+  it('emits the selected hourly bucket range from chart clicks', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+    const handler = chart.on.mock.calls[0][1];
+
+    handler({ dataIndex: 2 });
+
+    expect(wrapper.emitted('bar-click')).toEqual([[
+      {
+        fromDate: new Date(twelveHoursAgo.getTime() + 60 * 60 * 1000).toISOString(),
+        toDate: new Date(twelveHoursAgo.getTime() + 3 * 60 * 60 * 1000).toISOString(),
+      },
+    ]]);
+  });
+
+  it('emits the selected daily bucket range from chart clicks', async () => {
+    const from = new Date('2026-06-01T00:00:00.000Z');
+    const to = new Date('2026-06-08T00:00:00.000Z');
+    const wrapper = mountComponent({ fromDate: from.toISOString(), toDate: to.toISOString() });
+    await flushPromises();
+    const handler = chart.on.mock.calls[0][1];
+
+    handler({ dataIndex: 2 });
+
+    expect(wrapper.emitted('bar-click')).toEqual([[
+      {
+        fromDate: '2026-06-03T00:00:00.000Z',
+        toDate: '2026-06-04T00:00:00.000Z',
+      },
+    ]]);
+  });
+
+  it('does not emit when a chart click has no matching bucket', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+    const handler = chart.on.mock.calls[0][1];
+
+    handler({ dataIndex: 99 });
+
+    expect(wrapper.emitted('bar-click')).toBeUndefined();
+  });
+
+  it('does not have accessibility violations', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    await runA11yTest(wrapper);
   });
 
   it('renders VChart after loading', async () => {

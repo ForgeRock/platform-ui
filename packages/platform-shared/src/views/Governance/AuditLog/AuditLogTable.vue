@@ -78,7 +78,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BCard>
     <FrAuditLogHistogram
       v-if="hideActorFilter"
-      class="px-4 pt-4"
+      class="mx-3 px-4 pt-4"
       :from-date="filterFromDate"
       :to-date="filterToDate"
       :extra-params="histogramExtraParams"

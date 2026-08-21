@@ -42,20 +42,23 @@ of the MIT license. See the LICENSE file for details. -->
       class="histogram-container d-flex align-items-center justify-content-center">
       <BSpinner />
     </div>
-    <VChart
-      v-else
-      role="img"
-      class="histogram-container"
-      autoresize
-      :aria-label="t('governance.audit.histogram.title')"
-      :option="chartOption"
-      @click="onChartClick" />
+    <template v-else>
+      <VChart
+        ref="chartRef"
+        role="img"
+        class="histogram-container"
+        autoresize
+        :aria-label="t('governance.audit.histogram.title')"
+        :option="chartOption" />
+    </template>
   </BCard>
 </template>
 
 <script setup>
 /* eslint-disable import/no-unresolved, import/extensions */
-import { ref, computed, watch } from 'vue';
+import {
+  ref, computed, watch, nextTick,
+} from 'vue';
 import dayjs from 'dayjs';
 import { BButton, BCard, BSpinner } from 'bootstrap-vue';
 import VChart from 'vue-echarts';
@@ -100,6 +103,7 @@ const props = defineProps({
 
 const MIN_RANGE_MS = 60 * 60 * 1000; // 1 hour minimum
 
+const chartRef = ref(null);
 const isLoading = ref(false);
 const buckets = ref([]);
 
@@ -252,8 +256,8 @@ const chartOption = computed(() => ({
   animationEasing: 'cubicOut',
 }));
 
-function onChartClick(params) {
-  const bucket = buckets.value[params.dataIndex];
+function selectBucket(index) {
+  const bucket = buckets.value[index];
   if (!bucket) return;
   const isDaily = (bucket.to - bucket.from) >= 24 * 60 * 60 * 1000;
   if (isDaily) {
@@ -266,6 +270,23 @@ function onChartClick(params) {
     });
   }
 }
+
+function onChartClick(params) {
+  selectBucket(params.dataIndex);
+}
+
+// @click on VChart was not forwarded/read in Vue compat mode. Register directly on the
+// ECharts instance instead so bar selection remains functional in this configuration.
+watch(isLoading, async (loading) => {
+  if (!loading) {
+    await nextTick();
+    const instance = chartRef.value?.chart;
+    if (instance) {
+      instance.off('click', onChartClick);
+      instance.on('click', onChartClick);
+    }
+  }
+});
 
 // Sync internal view window when table filters change; resets any active zoom
 watch([() => props.fromDate, () => props.toDate], ([from, to]) => {
