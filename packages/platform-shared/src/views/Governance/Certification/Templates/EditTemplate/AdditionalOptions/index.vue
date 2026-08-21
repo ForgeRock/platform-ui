@@ -156,11 +156,11 @@ of the MIT license. See the LICENSE file for details. -->
         :description="$t('governance.editTemplate.processRemediationDescription')"
         :label="$t('governance.editTemplate.processRemediation')" />
       <BCollapse :visible="formFields.processRemediation">
-        <div class="p-4 rounded bg-light mb-4">
+        <div class="p-4 rounded bg-light mb-4 d-flex align-items-center">
           <span>{{ $t('governance.editTemplate.afterRevocation') }}</span>
           <FrField
             v-model="formFields.remediationTime"
-            class="mb-0 d-inline-block minWidth120"
+            class="mb-0 ml-2 d-inline-block minWidth120"
             name="remediationTime"
             testid="remediation-time"
             type="select"

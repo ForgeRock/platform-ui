@@ -339,6 +339,12 @@ export default {
     const floatLabels = ref(setFloatLabels(false, inputValue.value));
     const searchValue = ref('');
 
+    /**
+     * Prevents the input watcher from emitting a duplicate value after closeHandler
+     * has emitted the committed tag values synchronously.
+     */
+    const skipNextInputWatch = ref(false);
+
     const classes = computed(() => [
       { 'polyfill-placeholder': floatLabels.value },
       { 'h-100': props.floatingLabel },
@@ -361,13 +367,6 @@ export default {
       isOpen.value = true;
       floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
     }
-
-    function closeHandler() {
-      context.emit('close');
-      isOpen.value = false;
-      floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
-    }
-
     function inputHandler(e) {
       inputValue.value = e;
     }
@@ -383,27 +382,49 @@ export default {
     }
 
     /**
-     * Adds one or more tags from the current search input (comma-separated).
-     * Replaces the inputValue ref rather than mutating it in-place so that
-     * vee-validate's proxy setter fires and re-validates the field (e.g. `required`).
+     * Commits non-empty, non-duplicate values from the comma-separated search input as tags.
+     * Replaces inputValue so vee-validate re-validates the field and returns the updated values.
+     * The direct input event can be suppressed when the caller emits the values synchronously.
+     *
+     * @param {Boolean} emitInput whether to emit the input event directly
+     * @returns {Array|null} updated values when tags are added, otherwise null
      */
-    function addTag() {
+    function addTag(emitInput = true) {
       if (props.taggable && searchValue.value.trim().length > 0) {
         const newTags = [];
+        const existingValues = new Set(inputValue.value.map(({ value }) => value));
         searchValue.value.split(',').forEach((untrimmedVal) => {
           const newVal = untrimmedVal.trim();
-          const existsInCurrentValues = find(inputValue.value, { value: newVal });
-          if (newVal && !existsInCurrentValues) {
+          if (newVal && !existingValues.has(newVal)) {
             const tag = { multiselectId: generateTagId(), text: newVal, value: newVal };
             tagOptions.value = [...tagOptions.value, tag];
             newTags.push(tag);
+            existingValues.add(newVal);
           }
         });
         if (newTags.length) {
           inputValue.value = [...inputValue.value, ...newTags];
-          context.emit('input', map(inputValue.value, 'value'));
+          const newValues = map(inputValue.value, 'value');
+          if (emitInput) context.emit('input', newValues);
+          return newValues;
         }
       }
+      return null;
+    }
+
+    /**
+     * Commits pending taggable input, synchronously emits updated values before close,
+     * closes the dropdown, and updates the floating-label state.
+     */
+    function closeHandler() {
+      const newValues = addTag(false);
+      if (newValues) {
+        skipNextInputWatch.value = true;
+        context.emit('input', newValues);
+      }
+      context.emit('close');
+      isOpen.value = false;
+      floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
     }
 
     watch(() => inputValue.value, (value, oldValue) => {
@@ -411,7 +432,11 @@ export default {
       const newValues = map(value, 'value');
       const oldValues = map(oldValue, 'value');
       if (!isEqual(newValues, oldValues)) {
-        context.emit('input', newValues);
+        if (skipNextInputWatch.value) {
+          skipNextInputWatch.value = false;
+        } else {
+          context.emit('input', newValues);
+        }
       }
     });
 

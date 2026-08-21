@@ -48,17 +48,49 @@ describe('Multiselect', () => {
       expect(multiselectInput.attributes('aria-expanded')).toBe('true');
     });
 
-    it('emits "close" when the dropdown closes', async () => {
-      const wrapper = setup();
+    it('commits pending tags before closing the dropdown', async () => {
+      const eventOrder = [];
+      const wrapper = setup({
+        taggable: true,
+        onInput: () => eventOrder.push('input'),
+        onClose: () => eventOrder.push('close'),
+      });
       const multiselect = findByTestId(wrapper, 'stub-testid');
 
       await multiselect.trigger('click');
       await flushPromises();
+      wrapper.vm.searchChange('pending@example.com');
+      wrapper.vm.closeHandler();
+
+      // Consumers must receive the model update before the close event.
+      expect(eventOrder).toEqual(['input', 'close']);
+      expect(wrapper.emitted('input')).toHaveLength(1);
+
+      await flushPromises();
+
+      expect(wrapper.vm.inputValue).toStrictEqual([
+        {
+          multiselectId: 0,
+          text: 'pending@example.com',
+          value: 'pending@example.com',
+        },
+      ]);
+      expect(wrapper.emitted().input).toEqual([[['pending@example.com']]]);
+      expect(wrapper.emitted('close')).toBeTruthy();
+      expect(wrapper.emitted('closed')).toBeFalsy();
+    });
+
+    it('updates floating-label state when closing an empty dropdown', async () => {
+      const wrapper = setup();
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+
+      await multiselect.trigger('click');
+      expect(wrapper.vm.classes.some((item) => item['polyfill-placeholder'])).toBe(true);
+
       wrapper.vm.closeHandler();
       await flushPromises();
 
-      expect(wrapper.emitted('close')).toBeTruthy();
-      expect(wrapper.emitted('closed')).toBeFalsy();
+      expect(wrapper.vm.classes.some((item) => item['polyfill-placeholder'])).toBe(false);
     });
   });
 
@@ -78,6 +110,38 @@ describe('Multiselect', () => {
     ]);
 
     expect(wrapper.emitted().input).toEqual([[['test']]]);
+  });
+
+  it('commits a pending tag when the multiselect input loses focus', async () => {
+    const wrapper = setup({ taggable: true });
+    const input = findByTestId(wrapper, 'multi-select-input-stub-testid');
+
+    await input.trigger('click');
+    await input.setValue('pending@example.com');
+    await input.trigger('blur');
+    await flushPromises();
+
+    expect(wrapper.vm.inputValue).toStrictEqual([
+      {
+        multiselectId: 0,
+        text: 'pending@example.com',
+        value: 'pending@example.com',
+      },
+    ]);
+    expect(wrapper.emitted().input).toEqual([[['pending@example.com']]]);
+    expect(wrapper.emitted('close')).toBeTruthy();
+  });
+
+  it('does not add duplicate comma-separated tags', () => {
+    const wrapper = setup({ taggable: true, value: ['existing@example.com'] });
+
+    wrapper.vm.searchChange('existing@example.com, new@example.com, new@example.com');
+    wrapper.vm.addTag();
+
+    expect(wrapper.vm.inputValue.map(({ value }) => value)).toEqual([
+      'existing@example.com',
+      'new@example.com',
+    ]);
   });
 
   it.each([

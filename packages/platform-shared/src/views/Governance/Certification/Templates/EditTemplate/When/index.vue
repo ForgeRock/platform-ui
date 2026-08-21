@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-4 flex-grow-1 overflow-auto h-100">
     <BContainer
@@ -24,11 +23,11 @@ to such license between the licensee and ForgeRock AS. -->
         <BCollapse
           :visible="formFields.enableSchedule">
           <div class="p-4 rounded bg-light mb-4">
-            <div class="mb-3">
+            <div class="mb-3 d-flex align-items-center">
               <span>{{ $t('governance.editTemplate.runEvery') }}</span>
               <FrField
                 v-model="formFields.scheduleDuration"
-                class="mb-0 mr-3 d-inline-block"
+                class="mb-0 ml-2 mr-3 d-inline-block"
                 name="scheduleDuration"
                 style="max-width: 70px;"
                 testid="schedule-duration"
