@@ -214,6 +214,18 @@ describe('BasicInput', () => {
         expect(input.attributes('disabled')).toBeDefined();
       });
 
+      it('applies inputmode attribute to text inputs', () => {
+        const wrapper = setup({ inputmode: 'numeric' });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.attributes('inputmode')).toBe('numeric');
+      });
+
+      it('does not apply inputmode attribute when not passed', () => {
+        const wrapper = setup();
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.attributes('inputmode')).toBeUndefined();
+      });
+
       describe('when validation errors', () => {
         beforeEach(() => {
           jest.useFakeTimers();

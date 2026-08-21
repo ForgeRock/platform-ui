@@ -2554,6 +2554,99 @@ describe('Component Test', () => {
         // 'User Name' maps to 'username'
         expect(frField.attributes('autocomplete')).toBe('username');
       });
+
+      describe('PasswordCallback OTP field rendering', () => {
+        let otpWrapper;
+
+        afterEach(() => {
+          if (otpWrapper) {
+            otpWrapper.unmount();
+            otpWrapper = null;
+          }
+        });
+
+        it('renders an OTP PasswordCallback as a text input with inputmode and one-time-code autocomplete so iOS does not offer a strong password', async () => {
+          const authDataOtp = {
+            authId: '',
+            callbacks: [{
+              type: 'PasswordCallback',
+              output: [
+                { name: 'prompt', value: 'One-Time Password' },
+                { name: 'autocompleteValues', value: ['one-time-code'] },
+              ],
+              input: [{ name: 'IDToken1', value: '' }],
+            }],
+            header: 'Sign In',
+            description: '',
+          };
+          mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authDataOtp)));
+          mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authDataOtp)));
+
+          otpWrapper = setup();
+          jest.spyOn(otpWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+          await flushPromises();
+
+          const input = otpWrapper.find('input');
+          expect(input.attributes('type')).toBe('text');
+          expect(input.attributes('inputmode')).toBe('numeric');
+          expect(input.attributes('autocomplete')).toBe('one-time-code');
+          // the password reveal button must not appear on an OTP field
+          expect(otpWrapper.find('[data-testid^="btn-show-password"]').exists()).toBe(false);
+        });
+
+        it('renders a standard PasswordCallback as a password input with a reveal button when autocompleteValues is absent', async () => {
+          const authDataStandardPassword = {
+            authId: '',
+            callbacks: [{
+              type: 'PasswordCallback',
+              output: [
+                { name: 'prompt', value: 'Password' },
+              ],
+              input: [{ name: 'IDToken1', value: '' }],
+            }],
+            header: 'Sign In',
+            description: '',
+          };
+          mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authDataStandardPassword)));
+          mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authDataStandardPassword)));
+
+          otpWrapper = setup();
+          jest.spyOn(otpWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+          await flushPromises();
+
+          const input = otpWrapper.find('input');
+          expect(input.attributes('type')).toBe('password');
+          expect(input.attributes('inputmode')).toBeUndefined();
+          expect(otpWrapper.find('[data-testid^="btn-show-password"]').exists()).toBe(true);
+        });
+
+        it('renders a standard PasswordCallback as a password input when autocompleteValues does not contain one-time-code', async () => {
+          const authDataCurrentPassword = {
+            authId: '',
+            callbacks: [{
+              type: 'PasswordCallback',
+              output: [
+                { name: 'prompt', value: 'Password' },
+                { name: 'autocompleteValues', value: ['current-password'] },
+              ],
+              input: [{ name: 'IDToken1', value: '' }],
+            }],
+            header: 'Sign In',
+            description: '',
+          };
+          mockNext.mockImplementation(() => Promise.resolve(rehydrateStep(authDataCurrentPassword)));
+          mockStart.mockImplementation(() => Promise.resolve(rehydrateStep(authDataCurrentPassword)));
+
+          otpWrapper = setup();
+          jest.spyOn(otpWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+          await flushPromises();
+
+          const input = otpWrapper.find('input');
+          expect(input.attributes('type')).toBe('password');
+          expect(input.attributes('inputmode')).toBeUndefined();
+          expect(input.attributes('autocomplete')).toBe('current-password');
+        });
+      });
     });
   });
 

@@ -59,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
           :readonly="readonly"
           :type="fieldType"
           :autocomplete="$attrs.autocomplete"
+          :inputmode="$attrs.inputmode"
           :style="labelHeight && {height: `${labelHeight}px`, 'padding-top': `${labelHeight - 27}px`}"
           :aria-describedby="ariaDescribedBy"
           :aria-required="isRequiredAria"

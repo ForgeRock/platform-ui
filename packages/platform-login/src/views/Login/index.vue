@@ -1089,15 +1089,21 @@ export default {
           const errors = this.getTranslatedPolicyFailures(callback);
           const validation = getFieldValidation(policyRequirements);
           const autocompleteValues = callback.getOutputByName('autocompleteValues');
+          // AM signals an OTP field (e.g. from OATH nodes) with autocompleteValues: ['one-time-code'].
+          // Render it as a text input so iOS Safari doesn't treat it as a password and offer
+          // to autofill a strong password (IAM-10896). 'string' (not 'text') because Field/index.vue
+          // aliases 'text' back to 'string'; 'string' renders <input type="text"> in BasicInput.
+          const isOtp = Array.isArray(autocompleteValues) && autocompleteValues.includes('one-time-code');
           component.callbackSpecificProps = {
             errors,
             label,
             name,
-            type: fieldDataType,
+            type: isOtp ? 'string' : fieldDataType,
             value: value || defaultText,
             autocomplete: (Array.isArray(autocompleteValues) && autocompleteValues?.length) ? autocompleteValues.join(' ') : getAutocompleteValue(label),
             validationImmediate: !!errors.length,
             ...(validation && { validation }),
+            ...(isOtp && { inputmode: 'numeric' }),
           };
           if (policyRequirements.includes('VALID_ENUM_VALUE')) {
             const policyDetails = callback.getOutputByName('policies')?.policies?.find((policy) => policy.policyId === 'valid-enum-value');
