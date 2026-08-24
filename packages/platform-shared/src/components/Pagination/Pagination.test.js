@@ -6,6 +6,7 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { BPagination } from 'bootstrap-vue';
 import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import Pagination from './index';
 import { DatasetSize } from './types';
@@ -35,6 +36,81 @@ describe('Pagination Component', () => {
       });
       await runA11yTest(wrapper);
     });
+
+    // Ellipsis items render with role="separator" from BootstrapVue. Once fixNavButtonAttributes
+    // strips the menubar role from the <ul>, an li whose role is not listitem is no longer valid
+    // inside a plain list (axe "list" rule; W3C validator flags the same). The default a11y test
+    // above uses LARGE dataset size, which hides the ellipsis — this case renders it (CUSTOM).
+    it('should not have any accessibility violations when ellipsis is rendered', async () => {
+      const wrapper = mountPagination({
+        propsData: {
+          totalRows: 100,
+          value: 5,
+          hidePageSizeSelector: true,
+        },
+      }, DatasetSize.CUSTOM);
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('ellipsis is an inert indicator: no role, not a Tab stop, stays inert across re-renders', async () => {
+      const wrapper = mountPagination({
+        propsData: {
+          totalRows: 100,
+          value: 5,
+          hidePageSizeSelector: true,
+        },
+      }, DatasetSize.CUSTOM);
+      await flushPromises();
+
+      const assertEllipsisInert = () => {
+        const ellipsisItems = wrapper.findAll('.page-item.bv-d-xs-down-none');
+        expect(ellipsisItems.length).toBeGreaterThan(0);
+        Array.from(ellipsisItems).forEach((item) => {
+          expect(item.attributes('role')).toBeUndefined();
+          const link = item.find('.page-link');
+          expect(link.element.tagName).toBe('SPAN');
+          expect(link.attributes('role')).toBeUndefined();
+          expect(link.attributes('tabindex')).toBeUndefined();
+        });
+      };
+      assertEllipsisInert();
+
+      // Re-render (BV clobbers attributes) and re-run the fix via a prop change: the first
+      // fix run already stripped the separator role it detects by, so this must stay inert
+      // via the data-fr-ellipsis marker — the fix must be idempotent across runs.
+      await wrapper.setProps({ value: 6 });
+      await flushPromises();
+      assertEllipsisInert();
+    });
+  });
+
+  // Canary for fixNavButtonAttributes(): every "menu semantics removed" assertion in this
+  // suite is an absence check and would pass vacuously if BootstrapVue stopped generating
+  // the roles/attrs we strip. This test pins the library output those assertions depend on.
+  // If this fails after a bootstrap-vue upgrade, re-evaluate fixNavButtonAttributes()
+  // (including its triple-nested $nextTick, which must keep landing after BV's re-render).
+  it('canary: raw BPagination still generates the menu semantics we strip', async () => {
+    const wrapper = mount(BPagination, {
+      propsData: {
+        totalRows: 30,
+        value: 2,
+        limit: 4,
+      },
+      global: {
+        mocks: {
+          $t: (key) => key,
+        },
+      },
+    });
+    await flushPromises();
+
+    expect(wrapper.find('ul.pagination').attributes('role')).toBe('menubar');
+    expect(wrapper.findAll('[role="menuitem"], [role="menuitemradio"]').length).toBeGreaterThan(0);
+    const activeLink = wrapper.find('.page-item.active .page-link');
+    expect(activeLink.attributes('aria-checked')).toBe('true');
+    expect(activeLink.attributes('aria-posinset')).toBeDefined();
+    expect(activeLink.attributes('aria-setsize')).toBeDefined();
   });
 
   it('Pagination dropdown has aria-label for items per page', () => {
@@ -48,11 +124,101 @@ describe('Pagination Component', () => {
     expect(dropdownToggle.attributes('aria-label')).toBe('pagination.dropdown.ariaLabel');
   });
 
+  it('Pagination removes menu semantics from generated controls', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 30,
+        value: 2,
+      },
+    }, DatasetSize.CUSTOM);
+    await flushPromises();
+
+    const pagination = wrapper.find('#pagination');
+    const navigation = wrapper.find('nav.pagination-navigation');
+    expect(navigation.exists()).toBe(true);
+    expect(navigation.attributes('aria-label')).toBe('Pagination');
+    expect(pagination.attributes('role')).toBeUndefined();
+    const visibleItems = pagination.findAll('.page-item').filter((item) => !item.classes().includes('d-none'));
+    expect(visibleItems.filter((item) => item.find('[role="menuitem"]').exists())).toHaveLength(0);
+    expect(visibleItems.filter((item) => item.find('[role="menuitemradio"]').exists())).toHaveLength(0);
+    expect(visibleItems.filter((item) => item.find('[aria-checked]').exists())).toHaveLength(0);
+    expect(visibleItems.filter((item) => item.attributes('role') === 'presentation')).toHaveLength(0);
+    const numberedPages = visibleItems.filter((item) => item.find('[aria-label^="Go to page"]').exists());
+    numberedPages.forEach((item) => expect(item.find('.page-link').attributes('tabindex')).toBe('0'));
+
+    const activePage = pagination.find('.page-item.active .page-link');
+    expect(activePage.attributes('aria-current')).toBe('page');
+    expect(activePage.attributes('aria-posinset')).toBeUndefined();
+    expect(activePage.attributes('aria-setsize')).toBeUndefined();
+  });
+
+  it('keeps the synthetic on-demand page out of the Tab sequence', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 0,
+        lastPage: false,
+        value: 5,
+        perPage: 10,
+      },
+    }, DatasetSize.CUSTOM);
+
+    await flushPromises();
+
+    const placeholder = wrapper.find('.last-page-on-demand:nth-last-of-type(3)');
+    expect(placeholder.exists()).toBe(true);
+    expect(placeholder.find('.page-link').attributes('tabindex')).toBe('-1');
+    expect(placeholder.find('.page-link').attributes('aria-label')).toBe('Go to page 6');
+
+    const realPages = wrapper.findAll('.page-item.last-page-on-demand').filter((item) => !item.element.matches('.last-page-on-demand:nth-last-of-type(3)'));
+    realPages.forEach((item) => expect(item.find('.page-link').attributes('tabindex')).toBe('0'));
+  });
+
+  it('reapplies semantic normalization after pagination events and prop changes', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 30,
+        value: 2,
+      },
+    }, DatasetSize.CUSTOM);
+
+    await flushPromises();
+    await wrapper.find('.fr-pagination-next .page-link').trigger('click');
+    await flushPromises();
+
+    expect(wrapper.find('#pagination').attributes('role')).toBeUndefined();
+    expect(wrapper.findAll('#pagination .page-item:not(.d-none) [role="menuitem"], #pagination .page-item:not(.d-none) [role="menuitemradio"]')).toHaveLength(0);
+
+    await wrapper.setProps({
+      value: 1,
+      limit: 3,
+      hideEllipsis: true,
+      hidePageNumbers: false,
+      datasetSize: DatasetSize.CUSTOM,
+    });
+    await flushPromises();
+
+    expect(wrapper.find('#pagination').attributes('role')).toBeUndefined();
+    expect(wrapper.findAll('#pagination .page-item:not(.d-none) [role="menuitem"], #pagination .page-item:not(.d-none) [role="menuitemradio"]')).toHaveLength(0);
+    expect(wrapper.find('#pagination .page-item.active .page-link').attributes('aria-current')).toBe('page');
+  });
+
+  it('keeps the page-size dropdown menu semantics separate', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 30,
+      },
+    });
+    await flushPromises();
+
+    expect(wrapper.find('#dropdown .dropdown-menu').attributes('role')).toBe('menu');
+    expect(wrapper.findAll('#dropdown .dropdown-item[role="menuitem"]')).not.toHaveLength(0);
+  });
+
   it('Pagination correct aria labels', () => {
     const wrapper = mountPagination();
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
-    expect(pagination.attributes('aria-label')).toBe('Pagination');
+    expect(wrapper.find('nav.pagination-navigation').attributes('aria-label')).toBe('Pagination');
     const buttons = pagination.findAll('.page-item');
     const goToFirstButton = buttons[0].find('.page-link');
     expect(goToFirstButton.attributes('aria-label')).toBe('Go to first page');
@@ -210,7 +376,49 @@ describe('Pagination Component', () => {
     expect(wrapper.emitted('input')[0]).toEqual([2]);
   });
 
-  it('Disabled prev and enabled next are both tabbable on the 1st page', async () => {
+  it('preserves focus on the clicked pagination control', async () => {
+    const wrapper = mountPagination({
+      attachTo: document.body,
+      propsData: {
+        totalRows: 30,
+        value: 1,
+      },
+    }, DatasetSize.CUSTOM);
+    await flushPromises();
+
+    const pageTwo = wrapper.findAll('.page-item').find((item) => item.text().trim() === '2').find('.page-link');
+    pageTwo.element.focus();
+    await pageTwo.trigger('click');
+    await flushPromises();
+
+    expect(wrapper.find('.page-item.active .page-link').text()).toBe('2');
+    expect(wrapper.find('.page-item.active .page-link').attributes('aria-current')).toBe('page');
+    expect(wrapper.find('.page-item.active .page-link').attributes('data-page')).toBeUndefined();
+    // BootstrapVue retains or restores focus without an active-page focus override.
+    expect(document.activeElement).not.toBe(document.body);
+    wrapper.unmount();
+  });
+
+  it('does not steal focus during a controlled value update', async () => {
+    const wrapper = mountPagination({
+      attachTo: document.body,
+      propsData: {
+        totalRows: 30,
+        value: 1,
+      },
+    }, DatasetSize.CUSTOM);
+    await flushPromises();
+
+    const next = wrapper.find('.fr-pagination-next .page-link');
+    next.element.focus();
+    await wrapper.setProps({ value: 2 });
+    await flushPromises();
+
+    expect(document.activeElement).toBe(next.element);
+    wrapper.unmount();
+  });
+
+  it('Disabled prev remains tabbable and enabled next is tabbable on the 1st page', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 20,
@@ -221,10 +429,12 @@ describe('Pagination Component', () => {
     await flushPromises();
 
     // prev is disabled on page 1 — renders as <span> with aria-disabled="true"
-    // Per ARIA APG, disabled menuitems must remain focusable so keyboard users can discover them
+    // Visible disabled custom controls stay tabbable per the Level Access remediation (IAM-11261)
     const prevButton = wrapper.find('.fr-pagination-prev .page-link');
     expect(prevButton.exists()).toBe(true);
     expect(prevButton.element.tagName).toBe('SPAN');
+    expect(prevButton.attributes('role')).toBe('button');
+    expect(prevButton.attributes('aria-disabled')).toBe('true');
     expect(prevButton.attributes('tabindex')).toBe('0');
 
     const nextButton = wrapper.find('.fr-pagination-next .page-link');
@@ -252,7 +462,7 @@ describe('Pagination Component', () => {
     expect(nextButton.attributes('tabindex')).toBe('0');
   });
 
-  it('Enabled prev and disabled next are both tabbable on the last page', async () => {
+  it('Enabled prev is tabbable and disabled next remains tabbable on the last page', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 14,
@@ -268,14 +478,16 @@ describe('Pagination Component', () => {
     expect(prevButton.attributes('tabindex')).toBe('0');
 
     // next is disabled on last page — renders as <span> with aria-disabled="true"
-    // Per ARIA APG, disabled menuitems must remain focusable so keyboard users can discover them
+    // Visible disabled custom controls stay tabbable per the Level Access remediation (IAM-11261)
     const nextButton = wrapper.find('.fr-pagination-next .page-link');
     expect(nextButton.exists()).toBe(true);
     expect(nextButton.element.tagName).toBe('SPAN');
+    expect(nextButton.attributes('role')).toBe('button');
+    expect(nextButton.attributes('aria-disabled')).toBe('true');
     expect(nextButton.attributes('tabindex')).toBe('0');
   });
 
-  it('Disabled nav spans are tabbable and announced by screen readers when all buttons disabled', async () => {
+  it('Disabled nav spans are announced by screen readers and remain tabbable when all buttons are disabled', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 0,
@@ -292,15 +504,35 @@ describe('Pagination Component', () => {
     // Both render as <span> with aria-disabled="true" when all controls are disabled
     expect(prevButton.element.tagName).toBe('SPAN');
     expect(nextButton.element.tagName).toBe('SPAN');
-    // aria-hidden removed from parent <li> so screen readers announce the menuitem
+    // aria-hidden removed from visible parent items so screen readers announce the controls
     expect(wrapper.find('.fr-pagination-prev').attributes('aria-hidden')).toBeUndefined();
     expect(wrapper.find('.fr-pagination-next').attributes('aria-hidden')).toBeUndefined();
-    // tabindex="0" keeps disabled menuitems in Tab sequence per ARIA APG
+    expect(prevButton.attributes('role')).toBe('button');
+    expect(nextButton.attributes('role')).toBe('button');
+    // Disabled custom controls remain tabbable per the Level Access remediation (IAM-11261).
     expect(prevButton.attributes('tabindex')).toBe('0');
     expect(nextButton.attributes('tabindex')).toBe('0');
   });
 
-  it('Disabled nav button li wrappers have aria-hidden removed so inner menuitem is announced', async () => {
+  it('Normalizes hidden pagination items without exposing them', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 30,
+        value: 1,
+      },
+    });
+
+    await flushPromises();
+
+    const hiddenFirst = wrapper.find('.fr-pagination-first');
+    expect(hiddenFirst.classes()).toContain('d-none');
+    expect(hiddenFirst.attributes('aria-hidden')).toBe('true');
+    expect(hiddenFirst.attributes('role')).toBeUndefined();
+    expect(hiddenFirst.find('.page-link').attributes('role')).toBe('button');
+    expect(hiddenFirst.find('.page-link').attributes('tabindex')).not.toBe('0');
+  });
+
+  it('Disabled nav button li wrappers have aria-hidden removed so inner button is announced', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 20,
@@ -312,8 +544,7 @@ describe('Pagination Component', () => {
 
     const prevLi = wrapper.find('.fr-pagination-prev');
     expect(prevLi.attributes('aria-hidden')).toBeUndefined();
-    // role="presentation" on the <li> is intentional — only aria-hidden is removed
-    expect(prevLi.attributes('role')).toBe('presentation');
+    expect(prevLi.attributes('role')).toBeUndefined();
     // accessible semantics stay on the inner span, not promoted to <li>
     expect(prevLi.find('.page-link').attributes('aria-disabled')).toBe('true');
     expect(prevLi.find('.page-link').attributes('aria-label')).toBeTruthy();
@@ -334,7 +565,7 @@ describe('Pagination Component', () => {
 
     const prevLi = wrapper.find('.fr-pagination-prev');
     expect(prevLi.attributes('aria-hidden')).toBeUndefined();
-    expect(prevLi.attributes('role')).toBe('presentation');
+    expect(prevLi.attributes('role')).toBeUndefined();
 
     const nextLink = wrapper.find('.fr-pagination-next .page-link');
     expect(nextLink.attributes('tabindex')).toBe('0');

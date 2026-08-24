@@ -32,56 +32,60 @@ of the MIT license. See the LICENSE file for details. -->
       </BDropdownItem>
     </BDropdown>
     <!-- Pagination -->
-    <BPagination
-      class="m-0 pagination-buttons"
-      id="pagination"
-      :aria-label="ariaLabel"
-      :disabled="disabled"
-      :size="size"
-      :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
-      :first-class="[hideGoToFirstPageButton ? 'd-none' : null, 'fr-pagination-first', firstClass]"
-      :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
-      :label-first-page="labelFirstPage"
-      :label-last-page="labelLastPage"
-      :label-next-page="labelNextPage"
-      :label-page="labelPage"
-      :label-prev-page="labelPrevPage"
-      :last-class="[totalRows <= 0 || hideGoToLastPageButton ? 'd-none' : null, 'fr-pagination-last', lastClass]"
-      :limit="limit"
-      :next-class="'fr-pagination-next'"
-      :page-class="pageClasses"
-      :per-page="perPage"
-      :prev-class="['fr-pagination-prev', prevClass]"
-      :total-rows="effectiveTotalRows > 0 ? effectiveTotalRows : totalRowsOnDemand"
-      :value="value"
-      @change="$emit('change', $event)"
-      @input="$emit('input', $event)"
-    >
-      <template #first-text>
-        <FrIcon
-          data-testid="first_page-button"
-          icon-class="md-24"
-          name="first_page" />
-      </template>
-      <template #prev-text>
-        <FrIcon
-          data-testid="prev_page-button"
-          icon-class="md-24"
-          name="chevron_left" />
-      </template>
-      <template #next-text>
-        <FrIcon
-          data-testid="next_page-button"
-          icon-class="md-24"
-          name="chevron_right" />
-      </template>
-      <template #last-text>
-        <FrIcon
-          data-testid="last_page-button"
-          icon-class="md-24"
-          name="last_page" />
-      </template>
-    </BPagination>
+    <nav
+      class="pagination-navigation"
+      :aria-label="ariaLabel">
+      <BPagination
+        class="m-0 pagination-buttons"
+        id="pagination"
+        :aria-label="null"
+        :disabled="disabled"
+        :size="size"
+        :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
+        :first-class="[hideGoToFirstPageButton ? 'd-none' : null, 'fr-pagination-first', firstClass]"
+        :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
+        :label-first-page="labelFirstPage"
+        :label-last-page="labelLastPage"
+        :label-next-page="labelNextPage"
+        :label-page="labelPage"
+        :label-prev-page="labelPrevPage"
+        :last-class="[totalRows <= 0 || hideGoToLastPageButton ? 'd-none' : null, 'fr-pagination-last', lastClass]"
+        :limit="limit"
+        :next-class="'fr-pagination-next'"
+        :page-class="pageClasses"
+        :per-page="perPage"
+        :prev-class="['fr-pagination-prev', prevClass]"
+        :total-rows="effectiveTotalRows > 0 ? effectiveTotalRows : totalRowsOnDemand"
+        :value="value"
+        @change="$emit('change', $event)"
+        @input="paginationInput"
+      >
+        <template #first-text>
+          <FrIcon
+            data-testid="first_page-button"
+            icon-class="md-24"
+            name="first_page" />
+        </template>
+        <template #prev-text>
+          <FrIcon
+            data-testid="prev_page-button"
+            icon-class="md-24"
+            name="chevron_left" />
+        </template>
+        <template #next-text>
+          <FrIcon
+            data-testid="next_page-button"
+            icon-class="md-24"
+            name="chevron_right" />
+        </template>
+        <template #last-text>
+          <FrIcon
+            data-testid="last_page-button"
+            icon-class="md-24"
+            name="last_page" />
+        </template>
+      </BPagination>
+    </nav>
   </div>
 </template>
 
@@ -310,29 +314,97 @@ export default {
       if (pageSize === this.perPage) return;
       this.$emit('on-page-size-change', pageSize);
     },
+    // BPagination emits `input` on every `change`, so the attribute fix runs via paginationInput;
+    // change only re-emits to preserve this component's public change event.
+    paginationInput(page) {
+      this.$emit('input', page);
+      this.fixNavButtonAttributes();
+    },
     /**
-     * Corrects two BPagination rendering defects that break keyboard and screen reader access.
-     * BPagination exposes no API for either; direct DOM correction after $nextTick is the only option.
-     *
-     * 1. aria-hidden="true" on disabled nav <li> wrappers silences the inner menuitem from screen
-     *    readers entirely. Only aria-hidden is removed; role="presentation" on the <li> is intentional.
-     *
-     * 2. tabindex="-1" is hardcoded on all nav controls. tabindex="0" is set on every visible
-     *    .page-link, including disabled <span> elements. Per ARIA APG, disabled menuitems in a
-     *    menubar must remain in the tab sequence so Tab-only keyboard users can discover them.
-     *    Ref: https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
+     * Normalizes BootstrapVue pagination semantics and corrects its generated navigation attributes.
+     * BPagination exposes no API for these attributes; direct DOM correction after $nextTick is the
+     * smallest change that preserves its pagination behavior and public API.
      */
     fixNavButtonAttributes() {
       this.$nextTick(() => {
-        const navClasses = ['fr-pagination-first', 'fr-pagination-prev', 'fr-pagination-next', 'fr-pagination-last'];
-        navClasses.forEach((cls) => {
-          const li = this.$el.querySelector(`.${cls}`);
-          if (!li || li.classList.contains('d-none')) return;
-          li.removeAttribute('aria-hidden');
-          const link = li.querySelector('.page-link');
-          if (link) {
-            link.setAttribute('tabindex', '0');
-          }
+        // Wait for BootstrapVue's click/focusCurrent cycle before removing
+        // aria-posinset and aria-setsize, which it uses internally.
+        this.$nextTick(() => {
+          this.$nextTick(() => {
+            const pagination = this.$el.querySelector('#pagination');
+            if (!pagination) return;
+
+            if (pagination.getAttribute('role') === 'menubar') {
+              pagination.removeAttribute('role');
+            }
+
+            pagination.querySelectorAll('.page-item').forEach((item) => {
+              // Ellipsis carries role="separator" from BV, which must be stripped (invalid
+              // child of a plain list). The marker keeps it identifiable after the strip,
+              // since Vue never restores imperatively-removed attributes.
+              const isEllipsis = item.getAttribute('role') === 'separator'
+                || item.hasAttribute('data-fr-ellipsis');
+
+              const link = item.querySelector('.page-link');
+              if (!link) return;
+
+              const isHidden = item.classList.contains('d-none');
+              const isDisabled = link.tagName === 'SPAN';
+              const isActive = item.classList.contains('active');
+              const isOnDemandPlaceholder = item.matches(
+                '.last-page-on-demand:nth-last-of-type(3)',
+              );
+
+              item.removeAttribute('role');
+              link.removeAttribute('role');
+              link.removeAttribute('aria-checked');
+              link.removeAttribute('aria-current');
+              link.removeAttribute('aria-posinset');
+              link.removeAttribute('aria-setsize');
+
+              // The ellipsis is an inert indicator (pages are hidden here), not a control:
+              // no interactive role and not a Tab stop.
+              if (isEllipsis) {
+                item.setAttribute('data-fr-ellipsis', '');
+                link.removeAttribute('tabindex');
+                return;
+              }
+
+              // BV renders disabled controls as custom <span> elements (not native disabled
+              // buttons), so they need an explicit role to be announced as buttons.
+              if (isDisabled) link.setAttribute('role', 'button');
+
+              // Hidden controls are never in the accessibility tree, so remove any tabindex
+              // left by a previous render. display:none already excludes them from screen
+              // readers and focus, so no other hiding is needed.
+              if (isHidden) {
+                link.removeAttribute('tabindex');
+                return;
+              }
+
+              // The synthetic on-demand placeholder is never a sequential Tab stop
+              // tabindex="-1" keeps it programmatically focusable but out of the Tab sequence.
+              if (isOnDemandPlaceholder) {
+                link.setAttribute('tabindex', '-1');
+                return;
+              }
+
+              // Every other visible control is tabbable. Visible disabled controls are custom
+              // spans (not native disabled buttons), so they remain tabbable with aria-disabled
+              // so keyboard users can discover the unavailable state. This preserves the
+              // tabindex="0" behavior added for disabled interactive span elements by PR #6406
+              // which fixes IAM-11261.
+              link.setAttribute('tabindex', '0');
+              if (isActive) link.setAttribute('aria-current', 'page');
+            });
+
+            const navClasses = ['fr-pagination-first', 'fr-pagination-prev', 'fr-pagination-next', 'fr-pagination-last'];
+            navClasses.forEach((cls) => {
+              const li = pagination.querySelector(`.${cls}`);
+              if (!li || li.classList.contains('d-none')) return;
+              li.removeAttribute('aria-hidden');
+            });
+          });
         });
       });
     },
@@ -349,6 +421,10 @@ export default {
     perPage: 'fixNavButtonAttributes',
     disabled: 'fixNavButtonAttributes',
     lastPage: 'fixNavButtonAttributes',
+    limit: 'fixNavButtonAttributes',
+    hideEllipsis: 'fixNavButtonAttributes',
+    hidePageNumbers: 'fixNavButtonAttributes',
+    datasetSize: 'fixNavButtonAttributes',
     hideGoToFirstPageButton: 'fixNavButtonAttributes',
     hideGoToLastPageButton: 'fixNavButtonAttributes',
   },
