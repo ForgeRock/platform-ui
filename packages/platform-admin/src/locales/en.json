@@ -1193,6 +1193,8 @@
     "journeyDeleteSuccess": "\"{treeId}\" journey successfully deleted.",
     "journeyEditSuccess": "\"{treeId}\" journey successfully updated.",
     "defaultJourneyUpdated": "\"{treeId}\" successfully set as Default Journey.",
+    "defaultJourneyCannotBeDeleted": "The default journey cannot be deleted. Set another journey as the default first.",
+    "defaultJourneySelectedCannotBeDeleted": "A default journey is included in the selection and cannot be deleted. Unselect the default journey, or set another journey as the default first.",
     "maximumSessionTimeLabel": "Maximum Authenticated Session Time",
     "maximumIdleTimeLabel": "Maximum Authenticated Session Idle Time",
     "nodeDetails": "Node Details",
