@@ -30,11 +30,26 @@
 <a name="quick-start"></a>
 ## Development Quick start
 
-- [Download and install node](https://nodejs.org/en/download/) version 14 or higher, or verify your node version `node -v` in your terminal. Your Node.js version should be >=14.
-- This project uses a specific version of Yarn (3.6.1) that is bundled with the project in `.yarn/releases`. It's not required to install Yarn globally for this project, but if you are interested in how Yarn works or if you plan to use your own Yarn version, you can learn more about installing Yarn [here](https://yarnpkg.com/getting-started/install). You can verify the yarn version running `yarn -v` in your terminal.
-- Clone or download the repo
-- Navigate to newly cloned `platform-ui` directory, and install dependencies with yarn command: `yarn install`. Since this project uses [Yarn workspaces](https://yarnpkg.com/features/workspaces), this will install package requirements in all project folders under `packages`
-- To start the development server, navigate to target project by changing directory to specific package inside the `platform-ui/packages` directory, and enter the command: `yarn dev`
+### Setting up Nix (recommended)
+
+This repository uses a pinned [Nix flake](https://nixos.wiki/wiki/Flakes) to provide reproducible developer tooling on macOS and Linux. We recommend the [Determinate Nix Installer](https://determinate.systems/nix-installer/); the [official Nix installer](https://nixos.org/download/) is also supported. Windows users should use [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install); native Windows shells are not supported.
+
+From the repository root, run:
+
+```sh
+nix develop
+platform-ui-doctor
+YARN_ENABLE_GLOBAL_CACHE=1 yarn install --immutable
+```
+
+If you use [direnv](https://direnv.net/), run `direnv allow` once to load the flake shell automatically. Nix provides the development tooling; Docker, backend services, credentials, certificates, and environment configuration remain separate prerequisites where needed.
+
+### Manual setup
+
+Without Nix, use a Node.js version manager to install Node.js 24.10.0 (Node 14+ is the minimum supported by older tooling) and use the bundled Yarn 3.6.1. Clone the repo, run `yarn install --immutable` from its root, then enter a package under `packages` and run `yarn dev`. Do not install another global Yarn version: `.yarnrc.yml` selects the checked-in release.
+
+Docker Desktop or another Docker daemon must be installed and running for Docker-based tests. Install and configure `gcloud` manually when cloud tests are needed, authenticating through your organization's approved process. Certificate scripts may require local Java tooling and certificates. E2E tests require access to a suitable ForgeOps or cloud backend plus its environment/proxy configuration.
+To start the development server, navigate to a target package inside `platform-ui/packages` and run `yarn dev`.
 
 <a name="build-tools"></a>
 ## Build Tools
