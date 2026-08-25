@@ -913,6 +913,32 @@ describe('Component Test', () => {
     });
 
     describe('@renders', () => {
+      it.each([
+        ['card', { journeyLayout: 'card', journeyTheaterMode: false }],
+        ['theater', { journeyLayout: 'justified-left', journeyTheaterMode: true }],
+      ])('hides the fallback error heading and alert for an empty message in %s layout', async (_layout, layoutProps) => {
+        const renderWrapper = setup(layoutProps);
+        await flushPromises();
+
+        await renderWrapper.setData({
+          loading: false,
+          themeLoading: false,
+          header: '',
+          loginFailure: true,
+          errorMessage: '',
+        });
+
+        const failureAlert = renderWrapper.findAllComponents({ name: 'Alert' })[0];
+        expect(renderWrapper.find('h1.h2').exists()).toBe(false);
+        expect(failureAlert.props('show')).toBe(false);
+
+        await renderWrapper.setData({ errorMessage: 'AUTHN002' });
+
+        expect(renderWrapper.find('h1.h2').exists()).toBe(true);
+        expect(failureAlert.props('show')).toBe(true);
+        renderWrapper.unmount();
+      });
+
       it.skip('Displays remember my login checkbox if its enabled in the theme', async () => {
         jest.useFakeTimers();
         const wrapperOff = setup({ journeyRememberMeEnabled: false });
@@ -1916,11 +1942,11 @@ describe('Component Test', () => {
         containerFocusSpy.mockRestore();
       });
 
-      it('calls focusFirstInputAfterLoginFailure instead of container focus when loginFailure is true', async () => {
+      it('calls focusFirstInputAfterLoginFailure instead of container focus for a non-empty login failure', async () => {
         wrapper = createWrapper();
         await flushPromises();
 
-        await wrapper.setData({ loginFailure: true });
+        await wrapper.setData({ loginFailure: true, errorMessage: 'AUTHN002' });
 
         const focusFirstInputSpy = jest.spyOn(wrapper.vm, 'focusFirstInputAfterLoginFailure').mockImplementation(() => {});
         const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
@@ -1929,6 +1955,33 @@ describe('Component Test', () => {
 
         expect(focusFirstInputSpy).toHaveBeenCalled();
         expect(containerFocusSpy).not.toHaveBeenCalled();
+        focusFirstInputSpy.mockRestore();
+        containerFocusSpy.mockRestore();
+      });
+
+      it('uses normal container focus without an ARIA error reference when loginFailure has no message', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          loginFailure: true,
+          errorMessage: '',
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { name: 'callback_0' } },
+          ],
+        });
+
+        const focusFirstInputSpy = jest.spyOn(wrapper.vm, 'focusFirstInputAfterLoginFailure');
+        const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
+
+        wrapper.vm.handleFocus();
+        jest.advanceTimersByTime(200);
+        await wrapper.vm.$nextTick();
+
+        expect(focusFirstInputSpy).not.toHaveBeenCalled();
+        expect(containerFocusSpy).toHaveBeenCalled();
+        expect(document.activeElement).toBe(wrapper.vm.$refs.container);
+        expect(wrapper.vm.componentList[0].callbackSpecificProps.describedbyId).toBeUndefined();
         focusFirstInputSpy.mockRestore();
         containerFocusSpy.mockRestore();
       });
@@ -1975,7 +2028,7 @@ describe('Component Test', () => {
         wrapper = createWrapper();
         await flushPromises();
 
-        await wrapper.setData({ loginFailure: true });
+        await wrapper.setData({ loginFailure: true, errorMessage: 'AUTHN002' });
 
         const focusFirstInputSpy = jest.spyOn(wrapper.vm, 'focusFirstInputAfterLoginFailure').mockResolvedValue(null);
         const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
@@ -2004,7 +2057,7 @@ describe('Component Test', () => {
         // Second call: loginFailure is now true — should cancel the timer and focus username
         const mockInput = document.createElement('input');
         const inputFocusSpy = jest.spyOn(mockInput, 'focus');
-        await wrapper.setData({ loginFailure: true });
+        await wrapper.setData({ loginFailure: true, errorMessage: 'AUTHN002' });
         const focusFirstInputSpy = jest.spyOn(wrapper.vm, 'focusFirstInputAfterLoginFailure').mockResolvedValue(mockInput);
         const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
 

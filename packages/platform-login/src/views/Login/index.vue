@@ -44,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
                         {{ header }}
                       </h1>
                       <h1
-                        v-if="journeyA11yAddFallbackErrorHeading && !header && loginFailure"
+                        v-if="journeyA11yAddFallbackErrorHeading && !header && loginFailure && errorMessage !== ''"
                         class="h2">
                         {{ $t('login.errorHeading') }}
                       </h1>
@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
                          loginFailureAlert is the stable aria-describedby target for the first input. -->
                     <FrAlert
                       id="loginFailureAlert"
-                      :show="loginFailure"
+                      :show="loginFailure && errorMessage !== ''"
                       :dismissible="false"
                       variant="error"
                       class="p-3 text-left">
@@ -270,7 +270,7 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ header }}
                 </h1>
                 <h1
-                  v-if="journeyA11yAddFallbackErrorHeading && !header && loginFailure"
+                  v-if="journeyA11yAddFallbackErrorHeading && !header && loginFailure && errorMessage !== ''"
                   class="h2">
                   {{ $t('login.errorHeading') }}
                 </h1>
@@ -296,7 +296,7 @@ of the MIT license. See the LICENSE file for details. -->
                      loginFailureAlert is the stable aria-describedby target for the first input. -->
                 <FrAlert
                   id="loginFailureAlert"
-                  :show="loginFailure"
+                  :show="loginFailure && errorMessage !== ''"
                   :dismissible="false"
                   variant="error"
                   class="p-3 text-left">
@@ -856,7 +856,7 @@ export default {
         }
       }
 
-      if (this.loginFailure) {
+      if (this.loginFailure && this.errorMessage !== '') {
         const failureFocusElement = await this.focusFirstInputAfterLoginFailure();
         if (typeof failureFocusElement?.focus === 'function') {
           applyFocus(failureFocusElement);
