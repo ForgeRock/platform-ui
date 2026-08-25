@@ -22,3 +22,23 @@ export async function getRoleMetrics() {
 export async function launchRoleMiningJob() {
   return generateIgaApi().post('/governance/jobs/roleMining?_action=trigger');
 }
+
+/**
+  * Returns the role mining configuration
+  * @returns {Promise}
+  */
+export async function getRoleMiningConfig() {
+  return generateIgaApi().get('/governance/role/miningConfig');
+}
+
+/**
+  * Updates the role mining configuration
+  * @param {Object} payload
+  * @param {number} payload.roleMiningConfidenceThreshold
+  * @param {number} payload.roleMiningMembershipThreshold
+  * @param {number} payload.roleMiningEntitlementThreshold
+  * @returns {Promise}
+  */
+export async function putRoleMiningConfig(payload) {
+  return generateIgaApi().put('/governance/role/miningConfig', payload);
+}

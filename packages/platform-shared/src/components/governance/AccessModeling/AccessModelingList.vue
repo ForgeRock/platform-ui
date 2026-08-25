@@ -56,6 +56,9 @@ of the MIT license. See the LICENSE file for details. -->
           name="actions"
           :item="item" />
       </template>
+      <template #head(actions)>
+        <span class="sr-only">{{ i18n.global.t('common.actions') }}</span>
+      </template>
     </BTable>
     <template v-else>
       <slot name="no-data" />
