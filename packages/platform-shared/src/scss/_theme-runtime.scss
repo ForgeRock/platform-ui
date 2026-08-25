@@ -635,27 +635,27 @@
   --fr-floating-action-bar-link-hover-color: #{$dk-fr-floating-action-bar-link-hover-color};
 
   /* Icon Wrapper */
-  --fr-icon-wrapper-bg-light-blue: #{$blue};
-  --fr-icon-wrapper-bg-light-indigo: #{$indigo};
+  --fr-icon-wrapper-bg-light-blue: #{$dk-light-blue};
+  --fr-icon-wrapper-bg-light-indigo: #{$dk-light-indigo};
   --fr-icon-wrapper-bg-light-purple: #{$dk-light-purple};
   --fr-icon-wrapper-bg-light-yellow: #{$dk-light-yellow};
-  --fr-icon-wrapper-bg-light-orange: #{$orange};
-  --fr-icon-wrapper-bg-light-red: #{$red};
+  --fr-icon-wrapper-bg-light-orange: #{$dk-light-orange};
+  --fr-icon-wrapper-bg-light-red: #{$dk-light-red};
   --fr-icon-wrapper-bg-light-green: #{$dk-light-green};
-  --fr-icon-wrapper-bg-light-teal: #{$teal};
-  --fr-icon-wrapper-bg-light-cyan: #{$cyan};
-  --fr-icon-wrapper-bg-light-pink: #{$pink};
+  --fr-icon-wrapper-bg-light-teal: #{$dk-light-teal};
+  --fr-icon-wrapper-bg-light-cyan: #{$dk-light-cyan};
+  --fr-icon-wrapper-bg-light-pink: #{$dk-light-pink};
 
-  --fr-icon-wrapper-text-blue: #{$black};
-  --fr-icon-wrapper-text-indigo: #{$black};
-  --fr-icon-wrapper-text-purple: #{$black};
-  --fr-icon-wrapper-text-red: #{$black};
-  --fr-icon-wrapper-text-orange: #{$black};
-  --fr-icon-wrapper-text-yellow: #{$black};
-  --fr-icon-wrapper-text-green: #{$black};
-  --fr-icon-wrapper-text-teal: #{$black};
-  --fr-icon-wrapper-text-cyan: #{$black};
-  --fr-icon-wrapper-text-pink: #{$black};
+  --fr-icon-wrapper-text-blue: #{$dk-dark-blue};
+  --fr-icon-wrapper-text-indigo: #{$dk-dark-indigo};
+  --fr-icon-wrapper-text-purple: #{$dk-dark-purple};
+  --fr-icon-wrapper-text-red: #{$dk-dark-red};
+  --fr-icon-wrapper-text-orange: #{$dk-dark-orange};
+  --fr-icon-wrapper-text-yellow: #{$dk-dark-yellow};
+  --fr-icon-wrapper-text-green: #{$dk-dark-green};
+  --fr-icon-wrapper-text-teal: #{$dk-dark-teal};
+  --fr-icon-wrapper-text-cyan: #{$dk-dark-cyan};
+  --fr-icon-wrapper-text-pink: #{$dk-dark-pink};
 
   /* Icons */
   .fr-helix-logo {
@@ -727,6 +727,173 @@
 
   .fr-tag-secondary-text {
     color: rgba($gray-400, 0.7) !important;
+  }
+
+  /* Onyx dark nested icon-wrapper colors */
+  .fr-icon-wrapper,
+  .rounded-circle {
+    &.color-blue,
+    &.color-darkblue,
+    &.text-blue {
+      color: var(--fr-icon-wrapper-text-blue) !important;
+    }
+
+    &.color-green,
+    &.color-darkgreen,
+    &.text-green,
+    &.text-success {
+      color: var(--fr-icon-wrapper-text-green) !important;
+    }
+
+    &.color-indigo,
+    &.color-darkindigo,
+    &.text-indigo {
+      color: var(--fr-icon-wrapper-text-indigo) !important;
+    }
+
+    &.color-pink,
+    &.color-darkpink,
+    &.text-pink {
+      color: var(--fr-icon-wrapper-text-pink) !important;
+    }
+
+    &.color-purple,
+    &.color-darkpurple,
+    &.text-purple {
+      color: var(--fr-icon-wrapper-text-purple) !important;
+    }
+
+    &.color-red,
+    &.color-darkred,
+    &.text-red {
+      color: var(--fr-icon-wrapper-text-red) !important;
+    }
+
+    &.color-yellow,
+    &.color-darkyellow,
+    &.text-yellow {
+      color: var(--fr-icon-wrapper-text-yellow) !important;
+    }
+
+    &.color-orange,
+    &.color-darkorange,
+    &.text-orange {
+      color: var(--fr-icon-wrapper-text-orange) !important;
+    }
+
+    &.color-teal,
+    &.color-darkteal,
+    &.text-teal {
+      color: var(--fr-icon-wrapper-text-teal) !important;
+    }
+
+    &.color-cyan,
+    &.color-darkcyan,
+    &.text-cyan {
+      color: var(--fr-icon-wrapper-text-cyan) !important;
+    }
+
+    &.bg-lightblue {
+      .material-icons,
+      .material-icons-outlined,
+      .color-blue,
+      .color-darkblue,
+      .text-blue,
+      .text-primary {
+        color: var(--fr-icon-wrapper-text-blue) !important;
+      }
+    }
+
+    &.bg-lightgreen {
+      .material-icons,
+      .material-icons-outlined,
+      .color-green,
+      .color-darkgreen,
+      .text-green,
+      .text-success {
+        color: var(--fr-icon-wrapper-text-green) !important;
+      }
+    }
+
+    &.bg-lightindigo {
+      .material-icons,
+      .material-icons-outlined,
+      .color-indigo,
+      .color-darkindigo,
+      .text-indigo {
+        color: var(--fr-icon-wrapper-text-indigo) !important;
+      }
+    }
+
+    &.bg-lightpink {
+      .material-icons,
+      .material-icons-outlined,
+      .color-pink,
+      .color-darkpink,
+      .text-pink {
+        color: var(--fr-icon-wrapper-text-pink) !important;
+      }
+    }
+
+    &.bg-lightpurple {
+      .material-icons,
+      .material-icons-outlined,
+      .color-purple,
+      .color-darkpurple,
+      .text-purple {
+        color: var(--fr-icon-wrapper-text-purple) !important;
+      }
+    }
+
+    &.bg-lightred {
+      .material-icons,
+      .material-icons-outlined,
+      .color-red,
+      .color-darkred,
+      .text-red {
+        color: var(--fr-icon-wrapper-text-red) !important;
+      }
+    }
+
+    &.bg-lightyellow {
+      .material-icons,
+      .material-icons-outlined,
+      .color-yellow,
+      .color-darkyellow,
+      .text-yellow {
+        color: var(--fr-icon-wrapper-text-yellow) !important;
+      }
+    }
+
+    &.bg-lightorange {
+      .material-icons,
+      .material-icons-outlined,
+      .color-orange,
+      .color-darkorange,
+      .text-orange {
+        color: var(--fr-icon-wrapper-text-orange) !important;
+      }
+    }
+
+    &.bg-lightteal {
+      .material-icons,
+      .material-icons-outlined,
+      .color-teal,
+      .color-darkteal,
+      .text-teal {
+        color: var(--fr-icon-wrapper-text-teal) !important;
+      }
+    }
+
+    &.bg-lightcyan {
+      .material-icons,
+      .material-icons-outlined,
+      .color-cyan,
+      .color-darkcyan,
+      .text-cyan {
+        color: var(--fr-icon-wrapper-text-cyan) !important;
+      }
+    }
   }
 }
 
@@ -1151,6 +1318,7 @@ a.text-light-on-dark,
     }
   }
 }
+
 /* .fr-icon-wrapper {
   &.bg-lightblue {
     background-color: var(--fr-icon-wrapper-bg-light-blue) !important;
