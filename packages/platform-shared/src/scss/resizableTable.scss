@@ -32,7 +32,7 @@
       z-index: 1;
     }
   }
-  
+
   &.table-resizable--nowrap th:not(.sticky-left) div,
   &.table-resizable--nowrap td {
     white-space: nowrap;
@@ -48,7 +48,7 @@
   tr:not(:focus-visible) .sticky-right {
     position: sticky !important;
     z-index: 100;
-    background-color: inherit;
+    background-color: $card-bg;
   }
 
   .table-hover tbody tr:hover,
@@ -67,11 +67,11 @@
     right: 0;
   }
 
-  table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
+  table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left),
   table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
     &:has(.resizer:focus-visible) {
       background-position: right 1rem center;
-    } 
+    }
   }
 }
 
