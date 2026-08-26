@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getAccountAttribute, getObjectTypeFromAccountId } from './entitlements';
+import { getAccountAttribute, getObjectTypeFromAccountId, normalizeOwners } from './entitlements';
 
 describe('getObjectTypeFromAccountId', () => {
   it('returns item.objectType when present, without parsing accountId', () => {
@@ -83,5 +83,38 @@ describe('getAccountAttribute', () => {
     const input = {};
     const result = getAccountAttribute(input);
     expect(result).toBeUndefined();
+  });
+});
+
+describe('normalizeOwners', () => {
+  it('returns an array of owners unchanged when given multiple valid owners', () => {
+    const owners = [{ userName: 'owner1' }, { userName: 'owner2' }];
+    expect(normalizeOwners(owners)).toEqual(owners);
+  });
+
+  it('filters out null and empty-object entries from an owner array', () => {
+    const owners = [{ userName: 'owner1' }, null, {}, undefined, { userName: 'owner2' }];
+    expect(normalizeOwners(owners)).toEqual([{ userName: 'owner1' }, { userName: 'owner2' }]);
+  });
+
+  it('wraps a legacy single scalar owner object in an array', () => {
+    const owner = { userName: 'legacyOwner' };
+    expect(normalizeOwners(owner)).toEqual([owner]);
+  });
+
+  it('returns an empty array for an empty-object placeholder owner', () => {
+    expect(normalizeOwners({})).toEqual([]);
+  });
+
+  it('returns an empty array for null', () => {
+    expect(normalizeOwners(null)).toEqual([]);
+  });
+
+  it('returns an empty array for undefined', () => {
+    expect(normalizeOwners(undefined)).toEqual([]);
+  });
+
+  it('returns an empty array for an empty array', () => {
+    expect(normalizeOwners([])).toEqual([]);
   });
 });

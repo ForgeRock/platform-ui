@@ -206,14 +206,18 @@ function buildSchemaForFormGenerator(glossarySchema) {
 
 watch(() => props.glossarySchema, () => {
   buildSchemaForFormGenerator(props.glossarySchema);
-  const booleanDefaults = {};
+  const modelValueDefaults = {};
   props.glossarySchema.forEach((attribute) => {
     if (attribute.type === 'boolean' && !Object.hasOwn(props.modelValue, attribute.name)) {
-      booleanDefaults[attribute.name] = false;
+      modelValueDefaults[attribute.name] = false;
+    }
+    const rawValue = props.modelValue[attribute.name];
+    if (attribute.isMultiValue && rawValue && !isArray(rawValue)) {
+      modelValueDefaults[attribute.name] = getValueForMultivalue(rawValue);
     }
   });
-  if (Object.keys(booleanDefaults).length > 0) {
-    emit('update:modelValue', { ...props.modelValue, ...booleanDefaults });
+  if (Object.keys(modelValueDefaults).length > 0) {
+    emit('update:modelValue', { ...props.modelValue, ...modelValueDefaults });
   }
 }, { deep: true, immediate: true });
 

@@ -682,6 +682,50 @@ describe('GlossaryEditForm', () => {
       expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ booleanAttribute: true, anotherBoolean: false });
     });
 
+    it('should normalize a legacy scalar value to an array for a string field the schema marks multi-value', async () => {
+      const wrapper = setup({
+        glossarySchema: stringGlossarySchema,
+        'model-value': { arrayStrings: 'legacyValue' },
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ arrayStrings: ['legacyValue'] });
+    });
+
+    it('should not touch a multi-value string field whose value is already an array', async () => {
+      const wrapper = setup({
+        glossarySchema: stringGlossarySchema,
+        'model-value': { arrayStrings: ['a', 'b'] },
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    });
+
+    it('should normalize a legacy scalar value to an array for a managedObject field the schema marks multi-value', async () => {
+      const wrapper = setup({
+        glossarySchema: userGlossarySchema,
+        'model-value': { multiUser: 'managed/user/legacyId' },
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ multiUser: ['managed/user/legacyId'] });
+    });
+
+    it('should not wrap a scalar value for a field the schema marks single-value', async () => {
+      const wrapper = setup({
+        glossarySchema: stringGlossarySchema,
+        'model-value': { singleString: 'onlyValue' },
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    });
+
     it('should clean up glossary values for empty values', async () => {
       const wrapper = setup({
         glossarySchema: numberGlossarySchema,

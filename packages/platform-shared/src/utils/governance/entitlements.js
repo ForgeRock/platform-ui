@@ -37,3 +37,20 @@ export function getAccountAttribute(item) {
   return item?.item?.accountAttribute
   || item?.application?.objectTypes?.find((x) => (x.name === item.item?.objectType))?.accountAttribute;
 }
+
+/**
+ * Normalizes an entitlementOwner/roleOwner field into an array of owners, for display or editing.
+ *
+ * Handles the legacy single-owner object shape, the current multi-owner array shape, and the
+ * empty-owner placeholder (e.g. `{}`) some backend responses use for "no owner" - which is
+ * otherwise truthy and would render as a blank owner row.
+ *
+ * @param {Object|Object[]} owners - The raw entitlementOwner/roleOwner field value.
+ * @returns {Object[]} Array of owner objects with no empty/nullish entries.
+ */
+export function normalizeOwners(owners) {
+  const isNonEmptyOwner = (owner) => !!owner && typeof owner === 'object' && Object.keys(owner).length > 0;
+  if (Array.isArray(owners)) return owners.filter(isNonEmptyOwner);
+  if (isNonEmptyOwner(owners)) return [owners];
+  return [];
+}

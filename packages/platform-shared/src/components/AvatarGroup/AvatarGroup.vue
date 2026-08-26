@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
     class="d-flex ml-2">
     <div
       v-for="user in usersToShow"
-      :key="`user-${user.id}`"
+      :key="`user-${prop.id}-${user.id}`"
       class="cursor-pointer">
       <div class="avatar-item rounded-circle bg-lightblue color-blue font-weight-bold">
         <BImg
@@ -25,17 +25,17 @@ of the MIT license. See the LICENSE file for details. -->
           class="size-28"
           data-testid="avatar-item"
           :alt="$t('common.profilePicture')"
-          :id="`user-${user.id}`"
+          :id="`user-${prop.id}-${user.id}`"
           :aria-hidden="true"
           :src="user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
         <FrIcon
           v-else
-          :id="`user-${user.id}`"
+          :id="`user-${prop.id}-${user.id}`"
           class="d-flex align-items-center justify-content-center size-28"
           name="assignment_ind" />
       </div>
       <BTooltip
-        :target="`user-${user.id}`"
+        :target="`user-${prop.id}-${user.id}`"
         boundary="window"
         triggers="hover">
         <h2 class="h5 mb-0 text-white">
@@ -116,7 +116,7 @@ watch(
  * @returns {boolean} Returns true if the ID contains 'role', otherwise false.
  */
 function isItemRole(id) {
-  return id.includes('role');
+  return id?.includes('role');
 }
 
 /**

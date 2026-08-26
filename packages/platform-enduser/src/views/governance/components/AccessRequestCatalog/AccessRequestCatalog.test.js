@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -109,6 +109,27 @@ describe('AccessRequestCatalog Component', () => {
 
     expect(resultsText.exists()).toBeTruthy();
     expect(resultsText.text()).toEqual('2 Results');
+  });
+
+  it('does not offer owner sort options on the entitlement tab, since owner fields are multi-valued and unsortable', async () => {
+    const wrapper = mountComponent({ catalogItems: [] });
+    await flushPromises();
+    wrapper.setData({ selectedTab: 1 });
+
+    const sortValues = wrapper.vm.sortByOptions.map((option) => option.value);
+    expect(sortValues).not.toContain('entitlementOwner.userName');
+    expect(sortValues).not.toContain('applicationOwner.userName');
+    expect(sortValues).toEqual(['descriptor.idx./entitlement.displayName', 'application.name']);
+  });
+
+  it('does not offer an owner sort option on the application tab', async () => {
+    const wrapper = mountComponent({ catalogItems: [] });
+    await flushPromises();
+    wrapper.setData({ selectedTab: 0 });
+
+    const sortValues = wrapper.vm.sortByOptions.map((option) => option.value);
+    expect(sortValues).not.toContain('applicationOwner.userName');
+    expect(sortValues).toEqual(['application.name']);
   });
 
   it('displays catalog items passed in as props', async () => {

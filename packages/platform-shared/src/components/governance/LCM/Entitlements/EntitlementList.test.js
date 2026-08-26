@@ -132,6 +132,57 @@ describe('EntitlementList', () => {
     expect(entitlementRow.text()).toMatch('christian.marnell');
   });
 
+  it('shows an avatar for each entitlement owner and an overflow badge when there are more owners than the avatar limit', async () => {
+    EntitlementApi.getEntitlementList.mockImplementationOnce(() => Promise.resolve({
+      data: {
+        result: [
+          {
+            application: {
+              name: 'TargetApp',
+              templateName: 'servicenow',
+              templateVersion: '3.3',
+            },
+            descriptor: {
+              idx: {
+                '/entitlement': {
+                  displayName: 'template_read_global',
+                },
+              },
+            },
+            entitlementOwner: [
+              {
+                id: 'owner-1', userName: 'owner.one', givenName: 'Owner', sn: 'One',
+              },
+              {
+                id: 'owner-2', userName: 'owner.two', givenName: 'Owner', sn: 'Two',
+              },
+              {
+                id: 'owner-3', userName: 'owner.three', givenName: 'Owner', sn: 'Three',
+              },
+              {
+                id: 'owner-4', userName: 'owner.four', givenName: 'Owner', sn: 'Four',
+              },
+            ],
+            item: {
+              accountAttribute: '__user_group_ids__',
+              objectType: 'Group',
+            },
+          },
+        ],
+      },
+    }));
+
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const entitlementRow = wrapper.find('tbody tr');
+    expect(entitlementRow.findAll('[data-testid="avatar-item"]')).toHaveLength(3);
+
+    const overflowBadge = entitlementRow.find('[data-testid="overflow-badge"]');
+    expect(overflowBadge.exists()).toBe(true);
+    expect(overflowBadge.text()).toContain('+1');
+  });
+
   it('clicking column picker button should show the column picker modal', async () => {
     wrapper = mountComponent();
     await flushPromises();

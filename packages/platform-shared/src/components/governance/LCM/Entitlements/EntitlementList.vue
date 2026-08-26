@@ -109,10 +109,10 @@ of the MIT license. See the LICENSE file for details. -->
         {{ getAccountAttribute(item) || blankValueIndicator }}
       </template>
       <template #cell(owner)="{ item }">
-        <FrUserBasicInfo
-          v-if="item.entitlementOwner?.[0]"
-          :pic-dimension="28"
-          :user="item.entitlementOwner?.[0]" />
+        <FrAvatarGroup
+          v-if="normalizedOwners(item).length"
+          :id="item.id"
+          :users="normalizedOwners(item)" />
         <template v-else>
           {{ blankValueIndicator }}
         </template>
@@ -147,19 +147,19 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import { useRouter } from 'vue-router';
+import FrAvatarGroup from '@forgerock/platform-shared/src/components/AvatarGroup/AvatarGroup';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceList from '@forgerock/platform-shared/src/components/governance/GovResourceList';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
 import { getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getEntitlementList, getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
+import { getAccountAttribute, normalizeOwners } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import FrAddEntitlementModal from '@forgerock/platform-shared/src/components/governance/LCM/Roles/AddEntitlementModal';
 import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
 import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
@@ -274,6 +274,10 @@ function buildFilterQueryParams(applicationId, ownerQuery) {
   if (applicationId !== 'managed/application/all') filters.push(`application.id eq "${applicationId.split('/').pop()}"`);
   if (ownerQuery) filters.push(`(${ownerFields.map((field) => `${field} co "${ownerQuery}"`).join(' or ')})`);
   return filters.join(' and ');
+}
+
+function normalizedOwners(item) {
+  return normalizeOwners(item.entitlementOwner);
 }
 
 watch(() => applicationFilter.value, (newVal) => {

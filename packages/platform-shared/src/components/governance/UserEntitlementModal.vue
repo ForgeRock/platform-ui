@@ -89,25 +89,29 @@ of the MIT license. See the LICENSE file for details. -->
             <dd
               class="col-lg-8 mb-4"
               data-testid="owner">
-              <BMedia
-                v-if="ownerInfo"
-                no-body>
-                <BImg
-                  fluid
-                  class="mr-3 rounded-circle"
-                  height="36"
-                  width="36"
-                  :alt="$t('common.userFullName', { givenName: ownerInfo.givenName, sn: ownerInfo.sn })"
-                  :src="ownerInfo.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
-                <BMediaBody>
-                  <h3 class="h5 mb-0 text-dark text-truncate">
-                    {{ $t('common.userFullName', { givenName: ownerInfo.givenName, sn: ownerInfo.sn }) }}
-                  </h3>
-                  <small class="text-truncate">
-                    {{ ownerInfo.userName }}
-                  </small>
-                </BMediaBody>
-              </BMedia>
+              <template v-if="ownerInfos.length">
+                <BMedia
+                  v-for="(owner, index) in ownerInfos"
+                  :key="owner.id || owner._id || owner.userName || index"
+                  class="align-items-center mb-3"
+                  no-body>
+                  <BImg
+                    fluid
+                    class="mr-3 rounded-circle"
+                    height="36"
+                    width="36"
+                    :alt="$t('common.userFullName', { givenName: owner.givenName, sn: owner.sn })"
+                    :src="owner.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+                  <BMediaBody>
+                    <h3 class="h5 mb-0 text-dark text-truncate">
+                      {{ $t('common.userFullName', { givenName: owner.givenName, sn: owner.sn }) }}
+                    </h3>
+                    <small class="text-truncate">
+                      {{ owner.userName }}
+                    </small>
+                  </BMediaBody>
+                </BMedia>
+              </template>
               <template v-else>
                 {{ blankValueIndicator }}
               </template>
@@ -166,6 +170,7 @@ import { computed } from 'vue';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { normalizeOwners } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import FrContentDetailsTab from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal/ContentDetailsTab';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -208,10 +213,7 @@ const logo = computed(() => {
   if (props.grant?.application) return getApplicationLogo(props.grant.application);
   return '';
 });
-const ownerInfo = computed(() => {
-  if (!props.grant?.entitlementOwner || !props.grant.entitlementOwner[0]) return null;
-  return props.grant.entitlementOwner[0];
-});
+const ownerInfos = computed(() => normalizeOwners(props.grant?.entitlementOwner));
 const filteredGlossarySchema = computed(() => props.glossarySchema?.filter((glossaryProp) => (glossaryProp.name !== 'entitlementOwner')));
 const glossaryValues = computed(() => props.grant?.glossary?.idx?.['/entitlement'] || {});
 </script>

@@ -1,13 +1,13 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrUserBasicInfo
-    v-for="user in usersToRender"
+    v-for="(user, index) in usersToRender"
     data-testid="user-info"
     class="row-height mb-3"
-    :key="user.id"
+    :key="user.id || user._id || user.userName || index"
     :is-role="user.id?.includes('role')"
     :user="user"
   />
@@ -21,9 +21,9 @@ of the MIT license. See the LICENSE file for details. -->
     </BButton>
     <BCollapse v-model="showMore">
       <FrUserBasicInfo
-        v-for="user in usersToShowMore"
+        v-for="(user, index) in usersToShowMore"
         class="row-height mb-3"
-        :key="user.id"
+        :key="user.id || user._id || user.userName || index"
         :user="user"
         :is-role="user.id?.includes('role')"
       />
@@ -52,7 +52,7 @@ const prop = defineProps({
     default: false,
   },
   usersList: {
-    type: Object,
+    type: Array,
     required: true,
   },
   usersToDisplay: {

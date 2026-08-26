@@ -131,5 +131,53 @@ describe('UserEntitlementModal', () => {
       expect(entitlementInfo.text()).toMatch('someData');
       expect(entitlementInfo.text()).toMatch('someValue');
     });
+
+    describe('multi-value entitlementOwner', () => {
+      it('shows all owners when entitlementOwner has multiple entries', () => {
+        const wrapper = mountComponent({
+          grant: {
+            ...grant,
+            entitlementOwner: [
+              { givenName: 'First', sn: 'Owner', userName: 'owner1' },
+              { givenName: 'Second', sn: 'Owner', userName: 'owner2' },
+            ],
+          },
+        });
+        const ownerInfo = findByTestId(wrapper, 'owner');
+        expect(ownerInfo.findAll('.mb-3')).toHaveLength(2);
+        expect(ownerInfo.text()).toContain('owner1');
+        expect(ownerInfo.text()).toContain('owner2');
+      });
+
+      it('shows a single owner when entitlementOwner is a legacy scalar object', () => {
+        const wrapper = mountComponent({
+          grant: {
+            ...grant,
+            entitlementOwner: { givenName: 'Legacy', sn: 'Owner', userName: 'legacyOwner' },
+          },
+        });
+        const ownerInfo = findByTestId(wrapper, 'owner');
+        expect(ownerInfo.findAll('.mb-3')).toHaveLength(1);
+        expect(ownerInfo.text()).toContain('legacyOwner');
+      });
+
+      it('shows blank value indicator when entitlementOwner is an empty object', () => {
+        const wrapper = mountComponent({
+          grant: { ...grant, entitlementOwner: {} },
+        });
+        const ownerInfo = findByTestId(wrapper, 'owner');
+        expect(ownerInfo.findAll('.mb-3')).toHaveLength(0);
+        expect(ownerInfo.text()).toContain('--');
+      });
+
+      it('shows blank value indicator when entitlementOwner is missing', () => {
+        const wrapper = mountComponent({
+          grant: { ...grant, entitlementOwner: undefined },
+        });
+        const ownerInfo = findByTestId(wrapper, 'owner');
+        expect(ownerInfo.findAll('.mb-3')).toHaveLength(0);
+        expect(ownerInfo.text()).toContain('--');
+      });
+    });
   });
 });

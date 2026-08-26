@@ -57,27 +57,10 @@ of the MIT license. See the LICENSE file for details. -->
             {{ $t('common.roleOwner') }}
           </dt>
           <dd class="col-lg-8 mb-4">
-            <BMedia
-              v-if="roleOwner"
-              class="align-items-center"
-              data-testid="role-owner"
-              no-body>
-              <BImg
-                class="mr-3 rounded-circle"
-                height="36"
-                width="36"
-                :alt="roleOwner.userName"
-                :src="roleOwner.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                fluid />
-              <BMediaBody>
-                <h2 class="h5 m-0">
-                  {{ $t('common.userFullName', { givenName: roleOwner.givenName, sn: roleOwner.sn }) }}
-                </h2>
-                <small class="text-muted">
-                  {{ roleOwner.userName }}
-                </small>
-              </BMediaBody>
-            </BMedia>
+            <FrUserGroupList
+              v-if="roleOwners.length"
+              :users-list="roleOwners"
+              :users-to-display="3" />
             <template v-else>
               {{ blankValueIndicator }}
             </template>
@@ -100,10 +83,12 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  BButtonClose, BImg, BModal, BMedia, BMediaBody, BTab, BTabs, BRow,
+  BButtonClose, BModal, BMedia, BTab, BTabs, BRow,
 } from 'bootstrap-vue';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { normalizeOwners } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
+import FrUserGroupList from '@forgerock/platform-shared/src/components/UserGroupList/UserGroupList';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { computed } from 'vue';
 import FrApplicationsTab from './ApplicationTab/ApplicationTab';
@@ -133,7 +118,7 @@ const props = defineProps({
 
 const filteredGlossarySchema = computed(() => props?.glossarySchema?.filter((glossaryProp) => (glossaryProp.name !== 'roleOwner')));
 const glossaryValues = computed(() => props?.roleDetails?.glossary?.idx?.['/role'] || {});
-const roleOwner = computed(() => props?.roleDetails?.roleOwner?.[0] || null);
+const roleOwners = computed(() => normalizeOwners(props?.roleDetails?.roleOwner));
 const roleApplications = computed(() => props?.roleDetails?.applications || []);
 const roleObj = computed(() => props?.roleDetails?.role);
 

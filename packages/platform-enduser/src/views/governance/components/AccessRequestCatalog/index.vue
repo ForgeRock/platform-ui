@@ -134,10 +134,13 @@ of the MIT license. See the LICENSE file for details. -->
                 :icon="tabNoResultsIcon"
                 :title="$t('governance.accessRequest.newRequest.noFilterResults')"
                 :subtitle="$t('governance.accessRequest.newRequest.noFilterResultsSubTitle')"
-                role="alert"/>
+                role="alert" />
               <template v-else>
                 <BButtonToolbar class="p-0 mb-1 justify-content-between align-items-center border-0">
-                  <div class="mb-0 text-muted" tabindex="0" aria-live="polite">
+                  <div
+                    class="mb-0 text-muted"
+                    tabindex="0"
+                    aria-live="polite">
                     {{ $tc('governance.accessRequest.newRequest.results', totalCount, { totalCount }) }}
                   </div>
                   <FrSortDropdown
@@ -517,7 +520,6 @@ export default {
       if (this.tabType === 'application') {
         return [
           { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.name' },
-          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'applicationOwner.userName' },
         ];
       }
       if (this.tabType === 'entitlement') {
@@ -525,10 +527,6 @@ export default {
           { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'descriptor.idx./entitlement.displayName' },
           { text: this.catalogTabs.application.capitalizedSingularTitle, value: 'application.name' },
         ];
-        if (this.requestType !== 'recommendations') {
-          sortOptions.push({ text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'applicationOwner.userName' });
-          sortOptions.push({ text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlementOwner.userName' });
-        }
         return sortOptions;
       }
       return [{ text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.role.capitalizedSingularTitle }), value: 'role.name' }];
