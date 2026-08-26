@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -72,9 +72,10 @@ describe('CertificationDetails', () => {
   });
 
   describe('formatDate', () => {
-    it('Should return the param date with the format MMM D, YYYY', () => {
-      const result = wrapper.vm.formatDate('12/11/2022');
-      expect(result).toEqual('Dec 11, 2022');
+    it('Should format the date using the browser locale', () => {
+      const date = '12/11/2022';
+      const expected = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(date));
+      expect(wrapper.vm.formatDate(date)).toEqual(expected);
     });
   });
 

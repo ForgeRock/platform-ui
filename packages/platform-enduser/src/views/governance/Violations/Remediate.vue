@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="ml-auto d-lg-none"
             aria-controls="expandableCart"
             :aria-expanded="cartExpanded"
-            :aria-label="$t('governance.accessRequest.newRequest.expandRequestCart')"
+            :aria-label="$t('governance.violations.remediate.expandCart')"
             @click="toggleCartPanel">
             <FrIcon
               icon-class="md-24"

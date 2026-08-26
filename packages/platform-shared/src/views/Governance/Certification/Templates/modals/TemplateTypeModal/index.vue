@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     id="CampaignTemplateTypeModal"
+    :cancel-title="$t('common.cancel')"
     cancel-variant="link"
     no-close-on-backdrop
     size="lg"

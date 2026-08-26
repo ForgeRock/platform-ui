@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     :id="computedModalId"
     :visible="show"
+    :cancel-title="$t('common.cancel')"
     :ok-title="$t('common.apply')"
     :title="title || $t('columnPicker.customizeColumns')"
     :ok-disabled="!pendingColumns.length"

@@ -174,7 +174,13 @@ export default {
       this.commentsItemsPerPage = pageSize;
     },
     formatDate(date) {
-      return dayjs(date).format('MMM D, YYYY h:mm A');
+      try {
+        return new Intl.DateTimeFormat(undefined, {
+          year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+        }).format(new Date(date));
+      } catch {
+        return dayjs(date).format('MMM D, YYYY h:mm A');
+      }
     },
     openAddCommentModal() {
       this.$emit('open-add-comment-modal');

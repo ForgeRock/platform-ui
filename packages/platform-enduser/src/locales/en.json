@@ -354,6 +354,7 @@
       "remediate": {
         "addEntitlements": "Add entitlements to revoke",
         "cartTitle": "Entitlements to Revoke",
+        "expandCart": "Expand entitlements cart",
         "entitlementsAdded": "Entitlements added",
         "errorRemediating": "Revoking the selected entitlements did not fix the violation. Revoke additional entitlements and try again",
         "howToFix": "How to Fix",

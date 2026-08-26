@@ -80,9 +80,11 @@ describe('CommentsModal', () => {
   });
 
   it('formatDate method should return date formatted', () => {
-    const formatted = wrapper.vm.formatDate('2022-12-23');
-
-    expect(formatted).toBe('Dec 23, 2022 12:00 AM');
+    const date = '2022-12-23';
+    const expected = new Intl.DateTimeFormat(undefined, {
+      year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+    }).format(new Date(date));
+    expect(wrapper.vm.formatDate(date)).toBe(expected);
   });
 
   it('openAddCommentModal mehtos should emmit open-add-comment-modal', () => {

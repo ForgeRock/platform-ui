@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -32,9 +32,11 @@ describe('ActivityModal', () => {
   });
 
   it('formatDate method should return date formatted', () => {
-    const formatted = wrapper.vm.formatDate('2022-12-23');
-
-    expect(formatted).toBe('Dec 23, 2022 12:00 AM');
+    const date = '2022-12-23';
+    const expected = new Intl.DateTimeFormat(undefined, {
+      year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+    }).format(new Date(date));
+    expect(wrapper.vm.formatDate(date)).toBe(expected);
   });
 
   it('currentGivenName method should return default name for system actions', () => {

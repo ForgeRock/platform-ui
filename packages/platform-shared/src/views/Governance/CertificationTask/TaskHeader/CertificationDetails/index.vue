@@ -181,8 +181,12 @@ export default {
       this.$root.$emit('bv::show::modal', 'certificationCampaignDetails');
     },
     formatDate(date) {
-      if (date) return dayjs(date).format('MMM D, YYYY');
-      return blankValueIndicator;
+      if (!date) return blankValueIndicator;
+      try {
+        return new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(date));
+      } catch {
+        return dayjs(date).format('MMM D, YYYY');
+      }
     },
     setChartInfo(revoked, certified, exception) {
       this.chartDecisions = [{

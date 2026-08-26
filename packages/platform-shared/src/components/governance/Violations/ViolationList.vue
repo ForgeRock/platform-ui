@@ -77,27 +77,39 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-flex justify-content-end">
           <template v-if="!isAdmin">
             <BButton
+              :id="`allow-${item.id}`"
+              :aria-label="$t('common.allow')"
               @click="openExceptionModal(item)"
               class="mr-1"
               variant="outline-secondary"
               size="sm">
               <FrIcon
-                icon-class="mr-2 text-success"
-                name="check">
-                {{ $t('common.allow') }}
-              </FrIcon>
+                icon-class="text-success"
+                name="check" />
             </BButton>
+            <BTooltip
+              :target="`allow-${item.id}`"
+              triggers="hover"
+              placement="top">
+              {{ $t('common.allow') }}
+            </BTooltip>
             <BButton
+              :id="`revoke-${item.id}`"
+              :aria-label="$t('common.revoke')"
               @click="$emit('revoke-violation', item)"
               class="mr-1"
               variant="outline-secondary"
               size="sm">
               <FrIcon
-                icon-class="mr-2 text-danger"
-                name="block">
-                {{ $t('common.revoke') }}
-              </FrIcon>
+                icon-class="text-danger"
+                name="block" />
             </BButton>
+            <BTooltip
+              :target="`revoke-${item.id}`"
+              triggers="hover"
+              placement="top">
+              {{ $t('common.revoke') }}
+            </BTooltip>
           </template>
           <FrActionsCell
             v-if="item.status !== 'pending'"
@@ -162,6 +174,7 @@ import {
   BDropdownItem,
   BTable,
   BButton,
+  BTooltip,
 } from 'bootstrap-vue';
 import {
   groupBy,
