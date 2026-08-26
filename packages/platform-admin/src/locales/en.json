@@ -4377,7 +4377,7 @@
         "statusFieldLabel": "Status"
       },
       "validationType": {
-        "validationTypeFieldLabel": "Validation Type",
+        "validationTypeFieldLabel": "Validation Mode",
         "allowMissing": "Allow Missing",
         "rejectMissing": "Reject Missing"
       },
@@ -4403,14 +4403,14 @@
         "spinnerTextCertificateButton": "Adding Certificate...",
         "addCertificateText": "Add Certificate",
         "certTypeLabel": "Certificate Type",
-        "certificatePlaceholder": "Upload a Trusted Certificate File...",
-        "certificateLabel": "...or paste as text below",
+        "certificatePlaceholder": "Upload a trusted certificate file",
+        "certificateLabel": "Alternatively, paste the trusted certificate as text:",
         "certificateUploadFailure": "Error reading certificate file"
       },
       "confirmUpdateModal": {
         "confirmUpdateModalTitle": "Confirm Update",
-        "confirmationWarning": "These updates represent the desired mTLS configuration but do not take effect straight away. The update will be applied immediately but can take some time to propagate to all network resources.",
-        "hostInformation": "When prepared the mTLS domain will be available at <code>{domain}</code>",
+        "confirmationWarning": "Saving these changes updates your mTLS configuration. Settings are applied immediately, but full network propagation may take a few minutes.",
+        "hostInformation": "Once ready, your mTLS domain will be available at: <code>{domain}</code>",
         "updateConfigText": "Confirm",
         "spinnerTextConfigButton": "Updating..."
       },
