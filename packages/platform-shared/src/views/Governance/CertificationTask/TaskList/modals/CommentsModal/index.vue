@@ -23,6 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Content -->
     <template v-else>
       <BTable
+        v-presentational-table
         class="mb-0"
         borderless
         thead-class="d-none"
@@ -122,8 +123,51 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 
+/**
+ * BTable applies table roles and aria-index attributes to its generated markup
+ * after any user-supplied attrs, so they cannot be suppressed via props.
+ * This directive strips those semantics from the DOM so this layout-only
+ * BTable is not announced as a table by assistive technology. Re-strips on
+ * `updated` since pagination re-renders regenerate them.
+ *
+ * @warning Only use on layout-only tables. Never apply this to a BTable that
+ * represents real tabular data — it would remove semantics that data tables
+ * need for accessibility.
+ */
+const presentationalTable = {
+  mounted(container) {
+    const strip = (element) => {
+      element.setAttribute('role', 'presentation');
+      ['aria-colindex', 'aria-rowindex', 'aria-colcount', 'aria-rowcount', 'aria-busy'].forEach((attr) => element.removeAttribute(attr));
+    };
+
+    const stripTableSemantics = () => {
+      const table = container.tagName === 'TABLE' ? container : container.querySelector('table');
+      if (!table) {
+        return;
+      }
+      strip(table);
+      table.querySelectorAll('[role="rowgroup"], [role="row"], [role="cell"], [role="columnheader"], [role="rowheader"]').forEach(strip);
+    };
+
+    stripTableSemantics();
+    container.__stripTableSemantics = stripTableSemantics;
+  },
+  updated(container) {
+    if (container.__stripTableSemantics) {
+      container.__stripTableSemantics();
+    }
+  },
+  unmounted(container) {
+    delete container.__stripTableSemantics;
+  },
+};
+
 export default {
   name: 'CommentsModal',
+  directives: {
+    'presentational-table': presentationalTable,
+  },
   components: {
     BButton,
     BImg,
