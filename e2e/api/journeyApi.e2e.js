@@ -1,5 +1,5 @@
 /**
- * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2024-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -60,6 +60,46 @@ export function deleteAMResource(realm = defaultRealm, resource = defaultResourc
   });
 }
 
+/**
+ * GET a tree by id from the realm-config authenticationtrees endpoint. Mirrors
+ * the UI's `getTree(treeId, forExport=true)` call (packages/platform-shared/src/
+ * api/TreeApi.js) — i.e. no `?forUI=true` — so the response body's `.nodes` map
+ * can be walked to delete each inner node, matching `deleteTreeAndNodes` in
+ * TreeManagementMixin.vue.
+ */
+export function getTreeForExport(id) {
+  const realm = Cypress.env('IS_FRAAS') ? '/realms/root/realms/alpha' : '/realms/root';
+  const resource = 'realm-config/authentication/authenticationtrees/trees';
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/am/json${realm}/${resource}/${id}`,
+    headers: {
+      'content-type': 'application/json',
+      'Accept-API-Version': 'protocol=2.1,resource=1.0',
+    },
+    failOnStatusCode: false,
+  });
+}
+
+/**
+ * DELETE an inner tree node using the v3 nodes API — matches the UI's
+ * `deleteNode(nodeId, nodeType, nodeVersion)` (TreeApi.js), which uses
+ * `Accept-API-Version: protocol=2.1,resource=3.0`.
+ */
+export function deleteTreeNode(nodeType, nodeVersion, nodeId) {
+  const realm = Cypress.env('IS_FRAAS') ? '/realms/root/realms/alpha' : '/realms/root';
+  const resource = 'realm-config/authentication/authenticationtrees/nodes';
+  return cy.request({
+    method: 'DELETE',
+    url: `https://${Cypress.env('FQDN')}/am/json${realm}/${resource}/${nodeType}/${nodeVersion}/${nodeId}`,
+    headers: {
+      'content-type': 'application/json',
+      'Accept-API-Version': 'protocol=2.1,resource=3.0',
+    },
+    failOnStatusCode: false,
+  });
+}
+
 export function getIDMResource(resourceType = 'managed', resourceName, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
   return cy.request({
     method: 'GET',
@@ -110,7 +150,7 @@ export function createJourney(name, identityResource = 'managed/user', categorie
         'Accept-API-Version': 'protocol=2.1,resource=1.0',
       },
     }).then((res) => {
-      const { status, body: { entryNodeId } } = res;
+      const { status, body: template } = res;
       expect(status).to.equal(200);
 
       cy.request({
@@ -121,9 +161,7 @@ export function createJourney(name, identityResource = 'managed/user', categorie
           'Accept-API-Version': 'protocol=2.1,resource=1.0',
         },
         body: {
-          entryNodeId,
-          nodes: {},
-          staticNodes: {},
+          ...template,
           description: '',
           identityResource,
           uiConfig: {

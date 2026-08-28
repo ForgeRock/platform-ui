@@ -6,7 +6,13 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import { createJourney, deleteAMResource, deleteIDMResource } from '@e2e/api/journeyApi.e2e';
+import {
+  createJourney,
+  deleteAMResource,
+  deleteIDMResource,
+  deleteTreeNode,
+  getTreeForExport,
+} from '@e2e/api/journeyApi.e2e';
 import { deleteThemes } from '@e2e/utils/themeutils';
 import { journeyCleanupManager } from '@e2e/utils/manageJourneys';
 import { generateJourneyFileName } from '@e2e/utils/journeyUtils';
@@ -60,6 +66,12 @@ export default class JourneyApiSteps {
     });
   }
 
+  /**
+   * Delete every tracked journey the same way the admin UI does — read the
+   * tree config, DELETE the tree, then DELETE every inner node it referenced.
+   * Mirrors `deleteTreeAndNodes` in TreeManagementMixin.vue so afterEach leaves
+   * behind no orphan nodes that would poison later tests in the same run.
+   */
   static deleteCreatedJourneys() {
     const realm = Cypress.env('IS_FRAAS') ? '/realms/root/realms/alpha/' : '/realms/root/';
     const resource = 'realm-config/authentication/authenticationtrees/trees';
@@ -67,7 +79,17 @@ export default class JourneyApiSteps {
       if (!JourneyApiSteps.createdJourneyNames.length) return cy.wrap(null);
       const names = [...JourneyApiSteps.createdJourneyNames];
       JourneyApiSteps.createdJourneyNames = [];
-      return cy.wrap(names).each((name) => deleteAMResource(realm, resource, name));
+      return cy.wrap(names).each((name) => (
+        getTreeForExport(name).then((treeResponse) => {
+          const nodes = treeResponse?.body?.nodes || {};
+          return deleteAMResource(realm, resource, name).then(() => (
+            cy.wrap(Object.keys(nodes)).each((nodeId) => {
+              const node = nodes[nodeId];
+              return deleteTreeNode(node.nodeType, node.version, nodeId);
+            })
+          ));
+        })
+      ));
     });
   }
 

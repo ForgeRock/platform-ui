@@ -15,6 +15,7 @@ import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import CspApiSteps from './api/CspApiSteps';
 import CustomDomainApiSteps from './api/CustomDomainApiSteps';
 import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
+import CustomNodesApiSteps from './api/CustomNodesApiSteps';
 import EndUserApiSteps from './api/EndUserApiSteps';
 import EventHookApiSteps from './api/EventHookApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
@@ -36,6 +37,7 @@ export default {
   csp: CspApiSteps,
   customDomain: CustomDomainApiSteps,
   customEndpoints: CustomEndpointApiSteps,
+  customNodes: CustomNodesApiSteps,
   emailProvider: EmailProviderApiSteps,
   endUser: EndUserApiSteps,
   eventHooks: EventHookApiSteps,

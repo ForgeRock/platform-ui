@@ -66,12 +66,43 @@ export default class JourneyEditorPage {
     return cy.findByTestId('tree-node-list');
   }
 
+  static get nodeListLoadingSpinner() {
+    return cy.findByTestId('editor-item-list-loading');
+  }
+
   static get nodeFilter() {
     return cy.findByRole('searchbox', { name: 'Filter nodes' });
   }
 
+  static nodeCategory(categoryName) {
+    return cy.get('.fr-collapse-group').filter((index, element) => Cypress.$(element)
+      .find('.fr-collapse-group-header-name')
+      .text()
+      .trim() === categoryName);
+  }
+
+  static categoryNodes(categoryName) {
+    return JourneyEditorPage.nodeCategory(categoryName).find('[data-testid="sidebar-node"]');
+  }
+
   static get sidebarNode() {
-    return cy.findByTestId('sidebar-node');
+    return cy.get('[data-testid="sidebar-node"]');
+  }
+
+  static paletteNode(name) {
+    return cy.get('[data-testid="sidebar-node"]').filter((index, element) => Cypress.$(element).find('h3').text().trim() === name);
+  }
+
+  static get scriptEditor() {
+    return cy.get('.cm-content');
+  }
+
+  static get sidebarNodePopover() {
+    return cy.get('.fr-tree-node-list-card-popover:visible');
+  }
+
+  static get sidebarNodePopoverUnsafeElements() {
+    return JourneyEditorPage.sidebarNodePopover.find('img[onerror], script, iframe, object, embed');
   }
 
   // ── Toolbar buttons ───────────────────────────────────────────────────────
@@ -89,14 +120,11 @@ export default class JourneyEditorPage {
   }
 
   static get toggleNodeListButton() {
-    // Raw attribute selector — findByRole excludes elements whose parents are
-    // `display:none`, but this button stays in the DOM after the node list is
-    // closed and TC-12019 needs to assert `not.be.visible` on it.
-    return cy.get('button[aria-label="Toggle Node List"]');
+    return cy.get('#btnClosePanel');
   }
 
   static get openNodesButton() {
-    return cy.findByRole('button', { name: 'Nodes' });
+    return cy.get('#btnNodeList');
   }
 
   // ── Edit panel ────────────────────────────────────────────────────────────
@@ -139,8 +167,11 @@ export default class JourneyEditorPage {
     return cy.findAllByTestId('tree-node');
   }
 
+  // A single `cy.get` selector — `.filter()` retries until it matches at least
+  // one element, which masks a following `should('not.exist')`, and the
+  // testing-library `findAllBy*` commands throw outright on zero matches.
   static nodeByName(name) {
-    return cy.findAllByTestId('tree-node').contains(name);
+    return cy.get(`[data-testid="tree-node"]:contains("${name}")`);
   }
 
   static nodeWrapper(name) {
