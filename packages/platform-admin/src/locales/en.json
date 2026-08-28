@@ -531,6 +531,13 @@
       "saveSuccess": "OAuth2 Provider configuration saved.",
       "saveError": "Unable to save OAuth2 Provider configuration.",
       "loadError": "Unable to load OAuth2 Provider configuration.",
+      "emptyState": {
+        "title": "OAuth2 Provider is not enabled",
+        "description": "Enable OAuth2 Provider to configure how OAuth 2.0 tokens are issued and handled."
+      },
+      "enableService": "Enable OAuth2 Provider",
+      "enableSuccess": "OAuth2 Provider enabled successfully.",
+      "enableError": "Unable to enable OAuth2 Provider.",
       "scriptedJwtIssuers": {
         "tabLabel": "Scripted JWT Issuers",
         "noIssuersTitle": "No Scripted JWT Issuers",
