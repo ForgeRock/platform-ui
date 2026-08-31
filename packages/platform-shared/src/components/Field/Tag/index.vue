@@ -258,6 +258,18 @@ export default {
     }
   }
 
+  &.disabled {
+    background-color: var(--input-bg-disabled) !important;
+
+    .fr-tag {
+      cursor: default;
+
+      :deep(.close-icon) {
+        cursor: default;
+      }
+    }
+  }
+
   .ghost-tag {
     opacity: 0.3;
   }
