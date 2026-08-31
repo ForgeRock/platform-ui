@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BFormDatepicker
+    ref="datePicker"
     data-testid="datepicker"
     v-model="inputValue"
     v-calendar-grid
@@ -14,7 +15,8 @@ of the MIT license. See the LICENSE file for details. -->
     menu-class="shadow-lg"
     :class="{'input-has-value': value, 'fr-field-error': errors.length > 0}"
     :label-selected="placeholder"
-    :placeholder="placeholder">
+    :placeholder="placeholder"
+    @shown="fixDatePickerDialogLabel">
     <template #button-content>
       <span class="sr-only">
         {{ $t('common.dateTimePicker.openCalendar') }}
@@ -95,6 +97,15 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * Accessible name for the date picker dialog. Falls back to the generic
+     * "Select date" when not provided — useful for distinguishing multiple
+     * date pickers on one form.
+     */
+    dialogLabel: {
+      type: String,
+      default: '',
+    },
     /* Vee-validate validation types to check against
     */
     validation: {
@@ -122,6 +133,33 @@ export default {
     return {
       inputValue, errors,
     };
+  },
+  computed: {
+    datePickerDialogLabel() {
+      return this.dialogLabel || this.$t('common.dateTimePicker.selectDate');
+    },
+  },
+  methods: {
+    fixDatePickerDialogLabel() {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
+          // The template has multiple root nodes, so $el is a fragment anchor without
+          // querySelector — resolve the picker element from the component reference.
+          const pickerEl = this.$refs.datePicker?.$el;
+          const dialog = pickerEl?.querySelector?.('.dropdown-menu');
+          if (dialog) {
+            dialog.removeAttribute('aria-labelledby');
+            dialog.setAttribute('aria-label', this.datePickerDialogLabel);
+          }
+        });
+      });
+    },
+  },
+  mounted() {
+    // The dialog div is rendered at mount (hidden via CSS until opened), so label it now.
+    // bootstrap-vue focuses the menu *before* emitting `shown`, so fixing only on @shown
+    // would let focus land on an unnamed dialog on first open.
+    this.fixDatePickerDialogLabel();
   },
   watch: {
     inputValue(newValue) {

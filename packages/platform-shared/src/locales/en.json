@@ -503,7 +503,12 @@
     },
     "validationErrorsLabel": "Validation Errors",
     "dateTimePicker": {
-      "openCalendar": "Open Calendar"
+      "openCalendar": "Open Calendar",
+      "selectDate": "Select date",
+      "selectDateFor": "Select date for {label}",
+      "selectTime": "Select time",
+      "selectTimeFor": "Select time for {label}",
+      "timeFieldLabel": "{label} time"
     },
     "daysOfWeek": {
       "sundayShort": "Sun",

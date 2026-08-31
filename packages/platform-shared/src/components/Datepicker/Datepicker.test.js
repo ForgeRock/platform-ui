@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByRole, findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { flushPromises, mount } from '@vue/test-utils';
 import { v4 as uuid } from 'uuid';
 import Datepicker from './index';
@@ -66,6 +66,34 @@ describe('Datepicker Component', () => {
     uuid.mockImplementation(() => uuidValue);
     wrapper = setupMount({ placeholder: 'test' });
     expect(wrapper.vm.name).toBe(uuidValue);
+  });
+
+  describe('date picker dialog', () => {
+    async function mountAndOpenPicker(props) {
+      wrapper = setupMount({ name: 'datepicker', placeholder: 'Expiry Date', ...props });
+      await flushPromises();
+      await wrapper.find('button').trigger('click');
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+      return wrapper;
+    }
+
+    it('gives the date picker dialog a stable accessible name', async () => {
+      await mountAndOpenPicker();
+
+      const dialog = findByRole(wrapper, 'dialog');
+      expect(dialog.exists()).toBe(true);
+      expect(dialog.attributes('aria-label')).toBe('common.dateTimePicker.selectDate');
+      expect(dialog.attributes('aria-labelledby')).toBeUndefined();
+    });
+
+    it('uses the dialogLabel prop for the dialog name when provided', async () => {
+      await mountAndOpenPicker({ dialogLabel: 'Select date for Apply Expiration Date (optional)' });
+
+      const dialog = findByRole(wrapper, 'dialog');
+      expect(dialog.attributes('aria-label')).toBe('Select date for Apply Expiration Date (optional)');
+      expect(dialog.attributes('aria-labelledby')).toBeUndefined();
+    });
   });
 
   describe('@a11y', () => {

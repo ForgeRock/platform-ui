@@ -36,7 +36,8 @@ of the MIT license. See the LICENSE file for details. -->
         :id="internalId"
         :name="name"
         :min="minDate"
-        :aria-label="labelTranslation" />
+        :aria-label="labelTranslation"
+        @shown="fixDatePickerDialogLabel" />
     </FrInputLayout>
   </div>
 </template>
@@ -79,6 +80,15 @@ export default {
       default: '',
       type: String,
     },
+    /**
+     * Accessible name for the date picker dialog. Falls back to the generic
+     * "Select date" when not provided — useful for distinguishing multiple
+     * date pickers on one form (e.g. "Select date for Access End Date").
+     */
+    dialogLabel: {
+      default: '',
+      type: String,
+    },
   },
   setup(props) {
     const {
@@ -95,6 +105,15 @@ export default {
     return { inputValue, fieldErrors, validationListeners };
   },
   methods: {
+    fixDatePickerDialogLabel() {
+      this.$nextTick(() => {
+        const dialog = this.$el.querySelector('.date-button ~ .dropdown-menu, .date-button .dropdown-menu');
+        if (dialog) {
+          dialog.removeAttribute('aria-labelledby');
+          dialog.setAttribute('aria-label', this.datePickerDialogLabel);
+        }
+      });
+    },
     /**
      * Constructs a formatted and validated date in the form of YYYY-MM-DD
      *
@@ -148,9 +167,18 @@ export default {
     labelTranslation() {
       return this.getTranslation(this.label);
     },
+    datePickerDialogLabel() {
+      return this.dialogLabel || this.$t('common.dateTimePicker.selectDate');
+    },
     combinedErrors() {
       return this.errors.concat(this.fieldErrors);
     },
+  },
+  mounted() {
+    // The dialog div is rendered at mount (hidden via CSS until opened), so label it now.
+    // bootstrap-vue focuses the menu *before* emitting `shown`, so fixing only on @shown
+    // would let focus land on an unnamed dialog on first open.
+    this.fixDatePickerDialogLabel();
   },
   watch: {
     inputValue(newVal) {

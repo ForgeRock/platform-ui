@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           @input="dateValue = $event; emitDateTimeValue()"
           ref="dateInput"
           :aria-label="labelTranslation"
+          :dialog-label="datePickerDialogLabel"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :disabled="disabled"
           :dropleft="dropleft"
@@ -41,8 +42,9 @@ of the MIT license. See the LICENSE file for details. -->
           @input="timeValue = $event; emitDateTimeValue()"
           ref="timeInput"
           :adjust-for-timezone="adjustForTimezone"
-          :aria-label="labelTranslation"
-          :field-label="labelTranslation"
+          :aria-label="timeFieldLabel"
+          :field-label="timeFieldLabel"
+          :dialog-label="timePickerDialogLabel"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :dropleft="dropleft"
           :disabled="disabled"
@@ -163,6 +165,15 @@ export default {
   computed: {
     labelTranslation() {
       return this.getTranslation(this.label);
+    },
+    timeFieldLabel() {
+      return this.$t('common.dateTimePicker.timeFieldLabel', { label: this.labelTranslation });
+    },
+    datePickerDialogLabel() {
+      return this.$t('common.dateTimePicker.selectDateFor', { label: this.labelTranslation });
+    },
+    timePickerDialogLabel() {
+      return this.$t('common.dateTimePicker.selectTimeFor', { label: this.labelTranslation });
     },
   },
 };

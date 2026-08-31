@@ -43,7 +43,8 @@ of the MIT license. See the LICENSE file for details. -->
       :label-hours="timePickerHoursLabel"
       :label-minutes="timePickerMinutesLabel"
       :label-ampm="timePickerAmpmLabel"
-      @input="debounceEmitValidTime" />
+      @input="debounceEmitValidTime"
+      @shown="fixTimePickerDialogLabel" />
   </div>
 </template>
 
@@ -88,6 +89,15 @@ export default {
       default: '',
       type: String,
     },
+    /**
+     * Accessible name for the time picker dialog. Falls back to the generic
+     * "Select time" when not provided — useful for distinguishing multiple
+     * time pickers on one form (e.g. "Select time for Access End Date").
+     */
+    dialogLabel: {
+      default: '',
+      type: String,
+    },
     dropleft: {
       default: true,
       type: Boolean,
@@ -117,6 +127,15 @@ export default {
     return { inputValue, fieldErrors, validationListeners };
   },
   methods: {
+    fixTimePickerDialogLabel() {
+      this.$nextTick(() => {
+        const dialog = this.$el.querySelector('.time-button .dropdown-menu');
+        if (dialog) {
+          dialog.removeAttribute('aria-labelledby');
+          dialog.setAttribute('aria-label', this.timePickerDialogLabel);
+        }
+      });
+    },
     /**
      * Emits out a formatted time in the form of HH:mm:ss.SSSZ or an empty string if time is invalid
      * if adjustForTimezone is false, the Z is omitted
@@ -191,9 +210,18 @@ export default {
       }
     },
   },
+  mounted() {
+    // The dialog div is rendered at mount (hidden via CSS until opened), so label it now.
+    // bootstrap-vue focuses the menu *before* emitting `shown`, so fixing only on @shown
+    // would let focus land on an unnamed dialog on first open.
+    this.fixTimePickerDialogLabel();
+  },
   computed: {
     labelTranslation() {
       return this.getTranslation(this.label);
+    },
+    timePickerDialogLabel() {
+      return this.dialogLabel || this.$t('common.dateTimePicker.selectTime');
     },
     timePickerHoursLabel() {
       return `${this.fieldLabel} ${this.$t('date.hours')}`;

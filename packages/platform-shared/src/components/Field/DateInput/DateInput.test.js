@@ -5,7 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
+import { flushPromises, mount, shallowMount } from '@vue/test-utils';
+import { findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import DateInput from './index';
 import { runA11yTest } from '../../../utils/testHelpers';
 
@@ -48,6 +49,49 @@ describe('DateInput', () => {
     expect(wrapper.emitted().input[0][0]).toBe('4000-01-01');
     wrapper.vm.emitDateValue('');
     expect(wrapper.emitted().input[1][0]).toBe('');
+  });
+
+  describe('date picker dialog', () => {
+    async function mountAndOpenPicker(extraProps = {}) {
+      const wrapper = mount(DateInput, {
+        props: {
+          ...defaultMixinProps,
+          ...defaultProps,
+          label: 'Access Start Date',
+          ...extraProps,
+        },
+        global: {
+          mocks: {
+            $t: (text) => (text),
+          },
+        },
+        attachTo: document.body,
+      });
+
+      await wrapper.find('button').trigger('click');
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+      return wrapper;
+    }
+
+    it('gives the date picker dialog a stable accessible name', async () => {
+      const wrapper = await mountAndOpenPicker();
+
+      const dialog = findByRole(wrapper, 'dialog');
+      expect(dialog.exists()).toBe(true);
+      expect(dialog.attributes('aria-label')).toBe('common.dateTimePicker.selectDate');
+      expect(dialog.attributes('aria-labelledby')).toBeUndefined();
+      wrapper.unmount();
+    });
+
+    it('uses the dialogLabel prop for the dialog name when provided', async () => {
+      const wrapper = await mountAndOpenPicker({ dialogLabel: 'Select date for Access Start Date' });
+
+      const dialog = findByRole(wrapper, 'dialog');
+      expect(dialog.attributes('aria-label')).toBe('Select date for Access Start Date');
+      expect(dialog.attributes('aria-labelledby')).toBeUndefined();
+      wrapper.unmount();
+    });
   });
 
   describe('@a11y', () => {

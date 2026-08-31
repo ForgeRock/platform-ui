@@ -112,6 +112,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-model="expirationDate"
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
         :min="minExpirationDate"
+        :dialog-label="$t('common.dateTimePicker.selectDateFor', { label: $t('governance.accessRequest.newRequest.applyExpirationDate') })"
         :placeholder="$t('governance.accessRequest.newRequest.expiryDate')" />
     </BFormGroup>
     <!-- Submit new request button -->
