@@ -18,4 +18,20 @@ export default class LoginSteps {
     const url = generateJourneyURL(JOURNEYS.DEFAULT_LOGIN.name);
     cy.visit(url);
   }
+
+  static logout() {
+    cy.logout();
+  }
+
+  /**
+   * Assert the enduser has landed on their dashboard. The greeting heading varies by tenant:
+   *   - default cloud / forgeops: `Hello, {name}`
+   *   - governance tenants:       `Good Morning|Afternoon|Evening {givenName}!`
+   * Both contain the user's name, so we match on that alone.
+   */
+  static assertOnDashboard(userName) {
+    cy.findAllByRole('heading', { level: 1, timeout: 20000 })
+      .filter(`:contains("${userName}")`)
+      .should('be.visible');
+  }
 }

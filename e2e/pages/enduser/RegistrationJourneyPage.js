@@ -39,6 +39,34 @@ export default class RegistrationJourneyPage {
     return cy.findByRole('button', { name: /next/i });
   }
 
+  static get submitButton() {
+    return cy.get('[type="submit"]');
+  }
+
+  // KBA — Cloud renders one question, ForgeOps renders two. Callers pick the
+  // right slot with `position` ('first' | 'last') to mirror the existing tests.
+  static kbaQuestionCombobox(position = 'first') {
+    return position === 'last'
+      ? cy.findAllByRole('combobox').last()
+      : cy.findAllByRole('combobox').first();
+  }
+
+  static kbaQuestionOption(name, position = 'first') {
+    return position === 'last'
+      ? cy.findAllByText(name).last()
+      : cy.findAllByText(name).first();
+  }
+
+  static kbaAnswerInput(questionName, position = 'first') {
+    return position === 'last'
+      ? cy.findAllByLabelText(`Answer for: ${questionName}`).last()
+      : cy.findAllByLabelText(`Answer for: ${questionName}`).first();
+  }
+
+  static get suspendMessage() {
+    return cy.findByTestId('suspend-text-output');
+  }
+
   static fill(user) {
     RegistrationJourneyPage.usernameInput.should('be.visible').type(user.username);
     RegistrationJourneyPage.firstNameInput.should('be.visible').type(user.firstName);

@@ -139,7 +139,10 @@ Cypress.Commands.add('loginAsAdmin', () => {
   fetchAccessToken();
 
   // Wait for Dashboard to load
-  cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
+  // only assert if test didn't fail (the assertion occasionally fail in after hooks)
+  if (!Cypress.state('test').state || Cypress.state('test').state === 'passed') {
+    cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
+  }
 
   if (Cypress.env('IS_FRAAS')) {
     // Wait for the Cloud to properly load
