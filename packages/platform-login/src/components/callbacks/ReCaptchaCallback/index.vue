@@ -14,14 +14,15 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 
 export default {
   name: 'ReCaptchaCallback',
   components: {
-    FriendlyCaptchaV2: () => import('@/components/callbacks/ReCaptchaCallback/FriendlyCaptchaV2'),
-    HCaptchaV1: () => import('@/components/callbacks/ReCaptchaCallback/HCaptchaV1'),
-    ReCaptchaV2: () => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV2'),
-    ReCaptchaV3: () => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV3'),
+    FriendlyCaptchaV2: defineAsyncComponent(() => import('@/components/callbacks/ReCaptchaCallback/FriendlyCaptchaV2')),
+    HCaptchaV1: defineAsyncComponent(() => import('@/components/callbacks/ReCaptchaCallback/HCaptchaV1')),
+    ReCaptchaV2: defineAsyncComponent(() => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV2')),
+    ReCaptchaV3: defineAsyncComponent(() => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV3')),
   },
   props: {
     callback: {
