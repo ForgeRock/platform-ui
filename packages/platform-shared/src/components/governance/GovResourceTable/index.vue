@@ -289,8 +289,6 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="totalCount"
         v-model="paginationPage"
         aria-controls="gov-resource-table"
-        role="pagination"
-        :aria-current="paginationPage"
         :per-page="paginationPageSize"
         :total-rows="totalCount"
         @change="loadData({ paginationPage: $event })"

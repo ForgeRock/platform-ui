@@ -381,6 +381,15 @@ describe('GovResourceTable', () => {
     expect(wrapper.emitted()['load-data']).toBeTruthy();
   });
 
+  // The pagination wrapper must not receive an invalid 'role="pagination"' or a page-number 'aria-current' attribute (WCAG 4.1.2)
+  it('pagination wrapper has no invalid role or aria-current attributes', async () => {
+    const { wrapper } = await mountComponent({ totalCount: 1 });
+    const pagination = wrapper.findComponent({ name: 'Pagination' });
+    expect(pagination.exists()).toBeTruthy();
+    expect(pagination.attributes('role')).toBeUndefined();
+    expect(pagination.attributes('aria-current')).toBeUndefined();
+  });
+
   describe('loadData()', () => {
     it('sets table items when data is successfully loaded', async () => {
       const { wrapper } = await mountComponent();
