@@ -861,9 +861,9 @@
     "zurich": "Zurich",
     "warsaw": "Warsaw",
     "paris": "Paris",
-    "montreal": "Montr\u00e9al",
+    "montreal": "Montréal",
     "toronto": "Toronto",
-    "saoPaulo": "S\u00e3o Paulo",
+    "saoPaulo": "São Paulo",
     "santiago": "Santiago",
     "iowa": "Iowa",
     "southCarolina": "South Carolina",
@@ -1596,6 +1596,89 @@
         "fullscreen": "Toggle Fullscreen",
         "zoomIn": "Zoom In",
         "zoomOut": "Zoom Out"
+      }
+    },
+    "accessAnalysis": {
+      "title": "Access Analyzer",
+      "subtitle": "Analyze and compare user access across your organization",
+      "userA": "User A",
+      "userB": "User B",
+      "swapUsers": "Swap users",
+      "tabs": {
+        "compareUserAccess": "Compare User Access",
+        "accessSimulator": "Access Simulator"
+      },
+      "selectTwoIdentities": "Select two identities to compare",
+      "compareTabs": {
+        "attributes": "Attributes",
+        "roles": "Roles",
+        "applications": "Applications",
+        "entitlements": "Entitlements",
+        "scopes": "Scopes"
+      },
+      "attributes": {
+        "attribute": "Attribute",
+        "errorLoading": "Unable to load user attributes",
+        "noAttributes": "No attributes found"
+      },
+      "grants": {
+        "noGrants": "No grants found",
+        "errorLoading": "Unable to load grants",
+        "granted": "Granted",
+        "notGranted": "Not granted",
+        "requestAccess": "Request access",
+        "revokeAccess": "Revoke access",
+        "grantAccessTo": "Grant access to {name}",
+        "revokeAccessTo": "Revoke access from {name}",
+        "grantTo": "Grant to {name}",
+        "revokeFrom": "Revoke from {name}",
+        "errorSubmitting": "Unable to submit request"
+      },
+      "scopes": {
+        "noScopes": "No scopes found",
+        "errorLoading": "Unable to load scopes"
+      },
+      "simulator": {
+        "description": "The Access Simulator shows how a user's entitlements and application access would change if a role were added to or removed from them.",
+        "simulate": "Simulate",
+        "backToSimulator": "Back to simulator",
+        "runSimulation": "Run simulation",
+        "selectUserFirst": "Select a user to load their assigned options",
+        "noOptionsFound": "No assigned options found for this user",
+        "searchByName": "Search by name...",
+        "searchByRoleName": "Search by role name...",
+        "searchByScopeName": "Search by scope name...",
+        "userLabel": "User",
+        "role": "Role",
+        "scope": "Scope",
+        "types": {
+          "role": "Role",
+          "application": "Application",
+          "entitlement": "Entitlement",
+          "scope": "Scope"
+        },
+        "noImpact": "No access changes detected for this selection.",
+        "selectInputs": "Select a user and {resource} to simulate.",
+        "errorRunning": "Unable to run simulation",
+        "willBeGained": "Will be gained",
+        "willBeLost": "Will be lost",
+        "alreadyHeld": "Already held (direct)",
+        "addRole": {
+          "title": "Add a Role to the user",
+          "description": "See how adding a role would change the entitlements and application access a user has."
+        },
+        "removeRole": {
+          "title": "Remove a Role from the user",
+          "description": "See how removing a role would change the entitlements and application access a user has."
+        },
+        "addScope": {
+          "title": "Add a Scope to the user",
+          "description": "See how adding a scope would change the actions a user can perform in IGA."
+        },
+        "removeScope": {
+          "title": "Remove a Scope from the user",
+          "description": "See how removing a scope would change the actions a user can perform in IGA."
+        }
       }
     },
     "accessModeling": {

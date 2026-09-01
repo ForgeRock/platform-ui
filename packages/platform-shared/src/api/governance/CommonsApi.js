@@ -65,6 +65,16 @@ export function getUsers(params = {}) {
 }
 
 /**
+ * Get a single IGA user by ID
+ * @param {String} userId - The user ID
+ * @returns {Promise} User object
+ */
+export function getUserById(userId = '') {
+  const queryString = encodeQueryString({ _queryFilter: `id eq '${userId}'` }, false);
+  return generateIgaApi().get(`/governance/user${queryString}`);
+}
+
+/**
  * Query grants in IGA
  * @param {Object} params - parameters to filter the list
  * @returns {Promise} Grant results

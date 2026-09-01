@@ -210,7 +210,10 @@ export default {
         if (setValue) this.handleInput(selectedValue);
       })
         .catch(() => {})
-        .finally(() => { this.initialValuesLoad = true; });
+        .finally(() => {
+          this.initialValuesLoad = true;
+          this.$emit('loaded');
+        });
     },
     /**
      * emits out request to get user or role info if current resource is either, and emits
