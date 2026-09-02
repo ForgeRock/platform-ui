@@ -369,6 +369,8 @@
     "errorSavingAgent": "Error saving agent",
     "noAgents": "No AI Agents configured",
     "noAgentsSubtitle": "Create new AI Agents to support your customers and teams",
+    "noSearchResults": "No AI Agents found",
+    "noSearchResultsSubtitle": "Try a different search term or clear the search",
     "enableAiAgentIdentity": "Enable AI Agent Identity",
     "aiAgentsDisabled": "AI Agent Identity is not yet enabled",
     "enableSuccess": "AI Agent Identity successfully enabled",
