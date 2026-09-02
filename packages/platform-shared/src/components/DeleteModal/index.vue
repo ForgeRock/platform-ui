@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
     :no-close-on-esc="isDeleting"
     title-tag="h2"
     title-class="h5"
-    :title="$t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
+    :title="title || $t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
     <div
       data-testid="delete-modal-custom-message"
       v-if="customMessage"
@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       data-testid="deletePanel-body"
       v-else>
-      {{ $t('deletePanel.body', { type: translatedItemType.toLowerCase() }) }}
+      {{ description || $t('deletePanel.body', { type: translatedItemType.toLowerCase() }) }}
     </div>
     <slot name="below-body" />
     <template #modal-footer="{ cancel }">
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.cancel') }}
       </BButton>
       <FrButtonWithSpinner
-        :button-text="$t('common.delete')"
+        :button-text="confirmButtonText || $t('common.delete')"
         :disabled="isDeleting"
         :show-spinner="isDeleting"
         :spinner-text="$t('common.deleting')"
@@ -79,6 +79,27 @@ export default {
     customMessage: {
       type: String,
       default: null,
+    },
+    /**
+     * Optional description to display in place of the default confirmation copy.
+     */
+    description: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Optional title to display in place of the default confirmation question.
+     */
+    title: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Optional text to display on the confirmation button.
+     */
+    confirmButtonText: {
+      type: String,
+      default: '',
     },
     /**
      * Variable to determine when to show spinner in button

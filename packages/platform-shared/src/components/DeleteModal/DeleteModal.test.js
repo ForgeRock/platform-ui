@@ -45,6 +45,25 @@ describe('DeleteModal', () => {
     expect(bodyWithType.text()).toBe('Are you sure you want to delete this service account?');
   });
 
+  it('uses custom title and description when provided', () => {
+    const wrapper = setup({
+      description: 'Custom description',
+      title: 'Custom title',
+    });
+
+    expect(wrapper.findComponent({ name: 'BModal' }).props('title')).toBe('Custom title');
+    expect(findByTestId(wrapper, 'deletePanel-body').text()).toBe('Custom description');
+  });
+
+  it('uses custom confirmation button text when provided', () => {
+    const wrapper = setup({
+      confirmButtonText: 'Remove',
+      testid: 'delete-modal',
+    });
+
+    expect(findByTestId(wrapper, 'btn-confirm-delete-modal').text()).toBe('Remove');
+  });
+
   it('delete button should not be disabled when not deleting', () => {
     const wrapper = setup({
       isDeleting: false,

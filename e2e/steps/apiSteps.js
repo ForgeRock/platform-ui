@@ -32,6 +32,7 @@ import RelationshipApiSteps from './api/RelationshipApiSteps';
 import RoleApiSteps from './api/RoleApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import SamlApplicationApiSteps from './api/SamlApplicationApiSteps';
+import SecretMappingsApiSteps from './api/SecretMappingsApiSteps';
 import ThemeApiSteps from './api/ThemeApiSteps';
 import UserApiSteps from './api/UserApiSteps';
 
@@ -63,6 +64,7 @@ export default {
   relationships: RelationshipApiSteps,
   roles: RoleApiSteps,
   samlApplications: SamlApplicationApiSteps,
+  secretMappings: SecretMappingsApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   themes: ThemeApiSteps,
   user: UserApiSteps,

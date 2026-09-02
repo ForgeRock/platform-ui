@@ -70,6 +70,7 @@ const defaultState = {
   enableMonitoringUI: false,
   devAppTemplatesEnabled: false,
   servicesMigrationEnabled: false,
+  secretMappingsEnabled: false,
 };
 
 const mutations = {
@@ -294,6 +295,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_SERVICES_MIGRATION?.toString() === 'true') {
       state.servicesMigrationEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_SECRET_MAPPINGS?.toString() === 'true') {
+      state.secretMappingsEnabled = true;
     }
   },
   setIdmWorkflowEnabled(state, val) {
