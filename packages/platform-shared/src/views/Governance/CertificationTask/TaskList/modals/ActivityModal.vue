@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div v-if="activity.length">
       <!-- Activity list -->
       <BTable
+        v-presentational-table
         :current-page="currentPage"
         :fields="fields"
         :items="activity"
@@ -106,6 +107,7 @@ import { ref } from 'vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import vPresentationalTable from '@forgerock/platform-shared/src/directives/presentationalTable';
 
 /**
  * Activity icons
