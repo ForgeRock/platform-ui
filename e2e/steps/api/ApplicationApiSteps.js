@@ -6,7 +6,7 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import createApplication, { deleteApplication, deleteOAuth2Client } from '@e2e/api/applicationsApi.e2e';
+import createApplication, { createOAuth2Client, deleteApplication, deleteOAuth2Client } from '@e2e/api/applicationsApi.e2e';
 
 export default class ApplicationApiSteps {
   static createdManagedAppIds = [];
@@ -48,6 +48,34 @@ export default class ApplicationApiSteps {
       expect(response.status).to.equal(201);
       ApplicationApiSteps.createdApplicationIds.push(response.body._id);
       return response;
+    });
+  }
+
+  /**
+   * Create a native/SPA custom application the same way the UI does: an AM OAuth2
+   * client linked to an IDM managed application via ssoEntities.oidcId. Both the
+   * managed application id and the client id are tracked for cleanup.
+   * @param {Object} options
+   * @param {string} options.appName - Name of the managed application (also used as clientName)
+   * @param {string} options.clientId - Client id for the AM OAuth2 client
+   * @param {string} options.ownerId - Managed user id set as the application owner
+   * @returns {Cypress.Chainable} The response from the create application request
+   */
+  static createNativeSpaApplication({ appName, clientId, ownerId }) {
+    const userResource = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
+    return createOAuth2Client(clientId, appName).then(() => {
+      ApplicationApiSteps.createdClientIds.push(clientId);
+      return createApplication({
+        name: appName,
+        owners: [{ _ref: `managed/${userResource}/${ownerId}`, _refProperties: {} }],
+        templateName: 'native',
+        templateVersion: '1.0',
+        ssoEntities: { oidcId: clientId },
+      }).then((response) => {
+        expect(response.status).to.equal(201);
+        ApplicationApiSteps.createdApplicationIds.push(response.body._id);
+        return response;
+      });
     });
   }
 
