@@ -25,6 +25,7 @@ import LocalizationApiSteps from './api/LocalizationApiSteps';
 import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
 import OrganizationApiSteps from './api/OrganizationApiSteps';
 import RealmApiSteps from './api/RealmApiSteps';
+import RelationshipApiSteps from './api/RelationshipApiSteps';
 import RoleApiSteps from './api/RoleApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
@@ -51,6 +52,7 @@ export default {
   oauth2Clients: Oauth2ClientApiSteps,
   organizations: OrganizationApiSteps,
   realm: RealmApiSteps,
+  relationships: RelationshipApiSteps,
   roles: RoleApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   user: UserApiSteps,
