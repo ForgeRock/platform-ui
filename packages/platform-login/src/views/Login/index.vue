@@ -139,7 +139,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :position-button="journeySignInButtonPosition"
                           :aria-label="component?.callbackSpecificProps?.name || undefined"
                           :button-disabled="nextButtonDisabled || !isFormValid"
-                          v-bind="{...component.callbackSpecificProps}"
+                          v-bind="buildCallbackDisplayProps(component)"
                           v-on="{
                             'next-step': (event, preventClear) => {
                               nextStep(event, preventClear);
@@ -175,7 +175,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :floating-label="journeyFloatingLabels"
                           :is-required-aria="component.isRequired"
                           :position-button="journeySignInButtonPosition"
-                          v-bind="{...component.callbackSpecificProps, hasDivider: componentList.length > 0}"
+                          v-bind="{...buildCallbackDisplayProps(component), hasDivider: componentList.length > 0}"
                           v-on="{
                             'next-step': (event, preventClear) => {
                               nextStep(event, preventClear);
@@ -366,7 +366,7 @@ of the MIT license. See the LICENSE file for details. -->
                       :position-button="journeySignInButtonPosition"
                       :aria-label="component?.callbackSpecificProps?.name || undefined"
                       :button-disabled="nextButtonDisabled || !isFormValid"
-                      v-bind="{...component.callbackSpecificProps}"
+                      v-bind="buildCallbackDisplayProps(component)"
                       v-on="{
                         'next-step': (event, preventClear) => {
                           nextStep(event, preventClear);
@@ -401,7 +401,7 @@ of the MIT license. See the LICENSE file for details. -->
                       :floating-label="journeyFloatingLabels"
                       :is-required-aria="component.isRequired"
                       :position-button="journeySignInButtonPosition"
-                      v-bind="{...component.callbackSpecificProps, hasDivider: componentList.length > 0}"
+                      v-bind="{...buildCallbackDisplayProps(component), hasDivider: componentList.length > 0}"
                       v-on="{
                         'next-step': (event, preventClear) => {
                           nextStep(event, preventClear);
@@ -512,6 +512,8 @@ import {
 } from '../../utils/loginUtils';
 import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
 import doNewNodesContainRecaptchaV2 from '../../utils/recaptchaUtil';
+
+const REQUIRED_ASTERISK = '<span class="text-danger" aria-hidden="true">*</span>';
 
 export default {
   name: 'Login',
@@ -774,19 +776,6 @@ export default {
     clearTimeout(this._focusTimer);
   },
   watch: {
-    // on page load journeyShowAsteriskForRequiredFields will be false, it will
-    // update when the theme is loaded
-    journeyShowAsteriskForRequiredFields(value) {
-      if (value) {
-        this.componentList.forEach((component) => {
-          if (component.isRequired && (component.type === 'FrField' || component.type === 'FrPasswordCallback')) {
-            const { label } = component.callbackSpecificProps;
-            component.callbackSpecificProps.label = `${label}<span class="text-danger" aria-hidden="true">*</span>`;
-            component.callbackSpecificProps.isHtml = true;
-          }
-        });
-      }
-    },
     themeLoading(isLoading, wasLoading) {
       // $nextTick defers handleFocus() until after Vue re-renders with the new theme props,
       // so $refs point to the correct DOM elements (e.g. callbackMain in Theater Mode).
@@ -1126,6 +1115,21 @@ export default {
       if (componentList.length === 0) {
         this.nextButtonVisible = false;
       }
+    },
+    buildCallbackDisplayProps(component) {
+      const callbackSpecificProps = component.callbackSpecificProps || {};
+      const { label } = callbackSpecificProps;
+      const isInputField = component.type === 'FrField' || component.type === 'FrPasswordCallback';
+
+      if (!this.journeyShowAsteriskForRequiredFields || !component.isRequired || !isInputField || !label) {
+        return { ...callbackSpecificProps };
+      }
+
+      return {
+        ...callbackSpecificProps,
+        label: `${this.getTranslation(label)}${REQUIRED_ASTERISK}`,
+        isHtml: true,
+      };
     },
     handleIdpComponent(componentList, idpComponentIndex) {
       if (!Array.isArray(componentList)) return;

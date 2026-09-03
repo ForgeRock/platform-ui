@@ -706,6 +706,7 @@ describe('Component Test', () => {
   const mountLogin = async (overrideData = {}, props = {}) => {
     const wrapper = mount(Login, {
       global: {
+        plugins: [createTestingPinia()],
         stubs: {
           'router-link': true,
           FrField: true,
@@ -860,6 +861,125 @@ describe('Component Test', () => {
       await flushPromises();
 
       expect(wrapper.vm.componentList[0].isRequired).toBe(false);
+    });
+  });
+
+  describe('journeyShowAsteriskForRequiredFields', () => {
+    const asteriskMarkup = '<span class="text-danger" aria-hidden="true">*</span>';
+    const mixedStepPayload = {
+      authId: 'eyxQ',
+      callbacks: [
+        {
+          type: 'NameCallback',
+          output: [{ name: 'prompt', value: 'User Name' }],
+          input: [{ name: 'IDToken1', value: '' }],
+          _id: 0,
+        },
+        {
+          type: 'PasswordCallback',
+          output: [{ name: 'prompt', value: 'Password' }],
+          input: [{ name: 'IDToken2', value: '' }],
+          _id: 1,
+        },
+        {
+          type: 'StringAttributeInputCallback',
+          output: [
+            { name: 'name', value: 'givenName' },
+            { name: 'prompt', value: 'First Name' },
+            { name: 'required', value: false },
+            { name: 'policies', value: { policyRequirements: [], policies: [] } },
+            { name: 'failedPolicies', value: [] },
+            { name: 'validateOnly', value: false },
+            { name: 'value', value: '' },
+          ],
+          input: [{ name: 'IDToken3', value: '' }],
+          _id: 2,
+        },
+      ],
+      header: 'Sign In',
+    };
+
+    const getComponent = (wrapper, type) => wrapper.vm.componentList.find((component) => component.callback.getType() === type);
+
+    it('derives asterisk display props when the setting is already true during navigation', async () => {
+      const wrapper = await mountLogin(
+        { loading: true, step: new FRStep(mixedStepPayload) },
+        { journeyShowAsteriskForRequiredFields: true },
+      );
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      const nameComponent = getComponent(wrapper, 'NameCallback');
+      const passwordComponent = getComponent(wrapper, 'PasswordCallback');
+      const firstNameComponent = getComponent(wrapper, 'StringAttributeInputCallback');
+
+      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).label).toBe(`User Name${asteriskMarkup}`);
+      expect(wrapper.vm.buildCallbackDisplayProps(passwordComponent).label).toBe(`Password${asteriskMarkup}`);
+      expect(nameComponent.callbackSpecificProps.label).toBe('User Name');
+      expect(nameComponent.callbackSpecificProps.isHtml).toBeUndefined();
+      expect(firstNameComponent.callbackSpecificProps.label).toBe('First Name');
+      expect(wrapper.vm.buildCallbackDisplayProps(firstNameComponent)).toEqual(firstNameComponent.callbackSpecificProps);
+    });
+
+    it('derives props without mutating the source or duplicating the indicator', async () => {
+      const wrapper = await mountLogin(
+        { loading: true, step: new FRStep(mixedStepPayload) },
+        { journeyShowAsteriskForRequiredFields: true },
+      );
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      const nameComponent = getComponent(wrapper, 'NameCallback');
+      const sourceProps = { ...nameComponent.callbackSpecificProps };
+      const firstDisplayProps = wrapper.vm.buildCallbackDisplayProps(nameComponent);
+      const secondDisplayProps = wrapper.vm.buildCallbackDisplayProps(nameComponent);
+
+      expect(firstDisplayProps.label).toBe(`User Name${asteriskMarkup}`);
+      expect(secondDisplayProps.label).toBe(`User Name${asteriskMarkup}`);
+      expect(nameComponent.callbackSpecificProps).toEqual(sourceProps);
+      // The returned props must be structurally different — a new spread alone would
+      // satisfy not.toBe(), so assert the augmented label contents instead.
+      expect(firstDisplayProps).not.toEqual(nameComponent.callbackSpecificProps);
+    });
+
+    it('reflects theme changes without resetting existing HTML state', async () => {
+      const wrapper = await mountLogin(
+        { loading: true, step: new FRStep(mixedStepPayload) },
+        { journeyShowAsteriskForRequiredFields: true },
+      );
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      const nameComponent = getComponent(wrapper, 'NameCallback');
+      nameComponent.callbackSpecificProps.isHtml = true;
+      const sourceProps = { ...nameComponent.callbackSpecificProps };
+
+      await wrapper.setProps({ journeyShowAsteriskForRequiredFields: false });
+      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent)).toEqual(sourceProps);
+
+      await wrapper.setProps({ journeyShowAsteriskForRequiredFields: true });
+      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).label).toBe(`User Name${asteriskMarkup}`);
+      expect(nameComponent.callbackSpecificProps).toEqual(sourceProps);
+    });
+
+    it('translates the raw label before adding the required indicator', async () => {
+      const wrapper = await mountLogin(
+        { loading: true, step: new FRStep(mixedStepPayload) },
+        { journeyShowAsteriskForRequiredFields: true },
+      );
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      const nameComponent = getComponent(wrapper, 'NameCallback');
+      const translationSpy = jest.spyOn(wrapper.vm, 'getTranslation').mockReturnValue('Nom d’utilisateur');
+
+      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).label).toBe(`Nom d’utilisateur${asteriskMarkup}`);
+      expect(translationSpy).toHaveBeenCalledWith('User Name');
+      translationSpy.mockRestore();
     });
   });
 
