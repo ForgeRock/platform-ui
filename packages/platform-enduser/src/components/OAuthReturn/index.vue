@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BContainer } from 'bootstrap-vue';
 import { each } from 'lodash';
-import { BounceLoader } from 'vue-spinner/dist/vue-spinner.min';
+import BounceLoader from '@forgerock/platform-shared/src/components/Spinner/BounceLoader';
 import styles from '@/scss/main.scss';
 
 /**

@@ -56,7 +56,6 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   isEmpty, first, difference, keys, forEach,
 } from 'lodash';
-import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import Process from '../Process';
@@ -76,7 +75,6 @@ export default {
   data() {
     return {
       panelShown: {},
-      loadingColor: styles.baseColor,
     };
   },
   components: {

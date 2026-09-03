@@ -7,7 +7,15 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import contractorForm from '@forgerock/platform-shared/src/testing/resources/contractorForm';
+import ClipLoader from '@forgerock/platform-shared/src/components/Spinner/ClipLoader';
 import Process from './index';
+
+// Process reads loadingColor from `styles.basecolor` — the themed $primary exported by
+// platform-shared main.scss. Mocking a distinct value here proves the :color prop
+// binding passes it through to the loader.
+jest.mock('@forgerock/platform-shared/src/scss/main.scss', () => ({
+  basecolor: '#123456',
+}));
 
 describe('Process.vue', () => {
   let wrapper;
@@ -38,5 +46,25 @@ describe('Process.vue', () => {
     expect(buttons.length).toBe(2);
     expect(buttons[0].text()).toBe('Cancel');
     expect(buttons[1].text()).toBe('Submit');
+  });
+});
+
+describe('Process.vue while the process definition is loading', () => {
+  it('Shows the ClipLoader, passing through the loadingColor', () => {
+    const wrapper = mount(Process, {
+      props: {
+        processDefinition: null,
+      },
+      global: {
+        mocks: {
+          $t: (key) => (key),
+        },
+      },
+    });
+
+    expect(wrapper.vm.loadingColor).toBe('#123456');
+    const clipLoader = wrapper.findComponent(ClipLoader);
+    expect(clipLoader.exists()).toBe(true);
+    expect(clipLoader.props('color')).toBe('#123456');
   });
 });

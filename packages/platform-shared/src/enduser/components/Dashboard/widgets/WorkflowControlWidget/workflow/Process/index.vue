@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
+import ClipLoader from '@forgerock/platform-shared/src/components/Spinner/ClipLoader';
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import compileTemplateToRender from '@forgerock/platform-shared/src/utils/compileDynamicTemplate';
 import GenericProcess from '../GenericProcess';
@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      loadingColor: styles.baseColor,
+      loadingColor: styles.basecolor,
       startForm: undefined,
     };
   },

@@ -51,15 +51,6 @@ body {
   }
 }
 
-/* Application adjustments (not related to themes
-   Center spinner */
-.v-spinner {
-  .v-bounce1 {
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
 .fr-body-image {
   @if $fr-background-image != 'none' {
     background: $fr-background-image;

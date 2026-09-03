@@ -33,7 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import axios from 'axios';
-import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
+import ClipLoader from '@forgerock/platform-shared/src/components/Spinner/ClipLoader';
 import compileTemplateToRender from '@forgerock/platform-shared/src/utils/compileDynamicTemplate';
 import GenericTask from '../GenericTask';
 
@@ -61,7 +61,7 @@ export default {
     }
 
     return {
-      loadingColor: styles.baseColor,
+      loadingColor: styles.basecolor,
       processDefinition: temporaryProcessInstance,
       task: null,
       variables: null,

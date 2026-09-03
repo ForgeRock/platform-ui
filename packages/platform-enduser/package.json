@@ -49,7 +49,6 @@
     "vue-3-sanitize": "0.1.4",
     "vue-i18n": "10.0.8",
     "vue-router": "4.2.4",
-    "vue-spinner": "1.0.3",
     "vuex": "4.0.2",
     "whatwg-fetch": "3.2.0"
   },

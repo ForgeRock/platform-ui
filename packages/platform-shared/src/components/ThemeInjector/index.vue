@@ -189,6 +189,14 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.primaryColor }};
       }
 
+      .fr-bounce-loader__dot.spinner-primary {
+        background-color: {{ theme.primaryColor }} !important;
+      }
+
+      .fr-clip-loader__clip.spinner-primary {
+        border-color: {{ theme.primaryColor }} {{ theme.primaryColor }} transparent !important;
+      }
+
       #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error input:not(.multiselect__input):not(.fr-tag-input):not(.iti__search-input),
       #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error .btn {
         border-color: {{ theme.dangerColor }} !important;

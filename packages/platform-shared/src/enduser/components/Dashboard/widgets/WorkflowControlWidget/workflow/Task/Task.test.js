@@ -8,9 +8,17 @@
 import axios from 'axios';
 import { mount, flushPromises } from '@vue/test-utils';
 import contractorForm from '@forgerock/platform-shared/src/testing/resources/contractorForm';
+import ClipLoader from '@forgerock/platform-shared/src/components/Spinner/ClipLoader';
 import Task from './index';
 
 jest.mock('axios');
+
+// Task reads loadingColor from `styles.basecolor` — the themed $primary exported by
+// platform-shared main.scss. Mocking a distinct value here proves the :color prop
+// binding passes it through to the loader.
+jest.mock('@forgerock/platform-shared/src/scss/main.scss', () => ({
+  basecolor: '#123456',
+}));
 
 describe('Task.vue', () => {
   let wrapper;
@@ -42,6 +50,20 @@ describe('Task.vue', () => {
 
   it('Task successfully loaded', () => {
     expect(wrapper.vm.processDefinition).toStrictEqual(null);
+  });
+
+  it('Shows the ClipLoader, passing through the loadingColor, while the process definition is loading', () => {
+    expect(wrapper.vm.loadingColor).toBe('#123456');
+    const clipLoader = wrapper.findComponent(ClipLoader);
+    expect(clipLoader.exists()).toBe(true);
+    expect(clipLoader.props('color')).toBe('#123456');
+  });
+
+  it('Removes the ClipLoader once the task form has loaded', async () => {
+    await wrapper.setProps({ shown: true });
+    await flushPromises();
+
+    expect(wrapper.findComponent(ClipLoader).exists()).toBe(false);
   });
 
   it('creates taskForm when dynamic form is provided', async () => {
