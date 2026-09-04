@@ -52,7 +52,7 @@
 
   tr:not(:focus-visible) .sticky-left,
   tr:not(:focus-visible) .sticky-right {
-    background-color: $card-bg;
+    background-color: inherit;
   }
 
   .table-hover tbody tr:hover,

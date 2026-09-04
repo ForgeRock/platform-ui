@@ -421,6 +421,10 @@ of the MIT license. See the LICENSE file for details. -->
         box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.accountCardShadow !== undefined ? theme.accountCardShadow : 3 }}px;
       }
 
+      .sticky-right {
+        background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }} !important;
+      }
+
       #app .card .table {
         color: {{ theme.accountCardTextColor || '#5e6d82' }};
       }
