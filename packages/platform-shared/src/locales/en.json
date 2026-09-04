@@ -2559,6 +2559,7 @@
       "showTechnicalDetails": "Show technical details",
       "noItems": "No Certification Items",
       "noAccessReview": "No {type} Access Reviews",
+      "ownAccessBanner": "This campaign does not allow self-certification. Your own access items appear here and cannot be certified, revoked, or given exceptions. Reassign them to another certifier to complete the review.",
       "backLink": "Access Reviews",
       "signOff": "Submit",
       "signOffTooltip": "Complete your Access Review. If partial submission is enabled, only items with decisions will be submitted",
@@ -2611,6 +2612,7 @@
         "entitlementComposition": "entitlement composition",
         "groupByAccount": "group by account",
         "identityProfile": "identity profile",
+        "ownAccess": "Review My Access",
         "roleComposition": "role composition"
       },
       "columns": {

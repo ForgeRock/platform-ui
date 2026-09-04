@@ -408,6 +408,145 @@ describe('CertificationTask', () => {
       const roleCompositionTab = tabs.find((tab) => tab.props('title') === wrapper.vm.$t('governance.certificationTask.certificationTabs.roleComposition'));
       expect(roleCompositionTab).toBeTruthy();
     });
+
+    it('should show the own access review tab when the campaign does not allow self-certification and the certifier has own items', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          allowSelfCertification: false,
+          targetFilter: {
+            type: ['accountGrant'],
+          },
+        },
+      }));
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({
+        data: { totalCount: 2 },
+      }));
+
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const ownAccessTab = findByTestId(wrapper, 'cert-own-access-tab');
+      expect(ownAccessTab.exists()).toBe(true);
+    });
+
+    it('should not show the own access review tab when the certifier has no own items in the campaign', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          allowSelfCertification: false,
+          targetFilter: {
+            type: ['accountGrant'],
+          },
+        },
+      }));
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({
+        data: { totalCount: 0 },
+      }));
+
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const ownAccessTab = findByTestId(wrapper, 'cert-own-access-tab');
+      expect(ownAccessTab.exists()).toBe(false);
+    });
+
+    it('should not show the own access review tab when the campaign only covers grant types without user-owned items', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          allowSelfCertification: false,
+          targetFilter: {
+            type: ['entitlement'],
+          },
+        },
+      }));
+
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const ownAccessTab = findByTestId(wrapper, 'cert-own-access-tab');
+      expect(ownAccessTab.exists()).toBe(false);
+    });
+
+    it('should not show the own access review tab when the campaign allows self-certification', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          allowSelfCertification: true,
+          targetFilter: {
+            type: ['accountGrant'],
+          },
+        },
+      }));
+
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const ownAccessTab = findByTestId(wrapper, 'cert-own-access-tab');
+      expect(ownAccessTab.exists()).toBe(false);
+    });
+
+    it('should show one task list and no sub-tabs in own access review when the campaign covers a single grant type', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          allowSelfCertification: false,
+          certificationType: 'identityProfile',
+          targetFilter: {
+            type: ['user'],
+          },
+        },
+      }));
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({
+        data: { totalCount: 1 },
+      }));
+
+      wrapper = mountComponent();
+      await flushPromises();
+
+      expect(findByTestId(wrapper, 'cert-own-access-tab').exists()).toBe(true);
+      expect(findByTestId(wrapper, 'cert-own-access-subtabs').exists()).toBe(false);
+    });
+
+    it('should show a sub-tab per grant type in own access review when the campaign covers multiple grant types', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          allowSelfCertification: false,
+          targetFilter: {
+            type: ['accountGrant', 'entitlementGrant', 'roleMembership'],
+          },
+        },
+      }));
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({
+        data: { totalCount: 3 },
+      }));
+
+      wrapper = mountComponent();
+      await flushPromises();
+
+      expect(findByTestId(wrapper, 'cert-own-access-tab').exists()).toBe(true);
+      // the outer tabs are lazy — sub-tab content renders on activation, so assert on
+      // the computed that drives the sub-tabs rather than the DOM
+      expect(findByTestId(wrapper, 'cert-own-access-subtabs').exists()).toBe(false);
+      expect(wrapper.vm.ownAccessSubTabs.map((tab) => tab.key)).toEqual(['accounts', 'entitlements', 'roles']);
+    });
+
+    it('should only show own access sub-tabs for grant types that contain the certifier own items', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          allowSelfCertification: false,
+          targetFilter: {
+            type: ['accountGrant', 'entitlementGrant', 'roleMembership'],
+          },
+        },
+      }));
+      CertificationApi.getCertificationTasksListByCampaign
+        .mockImplementationOnce(() => Promise.resolve({ data: { totalCount: 2 } }))
+        .mockImplementationOnce(() => Promise.resolve({ data: { totalCount: 0 } }))
+        .mockImplementationOnce(() => Promise.resolve({ data: { totalCount: 1 } }));
+
+      wrapper = mountComponent();
+      await flushPromises();
+
+      expect(findByTestId(wrapper, 'cert-own-access-tab').exists()).toBe(true);
+      expect(wrapper.vm.ownAccessSubTabs.map((tab) => tab.key)).toEqual(['accounts', 'roles']);
+    });
   });
 
   describe('signOff', () => {

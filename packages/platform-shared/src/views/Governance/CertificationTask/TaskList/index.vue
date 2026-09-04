@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="d-flex justify-content-between certification-task-list_controls">
       <div class="d-flex justify-content-start">
         <FrTaskMultiSelect
-          v-if="campaignDetails.allowBulkCertify && !isStaged"
+          v-if="campaignDetails.allowBulkCertify && !isStaged && !disableDecisions"
           ref="taskMultiSelect"
           @select-tasks="selectTasks($event)"
           @select-all-tasks="selectAllTasks"
@@ -121,6 +121,14 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div
         class="d-flex flex-column h-100 flex-grow-1 min-width-0">
+        <BAlert
+          v-if="disableDecisions"
+          show
+          variant="info"
+          data-testid="own-access-banner"
+          class="mb-0 mx-3 mt-3">
+          {{ $t('governance.certificationTask.ownAccessBanner') }}
+        </BAlert>
         <FrSpinner
           v-if="isLoading"
           class="py-5" />
@@ -148,7 +156,7 @@ of the MIT license. See the LICENSE file for details. -->
           :tbody-tr-attr="rowAttrs">
           <template #cell(selector)="{ item }">
             <FrField
-              v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
+              v-if="!disableDecisions && item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
               @change="selectTask($event, item)"
               name="columnSelected"
               type="checkbox"
@@ -233,8 +241,13 @@ of the MIT license. See the LICENSE file for details. -->
                       :src="getApplicationLogo(item.application)">
                   </div>
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
-                    <span class="text-dark">
+                    <span
+                      v-if="item.application"
+                      class="text-dark">
                       {{ item.application.name }}
+                    </span>
+                    <span v-else>
+                      {{ blankValueIndicator }}
                     </span>
                   </div>
                 </BMedia>
@@ -365,7 +378,8 @@ of the MIT license. See the LICENSE file for details. -->
                 :campaign-details="campaignDetails"
                 :cert-grant-type="certificationGrantType"
                 :item="item"
-                :is-staged="isStaged" />
+                :is-staged="isStaged"
+                :disable-decisions="disableDecisions" />
 
               <!-- Select Row To Display Entitlements -->
               <BButton
@@ -496,6 +510,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 <script>
 import {
+  BAlert,
   BBadge,
   BButton,
   BButtonClose,
@@ -635,6 +650,7 @@ const ACTIONS = new Map([
 export default {
   name: 'TaskList',
   components: {
+    BAlert,
     BBadge,
     BButton,
     BButtonClose,
@@ -713,9 +729,21 @@ export default {
       type: String,
       default: null,
     },
+    disableDecisions: {
+      type: Boolean,
+      default: false,
+    },
     entitlementUserId: {
       type: String,
       default: null,
+    },
+    excludeSelf: {
+      type: Boolean,
+      default: false,
+    },
+    selfUserId: {
+      type: String,
+      default: '',
     },
     isAdmin: {
       type: Boolean,
@@ -906,7 +934,7 @@ export default {
     certificationListColumnsToShow() {
       const columns = cloneDeep(this.activeColumns);
 
-      if (this.campaignDetails.allowBulkCertify && !this.isStaged) {
+      if (this.campaignDetails.allowBulkCertify && !this.isStaged && !this.disableDecisions) {
         columns.unshift({
           key: 'selector',
           label: '',
@@ -1231,6 +1259,16 @@ export default {
       if (this.certificationGrantType) {
         const filterGrantType = this.getFilterGrantType(this.certificationGrantType);
         baseFilters = [...baseFilters, filterGrantType];
+      }
+      const selfId = this.selfUserId?.replace(/^managed\/user\//, '');
+      if (this.disableDecisions && selfId) {
+        baseFilters = [...baseFilters, getBasicFilter('EQUALS', 'user.id', selfId)];
+      }
+      if (this.excludeSelf && selfId) {
+        baseFilters = [...baseFilters, {
+          operator: 'NOT',
+          operand: [getBasicFilter('EQUALS', 'user.id', selfId)],
+        }];
       }
       return baseFilters;
     },

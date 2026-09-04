@@ -416,6 +416,75 @@ describe('TaskList', () => {
       const result = wrapper.vm.getBaseFilters();
       expect(result).toStrictEqual(expectedValue);
     });
+
+    it('should restrict to the certifier\'s own items when disableDecisions and selfUserId are set (own-access tab)', async () => {
+      const wrapper = shallowMountComponent();
+      await wrapper.setProps({ disableDecisions: true, selfUserId: 'self-user-id' });
+      const result = wrapper.vm.getBaseFilters();
+      expect(result).toStrictEqual([
+        {
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'decision.certification.actors.id',
+            targetValue: '',
+          },
+        },
+        {
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'user.id',
+            targetValue: 'self-user-id',
+          },
+        },
+      ]);
+    });
+
+    it('should normalize path-style selfUserId (managed/user/<id>) to a bare id for the user.id filter', async () => {
+      const wrapper = shallowMountComponent();
+      await wrapper.setProps({ disableDecisions: true, selfUserId: 'managed/user/98301fe1-49be-4df1-b4a7-a01713347eae' });
+      const result = wrapper.vm.getBaseFilters();
+      expect(result).toStrictEqual([
+        {
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'decision.certification.actors.id',
+            targetValue: '',
+          },
+        },
+        {
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'user.id',
+            targetValue: '98301fe1-49be-4df1-b4a7-a01713347eae',
+          },
+        },
+      ]);
+    });
+
+    it('should exclude the certifier\'s own items when excludeSelf and selfUserId are set (normal tabs)', async () => {
+      const wrapper = shallowMountComponent();
+      await wrapper.setProps({ excludeSelf: true, selfUserId: 'self-user-id' });
+      const result = wrapper.vm.getBaseFilters();
+      expect(result).toStrictEqual([
+        {
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'decision.certification.actors.id',
+            targetValue: '',
+          },
+        },
+        {
+          operator: 'NOT',
+          operand: [{
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'user.id',
+              targetValue: 'self-user-id',
+            },
+          }],
+        },
+      ]);
+    });
   });
   describe('buildBodyParams', () => {
     describe('admin', () => {
@@ -892,6 +961,33 @@ describe('TaskList', () => {
       const revoke = findByTestId(wrapper, 'tooltip-certify-testId');
       expect(revoke.exists()).toBe(true);
       expect(revoke.text()).toBe('Acknowledge');
+    });
+
+    describe('own-access tab (disableDecisions)', () => {
+      it('shows the explanatory banner and hides certify/revoke/exception/multiselect, even when the item and campaign permit them', async () => {
+        CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(nonRoleBased));
+        const { wrapper } = mountComponent({
+          disableDecisions: true,
+          selfUserId: 'self-user-id',
+          campaignDetails: { allowBulkCertify: true },
+        });
+        await flushPromises();
+
+        expect(findByTestId(wrapper, 'own-access-banner').exists()).toBe(true);
+        expect(findByTestId(wrapper, 'btnCertify-testId').exists()).toBe(false);
+        expect(findByTestId(wrapper, 'btnRevoke-testId').exists()).toBe(false);
+        expect(findByTestId(wrapper, 'btnAllowException-testId').exists()).toBe(false);
+        expect(findByTestId(wrapper, 'multiselect-testId').exists()).toBe(false);
+      });
+
+      it('does not show the banner on the normal (non-own-access) tab', async () => {
+        CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(nonRoleBased));
+        const { wrapper } = mountComponent();
+        await flushPromises();
+
+        expect(findByTestId(wrapper, 'own-access-banner').exists()).toBe(false);
+        expect(findByTestId(wrapper, 'btnCertify-testId').exists()).toBe(true);
+      });
     });
   });
 

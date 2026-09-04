@@ -45,7 +45,62 @@ of the MIT license. See the LICENSE file for details. -->
                 :is-admin="isAdmin"
                 :actor-id="actorId"
                 :task-status="taskStatus"
+                :self-user-id="actorId"
+                :exclude-self="showOwnAccessTab"
                 @hide-group-by="hideGroupBy"
+                @change-saving="setSaving"
+                @check-progress="checkInProgress"
+                @refresh-complete="refreshTasks = false"
+                @signed-off="hideSignOff = true;"
+                @set-totals="setTotals"
+                @update-details="getCertificationDetails" />
+            </BTab>
+            <BTab
+              v-if="showOwnAccessTab"
+              title-link-class="py-4 text-capitalize"
+              data-testid="cert-own-access-tab"
+              :title="$t('governance.certificationTask.certificationTabs.ownAccess')">
+              <BTabs
+                v-if="ownAccessSubTabs.length > 1"
+                nav-class="fr-tabs pl-3"
+                data-testid="cert-own-access-subtabs"
+                lazy>
+                <BTab
+                  v-for="subTab in ownAccessSubTabs"
+                  :key="subTab.key"
+                  title-link-class="py-3 text-capitalize"
+                  :data-testid="`cert-own-access-${subTab.key}-subtab`"
+                  :title="subTab.label">
+                  <FrTaskList
+                    v-if="campaignId && actorId"
+                    :certification-grant-type="subTab.key"
+                    :campaign-id="campaignId"
+                    :campaign-details="campaignDetails"
+                    :refresh-tasks="refreshTasks"
+                    :is-admin="isAdmin"
+                    :actor-id="actorId"
+                    :task-status="taskStatus"
+                    :self-user-id="actorId"
+                    disable-decisions
+                    @change-saving="setSaving"
+                    @check-progress="checkInProgress"
+                    @refresh-complete="refreshTasks = false"
+                    @signed-off="hideSignOff = true;"
+                    @set-totals="setTotals"
+                    @update-details="getCertificationDetails" />
+                </BTab>
+              </BTabs>
+              <FrTaskList
+                v-else-if="campaignId && actorId"
+                :certification-grant-type="ownAccessSubTabs[0]?.key"
+                :campaign-id="campaignId"
+                :campaign-details="campaignDetails"
+                :refresh-tasks="refreshTasks"
+                :is-admin="isAdmin"
+                :actor-id="actorId"
+                :task-status="taskStatus"
+                :self-user-id="actorId"
+                disable-decisions
                 @change-saving="setSaving"
                 @check-progress="checkInProgress"
                 @refresh-complete="refreshTasks = false"
@@ -100,8 +155,10 @@ import {
 import {
   getCertificationDetails,
   getInProgressTasksByCampaign,
+  getCertificationTasksListByCampaign,
   signOffCertificationTasks,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrCertificationDetails from './TaskHeader/CertificationDetails';
@@ -109,6 +166,8 @@ import FrCertificationToolbar from './TaskHeader/CertificationToolbar';
 import FrTaskList from './TaskList';
 import FrDecisionsCompleteModal from './TaskList/modals/DecisionsCompleteModal/DecisionsCompleteModal';
 import FrTaskListGroupBy from './TaskListGroupBy';
+
+const OWN_ACCESS_ELIGIBLE_GRANT_TYPES = ['accounts', 'entitlements', 'roles', 'identityProfile'];
 
 export default {
   name: 'CertificationTask',
@@ -152,11 +211,32 @@ export default {
       showGroupByAccount: true,
       backUrl: '/access-reviews',
       notifiedUserOfCompletion: false,
+      certifierHasOwnItems: false,
+      certifierOwnItemCounts: null,
     };
   },
   computed: {
     hideTabs() {
-      return this.grantTypeTabs.length === 1;
+      return this.grantTypeTabs.length === 1 && !this.showOwnAccessTab;
+    },
+    showOwnAccessTab() {
+      if (!(this.campaignDetails.allowSelfCertification === false
+        || this.campaignDetails.selfCertificationRule === 'none')) {
+        return false;
+      }
+      if (!this.ownAccessSubTabs.some((tab) => OWN_ACCESS_ELIGIBLE_GRANT_TYPES.includes(tab.key))) {
+        return false;
+      }
+      return this.certifierHasOwnItems;
+    },
+    showOwnAccessCandidate() {
+      return (this.campaignDetails.allowSelfCertification === false
+        || this.campaignDetails.selfCertificationRule === 'none')
+        && this.ownAccessSubTabs.some((tab) => OWN_ACCESS_ELIGIBLE_GRANT_TYPES.includes(tab.key));
+    },
+    ownAccessSubTabs() {
+      return this.grantTypeTabs.filter((tab) => OWN_ACCESS_ELIGIBLE_GRANT_TYPES.includes(tab.key)
+        && (this.certifierOwnItemCounts === null || this.certifierOwnItemCounts[tab.key] > 0));
     },
     grantTypeTabs() {
       const tabs = [];
@@ -227,6 +307,41 @@ export default {
     },
   },
   methods: {
+    checkCertifierOwnItems() {
+      const selfId = this.actorId?.replace(/^managed\/user\//, '');
+      const eligibleTabs = this.grantTypeTabs.filter((tab) => OWN_ACCESS_ELIGIBLE_GRANT_TYPES.includes(tab.key));
+      const typeByTabKey = {
+        accounts: 'accountGrant',
+        entitlements: 'entitlementGrant',
+        roles: 'roleMembership',
+        identityProfile: 'user',
+      };
+      const queries = eligibleTabs.map((tab) => getCertificationTasksListByCampaign(
+        { pageSize: 1, pageNumber: 0 },
+        this.campaignId,
+        {
+          targetFilter: {
+            operator: 'AND',
+            operand: [
+              getBasicFilter('EQUALS', 'decision.certification.actors.id', this.actorId),
+              getBasicFilter('EQUALS', 'item.type', typeByTabKey[tab.key]),
+              getBasicFilter('EQUALS', 'user.id', selfId),
+            ],
+          },
+        },
+      )
+        .then(({ data }) => ({ key: tab.key, count: data.totalCount }))
+        .catch(() => ({ key: tab.key, count: null })));
+
+      Promise.all(queries).then((results) => {
+        const counts = {};
+        results.forEach(({ key, count }) => {
+          counts[key] = count;
+        });
+        this.certifierOwnItemCounts = counts;
+        this.certifierHasOwnItems = results.some(({ count }) => count > 0);
+      });
+    },
     getCertificationDetails() {
       this.isDetailsLoading = true;
 
@@ -235,6 +350,9 @@ export default {
           this.loadFailed = false;
           this.campaignDetails = data;
           this.actorId = this.$route.query.actorId;
+          if (this.showOwnAccessCandidate) {
+            this.checkCertifierOwnItems();
+          }
         })
         .catch((error) => {
           this.loadFailed = true;

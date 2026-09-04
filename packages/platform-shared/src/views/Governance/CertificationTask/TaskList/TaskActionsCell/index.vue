@@ -1,10 +1,10 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <template v-if="item.permissions.certify">
+    <template v-if="!disableDecisions && item.permissions.certify">
       <!-- Certify -->
       <BButton
         :aria-label="$t(certifyButtonLabel)"
@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
 
     <!-- Revoke -->
-    <template v-if="item.permissions.revoke && !item.isAcknowledge">
+    <template v-if="!disableDecisions && item.permissions.revoke && !item.isAcknowledge">
       <BButton
         :aria-label="$t('common.revoke')"
         :data-testid="`btnRevoke-${item.id}`"
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
 
     <!-- Allow exception -->
-    <template v-if="campaignDetails.exceptionDuration > 0 && item.permissions.exception && !item.isAcknowledge">
+    <template v-if="!disableDecisions && campaignDetails.exceptionDuration > 0 && item.permissions.exception && !item.isAcknowledge">
       <BButton
         :aria-label="$t('governance.certificationTask.actions.allowException')"
         :data-testid="`btnAllowException-${item.id}`"
@@ -162,6 +162,10 @@ export default {
     certGrantType: {
       type: String,
       default: '',
+    },
+    disableDecisions: {
+      type: Boolean,
+      default: false,
     },
     item: {
       type: Object,
