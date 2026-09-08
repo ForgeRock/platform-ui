@@ -6327,9 +6327,9 @@
         "wordpressConfig": "WordPress",
         "yahooConfig": "Yahoo"
       },
-      "serviceDisabledTitle": "Identity Provider Service is disabled",
-      "serviceDisabledSubtitle": "Enable the service to configure and use identity providers.",
-      "enableService": "Enable service",
+      "serviceDisabledTitle": "Identity Providers are disabled",
+      "serviceDisabledSubtitle": "Enable Identity Providers to configure and use identity providers.",
+      "enableService": "Enable Identity Providers",
       "errors": {
         "loadError": "An error occurred while loading identity providers",
         "loadSchemaError": "An error occurred while loading the service schema",
