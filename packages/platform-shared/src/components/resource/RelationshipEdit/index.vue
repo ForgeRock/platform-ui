@@ -6,15 +6,18 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <BFormGroup
       v-if="showResourceType"
+      :id="`editResourceTypeGroup${index}`"
       :label-cols="isRelationshipArray || newResource ? 12 : 0"
       :label="$t('common.placeholders.relationshipLabel', {relationshipTitle: relationshipProperty.title})"
-      :label-for="'editResourceType' + index"
+      :label-for="`editResourceType${index}`"
       horizontal>
       <FrMultiselectBase
+        :id="`editResourceType${index}`"
         open-direction="below"
         label="label"
         track-by="label"
         :disabled="disabled"
+        :combobox-labelledby="`editResourceTypeGroup${index}__BV_label_`"
         :model-value="resourceCollection"
         :options="rescourceCollectionTypes"
         :show-labels="false"

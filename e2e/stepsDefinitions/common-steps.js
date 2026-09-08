@@ -330,7 +330,11 @@ When('user selects {string} option on dropdown', (optionName) => {
 });
 
 When('user selects {string} option on dropdown {string}', (option, dropdown) => {
-  cy.findByRole('combobox', { name: dropdown }).click();
+  // The closed-state combobox input is sr-only by design, so click the widget container
+  cy.findByRole('combobox', { name: dropdown })
+    .should('exist')
+    .closest('.multiselect')
+    .click();
   selectDropdownOption(option);
 });
 

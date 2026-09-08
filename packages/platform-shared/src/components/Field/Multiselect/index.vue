@@ -303,7 +303,10 @@ export default {
           }));
         } else {
           mapOptions = map(props.options, (option) => ({
-            text: getEnumTranslation(option, props.name),
+            // Options may be primitives (enum strings) or objects (e.g. raw resource objects from ResourceSelect).
+            // Object options carry no translatable string — text falls back to the object's own text or stays empty;
+            // display is handled by the caller's singleLabel/option slots, and empty text avoids "[object Object]" in the closed-state input.
+            text: (typeof option === 'object' && option !== null) ? (option.text ?? '') : getEnumTranslation(option, props.name),
             value: option,
             multiselectId: generateTagId(),
           }));

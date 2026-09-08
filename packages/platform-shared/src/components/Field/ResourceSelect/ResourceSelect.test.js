@@ -55,11 +55,11 @@ describe('ResourceSelect', () => {
       managedResourceApi.getManagedResourceList = jest.fn().mockReturnValue(mockReturnValue);
       const wrapper = mountComponent();
 
-      // ResourceSelect passes a #singleLabel slot, so inputHasComboboxRole=false and
-      // role="combobox" is on the wrapper <div>, not the <input>
       const combobox = wrapper.find('[role="combobox"]');
+      expect(combobox.element.tagName).toBe('INPUT');
       expect(combobox.attributes('aria-expanded')).toBe('false');
       expect(combobox.attributes('aria-labelledby')).toBe('floatingLabelInput5-label');
+      expect(wrapper.findAll('[role="combobox"]')).toHaveLength(1);
     });
   });
 

@@ -18,13 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
     @focus="onlyTagging && activate()"
     :data-testid="testid ? `multi-select-container-${testid}` : null "
     :autofocus="autofocus || null"
-    :role="wrapperHasComboboxRole ? 'combobox' : null"
-    :aria-autocomplete="wrapperHasComboboxRole ? 'list': null"
-    :aria-activedescendant="wrapperHasComboboxRole && isOpen && hasNavigated ? `${id}-${pointer}`: null"
-    :aria-expanded="wrapperHasComboboxRole ? isOpen.toString() : null"
-    :aria-controls="wrapperHasComboboxRole ? `listbox-${id}` : null"
-    :aria-labelledby="wrapperHasComboboxRole ? comboboxLabelledby || `${id}-label` : null"
-    :aria-required="wrapperHasComboboxRole ? isRequiredAria: null">
+    v-bind="!inputIsCombobox ? comboboxAttributes : null">
     <slot
       name="caret"
       :toggle="toggle">
@@ -111,13 +105,7 @@ of the MIT license. See the LICENSE file for details. -->
         @keydown.esc.prevent.stop="deactivate()"
         @keypress.enter.prevent.stop.self="addPointerElement($event)"
         @keydown.delete.stop="removeLastElement()"
-        :role="inputHasComboboxRole ? 'combobox' : null"
-        :aria-autocomplete="inputHasComboboxRole ? 'list': null"
-        :aria-activedescendant="inputHasComboboxRole && isOpen && hasNavigated ? `${id}-${pointer}`: null"
-        :aria-expanded="inputHasComboboxRole ? isOpen.toString() : null"
-        :aria-controls="inputHasComboboxRole ? `listbox-${id}` : null"
-        :aria-labelledby="inputHasComboboxRole ? comboboxLabelledby || `${id}-label` : null"
-        :aria-required="inputHasComboboxRole ? isRequiredAria: null">
+        v-bind="inputIsCombobox ? comboboxAttributes : null">
       <span
         v-if="isSingleLabelVisible && ((hasSingleLabelSlot && !isOpen) || !inputIsCombobox)"
         class="multiselect__single"
@@ -158,9 +146,9 @@ of the MIT license. See the LICENSE file for details. -->
               v-for="(option, index) of filteredOptions"
               :key="index"
               :id="`${id}-${index}`"
-              :role="!(option && option.$isLabel) ? 'option' : null"
+              :role="!(option && option.$isLabel) || groupSelect ? 'option' : null"
               :aria-disabled="!isSelected(option) && option?.$isDisabled"
-              :aria-selected="isOpen ? pointer === index : null">
+              :aria-selected="optionSelectedState(option)">
               <span
                 v-if="!(option && option.$isLabel)"
                 :class="optionHighlight(index, option)"
@@ -566,6 +554,24 @@ const hasSingleLabelSlot = !!slots?.singleLabel;
 const hasOptionGroup = computed(() => props.groupValues && props.groupLabel && props.groupSelect);
 const visibleValues = computed(() => (props.multiple ? internalValue.value.slice(0, props.limit) : []));
 
+/**
+ * Returns the ARIA selection state string for a rendered list item.
+ * Regular options report their committed selection (isSelected), which is independent of the keyboard/mouse highlight tracked by aria-activedescendant.
+ * Group labels are special: with groupSelect=false they are not options at all and get null.
+ * With groupSelect=true they are keyboard-selectable options, so they report whether every value in their group is currently selected (wholeGroupSelected).
+ * A group label whose backing group cannot be resolved reports 'false' defensively.
+ * Returns null for everything while the popup is closed, so the attribute is omitted rather than exposing stale state.
+ */
+const optionSelectedState = (option) => {
+  if (!isOpen.value) return null;
+  if (option && option.$isLabel) {
+    if (!props.groupSelect) return null;
+    const group = props.options.find((candidate) => candidate[props.groupLabel] === option.$groupLabel);
+    return group ? wholeGroupSelected(group).toString() : 'false';
+  }
+  return isSelected(option).toString();
+};
+
 const {
   addPointerElement,
   groupHighlight,
@@ -615,17 +621,50 @@ const isAbove = computed(() => {
 const inputIsCombobox = computed(() => props.searchable
         || props.multiple
         || props.taggable);
-const wrapperHasComboboxRole = computed(() => !inputIsCombobox.value || hasSingleLabelSlot);
-const inputHasComboboxRole = computed(() => inputIsCombobox.value && !hasSingleLabelSlot);
 const hasFilteredOptions = computed(() => !(filteredOptions.value.length === 0));
 const debouncePointerSet = debounce(pointerSet, 15);
 const hasNavigated = ref(false);
+/**
+ * Returns the filtered list index currently under the keyboard pointer, but only when that index identifies a rendered element
+ * that can safely be referenced by aria-activedescendant:
+ * - the popup must be open, keyboard navigation must have occurred, and the component id must be set (otherwise the option id cannot be formed);
+ * - the pointer must resolve to an existing entry (no stale reference after the option list shrinks or empties);
+ * - group labels are excluded unless groupSelect is true, because only in that mode are they real, keyboard-selectable options.
+ * Returns null in every other case so the attribute is omitted rather than pointing at an element that does not exist.
+ */
+const activeOptionIndex = computed(() => {
+  if (!isOpen.value || !hasNavigated.value || !props.id) return null;
+  const option = filteredOptions.value[pointer.value];
+  if (option === undefined || option === null) return null;
+  if (typeof option === 'object' && option.$isLabel && !props.groupSelect) return null;
+  return pointer.value;
+});
+
 const onArrowKey = (direction) => {
   hasNavigated.value = true;
   if (direction === 'forward') pointerForward();
   else pointerBackward();
 };
 watch(search, () => { hasNavigated.value = false; });
+
+/**
+ * Provides the complete ARIA contract for whichever element owns the combobox
+ * (the rendered input when one exists, otherwise the focusable wrapper).
+ * Each attribute maps to a WAI-ARIA combobox-pattern requirement:
+ * - role + aria-expanded + aria-controls + aria-labelledby + aria-required give screen readers the name, role and popup state of the control.
+ * - aria-autocomplete is 'list' when typing filters the suggestions (searchable controls) and 'none' when the popup content is static.
+ * - aria-activedescendant is emitted only after keyboard navigation resolves to an existing option (see activeOptionIndex); typing resets that state.
+ */
+const comboboxAttributes = computed(() => ({
+  role: 'combobox',
+  'aria-autocomplete': props.searchable ? 'list' : 'none',
+  'aria-activedescendant': activeOptionIndex.value !== null
+    ? `${props.id}-${activeOptionIndex.value}` : null,
+  'aria-expanded': isOpen.value.toString(),
+  'aria-controls': `listbox-${props.id}`,
+  'aria-labelledby': props.comboboxLabelledby || `${props.id}-label`,
+  'aria-required': props.isRequiredAria,
+}));
 const searchStatusMessage = ref('');
 const updateSearchStatusMessage = debounce((value) => {
   searchStatusMessage.value = value;

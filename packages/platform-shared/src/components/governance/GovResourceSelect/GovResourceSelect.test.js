@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -166,5 +166,31 @@ describe('GovResourceSelect Component', () => {
     wrapper.setProps({ customQuery: 'a basic filter' });
     await flushPromises();
     expect(resourceSpy).toHaveBeenCalledWith('alpha_user', 'queryFilter=a basic filter');
+  });
+
+  it('renders the Forward to combobox with full ARIA contract', async () => {
+    const wrapper = mountComponent({
+      name: 'forwardToResource',
+      label: 'Forward to',
+    });
+    await flushPromises();
+
+    // Exactly one combobox, and it is the rendered input, not a wrapper div.
+    const comboboxes = wrapper.findAll('[role="combobox"]');
+    expect(comboboxes).toHaveLength(1);
+    const combobox = comboboxes[0];
+    expect(combobox.element.tagName).toBe('INPUT');
+
+    expect(combobox.attributes('aria-expanded')).toBe('false');
+    expect(combobox.attributes('aria-autocomplete')).toBe('list');
+    expect(combobox.attributes('aria-labelledby')).toBeDefined();
+    const labelId = combobox.attributes('aria-labelledby');
+    expect(wrapper.find(`#${labelId}`).exists()).toBe(true);
+    expect(wrapper.find(`#${labelId}`).text()).toBe('Forward to');
+
+    // Popup is reachable through aria-controls and carries listbox semantics.
+    const listboxId = combobox.attributes('aria-controls');
+    expect(listboxId).toBe(`listbox-${combobox.attributes('id')}`);
+    expect(wrapper.find(`#${listboxId}`).attributes('role')).toBe('listbox');
   });
 });
