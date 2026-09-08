@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BCard no-body>
+  <BCard
+    no-body
+    :class="{ 'border-0': isEmbedded }">
     <BCardHeader class="p-0 border-bottom-0 flex-column flex-lg-row">
       <BButtonToolbar>
         <div class="mb-lg-0 mr-lg-1 ">
@@ -187,6 +189,11 @@ const props = defineProps({
     type: String,
     default: DatasetSize.LARGE,
   },
+  // When set, renders without the card border (hosted inside another card/tabs layout)
+  isEmbedded: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const isLoading = ref(false);
@@ -237,6 +244,7 @@ const totalResultsPath = computed(() => {
     case 'organization':
       return 'totalPagedResults';
     case 'entitlement':
+    case 'resource':
       return 'totalCount';
     default:
       return '';
@@ -280,6 +288,8 @@ function getQueryStringFields(resourceType) {
       return getQueryFields(resourceType).map((field) => `/${field}`);
     case 'entitlement':
       return ['descriptor.idx./entitlement.displayName'];
+    case 'resource':
+      return ['resource.displayName'];
     case 'role':
       return ['role.name', 'role.description'];
     default:

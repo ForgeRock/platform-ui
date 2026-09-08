@@ -25,6 +25,8 @@ jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
 
 describe('EntitlementList', () => {
   let wrapper;
+  let routerPushSpy;
+
   const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -33,17 +35,58 @@ describe('EntitlementList', () => {
         name: 'Entitlements',
         component: EntitlementList,
       },
+      {
+        path: '/entitlements/:entitlementId',
+        name: 'EntitlementDetails',
+        component: { template: '<div />' },
+      },
     ],
   });
 
-  function mountComponent() {
+  function mountComponent(propsData = {}) {
     setupTestPinia({ user: {} });
     store.replaceState({
       SharedStore: {
         webStorageAvailable: true,
       },
     });
+    jest.clearAllMocks();
+    EntitlementApi.getEntitlementList.mockImplementation(() => Promise.resolve({
+      data: {
+        result: [
+          {
+            id: 'ent-1',
+            application: {
+              name: 'TargetApp',
+              templateName: 'servicenow',
+              templateVersion: '3.3',
+            },
+            descriptor: {
+              idx: {
+                '/entitlement': {
+                  displayName: 'template_read_global',
+                },
+              },
+            },
+            entitlementOwner: [
+              {
+                id: 'bfd816e1-b9fe-4ea9-90f5-45e2e906cdfc',
+                userName: 'christian.marnell',
+                givenName: 'Christian',
+                sn: 'Marnell',
+                mail: 'christian.marnell@example.com',
+              },
+            ],
+            item: {
+              accountAttribute: '__user_group_ids__',
+              objectType: 'Group',
+            },
+          },
+        ],
+      },
+    }));
     router.push('/entitlements');
+    routerPushSpy = jest.spyOn(router, 'push');
     return mount(EntitlementList, {
       attachTo: createAppContainer(),
       global: {
@@ -52,6 +95,7 @@ describe('EntitlementList', () => {
           'resizable-table': jest.fn(),
         },
       },
+      props: propsData,
     });
   }
 
@@ -98,6 +142,10 @@ describe('EntitlementList', () => {
         },
       ],
     },
+  }));
+
+  EntitlementApi.getApplicationList.mockImplementation(() => Promise.resolve({
+    data: { totalCount: 1 },
   }));
 
   CommonsApi.getFilterSchema.mockResolvedValue({ data: {} });
@@ -291,5 +339,117 @@ describe('EntitlementList', () => {
         sortKeys: 'application.name',
       },
     );
+  });
+
+  describe('embedded application scoping', () => {
+    it('force-scopes queries to the embedding application', async () => {
+      wrapper = mountComponent({ applicationIds: ['app-1'] });
+      await flushPromises();
+
+      expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
+        'entitlement',
+        expect.objectContaining({
+          queryFilter: '(application.id eq \'app-1\')',
+        }),
+      );
+    });
+
+    it('combines the forced application filter with the owner filter', async () => {
+      wrapper = mountComponent({ applicationIds: ['app-1'] });
+      await flushPromises();
+
+      wrapper.findComponent('[label="Entitlement Owner"]').vm.$emit('input', 'userQuery');
+      await flushPromises();
+
+      expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
+        'entitlement',
+        expect.objectContaining({
+          queryFilter: '((entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery")) and (application.id eq \'app-1\')',
+        }),
+      );
+    });
+
+    it('combines the forced application filter with search and the owner filter', async () => {
+      wrapper = mountComponent({ applicationIds: ['app-1'] });
+      await flushPromises();
+
+      const search = wrapper.findComponent(FrSearchInput);
+      search.vm.$emit('input', 'test');
+      await flushPromises();
+      search.vm.$emit('search');
+      wrapper.findComponent('[label="Entitlement Owner"]').vm.$emit('input', 'userQuery');
+      await flushPromises();
+
+      expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
+        'entitlement',
+        expect.objectContaining({
+          queryFilter: '((descriptor.idx./entitlement.displayName co "test") and ((entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery"))) and (application.id eq \'app-1\')',
+        }),
+      );
+    });
+
+    it('hides the page header and application select but keeps the owner filter', async () => {
+      wrapper = mountComponent({ applicationIds: ['app-1'] });
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'FrHeader' }).exists()).toBe(false);
+      expect(wrapper.findComponent('[label="Select application"]').exists()).toBe(false);
+      expect(wrapper.findComponent('[label="Entitlement Owner"]').exists()).toBe(true);
+    });
+
+    it('skips the add-entitlement application probe when embedded', async () => {
+      wrapper = mountComponent({ applicationIds: ['app-1'] });
+      await flushPromises();
+
+      expect(EntitlementApi.getApplicationList).not.toHaveBeenCalled();
+      expect(wrapper.vm.showAddButton).toBe(false);
+    });
+
+    it('includes the origin query params when navigating to entitlement details', async () => {
+      wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App' });
+      await flushPromises();
+
+      await wrapper.find('tbody tr').trigger('click');
+      await flushPromises();
+
+      const pushArg = routerPushSpy.mock.calls.find(
+        (call) => call[0] && call[0].name === 'EntitlementDetails',
+      );
+      expect(pushArg[0]).toEqual({
+        name: 'EntitlementDetails',
+        params: { entitlementId: expect.any(String) },
+        query: { originAppId: 'app-1', originAppName: 'My App' },
+      });
+    });
+
+    it('includes the originating side tab in the origin query params when hosted under one', async () => {
+      wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App', objectTab: 'entitlements' });
+      await flushPromises();
+
+      await wrapper.find('tbody tr').trigger('click');
+      await flushPromises();
+
+      const pushArg = routerPushSpy.mock.calls.find(
+        (call) => call[0] && call[0].name === 'EntitlementDetails',
+      );
+      expect(pushArg[0]).toEqual({
+        name: 'EntitlementDetails',
+        params: { entitlementId: expect.any(String) },
+        query: { originAppId: 'app-1', originAppName: 'My App', originObjectTab: 'entitlements' },
+      });
+    });
+
+    it('does not include origin query params when standalone', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      await wrapper.find('tbody tr').trigger('click');
+      await flushPromises();
+
+      const pushArg = routerPushSpy.mock.calls.find(
+        (call) => call[0].name === 'EntitlementDetails',
+      );
+      expect(pushArg[0].query).toBeUndefined();
+    });
   });
 });

@@ -70,10 +70,15 @@ async function loadEntitlement() {
 
 onMounted(() => {
   let breadcrumbPath = '/administer/entitlements';
-  if (userStore.adminUser) {
+  let breadcrumbText = i18n.global.t('pageTitles.AdministerEntitlements');
+  if (route.query.originAppId) {
+    // Entered from an application's Objects tab — return the breadcrumb to that side tab
+    breadcrumbPath = `/applications/unmanaged/edit/${route.query.originAppId}/objects${route.query.originObjectTab ? `/${route.query.originObjectTab}` : ''}`;
+    breadcrumbText = route.query.originAppName || i18n.global.t('common.application');
+  } else if (userStore.adminUser) {
     breadcrumbPath = '/entitlements';
   }
-  setBreadcrumb(breadcrumbPath, i18n.global.t('pageTitles.AdministerEntitlements'));
+  setBreadcrumb(breadcrumbPath, breadcrumbText);
   loadEntitlement();
 });
 

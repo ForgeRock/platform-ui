@@ -126,6 +126,20 @@ describe('EditUnmanagedApplication', () => {
       expect(wrapper.vm.activeTabIndex).toBe(1);
     });
 
+    it('initializes activeTabIndex to the Objects tab for the objects slug', async () => {
+      const wrapper = setup({ tab: 'objects' });
+      await flushPromises();
+      expect(wrapper.vm.activeTabIndex).toBe(2);
+    });
+
+    it('renders the third tab as the Objects explorer', async () => {
+      const wrapper = setup({ tab: 'objects', objectTab: 'entitlements' });
+      await flushPromises();
+
+      expect(wrapper.vm.tabs).toEqual(['details', 'object-types', 'objects', 'import']);
+      expect(wrapper.vm.activeTabIndex).toBe(2);
+    });
+
     it('updateModel merges new value into applicationDetails', async () => {
       const wrapper = setup();
       await flushPromises();

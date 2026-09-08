@@ -1,12 +1,11 @@
 /**
- * Copyright 2023 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
-import { generateSearchQuery, filterFieldsForSearchQuery } from './queryFilterUtils';
+import { generateSearchQuery, filterFieldsForSearchQuery, escapeQueryFilterValue } from './queryFilterUtils';
 
 describe('Generating Search URLs', () => {
   const schemaProps = {
@@ -46,5 +45,27 @@ describe('Filtering Fields for Search Queries', () => {
   it('Filters out integer fields', () => {
     const filteredFields = filterFieldsForSearchQuery(['userName', 'mail', 'frIndexedInteger', 'frUnindexedInteger8']);
     expect(filteredFields).toStrictEqual(['userName', 'mail']);
+  });
+});
+
+describe('Escaping Query Filter Values', () => {
+  it('leaves a plain value unchanged', () => {
+    expect(escapeQueryFilterValue('jdoe')).toBe('jdoe');
+  });
+
+  it('escapes single quotes so the literal stays balanced', () => {
+    expect(escapeQueryFilterValue("O'Brien")).toBe("O\\'Brien");
+  });
+
+  it('escapes backslashes before quoting so a trailing backslash cannot escape the closing quote', () => {
+    expect(escapeQueryFilterValue("a\\'")).toBe("a\\\\\\'");
+  });
+
+  it('produces a value that cannot terminate the surrounding literal early', () => {
+    const malicious = "') or (true) or ('";
+    const escaped = escapeQueryFilterValue(malicious);
+    const filter = `field co '${escaped}'`;
+    // The escaped value must not contain an unescaped closing quote
+    expect(filter.match(/(?<!\\)'/g)).toHaveLength(2);
   });
 });

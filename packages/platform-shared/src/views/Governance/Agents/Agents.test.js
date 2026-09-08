@@ -11,6 +11,11 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import Agents from './Agents';
 
+const mockRouterPush = jest.fn();
+jest.mock('vue-router', () => ({
+  useRouter: () => ({ push: mockRouterPush }),
+}));
+
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
 }));
@@ -55,7 +60,7 @@ const createData = (params = {}, totalCount = 100) => {
 };
 
 describe('Agents Unit', () => {
-  function mountComponent() {
+  function mountComponent(props = {}) {
     CommonsApi.getIgaUiConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: { agents: { userProperty: 'custom_iga_identity_type' } } }));
     CommonsApi.getUsers = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [], totalCount: 0 } }));
     CommonsApi.getGrants = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [], totalCount: 0 } }));
@@ -76,6 +81,7 @@ describe('Agents Unit', () => {
           },
         },
       },
+      props,
     });
     return wrapper;
   }
@@ -345,5 +351,25 @@ describe('Agents Unit', () => {
     rowToClick.trigger('click');
 
     expect(wrapper.vm.navigateToEdit).toHaveBeenCalledWith('id-3');
+  });
+
+  it('navigation does not include origin query params', async () => {
+    const wrapper = mountComponent();
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    await flushPromises();
+
+    wrapper.vm.navigateToEdit('id-3');
+
+    expect(mockRouterPush).toHaveBeenCalledWith({
+      name: 'AgentsDetails',
+      params: {
+        agentId: 'id-3',
+        tab: 'details',
+      },
+    });
   });
 });

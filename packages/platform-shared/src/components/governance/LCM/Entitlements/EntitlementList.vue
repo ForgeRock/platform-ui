@@ -5,15 +5,18 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     fluid
-    class="my-5">
+    :class="{ 'my-0 px-0': isEmbedded }">
     <FrHeader
+      v-if="!isEmbedded"
       class="mb-4"
       :title="$t('governance.administer.entitlements.title')"
       :subtitle="$t('governance.administer.entitlements.subtitle')" />
     <FrGovResourceList
-      class="mb-5"
+      :class="isEmbedded ? 'mb-0' : 'mb-5'"
+      :is-embedded="isEmbedded"
       resource="entitlement"
       :additional-query-params="queryFilter"
+      :custom-filter="forcedApplicationFilter"
       :columns="currentColumns"
       :query-fields="queryFields"
       :resource-function="getEntitlementList"
@@ -41,7 +44,9 @@ of the MIT license. See the LICENSE file for details. -->
         <BCollapse :visible="showFilters">
           <div class="border-bottom p-4">
             <BRow>
-              <BCol lg="6">
+              <BCol
+                v-if="!applicationIds?.length"
+                lg="6">
                 <FrGovResourceSelect
                   v-model="applicationFilter"
                   resource-path="application"
@@ -169,6 +174,30 @@ import i18n from '@/i18n';
 const router = useRouter();
 const { bvModal } = useBvModal();
 
+// props
+const props = defineProps({
+  // When set, the list renders without the page header/application filter and is
+  // force-scoped to those applications (used when embedded in an application page)
+  isEmbedded: {
+    type: Boolean,
+    default: false,
+  },
+  applicationIds: {
+    type: Array,
+    default: null,
+  },
+  applicationName: {
+    type: String,
+    default: '',
+  },
+  // Side-tab key this view is hosted under when embedded, so detail views can
+  // return the breadcrumb to the originating side tab
+  objectTab: {
+    type: String,
+    default: '',
+  },
+});
+
 // data
 const filterSchema = ref({});
 
@@ -245,6 +274,30 @@ const allApplicationsOption = {
 const currentColumns = computed(() => activeColumns.value);
 
 /**
+ * Query params identifying the embedding application, so detail views can
+ * return the breadcrumb to this application's Objects tab. Empty when standalone.
+ * @returns {Object|null} The origin query params, or null when not application-scoped
+ */
+function getOriginQuery() {
+  if (!props.applicationIds?.length) return null;
+  return {
+    originAppId: props.applicationIds[0],
+    originAppName: props.applicationName,
+    ...(props.objectTab ? { originObjectTab: props.objectTab } : {}),
+  };
+}
+
+/**
+ * Query filter force-scoping the list to the embedding application(s).
+ * Passed as customFilter to GovResourceList, which always ANDs it with any
+ * user-driven search/filter — users cannot remove or bypass it.
+ * @returns {string|null} The application.id query filter, or null when standalone
+ */
+const forcedApplicationFilter = computed(() => (props.applicationIds?.length
+  ? `(${props.applicationIds.map((id) => `application.id eq '${id}'`).join(' or ')})`
+  : null));
+
+/**
  * Navigates to the details page of the specified entitlement.
  * @param {Object} entitlement - The entitlement object containing details to navigate to.
  */
@@ -252,6 +305,7 @@ function navigateToEntitlementDetails(entitlement) {
   router.push({
     name: 'EntitlementDetails',
     params: { entitlementId: entitlement.id },
+    ...(props.applicationIds?.length ? { query: getOriginQuery() } : {}),
   });
 }
 
@@ -271,7 +325,9 @@ function showAddEntitlementModal() {
 function buildFilterQueryParams(applicationId, ownerQuery) {
   const filters = [];
   const ownerFields = ['entitlementOwner.userName', 'entitlementOwner.givenName', 'entitlementOwner.sn'];
-  if (applicationId !== 'managed/application/all') filters.push(`application.id eq "${applicationId.split('/').pop()}"`);
+  // Skip the app clause when no application is selected (or when embedded, where the
+  // select is hidden and scoping is enforced by the forcedApplicationFilter)
+  if (applicationId && applicationId !== 'managed/application/all') filters.push(`application.id eq "${applicationId.split('/').pop()}"`);
   if (ownerQuery) filters.push(`(${ownerFields.map((field) => `${field} co "${ownerQuery}"`).join(' or ')})`);
   return filters.join(' and ');
 }
@@ -290,12 +346,16 @@ watch(() => ownerFilter.value, (newVal) => {
 
 onMounted(async () => {
   try {
-    const queryParams = {
-      pageSize: 10,
-      queryFilter: 'application.objectTypes.accountAttribute co ""',
-    };
-    const { data } = await getApplicationList(null, queryParams);
-    showAddButton.value = data.totalCount > 0;
+    if (!props.applicationIds) {
+      // The add-entitlement flow is only offered on the standalone list; skip the
+      // probe when embedded in an application page (button stays hidden)
+      const queryParams = {
+        pageSize: 10,
+        queryFilter: 'application.objectTypes.accountAttribute co ""',
+      };
+      const { data } = await getApplicationList(null, queryParams);
+      showAddButton.value = data.totalCount > 0;
+    }
   } catch {
     showAddButton.value = false;
   }

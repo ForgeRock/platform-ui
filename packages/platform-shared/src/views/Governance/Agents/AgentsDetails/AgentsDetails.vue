@@ -287,6 +287,10 @@ onBeforeMount(async () => {
   tabIndex.value = matchedTab > -1 ? matchedTab : 0;
   if (props.isEndUser) {
     setBreadcrumb('/my-agents', i18n.global.t('sideMenu.endUser.agents'));
+  } else if (route.query.originAppId) {
+    // Entered from an application's Objects tab — return the breadcrumb to that side tab
+    setBreadcrumb(`/applications/unmanaged/edit/${route.query.originAppId}/objects${route.query.originObjectTab ? `/${route.query.originObjectTab}` : ''}`,
+      route.query.originAppName || i18n.global.t('common.application'));
   } else {
     setBreadcrumb('/agents', i18n.global.t('governance.agents.title'));
   }

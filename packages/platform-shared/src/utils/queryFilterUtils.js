@@ -70,3 +70,15 @@ export function filterFieldsForSearchQuery(searchableFields) {
   const nonIndexedFields = store.state.isFraas ? ['accountStatus'] : [];
   return searchableFields.filter((field) => !passwordFields.includes(field) && !nonIndexedFields.includes(field) && !field.startsWith('frIndexedDate') && !field.startsWith('frUnindexedDate') && !field.startsWith('frIndexedInteger') && !field.startsWith('frUnindexedInteger'));
 }
+
+/**
+ * Escapes a raw value for safe interpolation into a single-quoted CREST query
+ * filter literal (e.g. `field co '<value>'`). Without this, a value containing
+ * an apostrophe produces an unbalanced literal (400 from the backend), and a
+ * crafted value can append extra filter clauses.
+ * @param {string} value - The raw value to interpolate into a filter literal.
+ * @returns {string} The escaped value, safe to place inside single quotes.
+ */
+export function escapeQueryFilterValue(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}

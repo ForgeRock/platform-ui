@@ -12,16 +12,16 @@ of the MIT license. See the LICENSE file for details. -->
         :title="i18n.global.t('common.accounts')"
         :subtitle="i18n.global.t('governance.accounts.subtitle')" />
       <div>
-        <div class="my-5">
+        <div :class="{ 'my-5': !isEmbedded }">
           <BCard
             no-body
-            class="card-tabs-vertical">
+            :class="{ 'card-tabs-vertical': !accountType, 'border-0': isEmbedded }">
             <BTabs
               ref="accountTabs"
               v-if="selectedTab !== null"
               v-model="selectedTab"
               @activate-tab="tabActivated"
-              nav-wrapper-class="d-none d-md-block account-tabs"
+              :nav-wrapper-class="accountType ? 'd-none' : 'd-none d-md-block account-tabs'"
               content-class="overflow-hidden position-inherit"
               pills
               vertical>
@@ -207,7 +207,12 @@ import {
   BTabs,
   BTable,
 } from 'bootstrap-vue';
-import { ref, computed, onMounted } from 'vue';
+import {
+  computed,
+  onMounted,
+  ref,
+  watch,
+} from 'vue';
 import { useRouter } from 'vue-router';
 import { capitalize, find } from 'lodash';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
@@ -238,6 +243,23 @@ const props = defineProps({
   applicationIds: {
     type: Array,
     default: null,
+  },
+  applicationName: {
+    type: String,
+    default: '',
+  },
+  // Side-tab key this view is hosted under when embedded, so detail views can
+  // return the breadcrumb to the originating side tab
+  objectTab: {
+    type: String,
+    default: '',
+  },
+  // Pre-selected account type filter — hides this view's own filter tabs and
+  // renders only the table (used when the selection is hosted in the object
+  // explorer's side nav)
+  accountType: {
+    type: String,
+    default: '',
   },
 });
 
@@ -338,6 +360,13 @@ const counts = ref({
   machine: 0,
 });
 
+// When the account type is hosted in the object explorer's side nav, the internal
+// filter tabs are hidden: seed the selection from the prop before the first search
+if (props.accountType) {
+  const typeIndex = tabItems.findIndex((tab) => tab.key === props.accountType);
+  if (typeIndex > -1) selectedTab.value = typeIndex;
+}
+
 /**
  * Get sort field to send to query
  * @param sortByVal string The field to sort by
@@ -409,7 +438,12 @@ async function search(page = null) {
     queryFilter: getQueryFilterForAccounts(selectedTab.value),
   };
 
-  if (previousQuery.value !== searchQuery.value) {
+  // When the account type is hosted externally (object explorer side nav), the
+  // internal filter tabs are hidden and their counts are never rendered — skip
+  // querying them so re-filtering doesn't fire ~4x redundant requests
+  const collectCounts = !props.accountType;
+
+  if (collectCounts && previousQuery.value !== searchQuery.value) {
     // When search term changes, query all tabs to update counts
     queryAll.value = true;
     previousQuery.value = searchQuery.value;
@@ -420,7 +454,7 @@ async function search(page = null) {
       if (index === selectedTab.value) {
         return getAccounts(searchParameters);
       }
-      if (queryAll.value) {
+      if (collectCounts && queryAll.value) {
         return getAccounts({
           pageSize: 0,
           queryFilter: getQueryFilterForAccounts(index),
@@ -477,6 +511,31 @@ function sortingChanged(ctx) {
   search();
 }
 
+// Mirror external selections of the hosted account type (object explorer side
+// nav) — declared after search because it calls it on re-filter
+watch(() => props.accountType, (type) => {
+  if (!type) return;
+  const index = tabItems.findIndex((tab) => tab.key === type);
+  if (index > -1 && index !== selectedTab.value) {
+    selectedTab.value = index;
+    search(1);
+  }
+});
+
+/**
+ * Query params identifying the embedding application, so the details view can
+ * return the breadcrumb to this application's Objects tab. Null when standalone.
+ * @returns {Object|null} The origin query params, or null when not application-scoped
+ */
+function getOriginQuery() {
+  if (!props.applicationIds?.length) return null;
+  return {
+    originAppId: props.applicationIds[0],
+    originAppName: props.applicationName,
+    ...(props.objectTab ? { originObjectTab: props.objectTab } : {}),
+  };
+}
+
 /**
  * Navigate to the given account by id
  * @param accountId string The account ID to navigate to
@@ -488,6 +547,7 @@ function navigateToEdit(accountId) {
       accountId,
       tab: 'details',
     },
+    ...(props.applicationIds?.length ? { query: getOriginQuery() } : {}),
   });
 }
 

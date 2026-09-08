@@ -77,11 +77,14 @@ of the MIT license. See the LICENSE file for details. -->
           </BTab>
           <BTab
             class="mt-4"
-            :title="$t('common.accounts')">
-            <FrAccounts
+            :title="$t('governance.applications.edit.objectsTab.title')">
+            <FrApplicationObjectExplorer
               v-if="applicationDetails"
-              is-embedded
-              :application-ids="[applicationDetails.id]" />
+              :application-id="applicationDetails.id"
+              :application-name="applicationDetails.name"
+              :logo-source="logoSource"
+              :object-tab="objectTab"
+              :object-sub-tab="objectSubTab" />
           </BTab>
           <BTab
             class="mt-4"
@@ -131,9 +134,9 @@ import {
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import FrApplicationDetailsPanel from '@forgerock/platform-shared/src/components/governance/Applications/ApplicationDetailsPanel';
-import FrAccounts from '@forgerock/platform-shared/src/views/Governance/Accounts/Accounts';
 import FrObjectTypes from '@forgerock/platform-shared/src/components/governance/Applications/ObjectType/ObjectTypes';
 import FrUnmanagedApplicationImport from '@forgerock/platform-shared/src/components/governance/Applications/UnmanagedApplicationImport';
+import FrApplicationObjectExplorer from './ApplicationObjectExplorer';
 import store from '@/store';
 import i18n from '@/i18n';
 
@@ -191,9 +194,19 @@ const props = defineProps({
     type: String,
     default: 'details',
   },
+  // Optional vertical sub-tab slug for the Objects tab (deep links)
+  objectTab: {
+    type: String,
+    default: '',
+  },
+  // Optional nested sub-tab slug (e.g. an account type under the Accounts side tab)
+  objectSubTab: {
+    type: String,
+    default: '',
+  },
 });
 
-const tabs = ['details', 'object-types', 'accounts', 'import'];
+const tabs = ['details', 'object-types', 'objects', 'import'];
 
 const router = useRouter();
 const { setBreadcrumb } = useBreadcrumb();

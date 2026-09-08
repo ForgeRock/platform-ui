@@ -10,6 +10,7 @@ import { cloneDeep } from 'lodash';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { useBreadcrumbStore } from '@forgerock/platform-shared/src/stores/breadcrumb';
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as resourceUtil from '@forgerock/platform-shared/src/utils/governance/resource';
@@ -99,6 +100,57 @@ function mountComponent(accountType, props = {}) {
 describe('AccountsDetails', () => {
   afterEach(() => {
     jest.spyOn(CommonsApi, 'getIgaAccessRequest').mockResolvedValue({ data: { requireRequestJustification: false } });
+  });
+
+  describe('breadcrumb return route', () => {
+    function mountWithQuery(query = {}) {
+      mockRouter({ params: { accountId: 'system/Target/User/102' }, query });
+      mountComponent(undefined, { isEndUser: false });
+      return flushPromises();
+    }
+
+    it('returns the breadcrumb to the unmanaged application when entered from its Objects tab', async () => {
+      await mountWithQuery({ originAppId: 'app-1', originAppName: 'My App' });
+
+      const breadcrumbStore = useBreadcrumbStore();
+      expect(breadcrumbStore.returnRoute).toBe('/applications/unmanaged/edit/app-1/objects');
+      expect(breadcrumbStore.returnRouteText).toBe('My App');
+    });
+
+    it('returns the breadcrumb to the originating side tab when one was set', async () => {
+      await mountWithQuery({ originAppId: 'app-1', originAppName: 'My App', originObjectTab: 'accounts' });
+
+      const breadcrumbStore = useBreadcrumbStore();
+      expect(breadcrumbStore.returnRoute).toBe('/applications/unmanaged/edit/app-1/objects/accounts');
+      expect(breadcrumbStore.returnRouteText).toBe('My App');
+    });
+
+    it('falls back to the application label when no origin name is passed', async () => {
+      await mountWithQuery({ originAppId: 'app-1' });
+
+      const breadcrumbStore = useBreadcrumbStore();
+      expect(breadcrumbStore.returnRoute).toBe('/applications/unmanaged/edit/app-1/objects');
+      expect(breadcrumbStore.returnRouteText).toBe('Application');
+    });
+
+    it('keeps the global accounts breadcrumb when there is no origin query', async () => {
+      await mountWithQuery({});
+
+      const breadcrumbStore = useBreadcrumbStore();
+      expect(breadcrumbStore.returnRoute).toBe('/accounts');
+      expect(breadcrumbStore.returnRouteText).toBe('Accounts');
+    });
+
+    it('keeps the enduser breadcrumb even when origin query present', async () => {
+      await mountWithQuery({ originAppId: 'app-1', originAppName: 'My App' });
+      // remount as enduser to verify branch precedence
+      mountComponent(undefined, { isEndUser: true });
+      await flushPromises();
+
+      const breadcrumbStore = useBreadcrumbStore();
+      expect(breadcrumbStore.returnRoute).toBe('/my-machine-accounts');
+      expect(breadcrumbStore.returnRouteText).toBe('Machine Accounts');
+    });
   });
 
   it('should retrieve the account on load', async () => {

@@ -10,6 +10,11 @@ import * as AccountApi from '@forgerock/platform-shared/src/api/governance/Accou
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import Accounts from './Accounts';
 
+const mockRouterPush = jest.fn();
+jest.mock('vue-router', () => ({
+  useRouter: () => ({ push: mockRouterPush }),
+}));
+
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
 }));
@@ -56,7 +61,7 @@ const createData = (params = {}, totalCount = 100) => {
 };
 
 describe('Accounts Unit', () => {
-  function mountComponent() {
+  function mountComponent(props = {}) {
     const wrapper = mount(Accounts, {
       global: {
         stubs: {
@@ -73,6 +78,7 @@ describe('Accounts Unit', () => {
           },
         },
       },
+      props,
     });
     return wrapper;
   }
@@ -224,5 +230,122 @@ describe('Accounts Unit', () => {
     rowToClick.trigger('click');
 
     expect(wrapper.vm.navigateToEdit).toHaveBeenCalledWith('id-3');
+  });
+
+  it('App-scoped accounts compose the application filter with the tab filter', async () => {
+    const wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App' });
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      queryFilter: '(application.id eq \'app-1\') and !(glossary.idx./account.accountType eq "agent")',
+    }));
+  });
+
+  it('App-scoped navigation includes the origin query params', async () => {
+    const wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App' });
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    await flushPromises();
+
+    wrapper.vm.navigateToEdit('id-3');
+
+    expect(mockRouterPush).toHaveBeenCalledWith({
+      name: 'AccountsDetails',
+      params: { accountId: 'id-3', tab: 'details' },
+      query: { originAppId: 'app-1', originAppName: 'My App' },
+    });
+  });
+
+  it('App-scoped navigation includes the originating side tab when hosted under one', async () => {
+    const wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App', objectTab: 'accounts' });
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    await flushPromises();
+
+    wrapper.vm.navigateToEdit('id-3');
+
+    expect(mockRouterPush).toHaveBeenCalledWith({
+      name: 'AccountsDetails',
+      params: { accountId: 'id-3', tab: 'details' },
+      query: { originAppId: 'app-1', originAppName: 'My App', originObjectTab: 'accounts' },
+    });
+  });
+
+  it('Standalone navigation does not include origin query params', async () => {
+    const wrapper = mountComponent();
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    await flushPromises();
+
+    wrapper.vm.navigateToEdit('id-3');
+
+    expect(mockRouterPush).toHaveBeenCalledWith({
+      name: 'AccountsDetails',
+      params: { accountId: 'id-3', tab: 'details' },
+    });
+  });
+
+  it('renders table-only scoped to the given account type when accountType is set', async () => {
+    const wrapper = mountComponent({ accountType: 'uncorrelated', isEmbedded: true });
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    await flushPromises();
+
+    // Internal filter tabs are hidden — the account type is hosted externally
+    expect(wrapper.find('.account-tabs').exists()).toBe(false);
+    expect(wrapper.vm.selectedTab).toBe(2);
+    // Machine tab hides the type/user columns; uncorrelated hides user/accountSubType
+    const headers = wrapper.findAll('th').map((th) => th.text());
+    expect(headers).not.toContain('governance.accounts.user');
+    expect(headers).not.toContain('governance.accounts.accountSubType');
+  });
+
+  it('re-filters when the hosted accountType prop changes', async () => {
+    const wrapper = mountComponent({ accountType: 'all', applicationIds: ['app-1'] });
+    AccountApi.getAccounts = jest.fn().mockResolvedValue(createData());
+    await flushPromises();
+    expect(wrapper.vm.selectedTab).toBe(0);
+
+    AccountApi.getAccounts.mockClear();
+    wrapper.setProps({ accountType: 'machine' });
+    await flushPromises();
+
+    expect(wrapper.vm.selectedTab).toBe(3);
+    expect(AccountApi.getAccounts).toHaveBeenCalled();
+    expect(wrapper.vm.getQueryFilterForAccounts(wrapper.vm.selectedTab)).toContain('accountType eq "machine"');
+  });
+
+  it('keeps internal vertical filter tabs when accountType is not set', async () => {
+    const wrapper = mountComponent();
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    await flushPromises();
+
+    expect(wrapper.find('.card-tabs-vertical').exists()).toBe(true);
+    expect(wrapper.vm.selectedTab).toBe(0);
   });
 });

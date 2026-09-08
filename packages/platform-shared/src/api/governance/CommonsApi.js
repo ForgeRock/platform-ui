@@ -148,3 +148,20 @@ export function searchGovernanceResource(payload, params) {
   const queryParams = encodeQueryString(params, false);
   return generateIgaApi().post(`/governance/resource/search${queryParams}`, payload);
 }
+
+/**
+ * Get a list of governance resources, optionally filtered (e.g. scoped to an
+ * application via `_queryFilter=application.id eq '<id>'`).
+ *
+ * NOTE: in-progress IGA endpoint — not yet in the published API reference;
+ * contract mirrors the other governance list endpoints (result + totalCount).
+ *
+ * @param {String} resource resource type (ignored — the endpoint is resource-type agnostic;
+ *                          present for GovResourceList resourceFunction compatibility)
+ * @param {Object} queryParams query parameters (`_queryFilter`, `_fields`, paging, etc.)
+ * @returns {Promise} IGA resource list
+ */
+export function getResourceList(resource, queryParams = {}) {
+  const encodedQueryParams = encodeQueryString(queryParams);
+  return generateIgaApi().get(`governance/resource${encodedQueryParams}`);
+}

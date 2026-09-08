@@ -305,6 +305,10 @@ async function getAccount() {
 onBeforeMount(async () => {
   if (props.isEndUser) {
     setBreadcrumb('/my-machine-accounts', i18n.global.t('sideMenu.endUser.machineAccounts'));
+  } else if (route.query.originAppId) {
+    // Entered from an application's Objects tab — return the breadcrumb to that side tab
+    setBreadcrumb(`/applications/unmanaged/edit/${route.query.originAppId}/objects${route.query.originObjectTab ? `/${route.query.originObjectTab}` : ''}`,
+      route.query.originAppName || i18n.global.t('common.application'));
   } else {
     setBreadcrumb('/accounts', i18n.global.t('common.accounts'));
   }

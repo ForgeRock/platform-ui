@@ -177,4 +177,24 @@ describe('Commons API', () => {
         });
     });
   });
+
+  describe('getResourceList', () => {
+    afterEach(() => {
+      get.mockClear();
+    });
+    it('makes a call without query params by default', async () => {
+      await CommonsApi.getResourceList();
+      expect(get).toBeCalledWith('governance/resource');
+    });
+
+    it('ignores the resource-type argument used by GovResourceList', async () => {
+      await CommonsApi.getResourceList('resource', { pageSize: 10 });
+      expect(get).toBeCalledWith('governance/resource?_pageSize=10');
+    });
+
+    it('encodes the application scoping filter into the request', async () => {
+      await CommonsApi.getResourceList('resource', { _queryFilter: "application.id eq 'app-1'" });
+      expect(get).toBeCalledWith(`governance/resource?${encodeURIComponent('_queryFilter')}=${encodeURIComponent("application.id eq 'app-1'")}`);
+    });
+  });
 });

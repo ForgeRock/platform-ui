@@ -2012,6 +2012,10 @@
         "newEntitlement": "New Entitlement",
         "chooseApplication": "Choose Application"
       },
+      "resources": {
+        "title": "Resources",
+        "subtitle": "Browse the resources provisioned by your configured applications."
+      },
       "users": {
         "title": "Users",
         "subtitle": "Create and manage your user identities."
@@ -2023,6 +2027,9 @@
     },
     "applications": {
       "edit": {
+        "objectsTab": {
+          "title": "Objects"
+        },
         "objectTypesTab": {
           "addProperty": "Add Property",
           "addPropertySuccess": "Property added successfully",

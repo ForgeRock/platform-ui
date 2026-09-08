@@ -318,6 +318,7 @@ import {
   getResource, getIgaUiConfig, getGrants, getUsers,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { escapeQueryFilterValue } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import agentConstants from './utils/agentConstants';
 import { getAgentDisplayName } from './utils/agentUtility';
 import i18n from '@/i18n';
@@ -434,8 +435,9 @@ function getSortParam(sortByVal) {
  * @param tab integer The tab key index to get the query filter for
  */
 function getQueryFilterForAgents(tab, additionalFilters = []) {
+  const escapedSearchQuery = escapeQueryFilterValue(searchQuery.value);
   const searchQueryFilter = searchQuery.value
-    ? `(user.userName co '${searchQuery.value}' or descriptor.idx./account.displayName co '${searchQuery.value}')`
+    ? `(user.userName co '${escapedSearchQuery}' or descriptor.idx./account.displayName co '${escapedSearchQuery}')`
     : '';
   const selectedApplicationQueryFilter = selectedApplications.value.length > 0
     ? `(${selectedApplications.value.map((app) => `application.id eq '${app}'`).join(' or ')})`
@@ -464,7 +466,7 @@ function setCounts(results) {
     }
   }
   if (!chartTotalsSet.value) {
-    // Only set the chart values once per page, do not reset them on every following search
+    // Only set the chart values once per page, do not reset them on every following search.
     chartTotalAll.value = newCounts.all || 0;
     newCounts.recentlyDiscovered = results[results.length - 3]?.data?.totalCount || 0;
     newCounts.noCustodians = results[results.length - 2]?.data?.totalCount || 0;
