@@ -112,6 +112,7 @@
     "markdown-it": "14.2.0",
     "eslint/minimatch": "3.1.5",
     "eslint-plugin-import/minimatch": "3.1.5",
+    "fflate": "0.8.3",
     "find-cypress-specs/minimatch": "3.1.5",
     "glob@npm:7.1.6/minimatch": "3.1.5",
     "glob@npm:7.2.3/minimatch": "3.1.5",
