@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -92,6 +92,21 @@ export function patchManagedResource(resourceName, resourceId, data, requestOver
 export function putManagedResource(resourceName, resourceId, data, requestOverrides) {
   const resourceUrl = `managed/${resourceName}/${resourceId}`;
   return generateIdmApi(requestOverrides).put(resourceUrl, data);
+}
+
+/**
+ * Patches a specific edge of a managed resource.
+ * @param {string} resourceName - Name of the managed resource (e.g., user, role)
+ * @param {string} resourceId - ID of the specific resource being patched
+ * @param {string} edgeName - Name of the edge to patch
+ * @param {string} edgeId - ID of the specific edge being patched
+ * @param {object} data - Patch request payload
+ * @param {object} requestOverrides - Override properties or headers to pass along to IDM API
+ * @returns {Promise} Promise containing results of the patch (success or failure)
+ */
+export function patchManagedResourceEdge(resourceName, resourceId, edgeName, edgeId, data, requestOverrides) {
+  const resourceUrl = `managed/${resourceName}/${resourceId}/${edgeName}/${edgeId}`;
+  return generateIdmApi(requestOverrides).patch(resourceUrl, data);
 }
 
 export function getLinkedApplications(resourceName, userId) {
