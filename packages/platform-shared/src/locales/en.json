@@ -1923,6 +1923,7 @@
           "high": "High"
         },
         "removeFromRequest": "Remove from Request",
+        "userRemoved": "User {user} has been removed",
         "request": "Request",
         "requestAdded": "Request added",
         "requestAddError": "The following users either already have the requested item assigned or in a pending request. Choose another item to request for the selected user.",
