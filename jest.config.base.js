@@ -37,7 +37,7 @@ module.exports = {
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(babel-jest|jest-vue-preprocessor|vee-validate/dist|vue-multiselect|@forgerock/ping-protect|uuid)/)',
+    'node_modules/(?!(babel-jest|domelementtype|domhandler|domutils|dom-serializer|entities|htmlparser2|jest-vue-preprocessor|vee-validate/dist|vue-multiselect|@forgerock/ping-protect|uuid)/)',
   ],
   moduleNameMapper: {
     axios: '<rootDir>/../../__mocks__/axios.js',
