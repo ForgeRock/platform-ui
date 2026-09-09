@@ -24,6 +24,10 @@ export default class DashboardAdminPage extends BaseAdminPage {
     cy.get('#app').should('have.class', 'fr-menu-expanded');
   }
 
+  static navigationButton(expectedText, timeout = 4000) {
+    return cy.findByRole('button', { name: expectedText, timeout });
+  }
+
   static get dashboardTitle() {
     return cy.get('[data-testid="dashboard-welcome-title"]');
   }

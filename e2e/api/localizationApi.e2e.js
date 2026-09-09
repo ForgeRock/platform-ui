@@ -1,9 +1,24 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright 2021-2026 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
+
+/**
+ * Get a config translation file
+ */
+export function getOverrides(locale, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    failOnStatusCode: false,
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/config/uilocale/${locale}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
 
 /**
  * Add a config translation file
