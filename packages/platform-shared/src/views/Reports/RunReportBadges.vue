@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
   <BBadge
     v-else-if="reportStatus === 'complete'"
-    class="w-100 text-white"
+    class="w-100"
     data-testid="fr-complete-report-badge"
     variant="success">
     {{ $t('common.complete') }}
