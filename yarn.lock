@@ -2883,7 +2883,9 @@ __metadata:
     "@codemirror/theme-one-dark": 6.1.2
     "@codemirror/view": 6.22.1
     "@cypress/grep": 5.1.0
+    "@forgerock/platform-enduser": 1.0.0
     "@forgerock/platform-login": 1.0.0
+    "@forgerock/platform-oauth2": 1.0.0
     "@forgerock/platform-shared": 1.0.0
     "@kyvg/vue3-notification": 3.0.2
     "@neuralegion/cypress-har-generator": 5.16.4
@@ -2961,7 +2963,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/platform-enduser@workspace:packages/platform-enduser":
+"@forgerock/platform-enduser@1.0.0, @forgerock/platform-enduser@workspace:packages/platform-enduser":
   version: 0.0.0-use.local
   resolution: "@forgerock/platform-enduser@workspace:packages/platform-enduser"
   dependencies:
@@ -3078,7 +3080,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/platform-oauth2@workspace:packages/platform-oauth2":
+"@forgerock/platform-oauth2@1.0.0, @forgerock/platform-oauth2@workspace:packages/platform-oauth2":
   version: 0.0.0-use.local
   resolution: "@forgerock/platform-oauth2@workspace:packages/platform-oauth2"
   dependencies:

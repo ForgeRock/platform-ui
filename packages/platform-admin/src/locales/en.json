@@ -1010,6 +1010,7 @@
     "packageShared": "Global",
     "packageEnduser": "User",
     "packageLogin": "Login",
+    "packageOauth2": "OAuth2",
     "showAll": "Show all",
     "activeLanguages": "Active Languages",
     "inactiveLanguages": "Inactive Languages",
