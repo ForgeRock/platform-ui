@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       no-body>
       <BButtonToolbar class="py-3 px-4 justify-content-between">
         <div class="d-flex flex-wrap">
-          <template v-if="customReportIsEnabled">
+          <template v-if="canManageReports">
             <BButton
               class="mb-2 mb-lg-0 w-100 w-lg-auto"
               variant="primary"
@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrSearchInput
           class="w-100 pl-lg-2 fr-search"
           v-model="searchTerm"
-          :class="{ 'flex-grow-1': hasFocus, 'w-lg-auto': customReportIsEnabled }"
+          :class="{ 'flex-grow-1': hasFocus, 'w-lg-auto': canManageReports }"
           :placeholder="$t('common.search')"
           @clear="searchTerm = ''"
           @search-input-blur="hasFocus = false"
@@ -126,11 +126,11 @@ of the MIT license. See the LICENSE file for details. -->
                 v-else
                 toggle-class="w-42 p-1"
                 wrapper-class="pr-0"
-                :delete-option="customReportIsEnabled && !item.ootb"
-                :divider="customReportIsEnabled && !item.ootb"
-                :edit-option="customReportIsEnabled && item.editable"
+                :delete-option="canManageReports && !item.ootb"
+                :divider="canManageReports && !item.ootb"
+                :edit-option="canManageReports && item.editable"
                 :edit-option-text="$t('reports.menu.editTemplate')"
-                :duplicate-option="customReportIsEnabled && item.duplicatable"
+                :duplicate-option="canManageReports && item.duplicatable"
                 @edit-clicked="editTemplate(item.name, item.type)"
                 @duplicate-clicked="openDuplicateModal(item)"
                 @delete-clicked="confirmDeleteTemplate(item.name, item.type)">
@@ -144,7 +144,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </FrIcon>
                   </BDropdownItem>
                   <BDropdownItem
-                    v-if="customReportIsEnabled && !item.ootb && item.type !== 'published'"
+                    v-if="canManageReports && !item.ootb && item.type !== 'published'"
                     @click="openAssignViewersModal(item)">
                     <FrIcon
                       icon-class="mr-2"
@@ -155,7 +155,7 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
                 <template #custom-bottom-actions>
                   <BDropdownItem
-                    v-if="customReportIsEnabled && item.type === 'draft'"
+                    v-if="canManageReports && item.type === 'draft'"
                     @click="publishTemplate(item.name, item.type)">
                     <FrIcon
                       icon-class="mr-2"
@@ -164,7 +164,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </FrIcon>
                   </BDropdownItem>
                   <BDropdownItem
-                    v-if="customReportIsEnabled && !item.ootb"
+                    v-if="canManageReports && !item.ootb"
                     @click="exportTemplate(item)">
                     <FrIcon
                       icon-class="mr-2"
@@ -193,7 +193,7 @@ of the MIT license. See the LICENSE file for details. -->
       :subtitle="$t('reports.noData')" />
 
     <FrNewReportModal
-      v-if="customReportIsEnabled"
+      v-if="canManageReports"
       :report-data-for-duplication="reportBeingProcessed"
       :report-is-saving="saveReportPending || reportIsDuplicating"
       :report-names="allReportNames"
@@ -201,14 +201,16 @@ of the MIT license. See the LICENSE file for details. -->
       @duplicate-report="duplicateTemplate"
       @hidden="reportBeingProcessed = undefined" />
     <FrImportReportModal
-      v-if="customReportIsEnabled"
+      v-if="canManageReports"
       @import-success="handleImportSuccess" />
     <FrAssignViewersModal
+      v-if="canManageReports"
       :report-viewers="reportBeingProcessed?.viewers"
       :is-saving="savingViewers"
       @hidden="reportBeingProcessed = undefined"
       @save="assignViewersToReport(reportBeingProcessed, $event)" />
     <FrDeleteModal
+      v-if="canManageReports"
       :is-deleting="isDeleting"
       :translated-item-type="$t('common.report')"
       @hidden="templateToDelete = undefined"
@@ -248,6 +250,7 @@ import { displayNotification, showErrorMessage } from '@forgerock/platform-share
 import { downloadFile } from '@forgerock/platform-shared/src/utils/downloadFile';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrNewReportModal from './modals/NewReportModal';
 import FrImportReportModal from './modals/ImportReportModal';
 import useSaveReportTemplate from './composables/SaveReport';
@@ -299,6 +302,8 @@ const tableFields = [
   },
 ];
 const customReportIsEnabled = computed(() => store.state.SharedStore.currentPackage === 'admin' && store.state.SharedStore.autoCustomReportsEnabled);
+const userStore = useUserStore();
+const canManageReports = computed(() => customReportIsEnabled.value && !userStore.hasTenantAuditorPrivilege);
 const isPublishing = ref(false);
 const isDeleting = ref(false);
 

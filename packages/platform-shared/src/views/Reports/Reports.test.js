@@ -17,6 +17,8 @@ import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModa
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import Reports from './Reports';
 import store from '../../store';
@@ -33,9 +35,13 @@ jest.mock('vue-router', () => ({
 
 describe('Reports', () => {
   let modalShow;
-  function setup(props = {}) {
+  function setup(props = {}, { isTenantAuditor = false } = {}) {
     ({ modalShow } = mockModal());
     ({ displayNotification, showErrorMessage } = mockNotification());
+    setupTestPinia({}, false);
+    if (isTenantAuditor) {
+      useUserStore().privileges = { TenantAuditor: true };
+    }
     const domWrapper = new DOMWrapper(document.body);
     const wrapper = mount(Reports, {
       attachTo: createAppContainer(),
@@ -768,6 +774,43 @@ describe('Reports', () => {
       await flushPromises();
 
       expect(getReportTemplatesSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('when the user is a Tenant Auditor', () => {
+    it('hides management actions for tenant auditor', async () => {
+      const { wrapper, domWrapper } = setup({}, { isTenantAuditor: true });
+      await flushPromises();
+
+      // Toolbar buttons hidden
+      expect(findByText(wrapper, 'button', 'addNew Report')).toBeUndefined();
+      expect(findByText(wrapper, 'button', 'file_uploadImport')).toBeUndefined();
+
+      // Draft template kebab actions: only Run History remains
+      const rows = wrapper.findAll('table tbody tr');
+      await toggleActionsMenu(rows[0]);
+      const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
+      expect(actions.length).toBe(1);
+      expect(actions[0].text()).toBe('list_altRun History');
+
+      // Modals not mounted
+      expect(wrapper.findComponent({ name: 'NewReportModal' }).exists()).toBe(false);
+      expect(wrapper.findComponent({ name: 'ImportReportModal' }).exists()).toBe(false);
+      expect(wrapper.findComponent({ name: 'AssignViewersModal' }).exists()).toBe(false);
+      expect(wrapper.findComponent({ name: 'DeleteModal' }).exists()).toBe(false);
+    });
+
+    it('shows Run and Run history for auditor', async () => {
+      const { wrapper, domWrapper } = setup({}, { isTenantAuditor: true });
+      await flushPromises();
+
+      const rows = wrapper.findAll('table tbody tr');
+      const runButton = findByText(rows[0], 'button', 'Run');
+      expect(runButton.exists()).toBe(true);
+
+      await toggleActionsMenu(rows[0]);
+      const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
+      expect(actions[0].text()).toBe('list_altRun History');
     });
   });
 });
