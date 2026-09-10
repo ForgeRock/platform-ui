@@ -145,3 +145,27 @@ describe('ManagedResourceApi', () => {
     });
   });
 });
+
+describe('getManagedResourceCount', () => {
+  let generateIdmApiSpy;
+
+  afterEach(() => {
+    // Explicitly restore the named spy — jest.restoreAllMocks() would also tear
+    // down spies registered outside this file by the snapshot-serializer.
+    if (generateIdmApiSpy) generateIdmApiSpy.mockRestore();
+  });
+
+  it('requests an exact managed-resource count with the protocol 2.2 header', () => {
+    const getSpy = jest.fn();
+    generateIdmApiSpy = jest.spyOn(BaseApi, 'generateIdmApi').mockReturnValue({ get: getSpy });
+
+    ManagedResourceApi.getManagedResourceCount('alpha_application');
+
+    expect(generateIdmApiSpy).toHaveBeenCalledWith({
+      headers: {
+        'accept-api-version': 'protocol=2.2,resource=1.0',
+      },
+    });
+    expect(getSpy).toHaveBeenCalledWith('managed/alpha_application?_countOnly=true&_queryFilter=true&_totalPagedResultsPolicy=EXACT');
+  });
+});
