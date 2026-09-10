@@ -60,6 +60,36 @@ export default class EndpointEditorModal {
     return cy.get('#curlCloseButton');
   }
 
+  // The test (validation) panel icon button — identified by the button id #btnShowValidationPanel, JS-only
+  static get testPanelIconButton() {
+    return cy.get('#btnShowValidationPanel');
+  }
+
+  // Test panel heading, i18n: endpoints.editorModal.test → "Test"
+  static get testPanelHeading() {
+    return EndpointEditorModal.modal.findByRole('heading', { name: /test/i });
+  }
+
+  // globalsObject textarea — identified by its name attribute (no accessible label in the template)
+  static get globalsTextarea() {
+    return cy.get('textarea[name="globalsObject"]');
+  }
+
+  // Run button inside the Test panel, i18n: common.run → "Run"
+  static get runButton() {
+    return cy.findByRole('button', { name: /^run$/i });
+  }
+
+  // Test Results heading, i18n: endpoints.editorModal.testResults → "Test Results"
+  static get testResultsHeading() {
+    return cy.findByRole('heading', { name: /test results/i });
+  }
+
+  // The rendered result — <pre> inside #validationPanel
+  static get testResultsPanel() {
+    return cy.get('#validationPanel');
+  }
+
   static get saveAndCloseButton() {
     return EndpointEditorModal.modal.findByRole('button', { name: /save and close/i });
   }

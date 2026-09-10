@@ -27,6 +27,10 @@ export default class RegistrationJourneyPage {
     return cy.findByLabelText(/email address/i);
   }
 
+  static get countryInput() {
+    return cy.findByLabelText(/^country/i);
+  }
+
   static get passwordInput() {
     return cy.findAllByLabelText(/password/i).first();
   }
@@ -72,6 +76,9 @@ export default class RegistrationJourneyPage {
     RegistrationJourneyPage.firstNameInput.should('be.visible').type(user.firstName);
     RegistrationJourneyPage.lastNameInput.should('be.visible').type(user.lastName);
     RegistrationJourneyPage.emailInput.should('be.visible').type(user.emailAddress);
+    if (user.country) {
+      RegistrationJourneyPage.countryInput.should('be.visible').type(user.country);
+    }
     RegistrationJourneyPage.passwordInput.should('be.visible').type(user.password);
   }
 

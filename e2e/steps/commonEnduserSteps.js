@@ -8,8 +8,10 @@
 
 import BrowserSteps from './admin/BrowserSteps';
 import LoginSteps from './enduser/EndUserLoginSteps';
+import RegistrationSteps from './enduser/RegistrationSteps';
 
 export default {
   browser: BrowserSteps,
   login: LoginSteps,
+  registration: RegistrationSteps,
 };

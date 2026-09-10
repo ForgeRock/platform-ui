@@ -30,10 +30,10 @@ export default class EndUserApiSteps {
     cy.loginAsEnduser(username, password, true, undefined, firstName);
   }
 
-  static registerViaJourney(journey) {
+  static registerViaJourney(journey, userData = {}) {
     const endUser = generateRandomEndUser();
     EndUserApiSteps.registeredUser = endUser;
-    cy.registerViaJourney(generateJourneyURL(journey.name), endUser);
+    cy.registerViaJourney(generateJourneyURL(journey.name), { ...endUser, ...userData });
   }
 
   static getRegisteredUser() {
@@ -43,7 +43,15 @@ export default class EndUserApiSteps {
       method: 'GET',
       url: `https://${Cypress.env('FQDN')}/openidm/managed/${objectType}?_queryFilter=userName+eq+"${username}"`,
       headers: { authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}` },
-    }).then(({ body }) => body.result[0]);
+    }).then(({ body }) => body.result[0] ?? null);
+  }
+
+  static assertRegisteredUserHas(attribute, value) {
+    return EndUserApiSteps.getRegisteredUser().its(attribute).should('eq', value);
+  }
+
+  static assertRegisteredUserDoesNotExist() {
+    return EndUserApiSteps.getRegisteredUser().should('be.null');
   }
 
   static triggerUpdateRegisteredUser() {
@@ -80,12 +88,23 @@ export default class EndUserApiSteps {
         failOnStatusCode: false,
       }).then(({ body }) => {
         const id = body.result?.[0]?._id;
-        if (id) {
-          return deleteIDMUser(id).then(() => {
-            EndUserApiSteps.registeredUser = null;
-          });
-        }
-        return null;
+        if (!id) return null;
+
+        const deleteWithRetry = (retries = 10) => deleteIDMUser(id, false).then((response) => {
+          if (response.status === 500 && retries > 0) {
+            // IDM applies managed-config changes (e.g. removing an event hook) asynchronously;
+            // a DELETE issued right after cleanup can still be evaluated against the previous
+            // config, where the hook script throws and IDM answers 500 Access Denied.
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            return cy.wait(3000).then(() => deleteWithRetry(retries - 1));
+          }
+          EndUserApiSteps.registeredUser = null;
+          if (!response.isOkStatusCode) {
+            throw new Error(`Failed to delete registered user ${username} (${id}) — status ${response.status}, user left on tenant`);
+          }
+          return response;
+        });
+        return deleteWithRetry();
       });
     });
   }

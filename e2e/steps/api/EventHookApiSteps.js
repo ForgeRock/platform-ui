@@ -10,16 +10,42 @@ import {
   getManagedConfig,
   createEventHook,
   deleteAllEventHooks,
+  deleteEventHook,
   ALLOWED_EVENT_TYPES,
 } from '@e2e/api/eventHooksApi.e2e';
+import CustomEndpointApiSteps from '@e2e/steps/api/CustomEndpointApiSteps';
+import JourneyApiSteps from '@e2e/steps/api/JourneyApiSteps';
 
 export default class EventHookApiSteps {
   static createdEventHooks = [];
 
   static createEventHook(params) {
     return createEventHook(params).then(({ response, originalValue }) => {
-      EventHookApiSteps.createdEventHooks.push({ objectName: params.objectName, event: params.event, originalValue });
+      const tracked = EventHookApiSteps.createdEventHooks.find(
+        (hook) => hook.objectName === params.objectName && hook.event === params.event,
+      );
+      if (tracked) {
+        // The pre-test tenant state was captured on the first create; a re-create
+        // (e.g. beforeEach retry after a failed cleanup) must not record our own
+        // hook as the value to restore.
+        tracked.originalValue = tracked.originalValue ?? originalValue;
+      } else {
+        EventHookApiSteps.createdEventHooks.push({ objectName: params.objectName, event: params.event, originalValue });
+      }
       return response;
+    });
+  }
+
+  /**
+   * Removes a hook left behind by a previously crashed run of a spec, identified by a
+   * marker substring in its script source, so a fresh create captures the true tenant
+   * state as originalValue instead of the stale hook itself.
+   */
+  static removeStaleHook(objectName, event, sourceMarker) {
+    return getManagedConfig().then(({ body }) => {
+      const managedObject = body.objects.find((obj) => obj.name === objectName);
+      const isOurs = managedObject?.[event]?.source?.includes(sourceMarker);
+      return isOurs ? deleteEventHook({ objectName, event }) : null;
     });
   }
 
@@ -50,6 +76,32 @@ export default class EventHookApiSteps {
         source: "logger.info('pagination');",
       });
     });
+  }
+
+  /**
+   * Seeds the custom-endpoint journey registration scenario: self-heals a stale hook,
+   * creates the countries endpoint, installs the onValidate hook calling it, and
+   * imports the dedicated registration journey. One call from the spec's beforeEach.
+   * @param {Object} scenario - The scenario parameters
+   * @param {string} scenario.endpointName - Name of the custom endpoint to create
+   * @param {string} scenario.endpointSource - JavaScript source of the endpoint
+   * @param {string} scenario.hookName - Human-readable name of the onValidate hook
+   * @param {string} scenario.hookSource - JavaScript source of the onValidate hook
+   * @param {Object} scenario.journey - JOURNEYS entry of the registration journey to import
+   */
+  static setupCountryValidationEndpoint({
+    endpointName, endpointSource, hookName, hookSource, journey,
+  }) {
+    const objectName = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
+    return cy.wrap(null).then(() => EventHookApiSteps.removeStaleHook(objectName, 'onValidate', `endpoint/${endpointName}`))
+      .then(() => CustomEndpointApiSteps.createEndpoint(endpointName, endpointSource))
+      .then(() => EventHookApiSteps.createEventHook({
+        objectName,
+        event: 'onValidate',
+        name: hookName,
+        source: hookSource,
+      }))
+      .then(() => JourneyApiSteps.importJourney(journey));
   }
 
   static deleteCreatedEventHooks() {

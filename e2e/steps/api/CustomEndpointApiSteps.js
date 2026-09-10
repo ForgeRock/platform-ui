@@ -6,16 +6,23 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import { createEndpoint, deleteEndpoint } from '@e2e/api/endpointsApi.e2e';
+import { createEndpoint, createReadSampleEndpoint, deleteEndpoint } from '@e2e/api/endpointsApi.e2e';
 
 export default class CustomEndpointApiSteps {
   static createdEndpointNames = [];
 
-  static createEndpoint(name) {
+  static createEndpoint(name, source) {
     if (!CustomEndpointApiSteps.createdEndpointNames.includes(name)) {
       CustomEndpointApiSteps.createdEndpointNames.push(name);
     }
-    return createEndpoint(name);
+    return createEndpoint(name, undefined, source);
+  }
+
+  static createReadSampleEndpoint(name) {
+    if (!CustomEndpointApiSteps.createdEndpointNames.includes(name)) {
+      CustomEndpointApiSteps.createdEndpointNames.push(name);
+    }
+    return createReadSampleEndpoint(name);
   }
 
   static deleteCreatedEndpoints() {
