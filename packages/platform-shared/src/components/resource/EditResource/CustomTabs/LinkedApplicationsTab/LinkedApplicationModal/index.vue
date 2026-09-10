@@ -10,14 +10,16 @@ of the MIT license. See the LICENSE file for details. -->
     ref="linkedApplicationModal"
     :ok-title="$t('common.done')">
     <template #modal-title>
-      <BMedia no-body>
-        <BImg
-          class="mt-3 mb-1 mr-4"
-          width="36"
-          height="36"
-          :src="require(`@forgerock/platform-shared/src/assets/images/connectors/${applicationData.image}`)"
-          :alt="$t('common.logo')"
-          fluid />
+      <BMedia
+        no-body
+        align-items-center>
+        <div class="size-36 fr-app-logo-bg mt-3 mb-1 mr-4 d-flex align-items-center justify-content-center flex-shrink-0">
+          <BImg
+            class="size-28"
+            :src="require(`@forgerock/platform-shared/src/assets/images/connectors/${applicationData.image}`)"
+            :alt="$t('common.logo')"
+            fluid />
+        </div>
         <div class="media-body align-self-center">
           <small class="text-muted">
             {{ applicationData.connectorType }}
@@ -116,7 +118,7 @@ export default {
   }
 
   li p {
-    color: $gray-900;
+    color: var(--body-color);
     word-break: break-all;
   }
 
@@ -127,6 +129,6 @@ export default {
   }
 
   .array-item li:first-child {
-    border-top: 1px solid $gray-200;
+    border-top: 1px solid var(--border-color);
   }
 </style>

@@ -42,12 +42,16 @@ of the MIT license. See the LICENSE file for details. -->
           @row-clicked="viewLinkedApplicationDetails($event)">
           <template
             #cell(name)="data">
-            <BMedia no-body>
-              <BImg
-                class="mt-1 mr-4 size-28"
-                :src="require(`@forgerock/platform-shared/src/assets/images/connectors/${data.item.image}`)"
-                :alt="$t('common.logo')"
-                fluid />
+            <BMedia
+              no-body
+              align-items-center>
+              <div class="size-28 fr-app-logo-bg mr-4 d-flex align-items-center justify-content-center flex-shrink-0">
+                <BImg
+                  class="size-24"
+                  :src="require(`@forgerock/platform-shared/src/assets/images/connectors/${data.item.image}`)"
+                  :alt="$t('common.logo')"
+                  fluid />
+              </div>
               <div class="media-body align-self-center">
                 <h5 class="m-0">
                   {{ data.item.name }}
