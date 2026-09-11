@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is-enduser="true"
       v-if="theme !== null" />
     <FrSessionTimeoutWarning />
+    <span v-if="buildNumber" class="d-none">{{ buildNumber }}</span>
   </div>
 </template>
 
@@ -102,6 +103,7 @@ export default {
   data() {
     const governanceEnabled = (this.$store.state.SharedStore.governanceEnabled === true) && (this.$store.state.realm === 'alpha');
     return {
+      buildNumber: process.env.VUE_APP_BUILD_NUMBER,
       governanceEnabled,
       version: '',
       menuItems: [],

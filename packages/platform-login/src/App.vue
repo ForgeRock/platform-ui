@@ -61,6 +61,9 @@ of the MIT license. See the LICENSE file for details. -->
         </FrAlert>
       </template>
     </notifications>
+    <span
+      v-if="buildNumber"
+      class="d-none">{{ buildNumber }}</span>
   </div>
 </template>
 
@@ -113,6 +116,7 @@ export default {
   },
   data() {
     return {
+      buildNumber: process.env.VUE_APP_BUILD_NUMBER,
       hideAppOnTransition: false,
       localizedFooter: '',
       localizedHeader: '',
