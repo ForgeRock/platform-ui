@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mr-3 rounded-circle"
                 height="16"
                 width="16"
-                :alt="$t('common.userFullName', { givenName: item.user.givenName, sn: item.user.sn })"
+                alt=""
                 :src="item.user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                 fluid />
               <BMediaBody>

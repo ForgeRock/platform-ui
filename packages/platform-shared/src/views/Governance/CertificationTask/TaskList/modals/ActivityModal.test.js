@@ -9,17 +9,30 @@ import { shallowMount } from '@vue/test-utils';
 import ActivityModal from './ActivityModal';
 
 let wrapper;
-function setup() {
+function setup(props) {
   wrapper = shallowMount(ActivityModal, {
     global: {
       mocks: {
         $t: (t) => t,
       },
+      renderStubDefaultSlot: true,
+      stubs: {
+        BModal: { name: 'BModal', template: '<div><slot /></div>' },
+        BTable: {
+          name: 'BTable',
+          template: '<div><slot name="cell(icon)" :item="items[0]" /><slot name="cell(activity)" :item="items[0]" /></div>',
+          props: ['fields', 'items'],
+        },
+        BMedia: { name: 'BMedia', template: '<div><slot /></div>' },
+        BMediaBody: { name: 'BMediaBody', template: '<div><slot /></div>' },
+      },
     },
     props: {
       taskListColumns: [],
+      ...props,
     },
   });
+  return wrapper;
 }
 
 describe('ActivityModal', () => {
@@ -101,5 +114,29 @@ describe('ActivityModal', () => {
       },
     });
     expect(wrapper.find('#CertificationTaskActivityEntitlementModal').exists()).toBeTruthy();
+  });
+
+  it('renders the user avatar as decorative image', () => {
+    wrapper = setup({
+      activity: [
+        {
+          user: {
+            id: 'testId',
+            givenName: 'Test',
+            sn: 'User',
+            userName: 'test.user',
+            profileImage: 'https://openam-gov-v2-3.forgeblocks.com/platform/img/avatar.png',
+          },
+          action: 'comment',
+          comment: 'Test comment',
+          timeStamp: '2026-09-15T12:00:00Z',
+        },
+      ],
+    });
+
+    const img = wrapper.find('b-img-stub');
+    expect(img.exists()).toBe(true);
+    expect(img.attributes('src')).toBe('https://openam-gov-v2-3.forgeblocks.com/platform/img/avatar.png');
+    expect(img.attributes('alt')).toBe('');
   });
 });
