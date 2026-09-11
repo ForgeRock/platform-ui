@@ -48,6 +48,13 @@ of the MIT license. See the LICENSE file for details. -->
         background-color: {{ theme.primaryOffColor }} !important;
       }
 
+      <template v-if="theme.brandSelectedColor">
+        <template v-if="mock">.fr-theme-preview</template> .btn-primary.active {
+          background-color: {{ theme.brandSelectedColor }} !important;
+          border-color: {{ theme.brandSelectedColor }} !important;
+        }
+      </template>
+
       <template v-if="mock">.fr-theme-preview</template> a {
         font-weight: {{ theme.boldLinks ? 700 : 400 }};
         color: {{ theme.linkColor }} <template v-if="mock">!important</template>;
@@ -845,6 +852,7 @@ accountNavigationTextColor: "#455469",
 accountNavigationToggleBorderColor: "#e7eef4",
 accountTableRowHoverColor: '#f6f8fa'
 backgroundColor: "#312E2E"
+brandSelectedColor: "#B20710"
 buttonRounded: "15"
 fontFamily: "Open Sans"
 journeyCardBackgroundColor: "#ffffff"

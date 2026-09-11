@@ -31,7 +31,6 @@ of the MIT license. See the LICENSE file for details. -->
           :class="setButtonClasses"
           :key="option.value"
           :pressed="selected.value === option.value"
-          :aria-label="`${option.text} ${selected.value === option.value ? '(selected)' : ''}`"
           @click="selected.value = option.value; callback.setInputValue(option.value)">
           {{ option.text }}
         </BButton>

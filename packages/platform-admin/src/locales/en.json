@@ -876,6 +876,8 @@
       "global": {
         "boldLinks": "Bold Links",
         "brandColor": "Brand Colors",
+        "brandSelectedColor": "Brand Selected Color",
+        "brandSelectedColorDescription": "Color used to indicate a selected button, such as a choice in a journey.",
         "buttonFocusBorderColor": "Button Focus Border Color",
         "buttonFocusBorderColorDescription": "Color used to indicate focus on buttons and links.",
         "buttonRounded": "Button Radius: {radius}px",

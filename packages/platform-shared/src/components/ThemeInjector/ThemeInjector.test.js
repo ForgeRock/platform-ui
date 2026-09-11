@@ -189,6 +189,30 @@ describe('Theme Injector Component', () => {
     });
   });
 
+  describe('pressed button theming', () => {
+    it('renders .btn-primary.active rule using brandSelectedColor', () => {
+      const brandSelectedColor = '#123456';
+      const wrapper = shallowMount(ThemeInjector, {
+        props: {
+          theme: { brandSelectedColor },
+        },
+      });
+      const html = wrapper.html();
+      expect(html).toContain('.btn-primary.active');
+      expect(html).toContain(`background-color: ${brandSelectedColor} !important`);
+      expect(html).toContain(`border-color: ${brandSelectedColor} !important`);
+    });
+
+    it('does not render .btn-primary.active rule when brandSelectedColor is not set', () => {
+      const wrapper = shallowMount(ThemeInjector, {
+        props: {
+          theme: {},
+        },
+      });
+      expect(wrapper.html()).not.toContain('.btn-primary.active');
+    });
+  });
+
   describe('alert notification theming', () => {
     it('renders success alert styles using theme successColor', () => {
       const successColor = '#ff0000';

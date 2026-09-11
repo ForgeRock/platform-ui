@@ -126,13 +126,25 @@ describe('ChoiceCallback', () => {
       expect(buttons[2].text()).toBe('Option C');
     });
 
-    it('Has proper aria-label for each button with selected state', async () => {
+    it('Announces accessible name from visible text with selected state', async () => {
       wrapper.vm.selected.value = 0;
       await wrapper.vm.$nextTick();
 
       const buttons = wrapper.findAllComponents({ name: 'BButton' });
-      expect(buttons[0].attributes('aria-label')).toBe('Option A (selected)');
-      expect(buttons[1].attributes('aria-label')).toBe('Option B ');
+      expect(buttons[0].text()).toBe('Option A');
+      expect(buttons[1].text()).toBe('Option B');
+      expect(buttons[0].attributes('aria-pressed')).toBe('true');
+    });
+
+    it('Marks the pressed button with the active class and aria-pressed', async () => {
+      wrapper.vm.selected.value = 0;
+      await wrapper.vm.$nextTick();
+
+      const buttons = wrapper.findAllComponents({ name: 'BButton' });
+      expect(buttons[0].classes()).toContain('active');
+      expect(buttons[0].attributes('aria-pressed')).toBe('true');
+      expect(buttons[1].classes()).not.toContain('active');
+      expect(buttons[1].attributes('aria-pressed')).toBe('false');
     });
 
     it('Has group role and aria-label on container', () => {
@@ -178,13 +190,24 @@ describe('ChoiceCallback', () => {
       expect(buttons).toHaveLength(3);
     });
 
-    it('Has proper aria-label for each button', async () => {
+    it('Announces accessible name from visible text', async () => {
       wrapper.vm.selected.value = 1;
       await wrapper.vm.$nextTick();
 
       const buttons = wrapper.findAllComponents({ name: 'BButton' });
-      expect(buttons[1].attributes('aria-label')).toBe('Option B (selected)');
-      expect(buttons[2].attributes('aria-label')).toBe('Option C ');
+      expect(buttons[1].text()).toBe('Option B');
+      expect(buttons[2].text()).toBe('Option C');
+    });
+
+    it('Marks the pressed button with the active class and aria-pressed', async () => {
+      wrapper.vm.selected.value = 1;
+      await wrapper.vm.$nextTick();
+
+      const buttons = wrapper.findAllComponents({ name: 'BButton' });
+      expect(buttons[1].classes()).toContain('active');
+      expect(buttons[1].attributes('aria-pressed')).toBe('true');
+      expect(buttons[2].classes()).not.toContain('active');
+      expect(buttons[2].attributes('aria-pressed')).toBe('false');
     });
 
     it('Updates value and calls setInputValue on button click', async () => {
@@ -206,8 +229,8 @@ describe('ChoiceCallback', () => {
 
       const buttons = wrapper.findAllComponents({ name: 'BButton' });
       buttons.forEach((button, index) => {
-        expect(button.attributes('aria-label')).toBeDefined();
-        expect(button.attributes('aria-label')).toContain(`Option ${String.fromCharCode(65 + index)}`);
+        expect(button.text()).toContain(`Option ${String.fromCharCode(65 + index)}`);
+        expect(button.attributes('aria-pressed')).toBeDefined();
       });
     });
 
