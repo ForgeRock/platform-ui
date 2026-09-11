@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -100,5 +100,35 @@ describe('findChanges', () => {
     const result = findChanges(newObj, oldObj);
 
     expect(result).toEqual([{ value: 'value3', name: 'key3' }]);
+  });
+
+  it('should not report a change when a relationship object only differs in decorated metadata and objEqualityKey is set', () => {
+    const newObj = { manager: { _ref: 'managed/user/1', displayName: 'New Name' } };
+    const oldObj = { manager: { _ref: 'managed/user/1', displayName: 'Old Name' } };
+
+    const result = findChanges(newObj, oldObj, false, '_ref');
+
+    expect(result).toEqual([]);
+  });
+
+  it('should report a change when a relationship object\'s equality key differs', () => {
+    const newObj = { manager: { _ref: 'managed/user/2', displayName: 'Old Name' } };
+    const oldObj = { manager: { _ref: 'managed/user/1', displayName: 'Old Name' } };
+
+    const result = findChanges(newObj, oldObj, false, '_ref');
+
+    expect(result).toEqual([{ value: newObj.manager, name: 'manager' }]);
+  });
+
+  it('should fall back to full deep equality when the compared values are not objects carrying the equality key', () => {
+    const newObj = { address: { manager: { _ref: 'managed/user/1', displayName: 'New Name' }, city: 'Austin' } };
+    const oldObj = { address: { manager: { _ref: 'managed/user/1', displayName: 'Old Name' }, city: 'Austin' } };
+
+    // objEqualityKey only applies at the top level of the compared objects; here the top-level
+    // value ('address') doesn't itself carry '_ref', so it falls back to isEqual and the change
+    // to the nested manager.displayName is reported via the whole 'address' object.
+    const result = findChanges(newObj, oldObj, false, '_ref');
+
+    expect(result).toEqual([{ value: newObj.address, name: 'address' }]);
   });
 });

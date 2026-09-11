@@ -214,7 +214,7 @@ export default {
 
           saveData = this.generateUpdatePatch(originalSubProp, newSubProp);
         } else {
-          saveData = this.generateUpdatePatch(cloneDeep(this.oldFormFields), cloneDeep(formFields));
+          saveData = this.generateUpdatePatch(cloneDeep(this.oldFormFields), cloneDeep(formFields), '_ref');
         }
 
         idmInstance.patch(this.resourcePath, saveData).then(() => {

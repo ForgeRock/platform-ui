@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -31,10 +31,21 @@ export default {
   },
   methods: {
     findChanges,
-    generateUpdatePatch(original, newForm) {
+    /**
+     * Generates a JSON Patch payload representing the differences between the original
+     * and new form values.
+     *
+     * @param {Object} original - The original (pre-edit) form values.
+     * @param {Object} newForm - The new (post-edit) form values.
+     * @param {String} [objEqualityKey] - When a field's value is an object, compare it by this
+     *                  key (e.g. `_ref`) instead of by full deep equality. See findChanges.
+     *
+     * @returns {Array} An array of JSON Patch operations (`add`, `remove`, or `replace`).
+     */
+    generateUpdatePatch(original, newForm, objEqualityKey = null) {
       const clonedOriginal = cloneDeep(original);
       const clonedNew = cloneDeep(newForm);
-      const changes = this.findChanges(clonedNew, clonedOriginal);
+      const changes = this.findChanges(clonedNew, clonedOriginal, false, objEqualityKey);
 
       return map(changes, (formField) => {
         if (formField.value === '' || formField.value === null || formField.value === undefined) {
