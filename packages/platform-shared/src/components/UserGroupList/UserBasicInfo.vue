@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,8 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       :height="picDimension"
       :width="picDimension"
       data-testid="profile-picture"
-      :alt="$t('common.profilePicture')"
-      :aria-hidden="true"
+      alt=""
       :src="user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
     <div
       v-else

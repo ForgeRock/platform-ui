@@ -49,6 +49,7 @@ describe('UserBasicInfo', () => {
     const profilePicture = wrapper.find('[data-testid="profile-picture"]');
     const roleIcon = wrapper.find('[data-testid="role-icon"]');
     expect(profilePicture.exists()).toBe(true);
+    expect(profilePicture.attributes('alt')).toBe('');
     expect(roleIcon.exists()).toBe(false);
   });
 
