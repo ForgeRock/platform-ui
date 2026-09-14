@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { useBreadcrumbStore } from '@forgerock/platform-shared/src/stores/breadcrumb';
@@ -17,6 +18,7 @@ import * as resourceUtil from '@forgerock/platform-shared/src/utils/governance/r
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import * as AccountsApi from '@/api/governance/AccountApi';
+import store from '@/store';
 import AccountsDetails from './AccountsDetails';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
@@ -61,9 +63,12 @@ const testAccount = {
       },
     },
   },
+  account: {
+    username: 'account-user',
+  },
 };
 
-function mountComponent(accountType, props = {}) {
+function mountComponent(accountType, props = {}, isAdmin = false, governanceDevEnabled = true) {
   const account = cloneDeep(testAccount);
   if (accountType === 'orphan') {
     delete account.user;
@@ -84,16 +89,23 @@ function mountComponent(accountType, props = {}) {
   AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockReturnValue(Promise.resolve({}));
   CommonsApi.getGlossarySchema = jest.fn().mockReturnValue(Promise.resolve({}));
 
-  setupTestPinia();
+  mockModal();
+  setupTestPinia(isAdmin ? { user: { idmRoles: ['adminUser'], idmUIAdminRoles: ['adminUser'] } } : undefined);
+  store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
   wrapper = mount(AccountsDetails, {
     global: {
       plugins: [Notifications],
+      stubs: {
+        // the shared edit modal fetches its own data and renders its own
+        // success modal, which would shadow the delete-flow modal under test
+        EditAccountModal: true,
+      },
       mocks: {
         $t: (t) => t,
         $bvModal: { show: jest.fn(), hide: jest.fn() },
       },
     },
-    props,
+    props: { isTesting: true, ...props },
   });
 }
 
@@ -171,7 +183,78 @@ describe('AccountsDetails', () => {
     const tabContainer = wrapper.find('.tabs');
     const tabs = tabContainer.findAll('li');
 
+    expect(tabs.length).toBe(2);
+    expect(tabs.map((tab) => tab.text())).not.toContain('governance.accounts.details.tabs.objectProperties');
+  });
+
+  it('shows the Account Properties content in the Details tab', async () => {
+    mountComponent();
+    await flushPromises();
+
+    const objectProperties = wrapper.findComponent({ name: 'ObjectProperties' });
+    expect(objectProperties.exists()).toBe(true);
+    expect(objectProperties.props('objectProperties')).toEqual(testAccount.account);
+    expect(objectProperties.props('schema')).toEqual({});
+    expect(objectProperties.props('enableCollapse')).toBe(true);
+    expect(objectProperties.props('isCollapsed')).toBe(false);
+
+    await objectProperties.find('.section-header').trigger('click');
+    await wrapper.vm.$nextTick();
+
+    expect(objectProperties.props('isCollapsed')).toBe(true);
+    expect(objectProperties.find('.collapse.show').exists()).toBe(false);
+  });
+
+  it('collapses the Account Details card when its header is clicked', async () => {
+    mountComponent();
+    await flushPromises();
+
+    const detailsTab = wrapper.findComponent({ name: 'DetailsTab' });
+    expect(detailsTab.props('enableCollapse')).toBe(true);
+    expect(detailsTab.props('isCollapsed')).toBe(false);
+
+    await detailsTab.find('.section-header').trigger('click');
+    await wrapper.vm.$nextTick();
+
+    expect(detailsTab.props('isCollapsed')).toBe(true);
+    expect(detailsTab.find('.collapse.show').exists()).toBe(false);
+  });
+
+  it('defaults to Details when the removed Object Properties route is requested', async () => {
+    mockRouter({ params: { accountId: testAccount.id, tab: 'objectProperties' } });
+    mountComponent();
+    await flushPromises();
+
+    expect(wrapper.vm.tabIndex).toBe(0);
+    expect(wrapper.find('.tabs').text()).not.toContain('governance.accounts.details.tabs.objectProperties');
+  });
+
+  it('deep links to the Object Properties tab when the flag is off', async () => {
+    mockRouter({ params: { accountId: testAccount.id, tab: 'objectProperties' } });
+    mountComponent(undefined, {}, false, false);
+    await flushPromises();
+
+    expect(wrapper.vm.tabIndex).toBe(1);
+    expect(wrapper.find('.tabs').text()).toContain('governance.accounts.details.tabs.objectProperties');
+  });
+
+  it('renders a separate Object Properties tab when the flag is off', async () => {
+    mountComponent(undefined, {}, false, false);
+    await flushPromises();
+
+    const tabs = wrapper.find('.tabs').findAll('li');
     expect(tabs.length).toBe(3);
+    expect(tabs.map((tab) => tab.text())).toContain('governance.accounts.details.tabs.objectProperties');
+
+    const objectProperties = wrapper.findComponent({ name: 'ObjectProperties' });
+    expect(objectProperties.props('enableCollapse')).toBe(false);
+  });
+
+  it('hides the Delete Account panel when the flag is off', async () => {
+    mountComponent(undefined, { isEndUser: false }, true, false);
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="account-detail-delete"]').exists()).toBe(false);
   });
 
   it('shows the Activity tab for admin users', async () => {
@@ -180,7 +263,7 @@ describe('AccountsDetails', () => {
 
     const tabs = wrapper.find('.tabs').findAll('li');
     const tabTitles = tabs.map((tab) => tab.text());
-    expect(tabs.length).toBe(4);
+    expect(tabs.length).toBe(3);
     expect(tabTitles).toContain('governance.accounts.details.tabs.activity');
   });
 
@@ -193,6 +276,140 @@ describe('AccountsDetails', () => {
     expect(tabTitles).not.toContain('governance.accounts.details.tabs.activity');
   });
 
+  it('shows the Delete Account panel for admin users', async () => {
+    mountComponent(undefined, { isEndUser: false }, true);
+    await flushPromises();
+
+    const deletePanel = wrapper.find('[data-testid="account-detail-delete"]');
+    expect(deletePanel.exists()).toBe(true);
+    expect(deletePanel.text()).toContain('deletePanel.deleteType');
+    expect(deletePanel.text()).toContain('common.cannotBeUndone');
+  });
+
+  it('hides the Delete Account panel for end users', async () => {
+    mountComponent();
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="account-detail-delete"]').exists()).toBe(false);
+  });
+
+  it('submits a deleteAccount request when the delete modal is confirmed', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
+    mountComponent(undefined, { isEndUser: false }, true);
+    await flushPromises();
+
+    await wrapper.find('[data-testid="account-detail-delete"] button').trigger('click');
+    await flushPromises();
+
+    const deleteModal = wrapper.findComponent({ name: 'DeleteModal' });
+    expect(deleteModal.exists()).toBe(true);
+    deleteModal.vm.$emit('delete-item');
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('deleteAccount', {
+      common: {
+        context: { type: 'admin' },
+      },
+      account: {
+        accountId: testAccount.keys.accountId,
+        applicationId: testAccount.application.id,
+      },
+    });
+    expect(wrapper.vm.requestId).toBe('request-1');
+  });
+
+  it('omits the admin context in the deleteAccount request for non-admin users', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
+    mountComponent(undefined, { isEndUser: false }, false);
+    await flushPromises();
+
+    wrapper.vm.showDeleteConfirmModal();
+    await flushPromises();
+
+    const deleteModal = wrapper.findComponent({ name: 'DeleteModal' });
+    expect(deleteModal.exists()).toBe(true);
+    deleteModal.vm.$emit('delete-item');
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('deleteAccount', {
+      account: {
+        accountId: testAccount.keys.accountId,
+        applicationId: testAccount.application.id,
+      },
+    });
+  });
+
+  it('shows the request confirmation modal with the created request id after deletion', async () => {
+    const modalShow = jest.fn();
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-9' } });
+    mountComponent(undefined, { isEndUser: false }, true);
+    await flushPromises();
+
+    wrapper.vm.bvModal.value.show = modalShow;
+    await wrapper.find('[data-testid="account-detail-delete"] button').trigger('click');
+    await flushPromises();
+    wrapper.findComponent({ name: 'DeleteModal' }).vm.$emit('delete-item');
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalled();
+    expect(wrapper.vm.requestId).toBe('request-9');
+    expect(modalShow).toHaveBeenCalledWith('delete-account-success');
+    const successModal = wrapper.findComponent({ name: 'RequestSubmitSuccessModal' });
+    expect(successModal.exists()).toBe(true);
+    expect(successModal.props('requestId')).toBe('request-9');
+  });
+
+  it('navigates back to the accounts list after the delete confirmation modal closes', async () => {
+    const { routerPush } = mockRouter({ params: { accountId: testAccount.id } });
+    jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
+    mountComponent(undefined, { isEndUser: false }, true);
+    await flushPromises();
+
+    await wrapper.find('[data-testid="account-detail-delete"] button').trigger('click');
+    await flushPromises();
+    wrapper.findComponent({ name: 'DeleteModal' }).vm.$emit('delete-item');
+    await flushPromises();
+
+    const successModal = wrapper.findComponent({ name: 'RequestSubmitSuccessModal' });
+    expect(successModal.props('routerPath')).toBe('Accounts');
+    // closing the success modal is what navigates back to the list
+    expect(routerPush).not.toHaveBeenCalled();
+    // the navigation is bound to the inner BModal's hidden event
+    successModal.findComponent({ name: 'BModal' }).vm.$emit('hidden');
+    await flushPromises();
+    expect(routerPush).toHaveBeenCalledWith({ name: 'Accounts' });
+  });
+
+  it('does not show the request confirmation modal when the deleteAccount request fails', async () => {
+    const modalShow = jest.fn();
+    jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockRejectedValue(new Error('fail'));
+    mountComponent(undefined, { isEndUser: false }, true);
+    await flushPromises();
+
+    wrapper.vm.bvModal.value.show = modalShow;
+    await wrapper.find('[data-testid="account-detail-delete"] button').trigger('click');
+    await flushPromises();
+    wrapper.findComponent({ name: 'DeleteModal' }).vm.$emit('delete-item');
+    await flushPromises();
+
+    expect(wrapper.vm.requestId).toBe('');
+    expect(modalShow).not.toHaveBeenCalledWith('delete-account-success');
+    expect(wrapper.vm.isDeleting).toBe(false);
+  });
+
+  it('shows an error and does not navigate when the deleteAccount request fails', async () => {
+    jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockRejectedValue(new Error('fail'));
+    mountComponent(undefined, { isEndUser: false }, true);
+    await flushPromises();
+
+    await wrapper.find('[data-testid="account-detail-delete"] button').trigger('click');
+    await flushPromises();
+    wrapper.findComponent({ name: 'DeleteModal' }).vm.$emit('delete-item');
+    await flushPromises();
+
+    expect(wrapper.vm.isDeleting).toBe(false);
+  });
+
   it('should not display entitlement tab for non user account', async () => {
     mountComponent('orphan');
     await flushPromises();
@@ -200,11 +417,11 @@ describe('AccountsDetails', () => {
     const tabContainer = wrapper.find('.tabs');
     const tabs = tabContainer.findAll('li');
 
-    expect(tabs.length).toBe(2);
+    expect(tabs.length).toBe(1);
   });
 
   async function activateEntitlementsTab() {
-    const tabLink = wrapper.find('.tabs').findAll('li')[2].find('a');
+    const tabLink = wrapper.find('.tabs').findAll('li')[1].find('a');
     await tabLink.trigger('click');
     await flushPromises();
     return wrapper.findComponent(FrGovResourceTable);
@@ -399,6 +616,7 @@ describe('AccountsDetails', () => {
     AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockResolvedValue({});
     CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({});
     setupTestPinia();
+    store.state.SharedStore.governanceDevEnabled = true;
     wrapper = mount(AccountsDetails, {
       global: { plugins: [Notifications], mocks: { $t: (t) => t } },
     });
@@ -419,6 +637,7 @@ describe('AccountsDetails', () => {
     AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockResolvedValue({});
     CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({});
     setupTestPinia();
+    store.state.SharedStore.governanceDevEnabled = true;
     wrapper = mount(AccountsDetails, {
       global: { plugins: [Notifications], mocks: { $t: (t) => t } },
     });

@@ -188,6 +188,12 @@ describe('ItemDetailsModal', () => {
     });
 
     it('marks the application logo image as decorative with an empty alt attribute', async () => {
+      // No mappingNames on this item, so getApplicationRequestForm falls back to
+      // listing all form assignments for the application — mock it to avoid an
+      // un-mocked axios call, which is captured as a console-error snapshot failure in CI
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationFormAssignments')
+        .mockResolvedValue({ data: { result: [] } });
+
       wrapper = setup({
         glossarySchema: [],
         item: {

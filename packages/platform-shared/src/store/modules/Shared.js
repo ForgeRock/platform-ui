@@ -34,6 +34,7 @@ const defaultState = {
   googleFontsApiKey: '',
   googleMapsApiKey: '',
   governanceAgentsEnabled: false,
+  governanceDevEnabled: false,
   governanceEnabled: false,
   governanceEnabledV4: false,
   governanceRoleMiningEnabled: false,

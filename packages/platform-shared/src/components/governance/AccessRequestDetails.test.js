@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,10 +9,13 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import store from '@/store';
 import i18n from '@/i18n';
 import AccessRequestDetails from './AccessRequestDetails';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi', () => ({
   getGlossarySchema: jest.fn().mockResolvedValue({ data: {} }),
   getIgaUiConfig: jest.fn().mockResolvedValue({ data: {} }),
@@ -43,6 +46,7 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
 describe('AccessRequestDetails', () => {
   const setup = (props = { requestId: '1' }) => {
     setupTestPinia({ user: { userId: '1234' } });
+    store.state.SharedStore.governanceDevEnabled = true;
     return mount(AccessRequestDetails, {
       global: {
         plugins: [i18n],
@@ -121,6 +125,13 @@ describe('AccessRequestDetails', () => {
         displayName: 'Request Display Name',
       },
     }));
+    // account requests trigger application and object-type-schema lookups
+    ApplicationsApi.getApplication = jest.fn().mockResolvedValue({
+      data: { ...mockRequest().application },
+    });
+    ApplicationsApi.getObjectTypeSchema = jest.fn().mockResolvedValue({
+      data: { properties: {} },
+    });
   });
 
   describe('@Component Tests', () => {
@@ -225,6 +236,26 @@ describe('AccessRequestDetails', () => {
       await flushPromises();
       const strongText = wrapper.find('strong');
       expect(strongText.exists()).toBeFalsy();
+    });
+
+    it('shows the application in the requested item card for an account request', async () => {
+      const accountRequest = mockRequest();
+      accountRequest.requestType = 'createAccount';
+      accountRequest.request.account = {
+        accountId: 'account-1',
+        applicationId: '2',
+        objectType: 'User',
+      };
+      AccessRequestApi.getRequest = jest.fn().mockReturnValue(Promise.resolve({
+        data: accountRequest,
+      }));
+      const wrapper = setup();
+      await flushPromises();
+
+      const detail = findByTestId(wrapper, 'request-detail');
+      expect(detail.text()).toContain('Application Information');
+      expect(detail.text()).toContain('My Azure App');
+      expect(detail.text()).not.toContain('—');
     });
   });
 });

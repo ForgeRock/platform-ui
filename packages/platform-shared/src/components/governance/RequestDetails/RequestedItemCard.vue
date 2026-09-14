@@ -128,7 +128,11 @@ of the MIT license. See the LICENSE file for details. -->
         :glossary-schema="glossarySchema.entitlement || []"
         modal-id="requestDetailsEntitlementModal" />
       <FrApplicationModal
-        :application="{ ...request.application, applicationOwners: request.applicationOwner, glossary: request.glossary } || {}"
+        :application="{
+          ...resolvedApplication,
+          applicationOwners: request.applicationOwner || resolvedApplication?.applicationOwner,
+          glossary: request.glossary,
+        } || {}"
         :glossary-schema="glossarySchema.application || []"
         modal-id="requestDetailsApplicationModal" />
     </template>
@@ -149,7 +153,8 @@ of the MIT license. See the LICENSE file for details. -->
  * agent read permissions.
  * For role requests: shows the role name.
  * @component RequestedItemCard
- * @prop {Object} request - The raw request data object
+ * @prop {Object} request - The raw request data object. For account requests the
+ *   resolved application must be provided at request.application by the parent.
  * @prop {Object} glossarySchema - Glossary schemas keyed by type (application, entitlement, role)
  * @prop {String} requestType - The request type (e.g. 'entitlementGrant', 'roleGrant')
  */
@@ -199,7 +204,7 @@ const isAgentRequestType = computed(() => ['createAgent', 'modifyAgent', 'delete
 const headerTitle = computed(() => {
   if (isRoleRequestType.value) return i18n.global.t('governance.requestModal.detailsTab.roleInformation');
   if (isAgentRequestType.value) return i18n.global.t('governance.requestModal.detailsTab.agentInformation');
-  if (['applicationGrant', 'applicationRemove'].includes(props.requestType)) return i18n.global.t('governance.requestModal.detailsTab.applicationInformation');
+  if (['applicationGrant', 'applicationRemove', 'createAccount', 'modifyAccount', 'deleteAccount'].includes(props.requestType)) return i18n.global.t('governance.requestModal.detailsTab.applicationInformation');
   return i18n.global.t('governance.requestModal.detailsTab.entitlementInformation');
 });
 const roleDetails = computed(() => ({
@@ -211,8 +216,22 @@ const roleDetails = computed(() => ({
 const roleName = computed(() => props.request?.role?.name);
 const accountName = computed(() => props.request?.descriptor?.idx?.['/account']?.displayName);
 const entitlementName = computed(() => props.request?.descriptor?.idx?.['/entitlement']?.displayName);
-const applicationName = computed(() => props.request?.application?.name);
-const applicationLogo = computed(() => getApplicationLogo(props.request?.application));
+
+// The application to display. Account requests may carry it anywhere in the stored
+// payload (top level from the backend or in the request's account block) — resolution
+// from the application id belongs to the parent (DetailsTab), which owns the lookup
+// and its disconnected fallback and passes the result in through `request.application`.
+// Application lookups can also return the application nested under an "application"
+// key (grant-shaped responses carry the name there instead of at the top level),
+// so unwrap that object when the top level has no name.
+const resolvedApplication = computed(() => {
+  const app = props.request?.application;
+  if (!app) return null;
+  return app.name ? app : { ...app, ...app.application };
+});
+
+const applicationName = computed(() => resolvedApplication.value?.name);
+const applicationLogo = computed(() => getApplicationLogo(resolvedApplication.value));
 
 // Agent requests stamp the agent's record top-level on the request (account,
 // descriptor, application, glossary — same fields as a cert line item), so the

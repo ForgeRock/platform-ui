@@ -147,7 +147,13 @@ of the MIT license. See the LICENSE file for details. -->
       </BCollapse>
     </BCard>
   </template>
+  <FrEditAccountModal
+    v-if="governanceDevEnabled"
+    :current-item="account"
+    :is-testing="isTesting"
+    @account-saved="getGlossary" />
   <BModal
+    v-else
     id="UpdateAccountModal"
     no-close-on-backdrop
     size="lg"
@@ -193,19 +199,21 @@ import {
 } from 'bootstrap-vue';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrUserDetails from '@forgerock/platform-shared/src/components/governance/UserDetails';
-import { saveAccountGlossaryAttributesData, getAccountGlossaryAttributesData } from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrEditAccountModal from '@forgerock/platform-shared/src/components/governance/LCM/Accounts/Edit/EditAccountModal';
+import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
+import { getAccountGlossaryAttributesData, saveAccountGlossaryAttributesData } from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import dayjs from 'dayjs';
-import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import { getAccountTypeVariant, adjustAccountGlossaryForDisplay } from '../utils/accountUtility';
 import accountConstants from '../utils/accountConstants';
+import store from '@/store';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -245,9 +253,10 @@ const accountSubType = ref(null);
 const actors = ref([]);
 const displayPairs = ref([]);
 const loading = ref(true);
-const saving = ref(false);
 const accountSubTypeObject = ref({});
+const saving = ref(false);
 
+const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 const isCorrelated = computed(() => props.account?.user);
 const isMachine = computed(() => accountType.value.toLowerCase() === accountConstants.ACCOUNT_TYPES.MACHINE);
 const updateSchema = computed(() => adjustAccountGlossaryForDisplay(glossaryValues.value.accountType || accountType.value, glossarySchema.value));
@@ -376,7 +385,11 @@ function updateGlossaryValues(value) {
 }
 
 function editAccountDetails() {
-  bvModal.value.show('UpdateAccountModal');
+  if (governanceDevEnabled.value) {
+    bvModal.value.show('editAccountModal');
+  } else {
+    bvModal.value.show('UpdateAccountModal');
+  }
 }
 
 function closeModal() {

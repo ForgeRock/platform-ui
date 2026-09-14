@@ -9,6 +9,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import store from '@/store';
 import accountConstants from '../utils/accountConstants';
 import DetailsTab from './DetailsTab';
 
@@ -137,12 +138,14 @@ describe('DetailsTab', () => {
     jest.clearAllMocks();
   });
 
-  async function mountComponent(accountType, readOnly, additionalProps) {
+  async function mountComponent(accountType, readOnly, additionalProps, governanceDevEnabled = true) {
     jest.spyOn(AccountApi, 'getAccountGlossaryAttributesData')
       .mockResolvedValue({ data: accountType === 'machine' ? machineValues : testValues });
 
     jest.spyOn(CommonsApi, 'getGlossarySchema')
       .mockResolvedValue({ data: { '/iga/governance/account': testSchema } });
+
+    store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
 
     const wrapper = mount(DetailsTab, {
       props: {
@@ -152,6 +155,10 @@ describe('DetailsTab', () => {
         ...additionalProps,
       },
       global: {
+        stubs: {
+          // the shared edit modal fetches its own data; irrelevant to these display tests
+          EditAccountModal: true,
+        },
         mocks: {
           $t: (text) => text,
           $store: {
@@ -228,11 +235,9 @@ describe('DetailsTab', () => {
       expect(button.exists()).toBe(false);
     });
 
-    it('save account configuration correctly', async () => {
+    it('edit button opens the shared editAccountModal', async () => {
       const wrapper = await mountComponent('orphan', false);
       const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
-
-      AccountApi.saveAccountGlossaryAttributesData = jest.fn().mockImplementation(() => Promise.resolve({}));
 
       const cards = wrapper.findAll('.card');
       expect(cards.length).toBe(2);
@@ -240,18 +245,7 @@ describe('DetailsTab', () => {
       const button = cards[0].find('.btn-link');
       button.trigger('click');
       await wrapper.vm.$nextTick();
-      expect(showSpy).toHaveBeenCalledWith('UpdateAccountModal');
-
-      const saveButton = wrapper.find('.btn-primary');
-      saveButton.trigger('click');
-      await wrapper.vm.$nextTick();
-      await flushPromises();
-
-      expect(AccountApi.saveAccountGlossaryAttributesData).toHaveBeenCalledWith('system/Target/User/102', testValues);
-      await wrapper.vm.$nextTick();
-      await flushPromises();
-
-      expect(wrapper.vm.saving).toBe(false);
+      expect(showSpy).toHaveBeenCalledWith('editAccountModal');
     });
 
     it('does not read new glossary data if choosing to use existing', async () => {
@@ -272,6 +266,59 @@ describe('DetailsTab', () => {
 
       const visibleAfterCollapse = cards[2].find('.collapse.show');
       expect(visibleAfterCollapse.exists()).toBe(false);
+    });
+  });
+
+  describe('governanceDevEnabled flag off (legacy update modal)', () => {
+    it('renders the legacy UpdateAccountModal and edit button opens it', async () => {
+      const wrapper = await mountComponent('orphan', false, {}, false);
+      const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+
+      const cards = wrapper.findAll('.card');
+      const button = cards[0].find('.btn-link');
+      button.trigger('click');
+      await wrapper.vm.$nextTick();
+      expect(showSpy).toHaveBeenCalledWith('UpdateAccountModal');
+      expect(wrapper.find('#UpdateAccountModal').exists()).toBe(true);
+    });
+
+    it('save account configuration correctly', async () => {
+      const wrapper = await mountComponent('default', false, {}, false);
+      const saveSpy = jest.spyOn(AccountApi, 'saveAccountGlossaryAttributesData').mockResolvedValue({});
+
+      wrapper.vm.glossaryValues = { accountType: 'default', customAttribute9: 'test', accountSubtype: 'x' };
+      await wrapper.vm.$nextTick();
+
+      await wrapper.vm.save();
+
+      expect(saveSpy).toHaveBeenCalledWith('system/Target/User/102', { accountType: 'default', customAttribute9: 'test' });
+      expect(wrapper.vm.saving).toBe(false);
+    });
+
+    it('does not persist accountSubtype for non-machine accounts', async () => {
+      const wrapper = await mountComponent('default', false, {}, false);
+      const saveSpy = jest.spyOn(AccountApi, 'saveAccountGlossaryAttributesData').mockResolvedValue({});
+
+      wrapper.vm.glossaryValues = { accountType: 'default', accountSubtype: 'sub' };
+      await wrapper.vm.$nextTick();
+
+      await wrapper.vm.save();
+
+      const payload = saveSpy.mock.calls[0][1];
+      expect(payload.accountSubtype).toBeUndefined();
+    });
+
+    it('keeps accountSubtype for machine accounts', async () => {
+      const wrapper = await mountComponent('machine', false, {}, false);
+      const saveSpy = jest.spyOn(AccountApi, 'saveAccountGlossaryAttributesData').mockResolvedValue({});
+
+      wrapper.vm.glossaryValues = { accountType: 'machine', accountSubtype: 'printer' };
+      await wrapper.vm.$nextTick();
+
+      await wrapper.vm.save();
+
+      const payload = saveSpy.mock.calls[0][1];
+      expect(payload.accountSubtype).toBe('printer');
     });
   });
 });

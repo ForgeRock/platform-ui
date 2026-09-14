@@ -88,3 +88,5 @@ export function adjustAccountGlossaryForDisplay(accountType, glossarySchema) {
   });
   return accountSchema;
 }
+
+export { getAccountObjectTypeNameFromApp } from '@forgerock/platform-shared/src/utils/governance/entitlements';

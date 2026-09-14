@@ -5,9 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, flushPromises } from '@vue/test-utils';
+import { mount, flushPromises, DOMWrapper } from '@vue/test-utils';
+import { BDropdownItem } from 'bootstrap-vue';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
+import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import store from '@/store';
 import Accounts from './Accounts';
 
 const mockRouterPush = jest.fn();
@@ -29,7 +35,11 @@ const createData = (params = {}, totalCount = 100) => {
     sampleData.push(
       {
         id: `id-${i}`,
+        keys: {
+          accountId: `account-id-${i}`,
+        },
         application: {
+          id: `application-id-${i}`,
           name: `${searchQuery} application name ${i}`,
           templateName: 'templateName',
           icon: 'test',
@@ -61,9 +71,22 @@ const createData = (params = {}, totalCount = 100) => {
 };
 
 describe('Accounts Unit', () => {
-  function mountComponent(props = {}) {
+  function mountComponent({ admin = true, governanceDevEnabled = true } = {}) {
+    mockModal();
+    setupTestPinia({
+      user: admin
+        ? { idmRoles: ['adminUser'], idmUIAdminRoles: ['adminUser'] }
+        : { idmRoles: [], idmUIAdminRoles: [] },
+    });
+    store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
+    // #app is the teleport target of the row actions menu (ActionsMenu)
+    const container = createAppContainer();
     const wrapper = mount(Accounts, {
+      attachTo: container,
       global: {
+        // Accounts.vue relies on the app's global BootstrapVue plugin for
+        // BDropdownItem; register it so the custom row actions resolve
+        components: { BDropdownItem },
         stubs: {
           ApplicationSearch: true,
         },
@@ -78,10 +101,17 @@ describe('Accounts Unit', () => {
           },
         },
       },
-      props,
     });
     return wrapper;
   }
+
+  const standardAccountMocks = () => {
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValueOnce(Promise.resolve(createData()))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+  };
 
   it('Accounts load on search call', async () => {
     const wrapper = mountComponent();
@@ -100,7 +130,12 @@ describe('Accounts Unit', () => {
     expect(wrapper.vm.accounts.length).toBe(10);
     expect(wrapper.vm.accounts[0]).toEqual(expect.objectContaining(
       {
-        application: { icon: 'test', name: ' application name 0', templateName: 'templateName' },
+        application: {
+          icon: 'test',
+          id: 'application-id-0',
+          name: ' application name 0',
+          templateName: 'templateName',
+        },
         id: 'id-0',
         displayName: ' name 0',
         type: 'Default',
@@ -216,11 +251,7 @@ describe('Accounts Unit', () => {
 
   it('Click on row loads details page', async () => {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    standardAccountMocks();
     wrapper.vm.navigateToEdit = jest.fn();
 
     await flushPromises();
@@ -232,120 +263,217 @@ describe('Accounts Unit', () => {
     expect(wrapper.vm.navigateToEdit).toHaveBeenCalledWith('id-3');
   });
 
-  it('App-scoped accounts compose the application filter with the tab filter', async () => {
-    const wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App' });
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
-
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-    await wrapper.vm.$nextTick();
-
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      queryFilter: '(application.id eq \'app-1\') and !(glossary.idx./account.accountType eq "agent")',
-    }));
-  });
-
-  it('App-scoped navigation includes the origin query params', async () => {
-    const wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App' });
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
-    await flushPromises();
-
-    wrapper.vm.navigateToEdit('id-3');
-
-    expect(mockRouterPush).toHaveBeenCalledWith({
-      name: 'AccountsDetails',
-      params: { accountId: 'id-3', tab: 'details' },
-      query: { originAppId: 'app-1', originAppName: 'My App' },
-    });
-  });
-
-  it('App-scoped navigation includes the originating side tab when hosted under one', async () => {
-    const wrapper = mountComponent({ applicationIds: ['app-1'], applicationName: 'My App', objectTab: 'accounts' });
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
-    await flushPromises();
-
-    wrapper.vm.navigateToEdit('id-3');
-
-    expect(mockRouterPush).toHaveBeenCalledWith({
-      name: 'AccountsDetails',
-      params: { accountId: 'id-3', tab: 'details' },
-      query: { originAppId: 'app-1', originAppName: 'My App', originObjectTab: 'accounts' },
-    });
-  });
-
-  it('Standalone navigation does not include origin query params', async () => {
+  it('opens the New Account modal from the toolbar button', async () => {
     const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+    standardAccountMocks();
     await flushPromises();
 
-    wrapper.vm.navigateToEdit('id-3');
+    const showSpy = jest.spyOn(wrapper.vm.bvModal.value, 'show');
+    const newAccountButton = wrapper.findAll('button').find((button) => button.text().includes('governance.accounts.newAccount.button'));
+    await newAccountButton.trigger('click');
 
-    expect(mockRouterPush).toHaveBeenCalledWith({
-      name: 'AccountsDetails',
-      params: { accountId: 'id-3', tab: 'details' },
+    expect(showSpy).toHaveBeenCalledWith('newAccountModal');
+  });
+
+  describe('Edit action', () => {
+    it('opens the edit modal with the selected account', async () => {
+      const wrapper = mountComponent();
+      standardAccountMocks();
+      await flushPromises();
+
+      const showSpy = jest.spyOn(wrapper.vm.bvModal.value, 'show');
+      wrapper.vm.showEditAccountModal(wrapper.vm.accounts[0]);
+
+      expect(wrapper.vm.itemToEdit).toEqual(expect.objectContaining({ id: 'id-0' }));
+      expect(showSpy).toHaveBeenCalledWith('editAccountModal');
+    });
+
+    it('offers the edit action to admin users', async () => {
+      const wrapper = mountComponent();
+      standardAccountMocks();
+      await flushPromises();
+
+      // the row menu renders its items only once opened (they teleport into #app)
+      await wrapper.find('[data-testid="actions-"] button').trigger('click');
+      await flushPromises();
+
+      // the edit item renders its icon ligature ("edit") before the label
+      const bodyWrapper = new DOMWrapper(document.body);
+      const editItems = bodyWrapper.findAll('[role="menuitem"]').filter((item) => item.text().includes('Edit'));
+      expect(editItems).toHaveLength(1);
+      // drop the teleported menu before the next test queries document.body
+      wrapper.unmount();
+    });
+
+    it('does not offer the edit action to non-admin users, matching the delete option', async () => {
+      const wrapper = mountComponent({ admin: false });
+      standardAccountMocks();
+      await flushPromises();
+
+      await wrapper.find('[data-testid="actions-"] button').trigger('click');
+      await flushPromises();
+
+      const bodyWrapper = new DOMWrapper(document.body);
+      const editItems = bodyWrapper.findAll('[role="menuitem"]').filter((item) => item.text().includes('Edit'));
+      expect(editItems).toHaveLength(0);
+      const actionsCell = wrapper.findComponent({ name: 'ActionsCell' });
+      expect(actionsCell.props('deleteOption')).toBe(false);
+      wrapper.unmount();
     });
   });
 
-  it('renders table-only scoped to the given account type when accountType is set', async () => {
-    const wrapper = mountComponent({ accountType: 'uncorrelated', isEmbedded: true });
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
-    await flushPromises();
+  describe('Delete action', () => {
+    it('offers the delete action to admin users', async () => {
+      const wrapper = mountComponent();
+      standardAccountMocks();
+      await flushPromises();
 
-    // Internal filter tabs are hidden — the account type is hosted externally
-    expect(wrapper.find('.account-tabs').exists()).toBe(false);
-    expect(wrapper.vm.selectedTab).toBe(2);
-    // Machine tab hides the type/user columns; uncorrelated hides user/accountSubType
-    const headers = wrapper.findAll('th').map((th) => th.text());
-    expect(headers).not.toContain('governance.accounts.user');
-    expect(headers).not.toContain('governance.accounts.accountSubType');
+      const actionsCell = wrapper.findComponent({ name: 'ActionsCell' });
+      expect(actionsCell.props('deleteOption')).toBe(true);
+    });
+
+    it('does not offer the delete action to non-admin users', async () => {
+      // the detail page and New Account button are admin-gated; the row menu must match
+      const wrapper = mountComponent({ admin: false });
+      standardAccountMocks();
+      await flushPromises();
+
+      const actionsCell = wrapper.findComponent({ name: 'ActionsCell' });
+      expect(actionsCell.props('deleteOption')).toBe(false);
+    });
+
+    it('opens confirmation modal with selected account', async () => {
+      const wrapper = mountComponent();
+      standardAccountMocks();
+      await flushPromises();
+
+      const showSpy = jest.spyOn(wrapper.vm.bvModal.value, 'show');
+      wrapper.vm.showDeleteConfirmModal(wrapper.vm.accounts[0]);
+
+      expect(wrapper.vm.itemToDelete).toEqual(expect.objectContaining({ id: 'id-0' }));
+      expect(showSpy).toHaveBeenCalledWith('deleteAccountModal');
+    });
+
+    it('hidden event clears selection without submitting request', async () => {
+      const wrapper = mountComponent();
+      standardAccountMocks();
+      const submitSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest');
+      await flushPromises();
+
+      const hideSpy = jest.spyOn(wrapper.vm.bvModal.value, 'hide');
+      wrapper.vm.showDeleteConfirmModal(wrapper.vm.accounts[0]);
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.hideDeleteConfirmModal();
+      await wrapper.vm.$nextTick();
+
+      expect(submitSpy).not.toHaveBeenCalled();
+      expect(wrapper.vm.itemToDelete).toBeNull();
+      expect(hideSpy).toHaveBeenCalledWith('deleteAccountModal');
+    });
+
+    it('delete confirmation submits deleteAccount request with account id', async () => {
+      const wrapper = mountComponent();
+      standardAccountMocks();
+      const submitSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
+      await flushPromises();
+
+      const showSpy = jest.spyOn(wrapper.vm.bvModal.value, 'show');
+      const hideSpy = jest.spyOn(wrapper.vm.bvModal.value, 'hide');
+      wrapper.vm.showDeleteConfirmModal(wrapper.vm.accounts[0]);
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.deleteAccountItem();
+      await flushPromises();
+
+      expect(submitSpy).toHaveBeenCalledWith('deleteAccount', {
+        common: {
+          context: { type: 'admin' },
+        },
+        account: {
+          accountId: 'account-id-0',
+          applicationId: 'application-id-0',
+        },
+      });
+      expect(wrapper.vm.isDeleting).toBe(false);
+      expect(wrapper.vm.itemToDelete).toBeNull();
+      expect(wrapper.vm.deleteRequestId).toBe('request-1');
+      expect(hideSpy).toHaveBeenCalledWith('deleteAccountModal');
+      expect(showSpy).toHaveBeenCalledWith('delete-account-success');
+    });
+
+    it('delete confirmation omits the admin context for non-admin users', async () => {
+      const wrapper = mountComponent({ admin: false });
+      standardAccountMocks();
+      const submitSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ data: { id: 'request-1' } });
+      await flushPromises();
+
+      wrapper.vm.showDeleteConfirmModal(wrapper.vm.accounts[0]);
+      await wrapper.vm.$nextTick();
+
+      wrapper.vm.deleteAccountItem();
+      await flushPromises();
+
+      expect(submitSpy).toHaveBeenCalledWith('deleteAccount', {
+        account: {
+          accountId: 'account-id-0',
+          applicationId: 'application-id-0',
+        },
+      });
+    });
+
+    it('failed delete shows error and resets state', async () => {
+      const wrapper = mountComponent();
+      standardAccountMocks();
+      const submitSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockRejectedValue(new Error('delete failed'));
+      await flushPromises();
+
+      wrapper.vm.showDeleteConfirmModal(wrapper.vm.accounts[0]);
+      await wrapper.vm.$nextTick();
+
+      await wrapper.vm.deleteAccountItem();
+      await flushPromises();
+
+      expect(submitSpy).toHaveBeenCalledWith('deleteAccount', {
+        common: {
+          context: { type: 'admin' },
+        },
+        account: {
+          accountId: 'account-id-0',
+          applicationId: 'application-id-0',
+        },
+      });
+      expect(wrapper.vm.isDeleting).toBe(false);
+      expect(wrapper.vm.itemToDelete).toBeNull();
+    });
   });
 
-  it('re-filters when the hosted accountType prop changes', async () => {
-    const wrapper = mountComponent({ accountType: 'all', applicationIds: ['app-1'] });
-    AccountApi.getAccounts = jest.fn().mockResolvedValue(createData());
-    await flushPromises();
-    expect(wrapper.vm.selectedTab).toBe(0);
+  describe('governanceDevEnabled flag off', () => {
+    it('hides the New Account button, Edit action, and delete option; keeps search alignment', async () => {
+      const wrapper = mountComponent({ governanceDevEnabled: false });
+      standardAccountMocks();
+      await flushPromises();
 
-    AccountApi.getAccounts.mockClear();
-    wrapper.setProps({ accountType: 'machine' });
-    await flushPromises();
+      const newAccountButton = wrapper.findAll('button').find((button) => button.text().includes('governance.accounts.newAccount.button'));
+      expect(newAccountButton).toBeUndefined();
 
-    expect(wrapper.vm.selectedTab).toBe(3);
-    expect(AccountApi.getAccounts).toHaveBeenCalled();
-    expect(wrapper.vm.getQueryFilterForAccounts(wrapper.vm.selectedTab)).toContain('accountType eq "machine"');
-  });
+      const actionsCell = wrapper.findComponent({ name: 'ActionsCell' });
+      expect(actionsCell.props('deleteOption')).toBe(false);
 
-  it('keeps internal vertical filter tabs when accountType is not set', async () => {
-    const wrapper = mountComponent();
-    AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve(createData()))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
-    await flushPromises();
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      expect(searchInput.classes()).toContain('ml-auto');
+    });
 
-    expect(wrapper.find('.card-tabs-vertical').exists()).toBe(true);
-    expect(wrapper.vm.selectedTab).toBe(0);
+    it('does not render the account LCM modals', () => {
+      const wrapper = mountComponent({ governanceDevEnabled: false });
+      expect(wrapper.findComponent({ name: 'AddAccountModal' }).exists()).toBe(false);
+      expect(wrapper.findComponent({ name: 'EditAccountModal' }).exists()).toBe(false);
+    });
+
+    it('renders the account LCM modals when the flag is on', () => {
+      const wrapper = mountComponent({ governanceDevEnabled: true });
+      expect(wrapper.findComponent({ name: 'AddAccountModal' }).exists()).toBe(true);
+      expect(wrapper.findComponent({ name: 'EditAccountModal' }).exists()).toBe(true);
+    });
   });
 });

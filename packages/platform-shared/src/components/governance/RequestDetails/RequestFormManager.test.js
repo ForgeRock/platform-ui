@@ -13,6 +13,7 @@ import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
+import store from '@/store';
 import RequestFormManager from './RequestFormManager';
 import i18n from '@/i18n';
 
@@ -70,7 +71,7 @@ SchemaApi.getSchema.mockImplementation(() => Promise.resolve({
 jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockResolvedValue({ data: { result: [] } });
 
 describe('RequestFormManager', () => {
-  const setup = (propsData = {}) => {
+  const setup = (propsData = {}, governanceDevEnabled = true) => {
     const props = {
       request: {
         decision: {
@@ -88,6 +89,7 @@ describe('RequestFormManager', () => {
     };
 
     setupTestPinia(undefined, false);
+    store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
     return mount(RequestFormManager, {
       global: {
         plugins: [i18n],
@@ -226,6 +228,159 @@ describe('RequestFormManager', () => {
 
       expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account', undefined);
       expect(wrapper.find('[label="testLabel"]').exists()).toBe(false);
+    });
+  });
+
+  describe('account LCM request', () => {
+    const accountRequestItem = {
+      phases: [{ name: 'testPhase' }],
+      workflow: { id: 'testWorkflowId' },
+      requestType: 'createAccount',
+      request: {
+        account: {
+          applicationId: 'testApp',
+          objectType: '__ACCOUNT__',
+          object: { userName: 'existing.user' },
+          glossary: { location: 'oslo' },
+        },
+      },
+    };
+
+    beforeEach(() => {
+      // spies in this suite persist across tests — start each test with clean history
+      RequestFormAssignmentsApi.getApplicationRequestFormAssignment.mockClear();
+      RequestFormAssignmentsApi.getFormAssignmentByRequestType.mockClear();
+    });
+
+    it('queries the application/object-type assignment with the create operation for createAccount', async () => {
+      const applicationAssignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      const requestTypeSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType');
+      const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: testFormSchema });
+
+      const wrapper = setup({ request: accountRequestItem });
+      await flushPromises();
+
+      expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', '__ACCOUNT__', 'create');
+      expect(requestTypeSpy).not.toHaveBeenCalled();
+      expect(formSpy).toHaveBeenCalledWith('someForm');
+      expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+    });
+
+    it('queries the assignment with the update operation for modifyAccount', async () => {
+      const applicationAssignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: testFormSchema });
+
+      setup({
+        request: {
+          ...accountRequestItem,
+          requestType: 'modifyAccount',
+        },
+      });
+      await flushPromises();
+
+      expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', '__ACCOUNT__', 'update');
+      expect(formSpy).toHaveBeenCalledWith('someForm');
+    });
+
+    it('seeds the form with the submitted account values', async () => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      jest.spyOn(RequestFormsApi, 'getRequestForm').mockResolvedValue({ data: testFormSchema });
+
+      const wrapper = setup({ request: accountRequestItem });
+      await flushPromises();
+
+      expect(wrapper.vm.formValue).toEqual({
+        object: { userName: 'existing.user' },
+        glossary: { location: 'oslo' },
+      });
+    });
+
+    it('does not query an application assignment when the account block is missing ids', async () => {
+      const applicationAssignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue({ data: { result: [] } });
+
+      setup({
+        request: {
+          ...accountRequestItem,
+          request: { account: {} },
+        },
+      });
+      await flushPromises();
+
+      expect(applicationAssignmentSpy).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['found', { data: { result: [{ formId: 'someForm' }] } }, true],
+      ['not found', { data: { result: [] } }, false],
+    ])('emits formResolved with %s assignment', async (_name, assignmentResult, expected) => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue(assignmentResult);
+      jest.spyOn(RequestFormsApi, 'getRequestForm').mockResolvedValue({ data: testFormSchema });
+
+      const wrapper = setup({ request: accountRequestItem });
+      await flushPromises();
+
+      expect(wrapper.emitted('formResolved')[0][0]).toBe(expected);
+    });
+
+    it('emits formResolved(false) when the assignment query fails', async () => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockRejectedValue(new Error('lookup failed'));
+
+      const wrapper = setup({ request: accountRequestItem });
+      await flushPromises();
+
+      expect(wrapper.emitted('formResolved')[0][0]).toBe(false);
+    });
+
+    it('emits the full request payload with the form values merged into the account block on save', async () => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      jest.spyOn(RequestFormsApi, 'getRequestForm').mockResolvedValue({ data: testFormSchema });
+
+      const wrapper = setup({ request: accountRequestItem });
+      await flushPromises();
+
+      wrapper.vm.formValue = { object: { userName: 'changed.user' } };
+      await wrapper.vm.handleSave();
+
+      expect(wrapper.emitted('save')[0][0]).toEqual({
+        account: {
+          applicationId: 'testApp',
+          objectType: '__ACCOUNT__',
+          object: { userName: 'changed.user' },
+          glossary: { location: 'oslo' },
+        },
+      });
+    });
+
+    it('treats an account request as a plain custom request when the flag is off', async () => {
+      const applicationAssignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment');
+      const requestTypeSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType')
+        .mockResolvedValue({ data: { result: [] } });
+      const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm');
+      // spies in this suite persist across tests — start with clean history
+      applicationAssignmentSpy.mockClear();
+      formSpy.mockClear();
+      requestTypeSpy.mockClear();
+
+      const wrapper = setup({ request: accountRequestItem }, false);
+      await flushPromises();
+
+      expect(applicationAssignmentSpy).not.toHaveBeenCalled();
+      expect(formSpy).not.toHaveBeenCalled();
+      // flag-off falls back to the plain custom-request form lookup (master behavior)
+      expect(requestTypeSpy).toHaveBeenCalledWith('createAccount');
+      // no account merge on save — the flag-off default custom-request payload wins
+      wrapper.vm.formValue = { object: { userName: 'changed.user' } };
+      await wrapper.vm.handleSave();
+      expect(wrapper.emitted('save')[0][0]).toEqual({ object: { userName: 'changed.user' } });
     });
   });
 

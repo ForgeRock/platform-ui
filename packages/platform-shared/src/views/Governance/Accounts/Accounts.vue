@@ -42,6 +42,20 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
                 <template v-if="selectedTab === index">
                   <BCardHeader class="p-0">
+                    <div
+                      v-if="isAdmin && governanceDevEnabled"
+                      class="w-100">
+                      <BButton
+                        class="ml-3 mr-3 mt-2"
+                        variant="primary"
+                        @click="showNewAccountModal">
+                        <FrIcon
+                          icon-class="mr-2"
+                          name="add">
+                          {{ $t('governance.accounts.newAccount.button') }}
+                        </FrIcon>
+                      </BButton>
+                    </div>
                     <BButtonToolbar
                       class="btn-toolbar d-flex flex-row justify-content-between p-3 border-bottom-0 app-toolbar">
                       <div
@@ -54,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :application-search-results="applicationSearchResults" />
                       </div>
                       <FrSearchInput
-                        class="ml-auto"
+                        :class="{ 'ml-auto': !governanceDevEnabled }"
                         v-model="searchQuery"
                         :placeholder="i18n.global.t('common.search')"
                         @clear="clear"
@@ -143,9 +157,10 @@ of the MIT license. See the LICENSE file for details. -->
                     <template #cell(actions)="{ item }">
                       <FrActionsCell
                         :divider="false"
-                        :delete-option="false"
-                        :edit-option="false">
-                        <template #custom-bottom-actions>
+                        :delete-option="isAdmin && governanceDevEnabled"
+                        :edit-option="false"
+                        @delete-clicked="showDeleteConfirmModal(item)">
+                        <template #custom-top-actions>
                           <BDropdownItem @click="navigateToEdit(item.id)">
                             <template>
                               <FrIcon
@@ -156,7 +171,18 @@ of the MIT license. See the LICENSE file for details. -->
                             </template>
                           </BDropdownItem>
                           <BDropdownItem
-                            v-if="item.item.decision?.accessRequest?.grantEndDate"
+                            v-if="isAdmin && governanceDevEnabled"
+                            @click="showEditAccountModal(item)">
+                            <FrIcon
+                              icon-class="mr-2"
+                              name="edit">
+                              {{ i18n.global.t('common.edit') }}
+                            </FrIcon>
+                          </BDropdownItem>
+                        </template>
+                        <template #custom-bottom-actions>
+                          <BDropdownItem
+                            v-if="item.item?.decision?.accessRequest?.grantEndDate"
                             @click="showExtendRequestModal(item)">
                             <FrIcon
                               icon-class="mr-2"
@@ -190,12 +216,29 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <FrExtendRequestModal
       :current-item="itemToExtendRequest" />
+    <template v-if="governanceDevEnabled">
+      <FrAddAccountModal @account-saved="search" />
+      <FrEditAccountModal
+        :current-item="itemToEdit"
+        @account-saved="search" />
+      <FrDeleteModal
+        id="deleteAccountModal"
+        :is-deleting="isDeleting"
+        :translated-item-type="$t('common.account')"
+        @hidden="hideDeleteConfirmModal"
+        @delete-item="deleteAccountItem" />
+      <FrRequestSubmitSuccessModal
+        modal-id="delete-account-success"
+        :request-id="deleteRequestId"
+        :success-text="$t('governance.accounts.deleteAccount.success')" />
+    </template>
   </BContainer>
 </template>
 
 <script setup>
 import {
   BBadge,
+  BButton,
   BButtonToolbar,
   BCard,
   BCardHeader,
@@ -223,14 +266,21 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrApplicationSearch from '@forgerock/platform-shared/src/components/governance/ApplicationSearch/ApplicationSearch';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
+import FrRequestSubmitSuccessModal from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccessModal';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getAccounts } from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrExtendRequestModal from '@forgerock/platform-shared/src/components/governance/ExtendRequestModal/ExtendRequestModal';
+import FrAddAccountModal from '@forgerock/platform-shared/src/components/governance/LCM/Accounts/Add/AddAccountModal';
+import FrEditAccountModal from '@forgerock/platform-shared/src/components/governance/LCM/Accounts/Edit/EditAccountModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import store from '@/store';
 import accountConstants from './utils/accountConstants';
 import { getAccountTypeVariant, getAccountDisplayName } from './utils/accountUtility';
 import i18n from '@/i18n';
@@ -278,6 +328,13 @@ const applicationSearchResults = ref([]);
 const selectedApplications = ref([]);
 const queryAll = ref(true);
 const itemToExtendRequest = ref(null);
+const itemToEdit = ref(null);
+const itemToDelete = ref(null);
+const isDeleting = ref(false);
+const deleteRequestId = ref('');
+const userStore = useUserStore();
+const isAdmin = computed(() => userStore.adminUser);
+const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 const { bvModal } = useBvModal();
 
 const fields = computed(() => {
@@ -558,6 +615,65 @@ function navigateToEdit(accountId) {
 function showExtendRequestModal(item) {
   itemToExtendRequest.value = item;
   bvModal.value.show('ExtendRequestModal');
+}
+
+/**
+ * Shows the modal for creating a new account.
+ */
+function showNewAccountModal() {
+  bvModal.value.show('newAccountModal');
+}
+
+/**
+ * Shows the modal for editing an account's properties.
+ * @param {Object} item Account object to edit
+ */
+function showEditAccountModal(item) {
+  itemToEdit.value = item;
+  bvModal.value.show('editAccountModal');
+}
+
+/**
+ * Shows the confirmation modal for deleting an account.
+ * @param {Object} item Account object to delete
+ */
+function showDeleteConfirmModal(item) {
+  itemToDelete.value = item;
+  bvModal.value.show('deleteAccountModal');
+}
+
+/**
+ * Hides the confirmation modal for deleting an account.
+ */
+function hideDeleteConfirmModal() {
+  itemToDelete.value = null;
+  bvModal.value.hide('deleteAccountModal');
+}
+
+/**
+ * Deletes the selected account by submitting a custom governance request.
+ */
+async function deleteAccountItem() {
+  isDeleting.value = true;
+  try {
+    const { data } = await submitCustomRequest('deleteAccount', {
+      // admin context marks the request for auto-approval by the backend workflow
+      ...(isAdmin.value ? { common: { context: { type: 'admin' } } } : {}),
+      account: {
+        accountId: itemToDelete.value.keys.accountId,
+        applicationId: itemToDelete.value.application?.id,
+      },
+    });
+    deleteRequestId.value = data.id;
+    await search();
+    hideDeleteConfirmModal();
+    bvModal.value.show('delete-account-success');
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.request.requestError'));
+    hideDeleteConfirmModal();
+  } finally {
+    isDeleting.value = false;
+  }
 }
 
 /**

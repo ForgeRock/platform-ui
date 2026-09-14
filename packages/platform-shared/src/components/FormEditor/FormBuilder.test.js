@@ -274,6 +274,58 @@ describe('FormBuilder', () => {
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ field1: 'test1' });
   });
 
+  it('keeps is-valid false when a field outside an invalid section changes, but the section itself is still invalid', async () => {
+    const wrapper = setup({}, [
+      {
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            label: 'Field 1',
+            layout: { columns: 12, offset: 0 },
+            validation: { required: true },
+          },
+        ],
+      },
+      {
+        id: 'row2',
+        fields: [
+          {
+            type: 'section',
+            model: 'section1',
+            layout: { columns: 12, offset: 0 },
+            fields: [
+              {
+                id: 'sectionRow1',
+                fields: [
+                  {
+                    type: 'string',
+                    model: 'field2',
+                    label: 'Field 2',
+                    layout: { columns: 12, offset: 0 },
+                    validation: { required: true },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    await flushPromises();
+    expect(wrapper.emitted('is-valid').at(-1)[0]).toBe(false);
+
+    // Fill in field1 (outside the section) only; field2 inside the section is still blank,
+    // so the form must remain invalid even though this change makes the outer meta valid.
+    const field1Input = wrapper.find('input');
+    await field1Input.setValue('value1');
+    await flushPromises();
+
+    expect(wrapper.emitted('is-valid').at(-1)[0]).toBe(false);
+  });
+
   it('should render correctly a text input', async () => {
     const wrapper = setup({}, [
       {

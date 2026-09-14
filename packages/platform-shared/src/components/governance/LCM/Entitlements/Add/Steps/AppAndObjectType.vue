@@ -41,7 +41,9 @@ of the MIT license. See the LICENSE file for details. -->
         </BMedia>
       </template>
     </FrGovResourceSelect>
-    <BCollapse :visible="application.length > 0">
+    <BCollapse
+      v-if="!applicationOnly"
+      :visible="application.length > 0">
       <FrField
         class="mb-4"
         name="objectType"
@@ -84,6 +86,14 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  applicationOnly: {
+    type: Boolean,
+    default: false,
+  },
+  filterByAccountAttribute: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const application = ref('');
@@ -107,15 +117,15 @@ function optionFunction(resource) {
  * @param {Object} query - The query search term.
  */
 function queryParamFunction(query) {
-  const filters = ['application.objectTypes.accountAttribute co ""'];
+  const filters = [];
+  if (props.filterByAccountAttribute) filters.push('application.objectTypes.accountAttribute co ""');
   if (props.excludeDisconnected) filters.push('!(application.isDisconnected eq "true")');
-  const baseFilter = filters.join(' and ');
-  const queryFilter = query
-    ? `application.name co "${query}" and ${baseFilter}`
-    : baseFilter;
+  if (query) filters.unshift(`application.name co "${query}"`);
   return {
-    pageSize: 10,
-    queryFilter,
+    // GovResourceSelect does not paginate, so fetch a large page to keep the
+    // full application list reachable in the dropdown
+    pageSize: 100,
+    queryFilter: filters.length ? filters.join(' and ') : 'true',
   };
 }
 
@@ -158,7 +168,11 @@ function setObjectTypes(selectedApplication) {
     }));
 
   emit('selected:application', selectedApplication?.application);
-  emitValue('');
+  if (props.applicationOnly) {
+    emit('input', { applicationId: application.value.split('/').pop() });
+  } else {
+    emitValue('');
+  }
 }
 
 </script>

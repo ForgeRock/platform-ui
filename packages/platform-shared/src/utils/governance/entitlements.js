@@ -24,6 +24,37 @@ export function getObjectTypeFromAccountId(item, keys, isDisconnected) {
 }
 
 /**
+ * Extracts the account object type name — the object type that maps to the
+ * managed user resource — from a saved application object. Relies on the
+ * mapping-name convention `system{Connector}{ObjectType}_managed{Resource}`
+ * (getMappingNames) and on only the account object type having an inbound
+ * mapping to user. When the app declares object types, the parsed name is
+ * canonicalized against them (casing); when it does not (e.g. catalog items),
+ * the raw parsed name is returned.
+ * @param {Object} app application object (connectorId, mappingNames, objectTypes?)
+ * @returns {String|undefined} the account object type name, e.g. '__ACCOUNT__'
+ */
+export function getAccountObjectTypeNameFromApp(app) {
+  const connectorPrefix = `system${app?.connectorId || ''}`.toLowerCase();
+  const parsedNames = (app?.mappingNames || [])
+    .map((mappingName) => {
+      const n = mappingName.toLowerCase();
+      if (!n.startsWith(connectorPrefix) || !n.endsWith('_user')) return undefined;
+      const managedIndex = n.lastIndexOf('_managed');
+      return managedIndex > connectorPrefix.length
+        ? mappingName.slice(connectorPrefix.length, managedIndex)
+        : undefined;
+    })
+    .filter(Boolean);
+  if (!parsedNames.length) return undefined;
+
+  const objectType = app.objectTypes?.find(
+    (type) => parsedNames.some((name) => name.toLowerCase() === type.name?.toLowerCase()),
+  )?.name;
+  return objectType ?? parsedNames[0];
+}
+
+/**
  * Retrieves the account attribute from the provided item.
  *
  * The function checks for the `accountAttribute` property in the `item.item` object.

@@ -6,8 +6,58 @@
  */
 
 import {
-  getAccountAttribute, getModifyEntitlementObjectType, getObjectTypeFromAccountId, normalizeOwners,
+  getAccountAttribute,
+  getAccountObjectTypeNameFromApp,
+  getModifyEntitlementObjectType,
+  getObjectTypeFromAccountId,
+  normalizeOwners,
 } from './entitlements';
+
+describe('getAccountObjectTypeNameFromApp', () => {
+  it('returns the object type canonicalized against app.objectTypes casing', () => {
+    const app = {
+      connectorId: 'Ldap',
+      objectTypes: [{ name: '__ACCOUNT__' }],
+      mappingNames: ['systemLdap__account___managedAlpha_user'],
+    };
+    expect(getAccountObjectTypeNameFromApp(app)).toBe('__ACCOUNT__');
+  });
+
+  it('returns the parsed mapping name when the app declares no objectTypes', () => {
+    const app = {
+      connectorId: 'testConnector',
+      mappingNames: ['systemTestconnectorAccount_managedAlpha_user'],
+    };
+    expect(getAccountObjectTypeNameFromApp(app)).toBe('Account');
+  });
+
+  it('ignores non-inbound-user mappings and object types that match nothing', () => {
+    const app = {
+      connectorId: 'Ldap',
+      objectTypes: [{ name: '__GROUP__' }, { name: '__ACCOUNT__' }],
+      mappingNames: [
+        'systemLdap__GROUP___managedLdap_group',
+        'manageduser_systemLdap__ACCOUNT__',
+        'systemOther__ACCOUNT___managedAlpha_user',
+        'systemLdap__ACCOUNT___managedAlpha_user',
+      ],
+    };
+    expect(getAccountObjectTypeNameFromApp(app)).toBe('__ACCOUNT__');
+  });
+
+  it('returns undefined when no inbound user mapping exists', () => {
+    const app = {
+      connectorId: 'Ldap',
+      objectTypes: [{ name: '__GROUP__' }],
+      mappingNames: ['systemLdap__GROUP__managedLdap_group'],
+    };
+    expect(getAccountObjectTypeNameFromApp(app)).toBeUndefined();
+  });
+
+  it('returns undefined when mappingNames is missing', () => {
+    expect(getAccountObjectTypeNameFromApp({ connectorId: 'Ldap' })).toBeUndefined();
+  });
+});
 
 describe('getObjectTypeFromAccountId', () => {
   it('returns item.objectType when present, without parsing accountId', () => {

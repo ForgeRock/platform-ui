@@ -17,7 +17,10 @@ import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as RoleApi from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import store from '@/store';
 import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
 
@@ -29,6 +32,7 @@ jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/RoleApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi', () => ({
   getGlossaryAttributes: jest.fn().mockResolvedValue({
     data: { result: [], resultCount: 0, totalCount: 0 },
@@ -181,8 +185,9 @@ jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockReso
 
 describe('DetailsTab', () => {
   let routerPush;
-  const setup = (propsData = {}) => {
+  const setup = (propsData = {}, governanceDevEnabled = true) => {
     routerPush = mockRouter().routerPush;
+    store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
     const props = {
       item: {
         details: {
@@ -304,6 +309,419 @@ describe('DetailsTab', () => {
     });
     await flushPromises();
     expect(wrapper.text()).not.toContain('Requested');
+  });
+
+  describe('account request', () => {
+    const accountFormSchema = {
+      form: {
+        fields: [
+          {
+            id: 'rowid',
+            fields: [
+              {
+                label: 'testLabel',
+                model: 'testModel',
+                name: 'test',
+                type: 'string',
+                layout: {
+                  offset: 0,
+                  columns: 12,
+                },
+                validation: {
+                  required: true,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    it.each(['createAccount', 'modifyAccount', 'deleteAccount'])('shows account request details for a %s request and skips the role/OOTB blocks', async (accountRequestType) => {
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: accountRequestType,
+            request: {
+              account: {
+                accountId: 'account-1',
+                applicationId: 'app-1',
+                objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'RequestAccountDetails' }).exists()).toBe(true);
+      expect(wrapper.findComponent({ name: 'RequestRoleDetails' }).exists()).toBe(false);
+      expect(wrapper.text()).toContain('Application Information');
+    });
+
+    it('shows the application and requested-for user in their own cards', async () => {
+      ApplicationsApi.getApplication.mockResolvedValue({
+        data: { name: 'Workday', id: 'app-1' },
+      });
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'modifyAccount',
+            user: {
+              givenName: 'Jane', sn: 'Doe', userName: 'jane.doe',
+            },
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(ApplicationsApi.getApplication).toHaveBeenCalledWith('app-1');
+      const itemCard = wrapper.findComponent({ name: 'RequestedItemCard' });
+      expect(itemCard.props('request').application).toEqual({ name: 'Workday', id: 'app-1' });
+      const userInfoCard = wrapper.findComponent({ name: 'UserInfoCard' });
+      expect(userInfoCard.props('user')).toEqual({ givenName: 'Jane', sn: 'Doe', userName: 'jane.doe' });
+    });
+
+    it('retries the application lookup for disconnected applications so the card shows application data', async () => {
+      ApplicationsApi.getApplication
+        .mockRejectedValueOnce(new Error('not found'))
+        .mockResolvedValueOnce({
+          data: { name: 'AS Disconnected', id: 'app-2', isDisconnected: true },
+        });
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-2', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(ApplicationsApi.getApplication).toHaveBeenCalledWith('app-2', { disconnected: true });
+      const itemCard = wrapper.findComponent({ name: 'RequestedItemCard' });
+      expect(itemCard.props('request').application).toEqual({ name: 'AS Disconnected', id: 'app-2', isDisconnected: true });
+    });
+
+    it('uses the backend-provided application when the request carries one at the top level', async () => {
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'modifyAccount',
+            application: { name: 'Workday', id: 'app-1' },
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      const itemCard = wrapper.findComponent({ name: 'RequestedItemCard' });
+      expect(itemCard.props('request').application).toEqual({ name: 'Workday', id: 'app-1' });
+    });
+
+    it('loads the application when the item arrives after mount', async () => {
+      ApplicationsApi.getApplication.mockResolvedValue({
+        data: { name: 'Workday', id: 'app-1' },
+      });
+      // parents like TaskDetail mount the tab before the request data resolves
+      const wrapper = setup({ item: { details: {}, rawData: {} } });
+      await flushPromises();
+      expect(wrapper.findComponent({ name: 'RequestedItemCard' }).exists()).toBe(false);
+
+      await wrapper.setProps({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(ApplicationsApi.getApplication).toHaveBeenCalledWith('app-1');
+      const itemCard = wrapper.findComponent({ name: 'RequestedItemCard' });
+      expect(itemCard.props('request').application).toEqual({ name: 'Workday', id: 'app-1' });
+    });
+
+    it('performs a single application lookup even though the card is rendered immediately', async () => {
+      // regression: the card used to run its own getApplication lookup in
+      // parallel with the tab's, issuing two requests for the same application
+      ApplicationsApi.getApplication.mockClear();
+      ApplicationsApi.getApplication.mockResolvedValue({
+        data: { name: 'Workday', id: 'app-1' },
+      });
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(ApplicationsApi.getApplication).toHaveBeenCalledTimes(1);
+      const itemCard = wrapper.findComponent({ name: 'RequestedItemCard' });
+      expect(itemCard.props('request').application).toEqual({ name: 'Workday', id: 'app-1' });
+    });
+
+    it('loads the application when the account block arrives after the request type', async () => {
+      ApplicationsApi.getApplication.mockClear();
+      ApplicationsApi.getApplication.mockResolvedValue({
+        data: { name: 'Workday', id: 'app-1' },
+      });
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+          },
+        },
+      });
+      await flushPromises();
+      expect(ApplicationsApi.getApplication).not.toHaveBeenCalled();
+
+      await wrapper.setProps({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(ApplicationsApi.getApplication).toHaveBeenCalledWith('app-1');
+      const itemCard = wrapper.findComponent({ name: 'RequestedItemCard' });
+      expect(itemCard.props('request').application).toEqual({ name: 'Workday', id: 'app-1' });
+    });
+
+    it('does not render a user card when the request has no target user', async () => {
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: { applicationId: 'app-1', objectType: 'User' },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'UserInfoCard' }).exists()).toBe(false);
+    });
+
+    it('allows saving when the current user is a permitted active actor for the current phase', async () => {
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'modifyAccount',
+            phases: [{ name: 'phase-1' }],
+            decision: {
+              actors: {
+                active: [
+                  { id: 'current-user', phase: 'phase-1', permissions: { modify: true } },
+                ],
+              },
+            },
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      useUserStore().userId = 'current-user';
+      await flushPromises();
+
+      const accountDetails = wrapper.findComponent({ name: 'RequestAccountDetails' });
+      expect(accountDetails.props('readOnly')).toBe(false);
+    });
+
+    it('keeps the account request read-only when there is no matching permitted actor', async () => {
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'modifyAccount',
+            phases: [{ name: 'phase-1' }],
+            decision: {
+              actors: {
+                active: [
+                  { id: 'someone-else', phase: 'phase-1', permissions: { modify: true } },
+                ],
+              },
+            },
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      useUserStore().userId = 'current-user';
+      await flushPromises();
+
+      const accountDetails = wrapper.findComponent({ name: 'RequestAccountDetails' });
+      expect(accountDetails.props('readOnly')).toBe(true);
+    });
+
+    it('keeps a deleteAccount request read-only even with a permitted active actor', async () => {
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'deleteAccount',
+            phases: [{ name: 'phase-1' }],
+            decision: {
+              actors: {
+                active: [
+                  { id: 'current-user', phase: 'phase-1', permissions: { modify: true } },
+                ],
+              },
+            },
+            request: {
+              account: { accountId: 'account-1' },
+            },
+          },
+        },
+      });
+      useUserStore().userId = 'current-user';
+      await flushPromises();
+
+      const accountDetails = wrapper.findComponent({ name: 'RequestAccountDetails' });
+      expect(accountDetails.props('readOnly')).toBe(true);
+    });
+
+    it('renders no account branch when the flag is off', async () => {
+      ApplicationsApi.getApplication.mockClear();
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      }, false);
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'RequestAccountDetails' }).exists()).toBe(false);
+      expect(wrapper.findComponent({ name: 'RequestedItemCard' }).exists()).toBe(false);
+      expect(ApplicationsApi.getApplication).not.toHaveBeenCalled();
+    });
+
+    it.each(['createAccount', 'modifyAccount'])('shows only the assigned custom form for a %s request when one exists', async (accountRequestType) => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: accountFormSchema });
+
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: accountRequestType,
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      // custom form renders, OOTB account form does not
+      expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+      expect(wrapper.findComponent({ name: 'RequestAccountDetails' }).exists()).toBe(false);
+    });
+
+    it('falls back to the OOTB account form when no form is assigned', async () => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockResolvedValue({ data: { result: [] } });
+
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'RequestAccountDetails' }).exists()).toBe(true);
+    });
+
+    it('holds the OOTB account form back while the form assignment is still resolving', async () => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+        .mockReturnValue(new Promise(() => {}));
+
+      const wrapper = setup({
+        item: {
+          details: {},
+          rawData: {
+            requestType: 'createAccount',
+            request: {
+              account: {
+                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
+              },
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'RequestAccountDetails' }).exists()).toBe(false);
+      expect(wrapper.findComponent({ name: 'RequestFormManager' }).exists()).toBe(true);
+    });
   });
 
   describe('forms', () => {

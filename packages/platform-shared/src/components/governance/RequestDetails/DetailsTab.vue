@@ -12,6 +12,33 @@ of the MIT license. See the LICENSE file for details. -->
     :item="props.item || {}"
     :request="props.item?.rawData || {}"
     :read-only="props.readOnly" />
+  <template v-else-if="isAccountRequestType && governanceDevEnabled && props.item?.rawData">
+    <BRow
+      class="mb-2">
+      <BCol
+        class="mb-2"
+        sm="12"
+        :md="props.item?.rawData?.user ? '6' : '12'">
+        <FrRequestedItemCard
+          :request="{ ...props.item.rawData, application: accountApplication || props.item.rawData.application }"
+          :request-type="requestType" />
+      </BCol>
+      <BCol
+        v-if="props.item?.rawData?.user"
+        class="mb-2"
+        sm="12"
+        md="6">
+        <FrUserInfoCard :user="props.item.rawData.user" />
+      </BCol>
+    </BRow>
+    <FrRequestAccountDetails
+      v-if="showAccountRequestDetails"
+      @save="modifyRequest"
+      :saving-request="savingRequest"
+      :request="props.item.rawData.request || {}"
+      :request-type="requestType"
+      :read-only="!isAccountRequestEditable" />
+  </template>
   <BRow
     v-else-if="isOotbNoFormRequestType"
     class="mb-2">
@@ -55,6 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <FrRequestFormManager
       @save="modifyRequest"
+      @form-resolved="accountRequestFormResolved = $event"
       :saving-request="savingRequest"
       :is-approval="props.isApproval"
       :request="props.item?.rawData || {}"
@@ -95,6 +123,7 @@ import {
   computed,
   onMounted,
   ref,
+  watch,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import dayjs from 'dayjs';
@@ -107,16 +136,22 @@ import { requestAction, putCustomRequest } from '@forgerock/platform-shared/src/
 import { OOTB_NO_FORM_REQUEST_TYPES } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getApplication } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrRequestedItemCard from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestedItemCard';
 import FrUserInfoCard from '@forgerock/platform-shared/src/components/governance/RequestDetails/UserInfoCard';
 import FrRequestFormManager from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestFormManager';
 import FrRequestRoleDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestRoleDetails';
+import FrRequestAccountDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestAccountDetails';
+import store from '@/store';
 import i18n from '@/i18n';
 
 const router = useRouter();
+const userStore = useUserStore();
+const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 
 const props = defineProps({
   isApproval: {
@@ -147,14 +182,37 @@ const isLoading = ref(false);
 const phaseId = computed(() => props.item.rawData.phases?.[0]?.name);
 const requestType = computed(() => props.item.rawData.requestType);
 const glossarySchema = ref({ application: [], entitlement: [], role: [] });
+const accountApplication = ref(null);
 const roleSchema = ref(null);
 const requestRoleData = ref(null);
 const isInitialized = ref(false);
 const isOOTBNoFormRequestType = computed(() => OOTB_NO_FORM_REQUEST_TYPES.some((type) => type?.value === requestType?.value));
 const isRoleRequestType = computed(() => ['createRole', 'modifyRole', 'publishRole', 'deleteRole'].includes(requestType.value));
+const isAccountRequestType = computed(() => ['createAccount', 'modifyAccount', 'deleteAccount'].includes(requestType.value));
 const isOotbNoFormRequestType = computed(() => OOTB_NO_FORM_REQUEST_TYPES.some((type) => type?.value === requestType.value));
 // Agent requests resolve their target in RequestedItemCard; the glossary schema fetch only feeds application/entitlement/role cards
 const isAgentRequestType = computed(() => ['createAgent', 'modifyAgent', 'deleteAgent'].includes(requestType.value));
+/**
+ * Finds the active actor entry, if any, that corresponds to the current user —
+ * preferring one scoped to the request's current phase, and falling back to any
+ * matching-user entry otherwise.
+ */
+const currentUserActor = computed(() => {
+  const activeActors = props.item?.rawData?.decision?.actors?.active || [];
+  const matchesCurrentUser = (actor) => actor.id === userStore.userId || actor.userName === userStore.userName;
+  return activeActors.find((actor) => matchesCurrentUser(actor) && actor.phase === phaseId.value)
+    || activeActors.find((actor) => matchesCurrentUser(actor));
+});
+const canModifyAccountRequest = computed(() => Boolean(currentUserActor.value?.permissions?.modify));
+const isAccountRequestEditable = computed(() => ['createAccount', 'modifyAccount'].includes(requestType.value) && canModifyAccountRequest.value);
+// the RequestFormManager resolves the account request's assigned form async —
+// hold the OOTB account form back until it settles, then fall back to it only
+// when no form was assigned (otherwise both forms would render)
+const accountRequestFormResolved = ref(null);
+const showAccountRequestDetails = computed(() => (
+  isAccountRequestType.value
+  && accountRequestFormResolved.value === false
+));
 /**
  * Retrieves the details for a given item.
  * @param {Object} item - The item for which to retrieve the details.
@@ -194,6 +252,33 @@ async function getSchemaData() {
     }
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.certificationTask.errors.glossaryError'));
+  }
+}
+
+/**
+ * Loads the application referenced by an account request, so its name/logo
+ * can be shown in the requested-item card.
+ */
+async function loadAccountApplication() {
+  if (accountApplication.value) return;
+  // account request payloads submitted through the custom request endpoint carry
+  // the application id inside the request's account block
+  const applicationId = props.item?.rawData?.request?.account?.applicationId
+    || props.item?.rawData?.request?.applicationId
+    || props.item?.rawData?.application?.id;
+  if (!applicationId) return;
+  try {
+    const { data } = await getApplication(applicationId);
+    accountApplication.value = data;
+  } catch {
+    // the plain lookup 404s for disconnected applications; retry with the flag
+    try {
+      const { data } = await getApplication(applicationId, { disconnected: true });
+      accountApplication.value = data;
+    } catch {
+      // application info is supplementary — fall back to a blank card
+      accountApplication.value = null;
+    }
   }
 }
 
@@ -274,5 +359,20 @@ onMounted(async () => {
     await getSchemaData();
     isInitialized.value = true;
   }
+  if (isAccountRequestType.value && governanceDevEnabled.value) {
+    await loadAccountApplication();
+  }
 });
+
+// parents that populate the item asynchronously (task/approval flows) mount this
+// tab before the request data exists — load once the account request arrives, or
+// when its application id arrives after the request type was already set
+watch(
+  [() => props.item?.rawData?.requestType, () => props.item?.rawData?.request?.account?.applicationId],
+  ([newRequestType, applicationId]) => {
+    if (governanceDevEnabled.value && ['createAccount', 'modifyAccount', 'deleteAccount'].includes(newRequestType) && applicationId) {
+      loadAccountApplication();
+    }
+  },
+);
 </script>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -60,7 +60,7 @@ describe('AppAndObjectType', () => {
     expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
       'application',
       {
-        pageSize: 10,
+        pageSize: 100,
         queryFilter: 'application.objectTypes.accountAttribute co ""',
       },
       false,
@@ -77,11 +77,69 @@ describe('AppAndObjectType', () => {
     expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
       'application',
       {
-        pageSize: 10,
+        pageSize: 100,
         queryFilter: 'application.objectTypes.accountAttribute co "" and !(application.isDisconnected eq "true")',
       },
       false,
     );
+  });
+
+  it('omits the entitlement scope permission filter when overrideScopePermission is true', async () => {
+    wrapper = mount(AppAndObjectType, {
+      global: { plugins: [i18n] },
+      props: { overrideScopePermission: true },
+    });
+    await flushPromises();
+
+    expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
+      'application',
+      {
+        pageSize: 100,
+        queryFilter: 'application.objectTypes.accountAttribute co ""',
+      },
+      true,
+    );
+  });
+
+  it('omits the account attribute filter when filterByAccountAttribute is false', async () => {
+    wrapper = mount(AppAndObjectType, {
+      global: { plugins: [i18n] },
+      props: { filterByAccountAttribute: false },
+    });
+    await flushPromises();
+
+    expect(EntitlementApi.getApplicationList).toHaveBeenCalledWith(
+      'application',
+      {
+        pageSize: 100,
+        queryFilter: 'true',
+      },
+      false,
+    );
+  });
+
+  it('still applies a user-entered search filter when filterByAccountAttribute is false', () => {
+    wrapper = mount(AppAndObjectType, {
+      global: { plugins: [i18n] },
+      props: { filterByAccountAttribute: false },
+    });
+
+    expect(wrapper.vm.queryParamFunction('acme')).toEqual({
+      pageSize: 100,
+      queryFilter: 'application.name co "acme"',
+    });
+  });
+
+  it('combines excludeDisconnected with a search filter when filterByAccountAttribute is false', () => {
+    wrapper = mount(AppAndObjectType, {
+      global: { plugins: [i18n] },
+      props: { filterByAccountAttribute: false, excludeDisconnected: true },
+    });
+
+    expect(wrapper.vm.queryParamFunction('acme')).toEqual({
+      pageSize: 100,
+      queryFilter: 'application.name co "acme" and !(application.isDisconnected eq "true")',
+    });
   });
 
   it('selecting application type sets object type options and emits event', async () => {
@@ -115,6 +173,29 @@ describe('AppAndObjectType', () => {
 
     expect(wrapper.emitted('selected:application')[0]).toEqual([application.application]);
     expect(wrapper.emitted('input')[0]).toEqual([null]);
+  });
+
+  it('application-only mode hides object type and emits application id', async () => {
+    wrapper = mount(AppAndObjectType, {
+      global: { plugins: [i18n] },
+      props: { applicationOnly: true },
+    });
+    await flushPromises();
+
+    const application = {
+      application: {
+        name: 'TestApp',
+        id: 'TestId',
+        objectTypes: [],
+      },
+    };
+
+    wrapper.findComponent(FrGovResourceSelect).vm.$emit('input', 'TestId');
+    wrapper.findComponent(FrGovResourceSelect).vm.$emit('selected:option', application);
+    await flushPromises();
+
+    expect(wrapper.find('[label="Object Type"]').exists()).toBe(false);
+    expect(wrapper.emitted('input').at(-1)).toEqual([{ applicationId: 'TestId' }]);
   });
 
   it('selecting application and object type emits event', async () => {

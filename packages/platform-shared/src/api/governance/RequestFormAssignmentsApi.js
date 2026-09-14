@@ -115,6 +115,19 @@ export function getFormApplications(formId) {
 }
 
 /**
+ * Retrieves the form assignments for a specific application, across all object types
+ * and operations. Used when the account object type cannot be derived up front
+ * (e.g. disconnected applications, which have no inbound user mapping).
+ *
+ * @param {string} applicationId - The ID of the application.
+ * @returns {Promise} A promise that resolves to the application's form assignments.
+ */
+export function getApplicationFormAssignments(applicationId) {
+  const objectId = encodeURIComponent(`application/${applicationId}/`);
+  return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId co "${objectId}"`);
+}
+
+/**
  * Retrieves the request form assignment for a specific application and object type.
  *
  * @param {string} applicationId - The ID of the application.
@@ -122,6 +135,6 @@ export function getFormApplications(formId) {
  * @returns {Promise} A promise that resolves to the request form assignment.
  */
 export function getApplicationRequestFormAssignment(applicationId, objectType, operation = 'create') {
-  const objectId = `application/${applicationId}/${objectType}/${operation}`;
+  const objectId = encodeURIComponent(`application/${applicationId}/${objectType}/${operation}`);
   return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId eq "${objectId}"`);
 }

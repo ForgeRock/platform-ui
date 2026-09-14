@@ -15,6 +15,9 @@ import i18n from '@/i18n';
 import GovResourceTable from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+// The account modal fetches the object-type schema when opened — without this
+// mock the un-mocked axios call is captured as a console-error snapshot failure in CI
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {
@@ -543,6 +546,91 @@ describe('GovResourceTable', () => {
       // Second click: _showDetails should toggle back to false
       wrapper.vm.handleRowClick(item);
       expect(item._showDetails).toBe(false);
+    });
+
+    it('opens the account modal with a cleaned grant when showViewDetails is true and grantType is account', async () => {
+      const { wrapper } = await mountComponent({ showViewDetails: true });
+      const accountGrant = {
+        id: 'grant-1',
+        account: {
+          __NAME__: '2014',
+          metadata: { created: '2024-01-01' },
+          proxyAddresses: ['smtp:test@forgerock.com'],
+        },
+        application: { id: 'app-1', name: 'Test App' },
+        descriptor: { idx: { '/account': { displayName: 'Test Account' } } },
+        glossary: { idx: { '/account': { accountType: 'default' } } },
+        keys: { accountId: 'system/App/__ACCOUNT__/123' },
+      };
+
+      wrapper.vm.handleRowClick(accountGrant);
+      await flushPromises();
+
+      expect(wrapper.vm.accountModalGrant.account).toEqual({ __NAME__: '2014' });
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('gov-resource-account');
+      // The original row's account object must not be mutated by the cleanup
+      expect(accountGrant.account).toEqual({
+        __NAME__: '2014',
+        metadata: { created: '2024-01-01' },
+        proxyAddresses: ['smtp:test@forgerock.com'],
+      });
+    });
+
+    it('does not open the account modal when showViewDetails is false', async () => {
+      const { wrapper } = await mountComponent();
+      wrapper.vm.handleRowClick({ id: 'grant-1', account: { __NAME__: '2014' } });
+      await flushPromises();
+
+      expect(wrapper.vm.accountModalGrant).toBeNull();
+      expect(wrapper.vm.$bvModal.show).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onRowClicked()', () => {
+    const mockAccountRow = {
+      id: 'grant-1',
+      item: { type: 'accountGrant' },
+      account: { __NAME__: '2014' },
+      application: { id: 'app-1', name: 'Test App' },
+    };
+
+    it('opens the account modal when an account row is clicked with showViewDetails', async () => {
+      const { wrapper } = await mountComponent({ showViewDetails: true });
+      await wrapper.setProps({ items: [mockAccountRow] });
+      await flushPromises();
+
+      const table = findByTestId(wrapper, 'gov-resource-table');
+      await table.find('tbody tr').trigger('click');
+
+      expect(wrapper.vm.accountModalGrant).toEqual(expect.objectContaining({ id: 'grant-1' }));
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('gov-resource-account');
+    });
+
+    it('does not open the account modal when the click originates in the checkbox column', async () => {
+      const { wrapper } = await mountComponent({ showViewDetails: true, items: [mockAccountRow] });
+      await flushPromises();
+
+      wrapper.vm.onRowClicked(
+        wrapper.vm.itemsWithAssignment[0],
+        0,
+        { target: { closest: (selector) => (selector === '.checkbox-column' ? {} : null) } },
+      );
+
+      expect(wrapper.vm.accountModalGrant).toBeNull();
+      expect(wrapper.vm.$bvModal.show).not.toHaveBeenCalled();
+    });
+
+    it('opens the entitlement details modal when an entitlement row is clicked', async () => {
+      const { wrapper } = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
+      await wrapper.setProps({ items: mockItems });
+      await flushPromises();
+
+      const table = findByTestId(wrapper, 'gov-resource-table');
+      await table.find('tbody tr').trigger('click');
+
+      expect(wrapper.vm.accountModalGrant).toBeNull();
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('gov-resource');
+      expect(wrapper.emitted('row-clicked')).toBeFalsy();
     });
   });
 

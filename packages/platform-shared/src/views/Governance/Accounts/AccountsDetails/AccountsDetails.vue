@@ -25,17 +25,33 @@ of the MIT license. See the LICENSE file for details. -->
           :active="tabIndex === 0"
           lazy>
           <FrDetailsTab
+            v-if="governanceDevEnabled"
+            @toggle-collapse="isVisible.details = !isVisible.details"
+            enable-collapse
+            :is-collapsed="!isVisible.details"
             :account="account"
             :read-only="readOnly" />
+          <FrDetailsTab
+            v-else
+            :account="account"
+            :read-only="readOnly" />
+          <FrAccountObjectProperties
+            v-if="governanceDevEnabled"
+            class="mt-3"
+            @toggle-collapse="isVisible.properties = !isVisible.properties"
+            enable-collapse
+            :is-collapsed="!isVisible.properties"
+            :object-properties="objectProperties"
+            :schema="accountSchema" />
         </BTab>
         <BTab
+          v-if="!governanceDevEnabled"
           :title="$t('governance.accounts.details.tabs.objectProperties')"
           key="objectProps"
           lazy>
           <FrAccountObjectProperties
             :object-properties="objectProperties"
-            :schema="accountSchema"
-          />
+            :schema="accountSchema" />
         </BTab>
         <BTab
           :title="$t('governance.accounts.details.tabs.entitlements')"
@@ -73,12 +89,44 @@ of the MIT license. See the LICENSE file for details. -->
             :parent-resource-name="$t('common.account')" />
         </BTab>
       </BTabs>
+      <!-- Delete panel -->
+      <BCard
+        v-if="isAdmin && governanceDevEnabled && Object.keys(account).length > 0"
+        class="mb-5 mt-3"
+        data-testid="account-detail-delete">
+        <h3 class="h5 card-title">
+          {{ $t('deletePanel.deleteType', { type: $t('common.account') }) }}
+        </h3>
+        <p class="text-danger">
+          {{ $t('common.cannotBeUndone') }}
+        </p>
+        <BButton
+          variant="danger"
+          @click="showDeleteConfirmModal">
+          {{ $t('deletePanel.deleteType', { type: $t('common.account') }) }}
+        </BButton>
+      </BCard>
     </div>
+    <template v-if="governanceDevEnabled">
+      <FrDeleteModal
+        id="deleteAccountModal"
+        :is-deleting="isDeleting"
+        :is-testing="isTesting"
+        :translated-item-type="$t('common.account')"
+        @delete-item="deleteAccount" />
+      <FrRequestSubmitSuccessModal
+        modal-id="delete-account-success"
+        :request-id="requestId"
+        :router-path="props.isEndUser ? 'MachineAccounts' : 'Accounts'"
+        :success-text="$t('governance.accounts.deleteAccount.success')" />
+    </template>
   </BContainer>
 </template>
 
 <script setup>
 import {
+  BButton,
+  BCard,
   BContainer,
   BTabs,
   BTab,
@@ -87,16 +135,20 @@ import { ref, onBeforeMount, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { omit } from 'lodash';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getAccountById, getAccountEntitlements } from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
+import FrRequestSubmitSuccessModal from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccessModal';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import { getEntitlements } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getAccountAttribute, getObjectTypeFromAccountId } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
 import FrHeaderWithImage from '@forgerock/platform-shared/src/components/HeaderWithImage/HeaderWithImage';
@@ -106,25 +158,36 @@ import store from '@/store';
 import i18n from '@/i18n';
 
 const props = defineProps({
-  readOnly: {
+  isEndUser: {
     type: Boolean,
     default: true,
   },
-  isEndUser: {
+  isTesting: {
+    type: Boolean,
+    default: false,
+  },
+  readOnly: {
     type: Boolean,
     default: true,
   },
 });
 const { setBreadcrumb } = useBreadcrumb();
+const { bvModal } = useBvModal();
 const route = useRoute();
+const userStore = useUserStore();
 const tabIndex = ref(0);
 const account = ref({});
 const accountSchema = ref({});
 const isLoading = ref(true);
+const isDeleting = ref(false);
+const requestId = ref('');
 const objectProperties = ref([]);
+const isVisible = ref({ details: true, properties: true });
 const entitlementList = ref([]);
 const entitlementTotalCount = ref(0);
 const id = route.params.accountId;
+const isAdmin = computed(() => userStore.adminUser);
+const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 const isCorrelated = computed(() => account.value.user);
 const isDisconnected = computed(() => account.value.application?.isDisconnected);
 const savingGovernanceResourcesStatus = ref('');
@@ -132,7 +195,7 @@ const entitlements = ref([]);
 const requireRequestJustification = ref(false);
 const tabs = computed(() => [
   'details',
-  'objectProperties',
+  ...(!governanceDevEnabled.value ? ['objectProperties'] : []),
   ...((isCorrelated.value || isDisconnected.value) ? ['entitlements'] : []),
   ...(!props.isEndUser ? ['activity'] : []),
 ]);
@@ -254,6 +317,39 @@ async function revokeEntitlement(payload) {
   if (failed.length > 0) {
     showErrorMessage(failed[0].reason, i18n.global.t('governance.request.requestError'));
     savingGovernanceResourcesStatus.value = 'error';
+  }
+}
+/**
+ * Shows the confirmation modal for deleting this account.
+ */
+function showDeleteConfirmModal() {
+  bvModal.value.show('deleteAccountModal');
+}
+
+/**
+ * Deletes the account by submitting a deleteAccount governance request, then
+ * shows the request confirmation modal — navigating back to the accounts list
+ * when it is closed.
+ */
+async function deleteAccount() {
+  isDeleting.value = true;
+  try {
+    const { data } = await submitCustomRequest('deleteAccount', {
+      // admin context marks the request for auto-approval by the backend workflow
+      ...(isAdmin.value ? { common: { context: { type: 'admin' } } } : {}),
+      account: {
+        accountId: account.value?.keys?.accountId,
+        applicationId: account.value?.application?.id,
+      },
+    });
+    requestId.value = data.id;
+    bvModal.value.hide('deleteAccountModal');
+    bvModal.value.show('delete-account-success');
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.request.requestError'));
+    bvModal.value.hide('deleteAccountModal');
+  } finally {
+    isDeleting.value = false;
   }
 }
 /**

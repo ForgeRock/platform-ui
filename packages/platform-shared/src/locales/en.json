@@ -2204,7 +2204,22 @@
           "activity": "Activity"
         }
       },
-      "editAccount": "Update Account",
+      "editAccount": {
+        "accountAttributes": "Account Attributes",
+        "noPropertiesAvailable": "There are no editable properties available for this account.",
+        "success": "Account update request successfully submitted",
+        "title": "Edit Account"
+      },
+      "newAccount": {
+        "button": "New Account",
+        "chooseApplication": "Choose the application for which to create the account.",
+        "success": "Account request successfully submitted",
+        "title": "New Account"
+      },
+      "deleteAccount": {
+        "success": "Account deletion request successfully submitted"
+      },
+      "accountOwner": "Account owner",
       "errors": {
         "errorSearchingAccounts": "There was an error searching accounts"
       },
@@ -3618,6 +3633,7 @@
         "modifyUser": "LCM: Modify user",
         "createEntitlement": "LCM: Create entitlement",
         "modifyEntitlement": "LCM: Modify entitlement",
+        "modifyAccount": "LCM: Modify account",
         "deleteRole": "LCM: Delete role",
         "adminEntitlementGrant": "Admin: Grant entitlement"
       }

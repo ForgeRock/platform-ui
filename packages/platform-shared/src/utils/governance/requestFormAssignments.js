@@ -6,19 +6,20 @@
  */
 
 import {
-  capitalize,
   isEmpty,
 } from 'lodash';
 import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import {
   createFormAssignment,
   deleteFormAssignment,
+  getApplicationFormAssignments,
   getApplicationRequestFormAssignment,
   getFormAssignmentByWorkflowNode,
   getFormAssignmentByFormId,
   getFormAssignmentByRequestType,
   getFormAssignmentByLcmOperation,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
+import { getAccountObjectTypeNameFromApp } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 
 /**
  * Returns an object representing the assignment of a form to a workflow node.
@@ -96,46 +97,45 @@ export async function deleteAllFormAssignments(formId) {
 }
 
 /**
- * Retrieves the object type from the given application object.
- *
- * @param {Object} application - The application object.
- * @returns {string|null} - The object type or null if not found.
- */
-function getObjectType(application) {
-  const connectorId = capitalize(application.connectorId);
-  const expression = `system${connectorId}(.*)_managedAlpha_user`;
-  const regExp = new RegExp(expression, 'g');
-  const results = application.mappingNames.map((mappingName) => regExp.exec(mappingName)).filter((result) => result !== null);
-  let objectType = null;
-  if (results.length === 1 && results[0].length === 2) {
-    [[, objectType]] = results;
-  }
-  return objectType;
-}
-
-/**
  * Retrieves the request form for a given application and application ID.
  *
- * @param {string} application - The application name.
+ * @param {Object} application - The application object (connectorId, mappingNames, objectTypes?, isDisconnected?).
  * @param {string} applicationId - The application ID.
+ * @param {string} [objectType] - The connector object type. When omitted, derived from the
+ *   application's inbound user mapping (see getAccountObjectTypeNameFromApp).
+ * @param {string} [operation] - The operation ("create" or "update"); required when an
+ *   objectType is derivable, ignored in the disconnected fallback.
  * @returns {Promise<object|null>} A promise that resolves to the request form data if found, or null if not found.
  */
 export async function getApplicationRequestForm(application, applicationId, objectType = null, operation) {
   try {
     if (!objectType) {
       // eslint-disable-next-line no-param-reassign
-      objectType = getObjectType(application);
-      if (!objectType) return Promise.resolve(null);
+      objectType = getAccountObjectTypeNameFromApp(application);
     }
 
-    // check for a form for this application and object type
-    const { data } = await getApplicationRequestFormAssignment(applicationId, objectType, operation);
-    if (data.result.length) {
-      const { formId } = data.result[0];
-      const { data: formData } = await getRequestForm(formId);
-      return formData;
+    if (objectType) {
+      // check for a form for this application and object type
+      const { data } = await getApplicationRequestFormAssignment(applicationId, objectType, operation);
+      if (data.result.length) {
+        const { formId } = data.result[0];
+        const { data: formData } = await getRequestForm(formId);
+        return formData;
+      }
+      return null;
     }
-    return null;
+
+    // The object type could not be derived (e.g. disconnected applications have no
+    // inbound user mapping), so look for any form assigned to the application.
+    const { data } = await getApplicationFormAssignments(applicationId);
+    if (!data.result.length) return null;
+
+    // Prefer a form assigned for this operation, then any create/update form, then any form
+    const { formId } = data.result.find((assignment) => assignment.objectId.endsWith(`/${operation}`))
+      || data.result.find((assignment) => ['create', 'update'].some((op) => assignment.objectId.endsWith(`/${op}`)))
+      || data.result[0];
+    const { data: formData } = await getRequestForm(formId);
+    return formData;
   } catch (error) {
     return null;
   }

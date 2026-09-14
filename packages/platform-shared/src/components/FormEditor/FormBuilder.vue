@@ -247,7 +247,7 @@ watch(() => [props.form, props.displayData], async ([newVal]) => {
 }, { immediate: true, deep: true });
 
 watch(meta, (newVal) => {
-  emit('is-valid', !!(newVal.valid && allSectionsValid));
+  emit('is-valid', !!(newVal.valid && allSectionsValid.value));
 });
 
 watch(() => allSectionsValid.value, (newVal) => {

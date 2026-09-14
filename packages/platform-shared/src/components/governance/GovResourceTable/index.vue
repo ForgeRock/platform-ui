@@ -359,6 +359,11 @@ of the MIT license. See the LICENSE file for details. -->
       :glossary-schema="glossarySchema"
       :is-loading="grantDisplayDataLoading"
       :modal-id="modalId" />
+    <FrAccountModal
+      v-if="accountModalGrant"
+      :grant="accountModalGrant"
+      :modal-id="accountModalId"
+      @hidden="accountModalGrant = null" />
     <FrFloatingActionBar
       v-if="!showRemoveButton"
       :buttons="actionBarButtons"
@@ -403,6 +408,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import { formatConstraintDate, getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
 import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
+import FrAccountModal from '../ObjectModals/AccountModal';
 import FrGovAssignResourceModal from '../GovAssignResourceModal';
 import FrRevokeRequestModal from '../RevokeRequestModal';
 import FrExtendRequestModal from '../ExtendRequestModal/ExtendRequestModal';
@@ -423,6 +429,7 @@ export default {
     BMediaBody,
     BModal,
     BTable,
+    FrAccountModal,
     FrActionsCell,
     FrButtonWithSpinner,
     FrFloatingActionBar,
@@ -570,6 +577,7 @@ export default {
       activeQuery: false,
       announcerLoadFromQuery: false,
       allRowsSelected: false,
+      accountModalGrant: null,
       blankValueIndicator,
       directAssignment: this.$t('common.direct'),
       glossarySchema: [],
@@ -663,6 +671,11 @@ export default {
     isAccount() {
       return this.grantType === 'account';
     },
+    // Derived from modalId rather than declared as a prop so the account modal
+    // always shares the parent table's modal namespace
+    accountModalId() {
+      return `${this.modalId}-account`;
+    },
   },
   methods: {
     assignmentHandler(membership) {
@@ -751,6 +764,20 @@ export default {
         item._showDetails = !item._showDetails;
         return;
       }
+      if (this.showViewDetails && this.grantType === 'account' && !this.externalViewDetails) {
+        // Copy `account` as well — deleting from a shallow copy would still
+        // mutate the parent's row data through the shared reference
+        this.accountModalGrant = {
+          ...item,
+          account: item.account ? { ...item.account } : item.account,
+        };
+        delete this.accountModalGrant.account?.metadata;
+        delete this.accountModalGrant.account?.proxyAddresses;
+        this.$nextTick(() => {
+          this.$bvModal.show(this.accountModalId);
+        });
+        return;
+      }
       if (this.showViewDetails && this.grantType === 'entitlement' && !this.externalViewDetails) {
         this.grantDetails = { ...item };
         this.grantDisplayData = {};
@@ -830,13 +857,20 @@ export default {
       this.allRowsSelected = selectedItems.length === selectableItemsOnPage;
     },
     /**
-     * Emit a row clicked event to the parent component. If a row-details slot
-     * is provided, also toggle the inline detail expansion for the clicked row.
+     * With view details enabled, forwards the click to handleRowClick, which
+     * opens the account or entitlement details modal and otherwise emits
+     * row-clicked. Otherwise toggles the row-details slot, if provided, and
+     * emits row-clicked.
      * @param {Object} item The table row clicked
+     * @param {Number} index The index of the clicked row
+     * @param {MouseEvent} event The native click event
      */
-    onRowClicked(item) {
+    onRowClicked(item, index, event) {
       if (this.showViewDetails) {
-        this.handleRowClick(item);
+        // checkbox clicks select the row rather than opening the account modal
+        if (!(this.isAccount && event?.target?.closest?.('.checkbox-column'))) {
+          this.handleRowClick(item);
+        }
         return;
       }
       if (this.$slots['row-details']) {

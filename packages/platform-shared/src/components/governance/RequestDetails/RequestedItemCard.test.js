@@ -9,6 +9,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import { loadAgentViewConfig } from '@forgerock/platform-shared/src/utils/governance/agentView';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import RequestedItemCard from './RequestedItemCard';
 import i18n from '@/i18n';
 
@@ -39,6 +40,7 @@ jest.mock('@forgerock/platform-shared/src/api/governance/AgentApi', () => ({
   // the mounted modal resolves custodians when the grant lacks _displayData
   getAgentCustodians: jest.fn().mockResolvedValue({ data: { result: [], totalCount: 0 } }),
 }));
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 
 // Mirrors the shape the backend stamps on agent requests (see a real
 // modifyAgent record): agent fields top-level, display name under
@@ -320,6 +322,137 @@ describe('RequestedItemCard', () => {
     it('does not render agent content for entitlement request types', () => {
       const wrapper = setup({ request: entitlementRequest, requestType: 'entitlementGrant' });
       expect(wrapper.text()).not.toContain('Agent Information');
+    });
+  });
+
+  describe.each(['createAccount', 'modifyAccount', 'deleteAccount'])('%s request type', (requestType) => {
+    it('renders the application information header and application name', () => {
+      const wrapper = setup({ request: { application: { name: 'Workday' } }, requestType });
+      expect(wrapper.text()).toContain('Application Information');
+      expect(wrapper.text()).toContain('Workday');
+    });
+
+    it('renders the application name from a nested application object when the top level has no name', () => {
+      // grant-shaped application responses carry the name under an "application" key
+      const wrapper = setup({
+        request: {
+          application: {
+            id: 'a2f4a0c3-28f3-447e-9be6-458d71eb6536',
+            item: { type: 'accountGrant' },
+            glossary: {},
+            application: {
+              id: 'a2f4a0c3-28f3-447e-9be6-458d71eb6536',
+              name: 'Target',
+              description: 'Test',
+            },
+          },
+        },
+        requestType,
+      });
+      expect(wrapper.text()).toContain('Application Information');
+      expect(wrapper.text()).toContain('Target');
+      expect(wrapper.text()).not.toContain('--');
+    });
+
+    it('does not render entitlement, account, or role content', () => {
+      const wrapper = setup({ request: { application: { name: 'Workday' } }, requestType });
+      expect(wrapper.text()).not.toContain('Entitlement');
+      expect(wrapper.text()).not.toContain('Account');
+      expect(wrapper.text()).not.toContain('Role');
+    });
+
+    it('does not fetch the application itself — resolution belongs to the parent', () => {
+      setup({
+        request: {
+          request: {
+            account: { accountId: 'account-1', applicationId: 'app-2', objectType: 'User' },
+          },
+        },
+        requestType,
+      });
+
+      expect(ApplicationsApi.getApplication).not.toHaveBeenCalled();
+    });
+
+    it('shows the blank indicator when the parent could not resolve the application', () => {
+      const wrapper = setup({
+        request: {
+          request: {
+            account: { accountId: 'account-1', applicationId: 'app-2', objectType: 'User' },
+          },
+        },
+        requestType,
+      });
+      expect(wrapper.text()).toContain('--');
+    });
+
+    it('passes the resolved application, owners, and glossary to the application modal', async () => {
+      const glossary = { idx: { '/application': { requestable: false } } };
+      const application = {
+        id: 'a2f4a0c3-28f3-447e-9be6-458d71eb6536',
+        name: 'Target',
+        description: 'Test',
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Microsoft_Entra_ID_color_icon.svg',
+        applicationOwner: [
+          {
+            id: 'b048400f-9fe2-4247-8ccc-b43382136da0',
+            userName: 'fyork',
+            givenName: 'Frank',
+            sn: 'York',
+          },
+        ],
+      };
+      const wrapper = setup({
+        request: {
+          application,
+          glossary,
+          request: {
+            account: {
+              accountId: 'account-1',
+              applicationId: 'a2f4a0c3-28f3-447e-9be6-458d71eb6536',
+              objectType: 'User',
+            },
+          },
+        },
+        requestType,
+      });
+      await flushPromises();
+
+      const appModal = wrapper.findComponent({ name: 'ApplicationModal' });
+      const applicationProp = appModal.props('application');
+      expect(applicationProp.name).toBe('Target');
+      expect(applicationProp.description).toBe('Test');
+      expect(applicationProp.applicationOwners).toEqual([
+        {
+          id: 'b048400f-9fe2-4247-8ccc-b43382136da0',
+          userName: 'fyork',
+          givenName: 'Frank',
+          sn: 'York',
+        },
+      ]);
+      expect(applicationProp.glossary).toEqual(glossary);
+    });
+
+    it('prefers request-level application owners over the application owners', async () => {
+      const requestOwners = [{ userName: 'request-owner' }];
+      const wrapper = setup({
+        request: {
+          application: {
+            id: 'app-1',
+            name: 'Target',
+            applicationOwner: [{ userName: 'response-owner' }],
+          },
+          applicationOwner: requestOwners,
+          request: {
+            account: { accountId: 'account-1', applicationId: 'app-1', objectType: 'User' },
+          },
+        },
+        requestType,
+      });
+      await flushPromises();
+
+      const appModal = wrapper.findComponent({ name: 'ApplicationModal' });
+      expect(appModal.props('application').applicationOwners).toEqual(requestOwners);
     });
   });
 });

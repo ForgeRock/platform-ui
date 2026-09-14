@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    id="successful-submit"
+    :id="modalId"
     size="lg"
     no-close-on-backdrop
     title-class="h5"
@@ -36,6 +36,10 @@ import FrRequestSubmitSuccess from './RequestSubmitSuccess';
 const router = useRouter();
 
 const props = defineProps({
+  modalId: {
+    type: String,
+    default: 'successful-submit',
+  },
   requestId: {
     type: String,
     default: '',

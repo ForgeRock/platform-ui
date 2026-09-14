@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,8 @@
 import {
   createFormAssignment,
   deleteFormAssignment,
+  getApplicationFormAssignments,
+  getApplicationRequestFormAssignment,
   getFormAssignmentByFormId,
   getFormAssignmentByRequestType,
   getFormAssignmentByWorkflowNode,
@@ -17,6 +19,7 @@ import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/Re
 import {
   buildFormAssignmentPromises,
   deleteAllFormAssignments,
+  getApplicationRequestForm,
   getCustomRequestForm,
   getLcmForm,
 } from './requestFormAssignments';
@@ -28,6 +31,8 @@ jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsA
   getFormAssignmentByFormId: jest.fn(),
   getFormAssignmentByRequestType: jest.fn(),
   getFormAssignmentByLcmOperation: jest.fn(),
+  getApplicationRequestFormAssignment: jest.fn(),
+  getApplicationFormAssignments: jest.fn(),
 }));
 
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormsApi', () => ({
@@ -223,5 +228,128 @@ describe('getCustomRequestForm', () => {
       expect(getRequestForm).not.toHaveBeenCalled();
       expect(result).toBeNull();
     });
+  });
+});
+
+describe('getApplicationRequestForm', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it('should derive the object type from the inbound user mapping when not provided', async () => {
+    getApplicationRequestFormAssignment.mockResolvedValue({ data: { result: [{ formId: 'form1' }] } });
+    getRequestForm.mockResolvedValue({ data: { id: 'form1', name: 'App Form' } });
+
+    const result = await getApplicationRequestForm({
+      connectorId: 'Ldap',
+      objectTypes: [{ name: '__ACCOUNT__' }],
+      mappingNames: ['systemLdap__ACCOUNT___managedAlpha_user'],
+    }, 'app1', null, 'create');
+
+    expect(getApplicationRequestFormAssignment).toHaveBeenCalledWith('app1', '__ACCOUNT__', 'create');
+    expect(getRequestForm).toHaveBeenCalledWith('form1');
+    expect(result).toEqual({ id: 'form1', name: 'App Form' });
+  });
+
+  it('matches mapping names case-insensitively against the connector id', async () => {
+    getApplicationRequestFormAssignment.mockResolvedValue({ data: { result: [{ formId: 'form1' }] } });
+    getRequestForm.mockResolvedValue({ data: { id: 'form1' } });
+
+    // master's regex required a capitalized connectorId — a lowercase one matched nothing
+    const result = await getApplicationRequestForm({
+      connectorId: 'ldap',
+      objectTypes: [{ name: '__ACCOUNT__' }],
+      mappingNames: ['systemldap__ACCOUNT___managedAlpha_user'],
+    }, 'app1', null, 'create');
+
+    expect(getApplicationRequestFormAssignment).toHaveBeenCalledWith('app1', '__ACCOUNT__', 'create');
+    expect(result).toEqual({ id: 'form1' });
+  });
+
+  it('matches non-Alpha managed user mappings (generic _user suffix)', async () => {
+    getApplicationRequestFormAssignment.mockResolvedValue({ data: { result: [{ formId: 'form2' }] } });
+    getRequestForm.mockResolvedValue({ data: { id: 'form2' } });
+
+    // master's regex only accepted managedAlpha_user suffixes
+    const result = await getApplicationRequestForm({
+      connectorId: 'Ldap',
+      objectTypes: [{ name: '__ACCOUNT__' }],
+      mappingNames: ['systemLdap__ACCOUNT___managedLdap_user'],
+    }, 'app1', null, 'create');
+
+    expect(getApplicationRequestFormAssignment).toHaveBeenCalledWith('app1', '__ACCOUNT__', 'create');
+    expect(result).toEqual({ id: 'form2' });
+  });
+
+  it('returns the first canonicalized mapping when several inbound user mappings exist', async () => {
+    getApplicationRequestFormAssignment.mockResolvedValue({ data: { result: [] } });
+
+    // master returned null when more than one inbound user mapping matched
+    const result = await getApplicationRequestForm({
+      connectorId: 'Ldap',
+      objectTypes: [{ name: '__ACCOUNT__' }],
+      mappingNames: [
+        'systemLdap__ACCOUNT___managedAlpha_user',
+        'systemLdap__ACCOUNT2___managedAlpha_user',
+      ],
+    }, 'app1', null, 'create');
+
+    expect(getApplicationRequestFormAssignment).toHaveBeenCalledWith('app1', '__ACCOUNT__', 'create');
+    expect(result).toBeNull();
+  });
+
+  it('should fall back to any application assignment when no object type is derivable', async () => {
+    getApplicationFormAssignments.mockResolvedValue({
+      data: {
+        result: [{ objectId: 'application/app1/__ACCOUNT__/update', formId: 'form2' }, { objectId: 'application/app1/__ACCOUNT__/create', formId: 'form1' }],
+      },
+    });
+    getRequestForm.mockResolvedValue({ data: { id: 'form1', name: 'App Form' } });
+
+    const result = await getApplicationRequestForm(
+      { isDisconnected: true },
+      'app1',
+      null,
+      'create',
+    );
+
+    expect(getApplicationRequestFormAssignment).not.toHaveBeenCalled();
+    expect(getApplicationFormAssignments).toHaveBeenCalledWith('app1');
+    expect(getRequestForm).toHaveBeenCalledWith('form1');
+    expect(result).toEqual({ id: 'form1', name: 'App Form' });
+  });
+
+  it('should fall back to the only assignment when none match the operation', async () => {
+    getApplicationFormAssignments.mockResolvedValue({
+      data: {
+        result: [{ objectId: 'application/app1/Disco/create', formId: 'form3' }],
+      },
+    });
+    getRequestForm.mockResolvedValue({ data: { id: 'form3', name: 'Disco Form' } });
+
+    const result = await getApplicationRequestForm({ isDisconnected: true }, 'app1', null, 'update');
+
+    expect(getRequestForm).toHaveBeenCalledWith('form3');
+    expect(result).toEqual({ id: 'form3', name: 'Disco Form' });
+  });
+
+  it('should return null when the disconnected app has no assigned forms', async () => {
+    getApplicationFormAssignments.mockResolvedValue({ data: { result: [] } });
+
+    const result = await getApplicationRequestForm({ isDisconnected: true }, 'app1', null, 'create');
+
+    expect(getApplicationFormAssignments).toHaveBeenCalledWith('app1');
+    expect(getRequestForm).not.toHaveBeenCalled();
+    expect(result).toBeNull();
+  });
+
+  it('should use the provided object type and skip derivation', async () => {
+    const result = await getApplicationRequestForm({
+      connectorId: 'Ldap',
+      mappingNames: ['systemLdap__GROUP__managedLdap_group'],
+    }, 'app1', '__ACCOUNT__', 'update');
+
+    expect(getApplicationRequestFormAssignment).toHaveBeenCalledWith('app1', '__ACCOUNT__', 'update');
+    expect(result).toBeNull();
   });
 });

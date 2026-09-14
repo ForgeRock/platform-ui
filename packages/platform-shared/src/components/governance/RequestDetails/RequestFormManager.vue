@@ -69,9 +69,16 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrDefaultFormManager from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/DefaultFormManager';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import { BCard, BCol, BRow } from 'bootstrap-vue';
+import store from '@/store';
 
 const { schema, setSchema } = useGovernanceStore();
-const emit = defineEmits(['save']);
+const emit = defineEmits(['save', 'formResolved']);
+
+// account LCM requests resolve their form through the application/object-type
+// assignment (application/{id}/{objectType}/{operation}) rather than the
+// request-type assignment used by other custom request types. Gated behind the
+// governanceDevEnabled flag — the flag-off path treats them as plain custom requests.
+const accountLcmRequestTypes = ['createAccount', 'modifyAccount'];
 
 const props = defineProps({
   isApproval: {
@@ -112,6 +119,9 @@ const showDefaultForm = ref(false);
 // computed
 const phaseId = computed(() => props.request.phases?.[0]?.name);
 const requestType = computed(() => props.request.requestType || '');
+const isAccountLcmRequest = computed(() => (
+  store.state.SharedStore.governanceDevEnabled && accountLcmRequestTypes.includes(requestType.value)
+));
 const displayData = computed(() => props.request._displayData || {});
 const isCustomRequestType = computed(() => !isSupportedRequestType(requestType.value));
 const showSaveButton = computed(() => (
@@ -135,6 +145,20 @@ async function setFormDefinition(request) {
   if (props.isApproval && request.workflow?.id) {
     await getFormDefinitionByType(formTypes.WORKFLOW, { workflowId: request.workflow?.id, phaseId: phaseId.value });
     if (form.value) return;
+  }
+
+  // account LCM requests use the application's assigned form, keyed by the
+  // object type and operation carried in the request's account block
+  if (isAccountLcmRequest.value) {
+    const { applicationId, objectType } = request.request?.account || {};
+    if (applicationId && objectType) {
+      await getFormDefinitionByType(formTypes.APPLICATION, {
+        applicationId,
+        objectType,
+        operation: requestType.value === 'createAccount' ? 'create' : 'update',
+      });
+    }
+    return;
   }
 
   switch (requestType.value) {
@@ -166,6 +190,20 @@ async function setFormDefinition(request) {
  */
 async function setFormValues(request) {
   let userValues;
+  // account LCM requests: the assigned form's model mirrors the submitted account
+  // block (owner keys at the top level, attributes under object, glossary nested)
+  if (isAccountLcmRequest.value) {
+    if (form.value) {
+      const {
+        applicationId,
+        objectType,
+        accountId,
+        ...modelSource
+      } = request.request?.account || {};
+      formValue.value = modelSource;
+    }
+    return;
+  }
   switch (requestType.value) {
     case requestTypes.ACCOUNT_GRANT.value:
       formValue.value = request.request?.common?.blob?.form || {};
@@ -238,9 +276,14 @@ async function setFormValues(request) {
 async function getForm(request) {
   const clonedRequest = cloneDeep(request);
 
-  await setFormDefinition(clonedRequest);
-  await setFormValues(clonedRequest);
-  isLoadingForm.value = false;
+  try {
+    await setFormDefinition(clonedRequest);
+    await setFormValues(clonedRequest);
+  } finally {
+    isLoadingForm.value = false;
+    // tells the parent whether an assigned form was found so it can drop its OOTB form
+    emit('formResolved', Boolean(form.value));
+  }
 }
 
 function getUserRequestPayload(originalRequest, updatedRequest) {
@@ -330,6 +373,30 @@ function getResourceRequestPayload(requestPayload, object = {}) {
 async function handleSave() {
   const clonedRequest = cloneDeep(props.request);
   let requestPayload = {};
+
+  // account LCM requests: merge the form's model back into the submitted account
+  // block (modelSource keys at the top level, glossary nested) and emit the whole
+  // request, matching the payload shape the request was submitted with
+  if (isAccountLcmRequest.value) {
+    const {
+      applicationId,
+      objectType,
+      accountId,
+      ...modelSource
+    } = clonedRequest.request?.account || {};
+    requestPayload = {
+      ...clonedRequest.request,
+      account: {
+        applicationId,
+        objectType,
+        ...(accountId ? { accountId } : {}),
+        ...modelSource,
+        ...formValue.value,
+      },
+    };
+    emit('save', requestPayload);
+    return;
+  }
 
   if (isCustomRequestType.value) {
     requestPayload = formValue.value;

@@ -14,7 +14,8 @@ export function mockRouter(routeOptions, routerOptions = {}) {
   const routerReplace = routerOptions.replace || jest.fn();
   const routerResolve = routerOptions.resolve || jest.fn();
 
-  useRoute.mockImplementation(() => (routeOptions));
+  // real routes always carry a query object, even when empty
+  useRoute.mockImplementation(() => ({ query: {}, ...routeOptions }));
   useRouter.mockImplementation(() => ({
     push: routerPush,
     replace: routerReplace,
