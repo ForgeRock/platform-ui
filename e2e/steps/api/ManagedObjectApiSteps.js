@@ -50,6 +50,21 @@ export default class ManagedObjectApiSteps {
     });
   }
 
+  /** Intercepts the UI create-resource POST for the managed user resource. */
+  static interceptUIUserCreation() {
+    const resourceName = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
+    cy.intercept('POST', `/openidm/managed/${resourceName}?_action=create`).as('createUserUI');
+  }
+
+  /** Waits for the UI user-creation intercept and tracks the new user id for cleanup. */
+  static waitForUIUserCreationAndTrack() {
+    cy.wait('@createUserUI').then(({ response }) => {
+      expect(response, 'user creation request received a response').to.be.an('object');
+      expect(response.statusCode).to.equal(201);
+      ManagedObjectApiSteps.createdUserIds.push(response.body._id);
+    });
+  }
+
   /**
    * Appends a new custom managed object type to `config/managed` and tracks its name
    * for later cleanup by deleteCreatedCustomManagedObjects().
