@@ -310,6 +310,7 @@
       "errorGettingDelegates": "Error getting delegates",
       "errorDeletingDelegate": "Error deleting delegate",
       "errorEndDate": "End date cannot come before start date",
+      "caption": "Delegates",
       "noDelegates": "No Delegates",
       "preconditionFailed": "Precondition Failed",
       "startDate": "Start Date",
@@ -318,6 +319,7 @@
       "title": "My Delegates"
     },
     "directReports": {
+      "caption": "Direct Reports",
       "errorGettingDirectReports": "Error getting direct reports.",
       "errorGettingDirectReportUserInfo": "Error getting direct report user information.",
       "noDirectReportsFound": "No direct reports found.",

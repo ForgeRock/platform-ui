@@ -1618,7 +1618,8 @@
         "fullscreen": "Toggle Fullscreen",
         "zoomIn": "Zoom In",
         "zoomOut": "Zoom Out"
-      }
+      },
+      "resourceTableCaption": "{grantType}"
     },
     "accessAnalysis": {
       "title": "Access Analyzer",
@@ -2545,6 +2546,7 @@
       "withoutCustodians": "Without assigned custodians"
     },
     "certificationTask": {
+      "caption": "Certification tasks",
       "hideTechnicalDetails": "Hide technical details",
       "showTechnicalDetails": "Show technical details",
       "noItems": "No Certification Items",
@@ -3347,6 +3349,7 @@
       "searchViolations": "Search Violations",
       "searchExceptions": "Search Exceptions",
       "ruleViolated": "Rule Violated",
+      "caption": "Violating users",
       "successAllowingException": "Exception successfully allowed",
       "successExtendingException": "Exception successfully extended",
       "successForwardingViolation": "Violation successfully forwarded",

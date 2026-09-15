@@ -71,6 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-model:sort-by="sortBy"
         v-model:sort-desc="sortDesc"
         :busy="isLoading"
+        :caption="$t('governance.access.resourceTableCaption', { grantType: pluralizedGrantType })"
         class="mb-0"
         :class="{ 'cursor-pointer': showViewDetails }"
         data-testid="gov-resource-table"
@@ -82,6 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
         no-sort-reset
         ref="gov-resource-table"
         responsive
+        table-class="fr-sr-caption"
         :selectable="allowSelect"
         @row-selected="onRowSelected"
         @row-clicked="onRowClicked"

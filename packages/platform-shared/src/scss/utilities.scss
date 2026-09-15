@@ -7,6 +7,11 @@
  */
 
 /**
+* for the sr-only() mixin below — file compiles standalone of main.scss's bootstrap import
+*/
+@import '~bootstrap/scss/mixins/screen-reader';
+
+/**
  * Utility CSS for components
  */
 
@@ -17,4 +22,16 @@
  */
 .white-space-pre-line {
   white-space: pre-line;
+}
+
+/**
+ * Screen-reader-only table caption for BTable. The `caption` prop renders a real
+ * <caption> (announced by screen readers and used as the table's accessible name),
+ * but bootstrap-vue 2.x has no caption-class prop to style it, so apply this class
+ * via `table-class="fr-sr-caption"` and the descendant selector hides it visually.
+ */
+.fr-sr-caption {
+  caption {
+    @include sr-only();
+  }
 }
