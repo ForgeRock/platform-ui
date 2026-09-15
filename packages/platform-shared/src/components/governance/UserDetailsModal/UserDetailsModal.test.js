@@ -45,7 +45,10 @@ describe('GovernanceUserDetailsModal', () => {
     expect(wrapper.vm.userFullName).toBe('common.userFullName');
   });
 
-  it('sets aria-label to the user full name', () => {
-    expect(wrapper.find('[arialabel="common.userFullName"]').exists()).toBeTruthy();
+  it('labels the dialog with the visible heading so personal names are not collected by analytics', () => {
+    wrapper.vm.fixDialogAccessibleName();
+    const dialogEl = wrapper.vm.$refs.modalRef.$el;
+    expect(dialogEl.getAttribute('aria-labelledby')).toBe('userDetailsModal-title');
+    expect(wrapper.vm.userFullName).toBe('common.userFullName');
   });
 });

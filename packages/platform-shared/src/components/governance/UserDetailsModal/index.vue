@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    :aria-label="userFullName"
+    ref="modalRef"
     :ok-title="$t('common.done')"
     body-class="p-0"
     content-class="border-0"
@@ -13,7 +13,8 @@ of the MIT license. See the LICENSE file for details. -->
     ok-only
     ok-variant="outline-primary"
     scrollable
-    size="xl">
+    size="xl"
+    @shown="fixDialogAccessibleName()">
     <template #modal-header="{ close }">
       <BMedia
         class="align-items-center"
@@ -26,7 +27,9 @@ of the MIT license. See the LICENSE file for details. -->
           :src="(user && user.profileImage) || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
           fluid />
         <div class="media-body">
-          <h2 class="h5 m-0">
+          <h2
+            id="userDetailsModal-title"
+            class="h5 m-0">
             {{ userFullName }}
           </h2>
           <small class="text-muted">
@@ -96,6 +99,19 @@ import FrEntitlementsTab from './EntitlementsTab';
 import FrRolesTab from './RolesTab';
 import FrAccountsTab from './AccountsTab';
 
+/**
+ * BModal passes template attrs to its outer wrapper div, not to the
+ * role="dialog" element it renders internally. So aria-labelledby set on
+ * <BModal> in the template never reaches the dialog. This function sets it
+ * directly on the dialog DOM element after BModal has rendered.
+ */
+function fixDialogAccessibleName() {
+  const refEl = this.$refs.modalRef?.$el;
+  const modalEl = refEl instanceof Element ? refEl : document.getElementById(this.modalId);
+  if (!modalEl) return;
+  modalEl.setAttribute('aria-labelledby', 'userDetailsModal-title');
+}
+
 export default {
   name: 'GovernanceUserDetailsModal',
   components: {
@@ -110,6 +126,9 @@ export default {
     FrIcon,
     FrRolesTab,
     FrUserDetailsTab,
+  },
+  methods: {
+    fixDialogAccessibleName,
   },
   props: {
     displayProperties: {

@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mt-2"
         height="24"
         width="24"
-        :alt="$t('common.userFullName', { givenName: userObject?.givenName, sn: userObject?.sn })"
+        :alt="$t('common.avatar')"
         :aria-hidden="true"
         :src="userObject?.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
     </template>

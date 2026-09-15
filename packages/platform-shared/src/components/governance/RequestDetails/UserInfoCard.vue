@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="mt-2"
             height="24"
             width="24"
-            :alt="`${user.givenName} ${user.sn}`"
+            :alt="$t('common.avatar')"
             :aria-hidden="true"
             :src="user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
         </template>
@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mt-2"
               height="24"
               width="24"
-              :alt="`${manager.givenName} ${manager.sn}`"
+              :alt="$t('common.avatar')"
               :aria-hidden="true"
               :src="manager.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </template>

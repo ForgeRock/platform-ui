@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mt-2"
                 height="24"
                 width="24"
-                :alt="manager.givenName"
+                :alt="$t('common.avatar')"
                 aria-hidden
                 :src="manager.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
             </template>

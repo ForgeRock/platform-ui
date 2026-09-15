@@ -100,7 +100,7 @@ of the MIT license. See the LICENSE file for details. -->
                     class="mr-3 rounded-circle"
                     height="36"
                     width="36"
-                    :alt="$t('common.userFullName', { givenName: owner.givenName, sn: owner.sn })"
+                    :alt="$t('common.avatar')"
                     :src="owner.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
                   <BMediaBody>
                     <h3 class="h5 mb-0 text-dark text-truncate">
