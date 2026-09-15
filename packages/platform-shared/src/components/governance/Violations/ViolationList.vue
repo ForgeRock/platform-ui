@@ -15,12 +15,14 @@ of the MIT license. See the LICENSE file for details. -->
     <BTable
       @row-selected="(rows) => rows.length && emit('viewViolationDetails', rows[0])"
       @sort-changed="sortChanged"
+      :caption="$t('governance.violations.caption')"
       class="mb-0"
       v-resizable-table="{ persistKey: `governance-violations-${isAdmin ? 'admin' : 'user'}` }"
       hover
       no-local-sorting
       no-sort-reset
       responsive
+      table-class="fr-sr-caption"
       selectable
       select-mode="single"
       show-empty
