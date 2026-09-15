@@ -129,6 +129,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-resizable-table="{ persistKey: `certification-tasklist-${campaignId}-${certificationGrantType}` }"
           @row-selected="onRowSelected"
           @sort-changed="sortChange"
+          :caption="$t('governance.certificationTask.caption')"
           class="m-0 border-top border-bottom task-list-table d-flex flex-column"
           ref="selectableTable"
           responsive
@@ -141,6 +142,7 @@ of the MIT license. See the LICENSE file for details. -->
           no-sort-reset
           :per-page="pageSize"
           :selectable="isSelectable"
+          table-class="fr-sr-caption"
           :sort-by="sortBy"
           :sort-desc="sortDir === 'desc'"
           :tbody-tr-attr="rowAttrs">

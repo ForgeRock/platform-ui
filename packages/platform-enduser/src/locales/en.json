@@ -303,6 +303,7 @@
     "delegates": {
       "addDelegates": "Add Delegates",
       "addModalTitle": "Choose users to add as delegates.",
+      "caption": "Delegates",
       "delegateAdded": "Delegate successfully added",
       "delegateRemoved": "Delegate successfully removed",
       "endDate": "End Date",
@@ -310,7 +311,6 @@
       "errorGettingDelegates": "Error getting delegates",
       "errorDeletingDelegate": "Error deleting delegate",
       "errorEndDate": "End date cannot come before start date",
-      "caption": "Delegates",
       "noDelegates": "No Delegates",
       "preconditionFailed": "Precondition Failed",
       "startDate": "Start Date",
