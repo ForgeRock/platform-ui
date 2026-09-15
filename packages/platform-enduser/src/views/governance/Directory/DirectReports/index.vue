@@ -63,8 +63,10 @@ of the MIT license. See the LICENSE file for details. -->
         class="cursor-pointer"
         data-testid="table-directreports"
         @sort-changed="sortChanged"
+        :caption="$t('governance.directReports.caption')"
         hover
         responsive
+        table-class="fr-sr-caption"
         selectable
         select-mode="single"
         :fields="fields"
