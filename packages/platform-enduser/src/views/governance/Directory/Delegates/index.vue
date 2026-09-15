@@ -48,8 +48,10 @@ of the MIT license. See the LICENSE file for details. -->
         id="delegate-table"
         data-testid="delegate-table"
         @sort-changed="sortChanged"
+        :caption="$t('governance.delegates.caption')"
         hover
         responsive
+        table-class="fr-sr-caption"
         :fields="fields"
         :items="items">
         <template #cell(user)="{ item }">
