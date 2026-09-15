@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center mr-3">
               <img
                 class="size-28"
-                :alt="item.application.name"
+                alt=""
                 :onerror="onImageError"
                 :src="getLogo(item.application)">
             </div>

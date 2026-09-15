@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { setApplicationsTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import EntitlementsTab from './index';
 
 describe('EntitlementsTab', () => {
@@ -15,12 +16,30 @@ describe('EntitlementsTab', () => {
         mocks: {
           $t: (t) => t,
         },
+        renderStubDefaultSlot: true,
+        stubs: {
+          BTable: {
+            name: 'BTable',
+            template: '<div><slot name="cell(application)" :item="items[0]" /><slot name="cell(name)" :item="items[0]" /><slot name="cell(account)" :item="items[0]" /></div>',
+            props: ['fields', 'items'],
+          },
+          BMedia: { name: 'BMedia', template: '<div><slot /></div>' },
+        },
       },
       props: {
         entitlements,
       },
     });
   }
+
+  beforeEach(() => {
+    // preload application templates so getApplicationLogo does not fetch the CDN
+    setApplicationsTemplates({
+      templateName: {
+        latest: { id: 'templateName', displayName: 'Template Name', image: 'template.svg' },
+      },
+    });
+  });
 
   describe('component loaded', () => {
     let wrapper;
@@ -60,6 +79,13 @@ describe('EntitlementsTab', () => {
 
     it('component should load correctly', () => {
       expect(wrapper.vm.blankValueIndicator).toBe('--');
+    });
+
+    it('renders the application logo as decorative image', () => {
+      const img = wrapper.find('img');
+      expect(img.exists()).toBe(true);
+      expect(img.attributes('src')).toBe('https://openam-gov-v2-3.forgeblocks.com/platform/img/microsoft.8a785075.svg');
+      expect(img.attributes('alt')).toBe('');
     });
   });
 });
