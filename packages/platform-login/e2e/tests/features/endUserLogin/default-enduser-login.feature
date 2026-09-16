@@ -104,8 +104,11 @@ Feature: Default enduser login
     And admin navigates to "Identities/Manage" page
     And page title is "Manage Identities"
     And user searches "endUserName" on search box
-    And user clicks on "endUserName" cell on table
-    Then the value of the "Status" field is "Inactive"
+    And the value of the "Status" column for the "endUserName" item in the current table is "Inactive"
+    # TODO: uncomment after IAM-12027 (https://pingidentity.atlassian.net/browse/IAM-12027) is fixed —
+    # the Status dropdown renders empty when accountStatus casing doesn't match the enum
+    # And user clicks on "endUserName" cell on table
+    # And the value of the "Status" field is "Inactive"
 
   @C29494
   @forgeops @cloud

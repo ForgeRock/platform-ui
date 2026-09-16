@@ -772,11 +772,18 @@ Then('text {string} is visible', (text) => {
 });
 
 Then('the value of the {string} field is {string}', (fieldName, expectedValue) => {
-  cy.findByLabelText(fieldName).should('have.value', expectedValue);
+  // Restrict to form controls: resizable table column headers carry an
+  // aria-label (IAM-10169), which findByLabelText would otherwise match while
+  // the list page is still mounted, reading '' instead of the field value.
+  cy.findByLabelText(fieldName, { timeout: 15000 })
+    .filter('input, textarea, select')
+    .should('have.value', expectedValue);
 });
 
 Then('the value of the {string} field is the stored value of {string}', (fieldName, expectedValue) => {
-  cy.findByLabelText(fieldName).should('have.value', Cypress.env(expectedValue));
+  cy.findByLabelText(fieldName, { timeout: 15000 })
+    .filter('input, textarea, select')
+    .should('have.value', Cypress.env(expectedValue));
 });
 
 Then('page title is {string}', (title) => {
@@ -885,6 +892,7 @@ Then('the following radio options are visible:', (dataTable) => {
 
 Then('the value of the {string} column for the {string} item in the current table is {string}', (columnName, itemName, expectedValue) => {
   let columnIndex;
+  const resolvedItemName = Cypress.env(itemName) ? Cypress.env(itemName) : itemName;
   cy.findByRole('table').within(() => {
     cy.get('thead').findAllByRole('columnheader').each((columnHeader, headerIndex) => {
       const headerText = columnHeader.text().trim();
@@ -894,8 +902,9 @@ Then('the value of the {string} column for the {string} item in the current tabl
       }
     }).then(() => {
       cy.log(`Column ${columnName} has index ${columnIndex}`);
+      expect(columnIndex, `column "${columnName}" found in table header`).to.not.equal(undefined);
       cy.findAllByRole('row')
-        .filter(`:has(td:contains("${itemName}"))`)
+        .filter(`:has(td:contains("${resolvedItemName}"))`)
         .findAllByRole('cell')
         .eq(columnIndex)
         .should('have.text', expectedValue);
