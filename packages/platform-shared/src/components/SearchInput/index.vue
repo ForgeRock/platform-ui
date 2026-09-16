@@ -4,6 +4,13 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="fr-search-input-holder">
+    <!-- The sr-only label supplies the accessible name without changing the
+      visual design; the placeholder stays visible as a hint only (WCAG 3.3.2). -->
+    <label
+      :for="searchFieldId"
+      class="sr-only">
+      {{ placeholder }}
+    </label>
     <BInputGroup :class="[{'bg-light': readOnly}]">
       <BInputGroupPrepend>
         <BInputGroupText :class="[{'bg-light': readOnly}, 'border-0']">
@@ -16,8 +23,8 @@ of the MIT license. See the LICENSE file for details. -->
       -->
       <BFormInput
         ref="searchInput"
+        :id="searchFieldId"
         :placeholder="placeholder"
-        :aria-label="placeholder"
         @focus="$emit('search-input-focus')"
         @blur="$emit('search-input-blur')"
         @keydown.enter="$emit('search')"
@@ -26,7 +33,9 @@ of the MIT license. See the LICENSE file for details. -->
         class="pl-0 mx-0 border-0"
         :disabled="readOnly"
         type="search" />
-      <slot name="append" v-if="!readOnly"/>
+      <slot
+        name="append"
+        v-if="!readOnly" />
       <BInputGroupAppend v-if="value.length">
         <BButton
           class="border-0"
@@ -51,6 +60,7 @@ import {
   BInputGroupText,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Component that provides a left and right icon for a text input.
@@ -75,7 +85,7 @@ export default {
       default: 'close',
     },
     /**
-     * Placeholder text that is visibile when input value is empty string.
+     * Placeholder text that is visible when input value is empty string.
      */
     placeholder: {
       type: String,
@@ -101,6 +111,7 @@ export default {
     return {
       value: '',
       searchHasFocus: false,
+      searchFieldId: `fr-search-input-${uuid()}`,
     };
   },
   methods: {

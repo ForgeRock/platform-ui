@@ -75,7 +75,10 @@ describe('EsvDropdown', () => {
     const items = wrapper.findAll('li');
 
     expect(items[0].text()).toBe('Variables');
-    expect(items[1].text()).toBe('search');
+    // the search bar li now also contains an sr-only label, so assert
+    // on the input and icon directly rather than the li's concatenated text
+    expect(items[1].find('input').attributes('placeholder')).toBe('Search variables');
+    expect(items[1].find('.material-icons-outlined').text()).toBe('search');
     expect(items[2].text()).toBe('&{esv.myBool}');
     expect(items[3].text()).toBe('&{esv.yourBool}');
   });

@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { runA11yTest } from '@/utils/testHelpers';
 import SearchInput from './index';
 
 let wrapper;
@@ -86,5 +87,27 @@ describe('SearchInput Component', () => {
     wrapper.setData({ value: 'Hello' });
     wrapper.find('input[type="search"]').trigger('keydown.enter');
     expect(wrapper.emitted().search).toBeTruthy();
+  });
+
+  describe('@a11y', () => {
+    it('should not have any a11y violations', async () => {
+      mountComponent();
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should provide a persistent accessible name via a label element, not the placeholder', () => {
+      mountComponent();
+      const input = wrapper.find('input[type="search"]');
+      const label = wrapper.find('label[for]');
+
+      expect(label.exists()).toBe(true);
+      // Label must be programmatically associated with the input
+      expect(label.attributes('for')).toBe(input.attributes('id'));
+      // Label text must match the visible hint so speech input users can target it
+      expect(label.text()).toBe('Search');
+      // The accessible name must no longer come from the placeholder
+      expect(input.attributes('aria-label')).toBeUndefined();
+    });
   });
 });
