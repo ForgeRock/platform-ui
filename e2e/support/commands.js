@@ -261,7 +261,7 @@ Cypress.Commands.add('loginAsAdminCachedForCucumber', () => {
 /**
  * Logs into the IDM-mode admin UI (`platform-admin --mode idm`) via the IDMLogin
  * form. On success IDM sets a `session-jwt` cookie, which we stash for cy.request()
- * IDM calls to reuse (see buildHeaders in authenticationConfigApi.e2e).
+ * IDM calls to reuse (see buildHeaders in idm-tests/api/authenticationConfigApi.e2e).
  *
  * Works locally. On PITF the login and dashboard render succeed (credentials are
  * fine — the cluster uses the default openidm-admin password), but getCookies()
