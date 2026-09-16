@@ -4410,10 +4410,6 @@
         "allowMissing": "Allow Missing",
         "rejectMissing": "Reject Missing"
       },
-      "certType": {
-        "root": "Root",
-        "intermediate": "Intermediate"
-      },
       "configUpdateSuccess": "Config update underway",
       "trustedCertificates": {
         "noDataTitle": "You haven't configured any Trusted Certificates for this tenant",
@@ -4421,7 +4417,6 @@
         "trustedCertificateDisplayName": "Trusted Certificate",
         "subjectTableFieldName": "Subject",
         "expireTimeTableFieldName": "Expiry Time",
-        "typeTableFieldName": "Type",
         "issuerTableFieldName": "Issuer",
         "errorCreatingTrustedCertificate": "Could not create trusted certificate",
         "errorDeletingTrustedCertificate": "Could not delete trusted certificate",
@@ -4431,7 +4426,6 @@
         "title": "Upload Trusted Certificate",
         "spinnerTextCertificateButton": "Adding Certificate...",
         "addCertificateText": "Add Certificate",
-        "certTypeLabel": "Certificate Type",
         "certificatePlaceholder": "Upload a trusted certificate file",
         "certificateLabel": "Alternatively, paste the trusted certificate as text:",
         "certificateUploadFailure": "Error reading certificate file"
