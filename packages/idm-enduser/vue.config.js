@@ -37,6 +37,13 @@ function getPlugins() {
   return plugins;
 }
 
+// The dev-server proxy target is the local IDM's origin — default
+// https://localhost:8443, a stock zip install — overridable for an IDM on
+// another port or host. Trailing slash stripped: the target is joined with
+// '/openidm' below, so a pasted 'https://localhost:9443/' would otherwise yield
+// double-slash upstream paths.
+const idmProxyTarget = String(process.env.VUE_APP_IDM_PROXY_TARGET || 'https://localhost:8443').replace(/\/+$/, '');
+
 module.exports = {
   devServer: {
     allowedHosts: 'all',
@@ -51,7 +58,9 @@ module.exports = {
     },
     proxy: {
       '/openidm': {
-        target: 'https://localhost:8443/openidm',
+        // scheme://host[:port] only, WITHOUT the /openidm context path — see
+        // idmProxyTarget above.
+        target: `${idmProxyTarget}/openidm`,
         pathRewrite: { '^/openidm': '' },
         changeOrigin: true,
       },

@@ -17,6 +17,7 @@
 ## Table of contents
 
 - [Quick start](#quick-start)
+- [Running against a local IDM](#running-against-a-local-idm)
 - [Build Tools](#build-tools)
 - [Testing tools](#testing-tools)
 - [Application tools](#application-tools)
@@ -50,6 +51,34 @@ Without Nix, use a Node.js version manager to install Node.js 24.10.0 (Node 14+ 
 
 Docker Desktop or another Docker daemon must be installed and running for Docker-based tests. Install and configure `gcloud` manually when cloud tests are needed, authenticating through your organization's approved process. Certificate scripts may require local Java tooling and certificates. E2E tests require access to a suitable ForgeOps or cloud backend plus its environment/proxy configuration.
 To start the development server, navigate to a target package inside `platform-ui/packages` and run `yarn dev`.
+
+<a name="running-against-a-local-idm"></a>
+## Running against a local IDM
+
+The Admin UI has an IDM mode (`VUE_APP_DEPLOYMENT_TYPE=IDM`) that talks to a standalone IDM instead of an AM-backed platform — for IDM product work and UI PR review (see also the [IDM UI PR Guide](https://pingidentity.atlassian.net/wiki/spaces/UE/pages/2809135155) and [IDM Basic Setup](https://pingidentity.atlassian.net/wiki/spaces/UE/pages/2010546328) on Confluence).
+
+1. **Get IDM running.** Any of these work:
+   - An extracted IDM (from Backstage, or built locally with `mvn clean install` and `openidm-zip/target/openidm-*.zip`), started with `./startup.sh`. Default project, `localhost:8080`, `openidm-admin/openidm-admin`. Add `jpda` to debug the Java side from IntelliJ on :5005.
+   - An IDM already running any other way — started by hand, from an IDE, under [platman](https://github.com/ping-rocks/openam-manager/blob/dev/platman/README.md), or a docker compose lab. Whatever answers on the IDM port is picked up as-is.
+   - Leave it to the VS Code tasks: set `PLATFORM_UI_IDM_HOME` (see step 3) and the "IDM (local)" debug config or "dev: start idm admin" task starts it for you.
+
+2. **Run the UI**: `cd packages/platform-admin && yarn dev:idm` → `http://localhost:8082`. The dev server proxies `/openidm` to `https://localhost:8443` (a stock zip install's HTTPS listener). The `idm-enduser` package works the same way with plain `yarn dev` on `:8889`.
+
+3. **If your IDM differs from the stock install**, set what moved in `~/.config/platform-ui/dev.env` (created by the "dev: first-time setup" VS Code task, or by hand):
+
+   | Key | Default | What it does |
+   |---|---|---|
+   | `PLATFORM_UI_IDM_PORT` | `8080` | Port the tasks use to detect and health-check a running IDM |
+   | `PLATFORM_UI_IDM_SCHEME` | `http` | Scheme of the listener the readiness probe hits — `https` for an IDM answering only on its TLS listener |
+   | `PLATFORM_UI_IDM_USER` / `PLATFORM_UI_IDM_PASSWORD` | `openidm-admin` | Credentials for the `/openidm/info/ping` readiness probe |
+   | `PLATFORM_UI_IDM_HOME` | — | Only needed if the tasks should start IDM for you; the directory containing `startup.sh` |
+   | `VUE_APP_IDM_PROXY_TARGET` | `https://localhost:8443` | IDM origin the dev server proxies `/openidm` to — scheme://host[:port] only, no `/openidm` path (e.g. a docker compose lab on `:9443`) |
+
+   When running `yarn dev:idm` by hand (outside the VS Code tasks), export `VUE_APP_IDM_PROXY_TARGET` yourself or uncomment it in `packages/platform-admin/.env.idm` (or `packages/idm-enduser/.env`).
+
+4. **Debugging the UI with the debugger attached**: open the repo in VS Code and pick the "IDM (local) — admin" config in the Run and Debug panel. It starts IDM (or adopts the one already running), the dev server, and a Chromium profile the debugger can attach to. See `.vscode/tasks.json` and `.vscode/scripts/` — everything there is also runnable from any terminal.
+
+An IDM you started yourself is never stopped by these tasks — teardown only touches an IDM the tasks started.
 
 <a name="build-tools"></a>
 ## Build Tools
