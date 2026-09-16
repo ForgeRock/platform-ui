@@ -44,7 +44,7 @@ describe('DecisionsCompleteModal', () => {
       const buttons = wrapper.findAll('.btn');
       expect(buttons.length).toBe(2);
       expect(buttons[0].text()).toBe('Continue Reviewing');
-      expect(buttons[1].text()).toBe('Sign off');
+      expect(buttons[1].text()).toBe('Submit');
 
       const chart = wrapper.find('#modal-decisions-chart');
       expect(chart.exists()).toBe(true);
@@ -79,13 +79,13 @@ describe('DecisionsCompleteModal', () => {
       const buttons = wrapper.findAll('.btn');
       expect(buttons.length).toBe(2);
       expect(buttons[0].text()).toBe('Back');
-      expect(buttons[1].text()).toBe('Sign off');
+      expect(buttons[1].text()).toBe('Submit');
 
       const chart = wrapper.find('#modal-decisions-chart');
       expect(chart.exists()).toBe(false);
 
       const spans = wrapper.findAll('span');
-      expect(spans[0].text()).toContain('Signing off on the access review is final');
+      expect(spans[0].text()).toContain('Submitting the access review is final');
     });
   });
 });
