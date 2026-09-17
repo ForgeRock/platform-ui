@@ -4806,6 +4806,7 @@
     "listSubtitle": "Monitor and schedule jobs.",
     "loadingJobs": "Loading jobs...",
     "modalTitle": "Schedule {title} Reconciliation Job",
+    "minutes": "minute(s)",
     "months": "month(s)",
     "nextRun": "Next run: {nextDate}",
     "nextScheduledRun": "Next Scheduled Run",
