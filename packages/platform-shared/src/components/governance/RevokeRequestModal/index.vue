@@ -29,14 +29,13 @@ of the MIT license. See the LICENSE file for details. -->
       </BFormGroup>
       <!-- Priority dropdown select -->
       <BFormGroup>
-        <div class="mb-2 text-muted">
-          {{ $t('common.priority') }}
-        </div>
         <FrField
           v-model="selectedPriority"
           data-testid="priority-field"
           name="Priority"
           type="select"
+          :label="$t('common.priority')"
+          :floating-label="false"
           :options="priorityOptions"
           :preselect-first="true"
           :searchable="false">
@@ -57,10 +56,13 @@ of the MIT license. See the LICENSE file for details. -->
       </BFormGroup>
       <!-- Expiration Datepicker -->
       <BFormGroup>
-        <div class="mb-2 text-muted">
+        <label
+          for="revokeExpirationDate"
+          class="mb-2 text-muted">
           {{ $t('governance.request.requestExpiration') }}
-        </div>
+        </label>
         <FrDatepicker
+          id="revokeExpirationDate"
           name="expirationDate"
           v-model="expirationDate"
           :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"

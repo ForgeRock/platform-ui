@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           data-testid="test-newEndDate"
           name="newEndDate"
           type="datetime"
-          :placeholder="$t('governance.accessRequest.extendRequest.GrantEndDate')"
+          :label="$t('governance.accessRequest.extendRequest.GrantEndDate')"
           :adjust-for-timezone="false"
           :show-seconds="false"
           :min-date="minEndDate"
@@ -43,14 +43,13 @@ of the MIT license. See the LICENSE file for details. -->
       </BFormGroup>
       <!-- Priority dropdown select -->
       <BFormGroup>
-        <div class="mb-2 text-muted">
-          {{ $t('common.priority') }}
-        </div>
         <FrField
           v-model="selectedPriority"
           data-testid="priority-field"
           name="Priority"
           type="select"
+          :label="$t('common.priority')"
+          :floating-label="false"
           :options="priorityOptions"
           :preselect-first="true"
           :searchable="false">

@@ -7,6 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import dayjs from 'dayjs';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -186,5 +187,36 @@ describe('ExtendRequestModal Component', () => {
     await flushPromises();
 
     expect(wrapper.vm.requireRequestJustification).toBe(false);
+  });
+
+  describe('@a11y', () => {
+    it('associates the Priority and Grant end date labels with their controls', async () => {
+      setup();
+      await flushPromises();
+
+      const labels = wrapper.findAll('label').map((label) => label.text());
+      expect(labels).toContain('Priority');
+      expect(labels).toContain("Grant's end date");
+
+      // The Grant end date label must reference an existing input id
+      const endDateLabel = wrapper.findAll('label').filter((label) => label.text() === "Grant's end date")[0];
+      const forId = endDateLabel.attributes('for');
+      expect(forId).toBeTruthy();
+      expect(wrapper.find(`#${forId.replace(/([.:])/g, '\\$1')}`).exists()).toBe(true);
+
+      // The Priority select wrapper must be labelled by the Priority label
+      const priorityLabel = wrapper.findAll('label').filter((label) => label.text() === 'Priority')[0];
+      expect(priorityLabel.attributes('id')).toBeTruthy();
+      const combobox = wrapper.find('[role="combobox"]');
+      expect(combobox.exists()).toBe(true);
+      expect(combobox.attributes('aria-labelledby')).toBe(priorityLabel.attributes('id'));
+    });
+
+    it('has no accessibility violations', async () => {
+      setup();
+      await flushPromises();
+
+      await runA11yTest(wrapper);
+    });
   });
 });
