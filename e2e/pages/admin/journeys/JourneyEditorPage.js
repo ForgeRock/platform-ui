@@ -160,7 +160,7 @@ export default class JourneyEditorPage {
   }
 
   static get connectionPaths() {
-    return cy.get('path.accented-connection');
+    return cy.get('g.accented-connection');
   }
 
   static allTreeNodes() {

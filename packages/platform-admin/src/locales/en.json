@@ -1217,6 +1217,7 @@
     "maximumSessionTimeLabel": "Maximum Authenticated Session Time",
     "maximumIdleTimeLabel": "Maximum Authenticated Session Idle Time",
     "nodeDetails": "Node Details",
+    "connectionAriaLabel": "Connection from {source} to {target}",
     "nodeVersion": "Version: ",
     "nodeUpdateAvailable": "Update Available",
     "noJourney": "You haven't created any journeys",
