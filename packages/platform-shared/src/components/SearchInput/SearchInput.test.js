@@ -40,6 +40,28 @@ describe('SearchInput Component', () => {
     expect(wrapper.find('input[type="search"]').attributes().placeholder).toBe('this is a test');
   });
 
+  it('Uses the placeholder as the accessible label by default', () => {
+    mountComponent();
+    const input = wrapper.find('input[type="search"]');
+    const label = wrapper.find('label[for]');
+    expect(label.exists()).toBe(true);
+    expect(label.attributes('for')).toBe(input.attributes('id'));
+    expect(label.text()).toBe('Search');
+  });
+
+  it('Uses the label prop as the accessible label when provided', () => {
+    mountComponent({
+      props: {
+        label: 'Search Entitlements',
+      },
+    });
+    const input = wrapper.find('input[type="search"]');
+    const label = wrapper.find('label[for]');
+    expect(label.exists()).toBe(true);
+    expect(label.attributes('for')).toBe(input.attributes('id'));
+    expect(label.text()).toBe('Search Entitlements');
+  });
+
   it('After typing into the input, the append icon will show', async () => {
     mountComponent();
     expect(wrapper.find('.input-group-append .material-icons-outlined').exists()).toBe(false);
@@ -108,6 +130,16 @@ describe('SearchInput Component', () => {
       expect(label.text()).toBe('Search');
       // The accessible name must no longer come from the placeholder
       expect(input.attributes('aria-label')).toBeUndefined();
+    });
+
+    it('has no accessibility violations with a custom label', async () => {
+      mountComponent({
+        props: {
+          label: 'Search Entitlements',
+        },
+      });
+      await flushPromises();
+      await runA11yTest(wrapper);
     });
   });
 });

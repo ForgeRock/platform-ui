@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import EntitlementsSearchableList from './EntitlementsSearchableList';
 
@@ -253,6 +254,38 @@ describe('EntitlementsSearchableList', () => {
 
       await search(wrapper, '');
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
+    });
+  });
+
+  it('gives the search input a contextual accessible label that includes the list title', () => {
+    const wrapper = setup({
+      entitlements: [],
+      title: 'Entitlements',
+    });
+
+    const searchInput = wrapper.find('input[type="search"]');
+    const label = wrapper.find('label[for]');
+    expect(label.exists()).toBe(true);
+    expect(label.attributes('for')).toBe(searchInput.attributes('id'));
+    expect(label.text()).toBe('Search Entitlements');
+  });
+
+  describe('@a11y', () => {
+    it('has no accessibility violations', async () => {
+      const wrapper = setup({
+        entitlements: [
+          {
+            name: 'testName',
+            description: 'testDescription',
+            appName: 'testAppName',
+            app: 'testApp',
+            compositeId: 'testCompositeId',
+          },
+        ],
+        title: 'Entitlements',
+      });
+
+      await runA11yTest(wrapper);
     });
   });
 });

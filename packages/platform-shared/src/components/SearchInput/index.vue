@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <label
       :for="searchFieldId"
       class="sr-only">
-      {{ placeholder }}
+      {{ label?.trim() || placeholder }}
     </label>
     <BInputGroup :class="[{'bg-light': readOnly}]">
       <BInputGroupPrepend>
@@ -90,6 +90,16 @@ export default {
     placeholder: {
       type: String,
       default: 'Search',
+    },
+    /**
+     * Accessible label for the search input. Falls back to the placeholder when not provided.
+     * Prefer this over relying on the placeholder for the accessible name: the placeholder
+     * disappears on input and some voice-control users cannot target it.
+     * Use when the visual context (e.g. a section heading) differs from the placeholder text.
+     */
+    label: {
+      type: String,
+      default: '',
     },
     /**
      * Material icon name to left of input used to indicate what field is for.

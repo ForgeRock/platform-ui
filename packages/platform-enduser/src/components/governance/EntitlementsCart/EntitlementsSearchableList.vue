@@ -26,7 +26,8 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <FrSearchInput
           v-model="searchQueryEntitlements"
-          :placeholder="$t('common.search')" />
+          :placeholder="$t('common.search')"
+          :label="$t('common.searchPlaceholder', { searchItem: title })" />
       </div>
     </template>
     <FrSearchResultsAnnouncer
