@@ -26,6 +26,7 @@
     "@hcaptcha/vue-hcaptcha": "0.3.2",
     "@kyvg/vue3-notification": "3.0.2",
     "@vue/compat": "3.3.4",
+    "abort-controller": "3.0.0",
     "axios": "1.18.0",
     "bootstrap": "4.6.2",
     "bootstrap-vue": "2.23.1",

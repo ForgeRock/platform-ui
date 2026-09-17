@@ -9,6 +9,7 @@ import 'whatwg-fetch';
 import 'core-js/stable';
 import '@forgerock/platform-shared/src/utils/domCollectionsForEach';
 import 'regenerator-runtime/runtime';
+import 'abort-controller/polyfill.js';
 
 import { createApp } from 'vue';
 import Notifications from '@kyvg/vue3-notification';

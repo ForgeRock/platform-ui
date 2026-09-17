@@ -170,6 +170,7 @@ module.exports = {
     lintStyleOnBuild: true,
   },
   transpileDependencies: [
+    'intl-tel-input',
     'postcss',
     'nanoid',
     'sanitize-html',
