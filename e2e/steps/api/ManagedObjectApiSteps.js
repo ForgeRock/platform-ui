@@ -93,6 +93,16 @@ export default class ManagedObjectApiSteps {
   }
 
   /**
+   * Tracks a managed object type that was created through the UI (not via
+   * createCustomManagedObject) so deleteCreatedCustomManagedObjects() removes it too.
+   *
+   * @param {string} name - Internal IDM name of the UI-created object type.
+   */
+  static trackCustomManagedObject(name) {
+    ManagedObjectApiSteps.createdCustomManagedObjectNames.push(name);
+  }
+
+  /**
    * Removes all custom managed object types added during the test run by restoring
    * `config/managed` to the state before any of them were added.
    *
