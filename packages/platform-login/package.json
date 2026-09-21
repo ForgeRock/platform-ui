@@ -19,7 +19,9 @@
     "test:lighthouse": "../../e2e/passwords.sh cypress run --spec e2e/tests/lighthouse.suite.js --config ignoreTestFiles=''",
     "unit": "jest --no-cache",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache",
-    "test:cb": "jest --config=../../jest.config.crossbrowser.js"
+    "test:cb": "jest --config=../../jest.config.crossbrowser.js",
+    "e2e:check-case-ids": "yarn workspace forgerock-platform-ui run e2e:check-case-ids",
+    "e2e:check-skips": "yarn workspace forgerock-platform-ui run e2e:check-skips"
   },
   "dependencies": {
     "@badeball/cypress-cucumber-preprocessor": "24.0.1",
