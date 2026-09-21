@@ -17,6 +17,7 @@ import {
   findByTestId,
   findByRole,
   createTooltipContainer,
+  runA11yTest,
   toggleActionsMenu,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
@@ -2633,6 +2634,79 @@ describe('TaskList', () => {
       wrapper.vm.addComment('test comment');
       await flushPromises();
       expect(restoreFocusSpy).toHaveBeenCalledWith('comment-item');
+    });
+  });
+
+  describe('flags cell accessibility', () => {
+    beforeEach(() => {
+      // Full-mount via the API path so the flags cell renders inside the table.
+      // getGrantFlags derives flags from the row: recon grant type + a nested
+      // item.decision.certification (suppresses the always-on NEW_ACCESS flag).
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({
+        data: {
+          result: [
+            {
+              id: 'testId',
+              user: {},
+              account: {},
+              application: {},
+              entitlement: {},
+              relationship: {
+                properties: {
+                  grantTypes: [{ grantType: 'recon' }],
+                },
+              },
+              item: {
+                decision: {
+                  certification: {},
+                },
+              },
+              decision: {
+                certification: {},
+              },
+              permissions: {},
+            },
+          ],
+        },
+      }));
+    });
+
+    // Flag icons must be keyboard focusable and expose a valid accessible name.
+    it('renders flag icons with role img, an accessible name, and tabindex 0', async () => {
+      const { wrapper } = mountComponent();
+      await flushPromises();
+
+      const reconIcon = wrapper.find('#flags-testId-0');
+      expect(reconIcon.exists()).toBe(true);
+      expect(reconIcon.attributes('role')).toBe('img');
+      expect(reconIcon.attributes('aria-label')).toBe('Recon');
+      expect(reconIcon.attributes('tabindex')).toBe('0');
+    });
+
+    // BTooltip is stubbed (the real component adds aria-describedby at show-time),
+    // so guard the declaration contract: the flag's tooltip targets its icon and is
+    // focus-triggered. Multiple tooltips exist on the page — find the flag's.
+    it('declares each flag tooltip against its icon target with focus trigger', async () => {
+      const { wrapper } = mountComponent();
+      await flushPromises();
+
+      const targetId = 'flags-testId-0';
+      const flagTooltip = wrapper.findAllComponents({ name: 'BTooltip' })
+        .find((t) => t.props('target') === targetId);
+      expect(flagTooltip).toBeDefined();
+      expect(flagTooltip.props('triggers')).toBe('focus hover');
+    });
+
+    // The focusable, named icon must not introduce axe violations in its cell.
+    it('passes axe scan of the flags cell', async () => {
+      const { wrapper } = mountComponent();
+      await flushPromises();
+
+      const reconIcon = wrapper.find('#flags-testId-0');
+      expect(reconIcon.exists()).toBe(true);
+      const flagsCell = reconIcon.element.closest('td');
+      expect(flagsCell).not.toBeNull();
+      await runA11yTest(flagsCell);
     });
   });
 });
