@@ -35,4 +35,17 @@ export default class ApplicationsPage {
   static applicationRowStatus(appName) {
     return ApplicationsPage.applicationRow(appName).findByRole('cell', { name: /active|inactive/i });
   }
+
+  static get searchInput() {
+    return cy.findByPlaceholderText('Search');
+  }
+
+  static searchFor(term) {
+    ApplicationsPage.searchInput.clear().type(term);
+  }
+
+  // Back link rendered by the shared Navbar on application detail pages
+  static get backLink() {
+    return cy.get('.fr-back-link');
+  }
 }
