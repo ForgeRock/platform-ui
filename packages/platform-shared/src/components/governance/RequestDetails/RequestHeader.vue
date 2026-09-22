@@ -31,16 +31,16 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
     <BMediaBody class="align-self-center text-truncate">
-      <div class="d-flex flex-column-reverse">
+      <div>
+        <p
+          v-if="item.details.name"
+          class="h5 text-muted mb-1">
+          {{ item.details.type }}
+        </p>
         <h1
           :class="[item.details.name ? 'mb-1 text-truncate' : 'h5 text-muted']">
           {{ item.details.name || item.details.type }}
         </h1>
-        <h2
-          v-if="item.details.name"
-          class="h5 text-muted mb-1">
-          {{ item.details.type }}
-        </h2>
       </div>
       <div>
         <span class="text-dark">
