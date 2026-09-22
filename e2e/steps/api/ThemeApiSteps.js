@@ -134,4 +134,21 @@ export default class ThemeApiSteps {
       expect(JSON.stringify(value), `theme.${fieldName}`).to.include(expectedFragment);
     });
   }
+
+  /**
+   * Toggles the "Display an asterisk (*) next to the label for all mandatory
+   * fields" setting (journeyShowAsteriskForRequiredFields) on the realm's
+   * default theme via the IDM themerealm config API. Requires an active admin
+   * session (ACCESS_TOKEN env fetched by the admin login).
+   * @param {Boolean} enabled whether the asterisk indicator should be shown
+   */
+  static setDefaultThemeAsteriskConfig(enabled) {
+    return getIDMThemes().then((response) => {
+      const realm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
+      const themes = response.body;
+      const defaultTheme = themes.realm[realm].find((theme) => theme.isDefault);
+      defaultTheme.journeyShowAsteriskForRequiredFields = enabled;
+      return putIDMResource('config/ui', 'themerealm', themes);
+    });
+  }
 }

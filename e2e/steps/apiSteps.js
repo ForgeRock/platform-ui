@@ -21,6 +21,7 @@ import EventHookApiSteps from './api/EventHookApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
 import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
+import JourneyNodeApiSteps from './api/JourneyNodeApiSteps';
 import LocalizationApiSteps from './api/LocalizationApiSteps';
 import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
 import OrganizationApiSteps from './api/OrganizationApiSteps';
@@ -47,6 +48,7 @@ export default {
   inviteAdmins: InviteAdminsApiSteps,
   jobs: JobsApiSteps,
   journey: JourneyApiSteps,
+  journeyNode: JourneyNodeApiSteps,
   journeys: JourneyApiSteps,
   localization: LocalizationApiSteps,
   managedObject: ManagedObjectApiSteps,

@@ -7,10 +7,12 @@
 
 import commonEnduserSteps from '@e2e/steps/commonEnduserSteps';
 import RegistrationSteps from '../steps/enduser/RegistrationSteps';
+import RequiredInputsSteps from '../steps/enduser/RequiredInputsSteps';
 import TermsAndConditionsSteps from '../steps/login/TermsAndConditionsSteps';
 
 export default {
   ...commonEnduserSteps,
   registration: RegistrationSteps,
+  requiredInputs: RequiredInputsSteps,
   termsAndConditionsJourney: TermsAndConditionsSteps,
 };
