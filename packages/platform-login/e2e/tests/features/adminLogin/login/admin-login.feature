@@ -13,8 +13,6 @@ Feature: Admin Login
     And the value of the "User Name" field is ""
     And the value of the "Password" field is ""
 
-  # FLAKY TEST detected within: IAM-11605
-  @skip
   @C29559
   @cloud @forgeops
   Scenario: Cannot login with empty admin password
@@ -82,8 +80,6 @@ Feature: Admin Login
     And user clicks on "Next" button
     Then admin dashboard is loaded
 
-  # FLAKY TEST detected within: IAM-11605
-  @skip
   @C29567
   @cloud
   Scenario: Admin logs in successfully - Cloud only
