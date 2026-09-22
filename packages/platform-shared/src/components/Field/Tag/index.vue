@@ -44,8 +44,8 @@ of the MIT license. See the LICENSE file for details. -->
                   <span
                     :aria-label="$t('common.close')"
                     :data-testid="`remove-${element.toString().replace(/\s/g, '-')}-tag`"
-                    @click="removeTag(element)"
-                    @keydown.enter="removeTag(element)"
+                    @click="removeTag(element.toString())"
+                    @keydown.enter="removeTag(element.toString())"
                     role="button"
                     tabindex="0">
                     <FrIcon
