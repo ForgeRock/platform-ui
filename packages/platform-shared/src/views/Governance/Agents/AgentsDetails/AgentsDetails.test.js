@@ -59,8 +59,11 @@ const testAgent = {
   },
 };
 
-function mountComponent(props = {}) {
+function mountComponent(props = {}, { uncorrelated = false } = {}) {
   const agent = cloneDeep(testAgent);
+  if (uncorrelated) {
+    delete agent.user;
+  }
   AccountsApi.getAccountById = jest.fn().mockReturnValue(Promise.resolve({
     data: agent,
   }));
@@ -153,7 +156,7 @@ describe('AgentsDetails', () => {
     await flushPromises();
 
     const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1', 'a/b/entitlement-2'], justification: '' });
+    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }, { entitlementId: 'a/b/entitlement-2' }], justification: '' });
     await flushPromises();
 
     expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
@@ -165,13 +168,57 @@ describe('AgentsDetails', () => {
     });
   });
 
+  it('calls submitCustomRequest with entitlementGrant on assign-resources emit with { entitlementId } objects', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('assign-resources', {
+      entitlements: [
+        { entitlementId: 'a/b/entitlement-1', assignmentId: 'assignment-1' },
+        { entitlementId: 'a/b/entitlement-2', assignmentId: 'assignment-2' },
+      ],
+      justification: '',
+    });
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
+      common: expect.objectContaining({
+        entitlementId: 'entitlement-1',
+        userId: testAgent.user.id,
+        accountId: testAgent.keys.accountId,
+      }),
+    });
+  });
+
+  it('submits entitlementGrant without userId when the agent has no correlated user', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
+    mountComponent({}, { uncorrelated: true });
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: '' });
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
+      common: expect.objectContaining({
+        entitlementId: 'entitlement-1',
+        accountId: testAgent.keys.accountId,
+      }),
+    });
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
+      common: expect.not.objectContaining({ userId: expect.anything() }),
+    });
+  });
+
   it('includes justification in common when assign-resources payload has a non-empty justification', async () => {
     const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
     mountComponent();
     await flushPromises();
 
     const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1'], justification: 'business reason' });
+    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: 'business reason' });
     await flushPromises();
 
     expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
@@ -189,7 +236,7 @@ describe('AgentsDetails', () => {
     await flushPromises();
 
     const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1'], justification: '' });
+    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: '' });
     await flushPromises();
 
     expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
@@ -203,7 +250,7 @@ describe('AgentsDetails', () => {
     await flushPromises();
 
     const govResourceTable = await activateEntitlementsTab();
-    govResourceTable.vm.$emit('assign-resources', { entitlements: ['a/b/entitlement-1'], justification: '   ' });
+    govResourceTable.vm.$emit('assign-resources', { entitlements: [{ entitlementId: 'a/b/entitlement-1' }], justification: '   ' });
     await flushPromises();
 
     expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
@@ -239,5 +286,17 @@ describe('AgentsDetails', () => {
     await flushPromises();
 
     expect(getEntitlementsSpy).toHaveBeenCalledWith(false, 'test', 'app-1', expect.stringContaining('_assignment'), true);
+  });
+
+  it('calls getEntitlements on get-entitlements emit even when the agent has no correlated user', async () => {
+    const getEntitlementsSpy = jest.spyOn(resourceUtil, 'getEntitlements').mockResolvedValue([]);
+    mountComponent({}, { uncorrelated: true });
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('get-entitlements', { searchValue: '', selectedApplicationId: 'app-1' });
+    await flushPromises();
+
+    expect(getEntitlementsSpy).toHaveBeenCalledWith(false, '', 'app-1', expect.stringContaining('_assignment'), true);
   });
 });

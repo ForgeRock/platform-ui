@@ -62,6 +62,7 @@ export async function assignResourcesToIGA(userId, entitlements, grantType, isEn
       const common = {
         context: { type: isEndUser ? 'request' : 'admin' },
         entitlementId: assignmentId,
+        justification: 'Admin submitted', // Not translated as this is filler text for auto-approved requests
         userId,
         ...(accountId && { accountId }),
       };
@@ -128,7 +129,7 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
       queryParams.fields = 'application,assignment,entitlement,id,descriptor,glossary';
       queryParams.sortKeys = 'descriptor.idx./entitlement.displayName';
       const { data } = await searchCatalog(queryParams, payload, !isEndUser);
-      return data?.result.map((result) => ({ value: result.entitlement?.id, text: get(result, 'descriptor.idx./entitlement.displayName'), assignmentId: result.assignment?.id })) || [];
+      return data?.result.map((result) => ({ value: result.assignment?.id, text: get(result, 'descriptor.idx./entitlement.displayName'), assignmentId: result.assignment?.id })) || [];
     }
     queryParams.sortBy = 'descriptor.idx./entitlement.displayName';
     const { data } = await searchGovernanceResource(payload, queryParams);

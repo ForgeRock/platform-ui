@@ -304,6 +304,7 @@ of the MIT license. See the LICENSE file for details. -->
       :parent-resource-name="parentResourceName"
       :require-request-justification="requireRequestJustification"
       :resource-type="pluralizedGrantType"
+      :show-justification="showJustification"
       :user-id="userId"
       @assign-resources="$emit('assign-resources', $event)"
       @get-entitlements="$emit('get-entitlements', $event)" />
@@ -351,7 +352,7 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="assigningResource"
           :show-spinner="assigningResource"
           :spinner-text="$t('governance.access.requesting')"
-          @click="$emit('assign-resources', { entitlements: itemToRequest, justification: $t('governance.lcm.justification.adminEntitlementGrant') })" />
+          @click="submitRequest($t('governance.lcm.justification.adminEntitlementGrant'))" />
       </template>
     </BModal>
     <FrUserEntitlementModal
@@ -517,6 +518,10 @@ export default {
     showRequest: {
       type: Boolean,
       default: false,
+    },
+    showJustification: {
+      type: Boolean,
+      default: true,
     },
     totalCount: {
       type: Number,
@@ -869,8 +874,23 @@ export default {
       // ActionsMenu component manages focus on trigger elements when modals are opened/closed.
       // To avoid conflicts, we defer showing the modal until the next tick.
       this.$nextTick(() => {
-        this.itemToRequest = [item?.catalog?.id];
+        this.itemToRequest = [item];
         this.$bvModal.show(`${this.modalId}-request`, [item?.catalog?.id]);
+      });
+    },
+    /**
+     * Emits the request-confirmation modal's submission in the standard assign-resources
+     * payload shape: entitlements as { entitlementId, assignmentId } objects, matching the
+     * assign modal — assignmentId is the identifier the IGA user-path helper publishes
+     * @param {String} justification pre-filled justification for admin-requested grants
+     */
+    submitRequest(justification) {
+      this.$emit('assign-resources', {
+        entitlements: this.itemToRequest.map((item) => ({
+          entitlementId: item?.catalog?.id,
+          assignmentId: item?.assignment?.id,
+        })),
+        justification,
       });
     },
     /**

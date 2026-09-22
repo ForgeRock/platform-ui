@@ -170,10 +170,6 @@ const entitlementTableFields = [
  * @param {*} queryParams Contains parameters to search for entitlements
  */
 async function getGovernanceEntitlements({ searchValue = '', selectedApplicationId }) {
-  const user = account.value?.user;
-  if (!user) {
-    return;
-  }
   entitlements.value = await getEntitlements(false, searchValue, selectedApplicationId, `managed/${store.state.realm}_assignment`, props.isEndUser);
 }
 
@@ -184,13 +180,11 @@ async function getGovernanceEntitlements({ searchValue = '', selectedApplication
 async function assignGovernanceResources(payload) {
   const { entitlements: resourceIds, justification } = payload;
   const userId = account.value?.user?.id;
-  if (!userId) {
-    return;
-  }
   savingGovernanceResourcesStatus.value = 'saving';
   const accountId = account.value?.keys?.accountId;
-  const requests = resourceIds.map((entitlementId) => {
-    const common = { entitlementId: entitlementId.split('/')[2], userId };
+  const requests = resourceIds.map(({ entitlementId }) => {
+    const common = { entitlementId: entitlementId.split('/').slice(2).join('/') };
+    if (userId) common.userId = userId;
     if (!props.isEndUser) common.context = { type: 'admin' };
     if (accountId) common.accountId = accountId;
     if (justification?.trim()) common.justification = justification.trim();
@@ -240,13 +234,11 @@ async function queryAccountEntitlements(params = {}) {
  */
 async function revokeEntitlement(payload) {
   const userId = account.value?.user?.id;
-  if (!userId) {
-    return;
-  }
   savingGovernanceResourcesStatus.value = 'saving';
   const accountId = account.value?.keys?.accountId;
   const requests = payload.itemsToRevoke.map((item) => {
-    const common = { entitlementId: item?.assignmentId, userId };
+    const common = { entitlementId: item?.assignmentId };
+    if (userId) common.userId = userId;
     if (!props.isEndUser) common.context = { type: 'admin' };
     if (accountId) common.accountId = accountId;
     if (payload.justification) common.justification = payload.justification;

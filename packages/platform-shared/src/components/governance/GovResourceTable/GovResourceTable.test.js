@@ -39,6 +39,12 @@ const mockItems = [
       name: 'test',
       templateName: 'test',
     },
+    catalog: {
+      id: 'catalog-1',
+    },
+    assignment: {
+      id: 'assignment-1',
+    },
     relationship: {
       id: '1234',
       properties: {
@@ -274,14 +280,34 @@ describe('GovResourceTable', () => {
     expect(request).toHaveBeenCalled();
   });
 
-  it('sets itemToRequest with the catalog id when showRequestModal is called', async () => {
+  it('sets itemToRequest with the item when showRequestModal is called', async () => {
     const { wrapper } = await mountComponent({ showViewDetails: true, showRequest: true, grantType: 'entitlement' });
     await wrapper.setProps({ items: mockItems });
 
     wrapper.vm.showRequestModal(mockItems[0]);
     await flushPromises();
 
-    expect(wrapper.vm.itemToRequest).toEqual([mockItems[0]?.catalog?.id]);
+    expect(wrapper.vm.itemToRequest).toEqual([mockItems[0]]);
+  });
+
+  it('emits assign-resources with { entitlementId, assignmentId } objects when submitRequest is called', async () => {
+    const { wrapper } = await mountComponent({ showViewDetails: true, showRequest: true, grantType: 'entitlement' });
+    await wrapper.setProps({ items: mockItems });
+
+    wrapper.vm.showRequestModal(mockItems[0]);
+    await flushPromises();
+    wrapper.vm.submitRequest('business reason');
+    await flushPromises();
+
+    expect(wrapper.emitted('assign-resources')).toEqual([[
+      {
+        entitlements: [{
+          entitlementId: mockItems[0]?.catalog?.id,
+          assignmentId: mockItems[0]?.assignment?.id,
+        }],
+        justification: 'business reason',
+      },
+    ]]);
   });
 
   it('should show floating bar when row is selected, and show revoke modal when revoke button is clicked', async () => {

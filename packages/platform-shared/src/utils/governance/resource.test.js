@@ -47,13 +47,21 @@ describe('getGovernanceGrants', () => {
   });
 
   it('assigns resources as relationships to IGA-resource, and returns success if errors are less than number of responses', async () => {
-    jest.spyOn(AccessRequestApi, 'requestAction').mockResolvedValue({ data: { errors: [] } });
+    const requestActionSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockResolvedValue({ data: { errors: [] } });
     const errorSpy = jest.spyOn(notification, 'showErrorMessage');
 
     const response = await assignResourcesToIGA('parentResourceId', [{ assignmentId: 'resourceId' }], 'grantType');
 
     expect(response).toEqual('success');
     expect(errorSpy).not.toHaveBeenCalled();
+    expect(requestActionSpy).toHaveBeenCalledWith('entitlementGrant', 'publish', null, {
+      common: {
+        context: { type: 'admin' },
+        entitlementId: 'resourceId',
+        justification: 'Admin submitted',
+        userId: 'parentResourceId',
+      },
+    });
   });
 
   it('assigns resources as relationships to IGA-resource, shows errors if returned, and returns error if all responses are errors', async () => {
@@ -86,7 +94,9 @@ describe('getGovernanceGrants', () => {
 
     const response = await getEntitlements(true);
 
-    expect(response).toStrictEqual([{ value: 'entitlementId', text: 'descriptorDisplayName', assignmentId: 'assignmentId' }]);
+    // value must be the assignment id — the identifier published to the IGA backend — and
+    // unique per option, so multiselect selection resolution does not collapse rows
+    expect(response).toStrictEqual([{ value: 'assignmentId', text: 'descriptorDisplayName', assignmentId: 'assignmentId' }]);
   });
 
   it('calls searchCatalog with isAdmin=true when resourceIsUser=true and isEndUser=false', async () => {

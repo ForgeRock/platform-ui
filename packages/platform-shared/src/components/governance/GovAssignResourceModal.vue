@@ -108,6 +108,8 @@ of the MIT license. See the LICENSE file for details. -->
           validation="required"
           @search-change="debouncedSearch" />
         <FrField
+          v-if="showJustification"
+          class="mt-3"
           v-model="justificationText"
           data-testid="justification-field"
           name="justificationText"
@@ -225,6 +227,10 @@ const props = defineProps({
   requireRequestJustification: {
     type: Boolean,
     default: false,
+  },
+  showJustification: {
+    type: Boolean,
+    default: true,
   },
 });
 

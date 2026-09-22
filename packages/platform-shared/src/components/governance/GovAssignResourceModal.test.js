@@ -297,6 +297,17 @@ describe('GovAssignResourceModal Component', () => {
       expect(justificationField.vm.$attrs.validation).toEqual({ required: false });
     });
 
+    it('does not render the justification textarea when showJustification is false', async () => {
+      const wrapper = mountComponent({ showJustification: false });
+      await flushPromises();
+
+      await advanceToStepOne(wrapper);
+
+      const allFields = wrapper.findAllComponents({ name: 'FrField' });
+      const justificationField = allFields.find((f) => f.props('name') === 'justificationText');
+      expect(justificationField).toBeUndefined();
+    });
+
     it('emits assign-resources with { entitlements, justification } payload when grant button is clicked', async () => {
       // Stub Form (vee-validate component name) to always report valid so the grant button is enabled
       const wrapper = mount(GovAssignResourceModal, {
