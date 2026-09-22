@@ -8,59 +8,51 @@ of the MIT license. See the LICENSE file for details. -->
     size="lg"
     ok-only
     ok-variant="outline-primary"
+    :static="isTesting"
     :ok-title="$t('common.done')"
     :title="$t('governance.certificationTask.campaignDetails.title')">
-    <div class="details-container">
-      <div class="d-flex justify-content-start align-items-center mb-4">
-        <div class="d-flex w-50 flex-column">
-          <span
-            class="text-muted">
-            {{ $t('governance.certificationTask.campaignDetails.campaignOwner') }}
-          </span>
-          <span class="text-dark">
-            {{ campaignDetails.ownerInfo && campaignDetails.ownerInfo.userName }}
-          </span>
-        </div>
-        <div class="d-flex w-50 flex-column">
-          <span
-            class="text-muted">
-            {{ $t('governance.certificationTask.campaignDetails.duration') }}
-          </span>
-          <span class="text-dark">
-            {{ campaignDetails.stageDuration }}
-          </span>
-        </div>
+    <dl class="details-container mb-0">
+      <div class="w-50 mb-4">
+        <dt class="text-muted">
+          {{ $t('governance.certificationTask.campaignDetails.campaignOwner') }}
+        </dt>
+        <dd class="text-dark mb-0">
+          {{ campaignDetails.ownerInfo && campaignDetails.ownerInfo.userName }}
+        </dd>
       </div>
-      <div class="d-flex justify-content-start align-items-center mb-4">
-        <div class="d-flex w-50 flex-column">
-          <span
-            class="text-muted">
-            {{ $t('governance.certificationTask.campaignDetails.startDate') }}
-          </span>
-          <span class="text-dark">
-            {{ formatDate(campaignDetails.startDate) }}
-          </span>
-        </div>
-        <div class="d-flex w-50 flex-column">
-          <span
-            class="text-muted">
-            {{ $t('common.deadline') }}
-          </span>
-          <span class="text-dark">
-            {{ formatDate(campaignDetails.deadline) }}
-          </span>
-        </div>
+      <div class="w-50 mb-4">
+        <dt class="text-muted">
+          {{ $t('governance.certificationTask.campaignDetails.duration') }}
+        </dt>
+        <dd class="text-dark mb-0">
+          {{ campaignDetails.stageDuration }}
+        </dd>
       </div>
-      <div class="d-flex flex-column">
-        <span
-          class="text-muted">
+      <div class="w-50 mb-4">
+        <dt class="text-muted">
+          {{ $t('governance.certificationTask.campaignDetails.startDate') }}
+        </dt>
+        <dd class="text-dark mb-0">
+          {{ formatDate(campaignDetails.startDate) }}
+        </dd>
+      </div>
+      <div class="w-50 mb-4">
+        <dt class="text-muted">
+          {{ $t('common.deadline') }}
+        </dt>
+        <dd class="text-dark mb-0">
+          {{ formatDate(campaignDetails.deadline) }}
+        </dd>
+      </div>
+      <div class="w-100">
+        <dt class="text-muted">
           {{ $t('governance.certificationTask.campaignDetails.description') }}
-        </span>
-        <span class="text-dark">
+        </dt>
+        <dd class="text-dark mb-0">
           {{ campaignDetails.description }}
-        </span>
+        </dd>
       </div>
-    </div>
+    </dl>
   </BModal>
 </template>
 
@@ -84,6 +76,10 @@ export default {
       type: Object,
       default: null,
     },
+    isTesting: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     formatDate(date) {
@@ -98,8 +94,22 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  // dl is the flex row; each div is one name-value group (two per row at w-50).
+  // Valid dl content model: dt/dd must be direct children of the group div.
+  // align-items: center keeps vertically centered rows like the old row divs did.
   .details-container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+
+    // dt carries the browser default bold from reboot; the original labels
+    // were normal-weight muted spans, so keep them visually unchanged.
+    dt {
+      font-weight: inherit;
+    }
+
+    dd {
+      margin-left: 0;
+    }
   }
 </style>
