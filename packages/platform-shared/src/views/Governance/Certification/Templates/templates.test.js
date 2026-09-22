@@ -102,9 +102,13 @@ describe('test with shallow mount', () => {
           expect(getTemplateDataSpy).toBeCalledWith(mainPageNumber);
         });
         it('Should set the right values for sortBy and sortDesc depending on the params', () => {
-          wrapper.vm.sortTemplates({ sortBy: 'name' });
+          wrapper.vm.sortTemplates({ sortBy: 'name', sortDesc: true });
           expect(wrapper.vm.sortBy).toEqual('name');
           expect(wrapper.vm.sortDesc).toEqual(true);
+
+          wrapper.vm.sortTemplates({ sortBy: 'name', sortDesc: false });
+          expect(wrapper.vm.sortBy).toEqual('name');
+          expect(wrapper.vm.sortDesc).toEqual(false);
         });
       });
       describe('search', () => {

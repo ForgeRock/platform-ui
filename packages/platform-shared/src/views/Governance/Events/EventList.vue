@@ -428,7 +428,7 @@ function search(value) {
  * @param {Object} sortContext Current context of table sorting
  */
 function sortChanged(sortContext) {
-  sortKeys = sortContext.sortDesc ? sortContext.sortBy : `-${sortContext.sortBy}`;
+  sortKeys = sortContext.sortDesc ? `-${sortContext.sortBy}` : sortContext.sortBy;
   getData();
 }
 

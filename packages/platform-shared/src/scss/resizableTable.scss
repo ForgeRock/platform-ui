@@ -70,13 +70,6 @@
   .sticky-right {
     right: 0;
   }
-
-  table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left),
-  table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
-    &:has(.resizer:focus-visible) {
-      background-position: right 1rem center;
-    }
-  }
 }
 
 .table-hover tbody tr:hover,

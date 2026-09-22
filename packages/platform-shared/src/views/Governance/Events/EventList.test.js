@@ -177,6 +177,22 @@ describe('EventList', () => {
       expect(getEventListSpy).toHaveBeenCalledWith({
         pageSize: 10,
         pagedResultsOffset: 0,
+        sortKeys: 'name',
+      });
+    });
+
+    it('requests descending order when sorting the same column twice', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      const getEventListSpy = jest.spyOn(EventApi, 'getEventList').mockImplementation(() => Promise.resolve(getEventListResponse));
+
+      const columnheader = wrapper.findAll('[role="columnheader"]')[0];
+      await columnheader.trigger('click'); // ascending
+      await columnheader.trigger('click'); // descending
+
+      expect(getEventListSpy).toHaveBeenLastCalledWith({
+        pageSize: 10,
+        pagedResultsOffset: 0,
         sortKeys: '-name',
       });
     });

@@ -65,7 +65,6 @@ of the MIT license. See the LICENSE file for details. -->
         id="table-directreports"
         class="cursor-pointer"
         data-testid="table-directreports"
-        @sort-changed="sortChanged"
         :caption="$t('governance.directReports.caption')"
         hover
         responsive
@@ -75,7 +74,6 @@ of the MIT license. See the LICENSE file for details. -->
         :fields="fields"
         :items="items"
         :busy="isLoading"
-        :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
         @row-selected="(rows) => rows.length && viewDirectReportDetails(rows[0])"
@@ -293,11 +291,6 @@ export default {
       });
       this.isLoading = false;
       this.activeQuery = Boolean(this.searchQuery);
-    },
-    async sortChanged() {
-      this.sortDesc = !this.sortDesc;
-      this.paginationPage = 1;
-      await this.loadData();
     },
     async pageChange(page) {
       this.paginationPage = page;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -115,13 +115,13 @@ export default function useRunHistoryTable() {
     {
       key: 'date',
       label: i18n.global.t('common.started'),
-      class: 'fr-report-history-start-date fr-bg-none',
+      class: 'fr-report-history-start-date',
       sortable: true,
     },
     {
       key: 'reportStatus',
       label: i18n.global.t('common.status'),
-      class: 'd-none d-lg-table-cell fr-report-history-status fr-bg-none',
+      class: 'd-none d-lg-table-cell fr-report-history-status',
       sortable: true,
     },
     {

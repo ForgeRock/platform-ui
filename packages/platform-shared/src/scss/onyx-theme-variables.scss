@@ -577,17 +577,21 @@ $table-cell-padding: 1rem 1.5rem;
 $table-cell-padding-sm: 0.5rem;
 $table-color: $gray-900;
 $table-border-color: $border-color;
-$b-table-sort-icon-bg-ascending: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'><path fill='black' d='M51 1l25 23 24 22H1l25-22z'/><path fill='black' opacity='.3' d='M51 101l25-23 24-22H1l25 22z'/></svg>");
-$b-table-sort-icon-bg-descending: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'><path fill='black' opacity='.3' d='M51 1l25 23 24 22H1l25-22z'/><path fill='black' d='M51 101l25-23 24-22H1l25 22z'/></svg>");
-$fr-table-row-selected-bg: $light;
-$fr-table-resize-handle-bg: $gray-500;
+/* Table sort icons — paths/fills duplicated from theme-variables.scss, which
+   platform-admin does not import (it prepends this file instead). */
+$fr-sort-arrow-up-path: 'm4 12 1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z';
+$fr-sort-arrow-down-path: 'm20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z';
+$fr-sort-unfold-more-path: 'M12 5.83 15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z';
 
 $table-sort-icon-inactive-fill: '%23#{str-slice(inspect($gray-500), 2)}';
-$table-sort-icon-active-fill: '%23#{str-slice(inspect($table-color), 2)}';
+$table-sort-icon-active-fill: '%23#{str-slice(inspect($gray-500), 2)}';
 
-$table-sort-icon-none: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 1l25 23 24 22H1l25-22zM51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
-$table-sort-icon-ascending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
-$table-sort-icon-descending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+$table-sort-icon-none: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='#{$fr-sort-unfold-more-path}'/%3e%3c/svg%3e");
+/* Arrows point in the sort direction per the updated Onyx styleguide — see theme-variables.scss. */
+$table-sort-icon-ascending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='#{$fr-sort-arrow-up-path}'/%3e%3c/svg%3e");
+$table-sort-icon-descending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='#{$fr-sort-arrow-down-path}'/%3e%3c/svg%3e");
+$fr-table-row-selected-bg: $light;
+$fr-table-resize-handle-bg: $gray-500;
 
 /* Definition List */
 $fr-dt-font-weight: $font-weight-normal;

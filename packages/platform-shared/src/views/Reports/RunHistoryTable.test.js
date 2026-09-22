@@ -66,6 +66,15 @@ describe('Run History Table component', () => {
       expect(tableRows.length).toBe(4);
     });
 
+    it('toggles the date column sort state when its header is clicked', async () => {
+      const table = findByTestId(wrapper, 'run-history-table');
+      const dateHeader = table.find('thead th[aria-sort]');
+
+      expect(dateHeader.attributes('aria-sort')).toBe('descending');
+      await dateHeader.trigger('click');
+      expect(dateHeader.attributes('aria-sort')).toBe('ascending');
+    });
+
     describe('@watchers', () => {
       it('updates a table row if the "updatedRow" prop has a new value', async () => {
         const tableRowStubs = reportHistoryTableDataGenerator(ReportHistoryStubs);

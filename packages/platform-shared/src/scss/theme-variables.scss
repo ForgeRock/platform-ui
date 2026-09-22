@@ -561,15 +561,21 @@ $table-cell-padding-sm: 0.5rem;
 $table-color: $gray-900;
 $table-border-color: $gray-200;
 
-/* Table sort icon overrides: inactive arrows use $gray-500 (4.51:1 on white) to meet WCAG SC 1.4.11.
-   Matches resizer icon color for consistent theme-driven styling. */
+/* Table sort icons: Material outlined glyphs matching the Onyx design system.
+   Paths are canonical (extracted from the material-icons font — don't hand-edit).
+   Fill $gray-500 meets WCAG SC 1.4.11 (4.5:1 on white). */
+$fr-sort-arrow-up-path: 'm4 12 1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z';
+$fr-sort-arrow-down-path: 'm20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z';
+$fr-sort-unfold-more-path: 'M12 5.83 15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z';
 
 $table-sort-icon-inactive-fill: '%23#{str-slice(inspect($gray-500), 2)}';
-$table-sort-icon-active-fill: '%23#{str-slice(inspect($table-color), 2)}';
+$table-sort-icon-active-fill: '%23#{str-slice(inspect($gray-500), 2)}';
 
-$table-sort-icon-none: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 1l25 23 24 22H1l25-22zM51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
-$table-sort-icon-ascending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
-$table-sort-icon-descending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+$table-sort-icon-none: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='#{$fr-sort-unfold-more-path}'/%3e%3c/svg%3e");
+/* Per the updated Onyx styleguide, arrows point in the sort direction:
+   ascending renders arrow_upward, descending renders arrow_downward. */
+$table-sort-icon-ascending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='#{$fr-sort-arrow-up-path}'/%3e%3c/svg%3e");
+$table-sort-icon-descending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='#{$fr-sort-arrow-down-path}'/%3e%3c/svg%3e");
 
 /* Forgerock specific table variables */
 $fr-table-head-weight: 600;

@@ -80,6 +80,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-0"
         v-resizable-table="{ persistKey: `certification-access-reviews-${campaignId}` }"
         hover
+        no-sort-reset
         tbody-tr-class="cursor-pointer"
         primary-key="id"
         responsive
@@ -403,9 +404,9 @@ export default {
       this.currentPage = 1;
       this.getList();
     },
-    sortAccessReviews({ sortBy }) {
+    sortAccessReviews({ sortBy, sortDesc }) {
       this.sortBy = sortBy;
-      this.sortDesc = !this.sortDesc;
+      this.sortDesc = sortDesc;
       this.getList();
     },
     paginationChange(pageNumber) {

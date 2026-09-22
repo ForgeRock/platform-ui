@@ -19,15 +19,6 @@ of the MIT license. See the LICENSE file for details. -->
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :thead-class="!tableRows.length ? 'd-none' : ''">
-      <template #head()="{ label, field: { key, sortable }}">
-        {{ label }}
-        <template v-if="sortable && sortBy === key">
-          <!-- Custom sort icon -->
-          <FrIcon
-            icon-class="text-muted"
-            :name="sortDesc ? 'arrow_downward' : 'arrow_upward'" />
-        </template>
-      </template>
       <template #cell(date)="{ item }">
         <div class="fr-report-history-start-date-container d-flex align-items-center">
           {{ dayjs(item.date).format('MM/DD/YYYY h:mm A') }}
@@ -261,10 +252,6 @@ watch(() => props.updatedRow, (newRow) => updateTableRow(newRow));
 
 <style lang="scss" scoped>
   :deep(.table-responsive) {
-    /* Hide default sort icon */
-    .fr-bg-none {
-      background: none !important;
-    }
     .fr-report-history-start-date {
       width: auto;
       padding-right: 0;

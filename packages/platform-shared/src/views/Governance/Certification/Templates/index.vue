@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
       :items="templatesData"
       :fields="fields"
       :no-local-sorting="true"
+      no-sort-reset
       :sort-by="sortBy"
       :sort-desc="sortDesc"
       @row-clicked="onRowClick"
@@ -286,9 +287,9 @@ export default {
      * Reload the event data based on a search query
      * @param {String} query the query to search with
      */
-    sortTemplates({ sortBy }) {
+    sortTemplates({ sortBy, sortDesc }) {
       this.sortBy = sortBy;
-      this.sortDesc = !this.sortDesc;
+      this.sortDesc = sortDesc;
       this.getTemplateData(this.mainPageNumber);
     },
     /**

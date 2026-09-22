@@ -588,20 +588,48 @@ a.card {
   }
 }
 
-/* Override BootstrapVue sort icon SVGs so inactive arrows meet WCAG SC 1.4.11 (min 3:1 contrast). */
+/* Sort icons: Material outlined arrows (vars in theme-variables.scss), rendered as an
+   inline ::after beside the header label. The empty 16px ::after on unsorted headers
+   keeps them aligned with sorted ones. */
 .table.b-table {
-  > thead > tr > [aria-sort=none],
-  > tfoot > tr > [aria-sort=none] {
+  > thead > tr > [aria-sort],
+  > tfoot > tr > [aria-sort] {
+    /* Suppress BootstrapVue's cell-background sort icon */
+    background-image: none;
+    background-size: 0;
+
+    /* Target Bootstrap's default classless header div only; do not touch slotted header styles. */
+    > div:not([class]) {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    > div::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      flex: none;
+      margin-left: 4px;
+      vertical-align: middle;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 16px 16px;
+    }
+  }
+
+  > thead > tr > [aria-sort=none] > div::after,
+  > tfoot > tr > [aria-sort=none] > div::after {
     background-image: $table-sort-icon-none;
   }
 
-  > thead > tr > [aria-sort=ascending],
-  > tfoot > tr > [aria-sort=ascending] {
+  > thead > tr > [aria-sort=ascending] > div::after,
+  > tfoot > tr > [aria-sort=ascending] > div::after {
     background-image: $table-sort-icon-ascending;
   }
 
-  > thead > tr > [aria-sort=descending],
-  > tfoot > tr > [aria-sort=descending] {
+  > thead > tr > [aria-sort=descending] > div::after,
+  > tfoot > tr > [aria-sort=descending] > div::after {
     background-image: $table-sort-icon-descending;
   }
 }

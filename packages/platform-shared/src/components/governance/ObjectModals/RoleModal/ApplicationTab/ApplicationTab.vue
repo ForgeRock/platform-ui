@@ -16,15 +16,6 @@ of the MIT license. See the LICENSE file for details. -->
       :current-page="currentPage"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc">
-      <template #head()="{ label, field: { key, sortable }}">
-        {{ label }}
-        <template v-if="sortable && sortBy === key">
-          <!-- Custom sort icon -->
-          <FrIcon
-            icon-class="text-muted"
-            :name="sortDesc ? 'arrow_downward' : 'arrow_upward'" />
-        </template>
-      </template>
       <template #cell(name)="{ item }">
         <BMedia
           class="align-items-center"
@@ -78,7 +69,6 @@ import {
   BMediaBody,
   BTable,
 } from 'bootstrap-vue';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import i18n from '@/i18n';
@@ -94,7 +84,6 @@ const applicationsFields = [
   {
     key: 'name',
     label: i18n.global.t('common.application'),
-    class: 'fr-bg-none',
     sortable: true,
   },
 ];
@@ -122,12 +111,3 @@ function pageSizeChange(pageSizeValue) {
   pageSize.value = pageSizeValue;
 }
 </script>
-
-<style lang="scss" scoped>
-  :deep(.table-responsive) {
-    /* Hide default sort icon */
-    .fr-bg-none {
-      background: none !important;
-    }
-  }
-</style>

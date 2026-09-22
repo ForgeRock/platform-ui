@@ -30,6 +30,7 @@ import {
   getColumnName,
   getColumnWidth,
   getColumnMinWidthInPx,
+  getHeaderMinWidthInPx,
   getPersistedColumnWidth,
   isResizableColumn,
   measureCellContent,
@@ -130,6 +131,15 @@ function createResizableColumn(colIndex, columnProps, table) {
   const { persistKey } = columnProps;
 
   /**
+   * Column's effective minimum width: the larger of the global floor and this
+   * header's own floor (label + sort icon + focused ring reach).
+   * @return {number} Minimum width in pixels
+   */
+  function minColumnWidth() {
+    return Math.max(columnProps.columnMinWidth, columnProps.headerMinWidths?.[colIndex] || 0);
+  }
+
+  /**
    * Shared logic for mouse down and touch start events.
    * @param {MouseEvent|TouchEvent} event The mouse or touch event
    * @param {HTMLElement} currentColumn The column element being resized
@@ -154,7 +164,7 @@ function createResizableColumn(colIndex, columnProps, table) {
     window.requestAnimationFrame(() => {
       const clientX = getClientX(event);
       const dx = isRightToLeft(table) ? startX - clientX : clientX - startX;
-      const newWidth = Math.max(columnProps.columnMinWidth, startWidth + dx);
+      const newWidth = Math.max(minColumnWidth(), startWidth + dx);
       if (col.style.width !== `${newWidth}px`) {
         updateColumnWidths(colIndex, newWidth, columnProps);
         announceMessage(table.__resizeLiveRegion, columnName, Math.round(newWidth));
@@ -221,7 +231,7 @@ function createResizableColumn(colIndex, columnProps, table) {
     const columnIndex = Array.from(column.parentElement.children).indexOf(column);
     const delta = (isRightToLeft(table) ? event.key === 'ArrowLeft' : event.key === 'ArrowRight') ? 10 : -10;
     const columnWidth = getColumnWidth(column);
-    const width = Math.max(columnProps.columnMinWidth, columnWidth + delta);
+    const width = Math.max(minColumnWidth(), columnWidth + delta);
     if (column.style.width !== `${width}px`) {
       updateColumnWidths(columnIndex, width, columnProps);
       announceMessage(table.__resizeLiveRegion, columnName, Math.round(width));
@@ -235,7 +245,7 @@ function createResizableColumn(colIndex, columnProps, table) {
    */
   handlers.onDoubleClick = () => {
     const { rows } = table;
-    let maxContentWidth = columnProps.columnMinWidth;
+    let maxContentWidth = minColumnWidth();
     for (let i = 0; i < rows.length; i += 1) {
       const cell = rows[i].cells[colIndex];
       if (cell) {
@@ -297,6 +307,13 @@ function createResizableTable(table, options) {
     applyFixedTableLayout(table); // Ensure table-layout is fixed when the modified column widths are being restored
   }
 
+  // Per-column floor (getHeaderMinWidthInPx) so a narrowed column keeps room for its
+  // label, sort icon, and the focused resizer outline.
+  const headerMinWidths = cols.map((col) => {
+    const measured = getHeaderMinWidthInPx(sharedMeasureDiv, col);
+    return Number.isFinite(measured) && measured > 0 ? measured : getColumnMinWidthInPx();
+  });
+
   // Adds column properties to the Map based on the table persistKey
   COLUMN_PROPS_MAP.set(persistKey, {
     persistKey,
@@ -304,6 +321,7 @@ function createResizableTable(table, options) {
     tableId: table.id,
     tdColumnList: table.querySelector('tbody tr:first-child')?.cells || table.rows?.[1]?.cells || [],
     columnMinWidth: getColumnMinWidthInPx(),
+    headerMinWidths,
   });
 
   // Add resizer handles to each column

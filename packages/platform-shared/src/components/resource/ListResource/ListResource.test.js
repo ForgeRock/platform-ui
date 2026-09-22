@@ -187,8 +187,8 @@ describe('ListResource Component', () => {
   });
 
   it('ListResource sort column', () => {
-    expect(wrapper.vm.calculateSort(false, 'test')).toBe('-test');
-    expect(wrapper.vm.calculateSort(true, 'test')).toBe('test');
+    expect(wrapper.vm.calculateSort(false, 'test')).toBe('test');
+    expect(wrapper.vm.calculateSort(true, 'test')).toBe('-test');
   });
 
   it('Sorting change reset', () => {
@@ -197,7 +197,7 @@ describe('ListResource Component', () => {
       sortBy: 'test',
     });
     expect(wrapper.emitted().sort).toBeTruthy();
-    expect(wrapper.emitted().sort[0]).toEqual(['-test']);
+    expect(wrapper.emitted().sort[0]).toEqual(['test']);
     expect(wrapper.vm.currentPage).toBe(1);
   });
 

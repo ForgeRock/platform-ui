@@ -506,10 +506,11 @@ export default {
       let sortUrl = null;
 
       if (!isNull(sortBy)) {
+        // sortField contract: ascending is the default (bare field), '-' prefix = descending
         if (sortDesc) {
-          sortUrl = `${sortBy}`;
-        } else {
           sortUrl = `-${sortBy}`;
+        } else {
+          sortUrl = `${sortBy}`;
         }
       }
       return sortUrl;

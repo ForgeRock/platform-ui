@@ -13,6 +13,9 @@ const RESIZER_CLASS = 'resizer';
 const STORAGE_KEY_SUFFIX = '-column-width';
 const MIN_COLUMN_WIDTH = 120;
 const RESIZER_CONTENT_BUFFER = 24;
+const FOCUS_RING_INTRUSION_PX = 8; // 4px focus margin + 2px outline-offset + 2px outline
+const SORT_ICON_SPACE_PX = 20; // 16px icon + 4px flex gap
+const MIN_ICON_RING_GAP_PX = 16.25; // 1rem gap between sort icon and focused ring, 0.25 to avoid ellipsis
 const DEBOUNCE_TIMER_IN_MS = 1000;
 // Maintains a map of columns which should not be resizable
 const NON_RESIZABLE_COLUMN_CLASS = 'fr-no-resize';
@@ -85,7 +88,8 @@ function updateColumnWidths(colIndex, updatedWidthAtIndex, columnProps) {
   Array.from(columnProps.cols).forEach((col, index) => {
     if (isResizableColumn(col.classList)) {
       const updatedColWidth = index === colIndex ? updatedWidthAtIndex : getColumnWidth(col);
-      const columnWidth = Math.max(columnProps.columnMinWidth, updatedColWidth);
+      const minWidth = Math.max(columnProps.columnMinWidth, columnProps.headerMinWidths?.[index] || 0);
+      const columnWidth = Math.max(minWidth, updatedColWidth);
       col.style.setProperty('width', `${columnWidth}px`, 'important');
     }
   });
@@ -149,6 +153,31 @@ function measureCellContent(sharedMeasureDiv, cell) {
 }
 
 /**
+ * Minimum width a sortable column needs so its label + sort icon keep a 1rem gap from the
+ * focused resizer's outline at the narrowest allowed width: left padding + content +
+ * icon space (icon + gap + 1rem ring gap) + ring reach. The ring sits inside the existing
+ * right padding, so that padding is not added here.
+ * @param {HTMLElement} sharedMeasureDiv - A shared div element used for measurement.
+ * @param {HTMLElement} cell - The column's `th` element.
+ * @return {number} The per-column minimum width in pixels.
+ */
+function getHeaderMinWidthInPx(sharedMeasureDiv, cell) {
+  sharedMeasureDiv.innerHTML = '';
+  Array.from(cell.childNodes).forEach((node) => {
+    sharedMeasureDiv.appendChild(node.cloneNode(true));
+  });
+  const style = window.getComputedStyle(cell);
+  const paddingLeft = parseInt(style.paddingLeft, 10) || 0;
+  const iconSpace = cell.hasAttribute('aria-sort')
+    ? SORT_ICON_SPACE_PX + MIN_ICON_RING_GAP_PX
+    : 0;
+  return sharedMeasureDiv.offsetWidth
+    + paddingLeft
+    + iconSpace
+    + FOCUS_RING_INTRUSION_PX;
+}
+
+/**
  * Apply fixed table-layout, if not already applied, to ensure column widths are respected
  * @param {HTMLElement} table - The table element to apply the layout to.
  */
@@ -178,6 +207,7 @@ export {
   getColumnName,
   getColumnWidth,
   getColumnMinWidthInPx,
+  getHeaderMinWidthInPx,
   getPersistedColumnWidth,
   isResizableColumn,
   measureCellContent,

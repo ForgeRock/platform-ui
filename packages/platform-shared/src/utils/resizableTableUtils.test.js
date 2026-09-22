@@ -99,6 +99,21 @@ describe('resizableTableUtils', () => {
     expect(col2.style.width).toBe('120px'); // Width should be reset to global min width
   });
 
+  it('updateColumnWidths should respect the per-column header minimum width when set', () => {
+    const col1 = document.createElement('th');
+    const col2 = document.createElement('th');
+    columnProps = {
+      ...columnProps,
+      cols: [col1, col2],
+      headerMinWidths: [260, 0], // col1 needs 260px for its header; col2 falls back to the global floor
+    };
+    resizableTableUtils.updateColumnWidths(0, 80, columnProps);
+    expect(col1.style.width).toBe('260px');
+
+    resizableTableUtils.updateColumnWidths(1, 80, columnProps);
+    expect(col2.style.width).toBe('120px');
+  });
+
   it('persistCurrentWidths should trigger setLocalStorageValue to persist the updated column widths in viewport units', () => {
     const col1 = document.createElement('td');
     const col2 = document.createElement('td');
@@ -203,6 +218,29 @@ describe('getColumnMinWidthInPx', () => {
     global.innerWidth = 2560;
     const min = resizableTableUtils.getColumnMinWidthInPx();
     expect(min).toBe(256); // Minimum width should be 256px, as 10% of 2560 is greater than the minimum limit of 120px
+  });
+});
+
+describe('getHeaderMinWidthInPx', () => {
+  it('keeps a 1rem gap between the sort icon and the focused resizer ring for sortable columns', () => {
+    const measureDiv = document.createElement('div');
+    const th = document.createElement('th');
+    th.setAttribute('aria-sort', 'none');
+    th.style.padding = '1rem 24px';
+
+    const min = resizableTableUtils.getHeaderMinWidthInPx(measureDiv, th);
+    // content 0 + left padding 24 + sort icon 20 + icon/ring gap 16.25 + ring intrusion 8
+    expect(min).toBe(68.25);
+  });
+
+  it('omits the sort-icon space and icon/ring gap for non-sortable columns', () => {
+    const measureDiv = document.createElement('div');
+    const th = document.createElement('th');
+    th.style.padding = '1rem 24px';
+
+    const min = resizableTableUtils.getHeaderMinWidthInPx(measureDiv, th);
+    // content 0 + left padding 24 + ring intrusion 8
+    expect(min).toBe(32);
   });
 });
 

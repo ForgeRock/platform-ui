@@ -204,11 +204,14 @@ describe('AccessReviews', () => {
 
     it('sortAccessReviews called properly', () => {
       const wrapper = mountComponent();
-      wrapper.vm.sortAccessReviews({ sortBy: 'certifier' });
+      wrapper.vm.sortAccessReviews({ sortBy: 'certifier', sortDesc: true });
 
       expect(wrapper.vm.sortBy).toBe('certifier');
       expect(wrapper.vm.sortDesc).toBe(true);
       expect(getListSpy).toHaveBeenCalled();
+
+      wrapper.vm.sortAccessReviews({ sortBy: 'certifier', sortDesc: false });
+      expect(wrapper.vm.sortDesc).toBe(false);
     });
 
     it('paginationChange calls get list properly', () => {
