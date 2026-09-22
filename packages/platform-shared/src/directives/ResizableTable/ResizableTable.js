@@ -45,6 +45,7 @@ const RESIZER_LIVE_REGION_CLASS = `${TABLE_CLASS}__live-region`;
 const RESIZER_TOOLTIP_CLASS = `${TABLE_CLASS}__resizer-tooltip`;
 const RESIZER_TOOLTIP_VISIBLE_CLASS = `${RESIZER_TOOLTIP_CLASS}--visible`;
 const TABLE_NOWRAP_CLASS = `${TABLE_CLASS}--nowrap`;
+const RESIZED_EVENT_NAME = 'resizable-table:resized';
 const MUTATION_OBSERVER_DEBOUNCE_MS = 200;
 const COLUMN_PROPS_MAP = new Map();
 
@@ -96,6 +97,15 @@ function syncColumnWidthsToComputed() {
 // Helper to get the X coordinate from mouse or touch event
 function getClientX(e) {
   return e.touches ? e.touches[0].clientX : e.clientX;
+}
+
+/**
+ * Announces a completed column resize (drag-end, keyboard, double-click auto-fit) so the
+ * bound component can react, e.g. re-measure truncated cell content.
+ * @param {HTMLElement} table The table element the directive is bound to
+ */
+function announceColumnResized(table) {
+  table.dispatchEvent(new CustomEvent(RESIZED_EVENT_NAME, { bubbles: true }));
 }
 
 /**
@@ -173,6 +183,7 @@ function createResizableColumn(colIndex, columnProps, table) {
     document.addEventListener('click', suppressClick, true);
     const currentColumnProps = COLUMN_PROPS_MAP.get(persistKey);
     if (currentColumnProps) persistCurrentWidths(currentColumnProps);
+    announceColumnResized(table);
   }
 
   /**
@@ -216,6 +227,7 @@ function createResizableColumn(colIndex, columnProps, table) {
       announceMessage(table.__resizeLiveRegion, columnName, Math.round(width));
     }
     persistCurrentWidths(columnProps);
+    announceColumnResized(table);
   };
 
   /**
@@ -234,6 +246,7 @@ function createResizableColumn(colIndex, columnProps, table) {
     updateColumnWidths(colIndex, maxContentWidth, columnProps);
     announceMessage(table.__resizeLiveRegion, columnName, Math.round(maxContentWidth));
     persistCurrentWidths(columnProps);
+    announceColumnResized(table);
   };
 
   handlers.onFocus = () => {

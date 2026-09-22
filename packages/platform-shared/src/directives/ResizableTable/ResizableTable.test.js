@@ -246,4 +246,49 @@ describe('ResizableTable directive', () => {
     ResizableTable.mounted(el, { value: { ...binding.value, wrap: true } });
     expect(table.parentElement.classList.contains('table-resizable--nowrap')).toBe(false);
   });
+
+  it('dispatches resizable-table:resized on drag-end, keyboard resize, and double-click auto-fit', () => {
+    ResizableTable.mounted(el, binding);
+
+    const resizedListener = jest.fn();
+    table.addEventListener('resizable-table:resized', resizedListener);
+
+    // Drag-end (mouse)
+    const resizer = getResizer();
+    resizer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0, clientX: 10 }));
+    window.requestAnimationFrame = (cb) => cb();
+    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 60 }));
+    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 60 }));
+    expect(resizedListener).toHaveBeenCalledTimes(1);
+
+    // Keyboard (arrow keys)
+    resizer.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(resizedListener).toHaveBeenCalledTimes(2);
+
+    // Double-click auto-fit
+    resizer.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+    expect(resizedListener).toHaveBeenCalledTimes(3);
+
+    table.removeEventListener('resizable-table:resized', resizedListener);
+  });
+
+  it('does not dispatch resizable-table:resized while a drag is still in progress', () => {
+    ResizableTable.mounted(el, binding);
+
+    const resizedListener = jest.fn();
+    table.addEventListener('resizable-table:resized', resizedListener);
+
+    // Fires only on the completed resize (mouseup), not per drag frame
+    const resizer = getResizer();
+    resizer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0, clientX: 10 }));
+    window.requestAnimationFrame = (cb) => cb();
+    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 40 }));
+    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 60 }));
+    expect(resizedListener).not.toHaveBeenCalled();
+
+    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 60 }));
+    expect(resizedListener).toHaveBeenCalledTimes(1);
+
+    table.removeEventListener('resizable-table:resized', resizedListener);
+  });
 });

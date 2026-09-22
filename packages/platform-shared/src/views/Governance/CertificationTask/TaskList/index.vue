@@ -340,12 +340,13 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <template #cell()="data">
             <div
-              class="text-truncate w-450px"
-              :id="`${data.item.id}-${data.field.key}`">
+              class="fr-default-cell"
+              :id="`${data.item.id}-${data.field.key}`"
+              :tabindex="truncatedCellIds[`${data.item.id}-${data.field.key}`] ? 0 : null">
               {{ getCellData(data) }}
             </div>
             <BPopover
-              v-if="isTruncated(`${data.item.id}-${data.field.key}`)"
+              v-if="truncatedCellIds[`${data.item.id}-${data.field.key}`]"
               :target="`${data.item.id}-${data.field.key}`"
               triggers="focus hover"
               placement="top">
@@ -891,6 +892,7 @@ export default {
       sortBy: 'user',
       tasksFieldsToSort: [],
       totalRows: 0,
+      truncatedCellIds: {},
       userDisplayProperties: [],
       glossarySchema: {
         application: [],
@@ -918,6 +920,7 @@ export default {
         this.filterData[field] = value;
       }),
       debounceUserSearch: debounce(this.getUserInfo, 500),
+      debouncedTruncatedCellMeasure: debounce(this.updateTruncatedCells, 200),
       roleFilters: ROLE_FILTERS,
       applicationFilter: APPLICATION_FILTERS,
       userFilter: USER_FILTERS,
@@ -985,6 +988,12 @@ export default {
     },
   },
   async mounted() {
+    // Resize re-applies persisted column widths, changing wrap points — re-measure overflow.
+    window.addEventListener('resize', this.debouncedTruncatedCellMeasure);
+    // The directive dispatches a bubbling `resizable-table:resized` event on column drag,
+    // keyboard resize, and auto-fit. A template listener won't work (bootstrap-vue swallows
+    // colon-named listeners), so listen on the component root.
+    this.$el.addEventListener('resizable-table:resized', this.debouncedTruncatedCellMeasure);
     try {
       const { data } = await getGlossarySchema();
       this.glossarySchema = {
@@ -1039,6 +1048,11 @@ export default {
     }
   },
   beforeDestroy() {
+    window.removeEventListener('resize', this.debouncedTruncatedCellMeasure);
+    if (this.$el) {
+      this.$el.removeEventListener('resizable-table:resized', this.debouncedTruncatedCellMeasure);
+    }
+    this.debouncedTruncatedCellMeasure.cancel();
     resetFilterTypes();
   },
   methods: {
@@ -1956,12 +1970,37 @@ export default {
       }
       this.$bvModal.show(this.getModalId('role'));
     },
+    /**
+     * True when the cell content overflows horizontally. offsetWidth/scrollWidth are rounded
+     * in opposite directions, so a fitting cell can measure as truncated at some sub-pixel
+     * widths — accepted; getBoundingClientRect is the precise alternative if needed.
+     * @param {String} id id of the generic cell content div (`${item.id}-${field.key}`)
+     * @returns {Boolean} true when the element overflows horizontally
+     */
     isTruncated(id) {
       const el = document.getElementById(id);
       if (el) {
         return el.offsetWidth < el.scrollWidth;
       }
       return false;
+    },
+    /**
+     * Measures every generic cell and stores the overflowing ids in `truncatedCellIds`,
+     * gating the cell `BPopover`s. Slot-rendered columns have no `${item.id}-${field.key}`
+     * div, so they map to false — their popovers never consult this map.
+     * Must run after the DOM updates: watchers use `flush: 'post'`, listeners are debounced.
+     */
+    updateTruncatedCells() {
+      const truncated = {};
+      // Hoisted out of the loop — this computed deep-clones activeColumns on every access
+      const fields = this.certificationListColumnsToShow;
+      this.items.forEach((item) => {
+        fields.forEach((field) => {
+          const id = `${item.id}-${field.key}`;
+          truncated[id] = this.isTruncated(id);
+        });
+      });
+      this.truncatedCellIds = truncated;
     },
     openDownloadModal() {
       this.$bvModal.show('certification-task-download-items-modal');
@@ -2012,6 +2051,34 @@ export default {
     },
     entitlementUserId() {
       this.getItems(1);
+    },
+    // Re-measure on page load / reload so popovers track the rendered rows. Skipped while
+    // isLoading — the table is unmounted then; the isLoading watcher owns that re-measure.
+    // `flush: 'post'` defers to after the DOM update so offsetWidth/scrollWidth are current.
+    items: {
+      handler() {
+        if (!this.isLoading) {
+          this.updateTruncatedCells();
+        }
+      },
+      flush: 'post',
+    },
+    // Column picker changes swap which generic-template cells exist in the DOM.
+    certificationListColumnsToShow: {
+      handler() {
+        this.updateTruncatedCells();
+      },
+      flush: 'post',
+    },
+    // getItems() unmounts the BTable while isLoading is true, so the items watcher can't
+    // see cells. Re-measure here once the table remounts, covering all data-load paths.
+    isLoading: {
+      handler(newVal) {
+        if (!newVal) {
+          this.updateTruncatedCells();
+        }
+      },
+      flush: 'post',
     },
   },
 };
@@ -2095,8 +2162,8 @@ export default {
   .w-230px {
     width: 230px;
   }
-  .w-450px {
-    max-width: 450px;
+  .fr-default-cell {
+    white-space: normal;
   }
 }
 </style>

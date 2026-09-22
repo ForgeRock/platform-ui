@@ -12,6 +12,7 @@ import {
   flushPromises,
 } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
+import { BPopover } from 'bootstrap-vue';
 import {
   createAppContainer,
   findByTestId,
@@ -19,6 +20,7 @@ import {
   createTooltipContainer,
   runA11yTest,
   toggleActionsMenu,
+  runA11yTest,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
@@ -182,6 +184,345 @@ describe('TaskList', () => {
 
       const entitlement = findByTestId(wrapper, 'entitlement-cell');
       expect(entitlement.text()).toBe('entitlement name');
+    });
+  });
+
+  describe('Generic default cell rendering', () => {
+    const genericCellItem = {
+      id: 'item-1',
+      user: {},
+      account: {},
+      application: {},
+      entitlement: { description: 'a long entitlement description value' },
+      decision: {
+        certification: {},
+      },
+      permissions: {},
+    };
+    const genericCellColumn = {
+      key: 'description',
+      category: 'entitlement',
+      label: 'Entitlement Description',
+      sortable: false,
+      class: 'text-truncate fr-access-cell',
+      show: true,
+      value: 'entitlement.description',
+    };
+
+    function findGenericCell(wrapper) {
+      return wrapper.find('#item-1-description');
+    }
+
+    /**
+     * jsdom computes no layout, so offsetWidth/scrollWidth always read 0. Mocks both at the
+     * HTMLElement.prototype level and returns a restore function.
+     */
+    function mockCellLayoutMetrics(offsetWidth, scrollWidth) {
+      const originalOffsetWidth = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
+      Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, value: offsetWidth });
+      Object.defineProperty(HTMLElement.prototype, 'scrollWidth', { configurable: true, value: scrollWidth });
+      return () => {
+        // Both metrics live on Element.prototype, so deleting restores the real getters.
+        if (originalOffsetWidth) {
+          Object.defineProperty(HTMLElement.prototype, 'offsetWidth', originalOffsetWidth);
+        } else {
+          delete HTMLElement.prototype.offsetWidth;
+        }
+        delete HTMLElement.prototype.scrollWidth;
+      };
+    }
+
+    it('renders the generic cell content div with fr-default-cell and no width-cap classes', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      wrapper.vm.activeColumns = [genericCellColumn];
+      wrapper.vm.items = [genericCellItem];
+      await flushPromises();
+
+      const cell = findGenericCell(wrapper);
+      expect(cell.exists()).toBe(true);
+      expect(cell.classes()).toContain('fr-default-cell');
+      expect(cell.classes()).not.toContain('text-truncate');
+      expect(cell.classes()).not.toContain('w-450px');
+    });
+
+    it('renders the cell text inside the generic cell content div', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      wrapper.vm.activeColumns = [genericCellColumn];
+      wrapper.vm.items = [genericCellItem];
+      await flushPromises();
+
+      const cell = findGenericCell(wrapper);
+      expect(cell.text()).toBe('a long entitlement description value');
+    });
+
+    it('renders a blank value indicator inside the generic cell when item data is missing', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      wrapper.vm.activeColumns = [genericCellColumn];
+      wrapper.vm.items = [{ ...genericCellItem, entitlement: {} }];
+      await flushPromises();
+
+      const cell = findGenericCell(wrapper);
+      expect(cell.text()).toBe('--');
+    });
+
+    it('does not render a BPopover when the cell content fits (jsdom measures no overflow)', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      wrapper.vm.activeColumns = [genericCellColumn];
+      wrapper.vm.items = [genericCellItem];
+      await flushPromises();
+
+      expect(wrapper.findComponent(BPopover).exists()).toBe(false);
+    });
+
+    it('renders a BPopover targeting the correct cell after the measured pass reports overflow', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      // Overflow before swapping the list in, so the items watcher's pass picks it up
+      const restoreMetrics = mockCellLayoutMetrics(100, 500);
+      try {
+        wrapper.vm.activeColumns = [genericCellColumn];
+        wrapper.vm.items = [genericCellItem];
+        await flushPromises();
+        await flushPromises();
+
+        const popover = wrapper.findComponent(BPopover);
+        expect(popover.exists()).toBe(true);
+        expect(popover.props('target')).toBe('item-1-description');
+        expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': true });
+      } finally {
+        restoreMetrics();
+      }
+
+      // Metrics back to zero — the next re-measure drops the popover
+      wrapper.vm.items = [genericCellItem];
+      await flushPromises();
+      await flushPromises();
+      expect(wrapper.findComponent(BPopover).exists()).toBe(false);
+    });
+
+    it('renders the generic cell with an overflowing (popover-gated) value without axe violations', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      const restoreMetrics = mockCellLayoutMetrics(100, 500);
+      try {
+        wrapper.vm.activeColumns = [genericCellColumn];
+        wrapper.vm.items = [genericCellItem];
+        await flushPromises();
+        await flushPromises();
+
+        expect(wrapper.findComponent(BPopover).exists()).toBe(true);
+        await runA11yTest(findGenericCell(wrapper));
+      } finally {
+        restoreMetrics();
+      }
+    });
+
+    it('updates truncatedCellIds when the debounced window-resize handler re-measures', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      wrapper.vm.activeColumns = [genericCellColumn];
+      wrapper.vm.items = [genericCellItem];
+      await flushPromises();
+      expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': false });
+
+      // flush() skips the lodash debounce delay
+      const restoreMetrics = mockCellLayoutMetrics(100, 500);
+      try {
+        wrapper.vm.debouncedTruncatedCellMeasure();
+        wrapper.vm.debouncedTruncatedCellMeasure.flush();
+        await flushPromises();
+        await flushPromises();
+
+        expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': true });
+      } finally {
+        restoreMetrics();
+      }
+    });
+
+    it('makes truncated cells focusable so the popover is keyboard-reachable', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      wrapper.vm.activeColumns = [genericCellColumn];
+      wrapper.vm.items = [genericCellItem];
+      await flushPromises();
+
+      // Fits — no tabindex, stays out of tab order
+      expect(findGenericCell(wrapper).attributes('tabindex')).toBeUndefined();
+
+      // Overflowing — focusable, which fires the popover's `triggers="focus hover"`
+      const restoreMetrics = mockCellLayoutMetrics(100, 500);
+      try {
+        wrapper.vm.debouncedTruncatedCellMeasure();
+        wrapper.vm.debouncedTruncatedCellMeasure.flush();
+        await flushPromises();
+        await flushPromises();
+
+        expect(findGenericCell(wrapper).attributes('tabindex')).toBe('0');
+      } finally {
+        restoreMetrics();
+      }
+    });
+
+    it('re-measures on the resizable-table:resized event from the column-resize directive', async () => {
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+      await flushPromises();
+
+      wrapper.vm.activeColumns = [genericCellColumn];
+      wrapper.vm.items = [genericCellItem];
+      await flushPromises();
+      expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': false });
+
+      // The directive dispatches this bubbling event on completed column resizes
+      const restoreMetrics = mockCellLayoutMetrics(100, 500);
+      try {
+        wrapper.find('table').element.dispatchEvent(new CustomEvent('resizable-table:resized', { bubbles: true }));
+        wrapper.vm.debouncedTruncatedCellMeasure.flush();
+        await flushPromises();
+        await flushPromises();
+
+        expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': true });
+      } finally {
+        restoreMetrics();
+      }
+    });
+
+    describe('popover measurement triggers', () => {
+      it('runs updateTruncatedCells when items are replaced', async () => {
+        const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+        await flushPromises();
+
+        const updateSpy = jest.spyOn(wrapper.vm, 'updateTruncatedCells');
+        wrapper.vm.activeColumns = [genericCellColumn];
+        wrapper.vm.items = [genericCellItem];
+        await flushPromises();
+        await flushPromises();
+
+        expect(updateSpy).toHaveBeenCalled();
+        expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': false });
+      });
+
+      it('runs updateTruncatedCells when the column list changes', async () => {
+        const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+        await flushPromises();
+
+        wrapper.vm.activeColumns = [genericCellColumn];
+        wrapper.vm.items = [genericCellItem];
+        await flushPromises();
+        await flushPromises();
+
+        const updateSpy = jest.spyOn(wrapper.vm, 'updateTruncatedCells');
+        expect(updateSpy).not.toHaveBeenCalled();
+        wrapper.vm.activeColumns = [genericCellColumn, { ...genericCellColumn, key: 'name', value: 'entitlement.name' }];
+        await flushPromises();
+        await flushPromises();
+
+        expect(updateSpy).toHaveBeenCalled();
+        expect(Object.keys(wrapper.vm.truncatedCellIds).sort()).toEqual(['item-1-description', 'item-1-name']);
+      });
+
+      it('drops keys from items that are no longer present (stale popover ids cannot persist)', async () => {
+        const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+        await flushPromises();
+
+        wrapper.vm.activeColumns = [genericCellColumn];
+        wrapper.vm.items = [genericCellItem];
+        await flushPromises();
+        await flushPromises();
+        expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': false });
+
+        // Items are replaced wholesale — the previous page's keys must vanish
+        wrapper.vm.loadItemsList({
+          data: {
+            totalCount: 1,
+            result: [{ ...genericCellItem, id: 'item-2' }],
+          },
+        }, 2);
+        await flushPromises();
+        await flushPromises();
+
+        expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-2-description': false });
+        expect(wrapper.vm.truncatedCellIds['item-1-description']).toBeUndefined();
+      });
+
+      it('re-measures after the table remounts when a getItems load completes', async () => {
+        const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+        await flushPromises();
+
+        wrapper.vm.activeColumns = [genericCellColumn];
+
+        // getItems() unmounts the BTable while isLoading; only the isLoading flip re-measures
+        CertificationApi.getCertificationTasksListByCampaign.mockResolvedValue({
+          data: {
+            result: [genericCellItem],
+            totalCount: 1,
+          },
+        });
+        const restoreMetrics = mockCellLayoutMetrics(100, 500);
+        try {
+          await wrapper.vm.getItems(1);
+          await flushPromises();
+          await flushPromises();
+
+          expect(wrapper.vm.isLoading).toBe(false);
+          expect(findGenericCell(wrapper).exists()).toBe(true);
+          expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': true });
+          const popover = wrapper.findComponent(BPopover);
+          expect(popover.exists()).toBe(true);
+          expect(popover.props('target')).toBe('item-1-description');
+        } finally {
+          restoreMetrics();
+        }
+      });
+
+      it('registers the debounced resize re-measure on mount and removes it on unmount', async () => {
+        const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
+        const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
+
+        const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+        await flushPromises();
+
+        expect(addEventListenerSpy).toHaveBeenCalledWith('resize', wrapper.vm.debouncedTruncatedCellMeasure);
+        wrapper.unmount();
+        expect(removeEventListenerSpy).toHaveBeenCalledWith('resize', wrapper.vm.debouncedTruncatedCellMeasure);
+
+        addEventListenerSpy.mockRestore();
+        removeEventListenerSpy.mockRestore();
+      });
+
+      it('re-measures on a real window resize event', async () => {
+        const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
+        await flushPromises();
+
+        wrapper.vm.activeColumns = [genericCellColumn];
+        wrapper.vm.items = [genericCellItem];
+        await flushPromises();
+        expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': false });
+
+        // Real event drives the registered window listener; flush() skips the debounce delay
+        const restoreMetrics = mockCellLayoutMetrics(100, 500);
+        try {
+          window.dispatchEvent(new Event('resize'));
+          wrapper.vm.debouncedTruncatedCellMeasure.flush();
+          await flushPromises();
+          await flushPromises();
+
+          expect(wrapper.vm.truncatedCellIds).toEqual({ 'item-1-description': true });
+        } finally {
+          restoreMetrics();
+        }
+      });
     });
   });
 
