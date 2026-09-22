@@ -293,7 +293,11 @@ module.exports = defineConfig({
       return require('../../e2e/plugins/index.js')(on, config); // eslint-disable-line global-require
     },
     excludeSpecPattern: ['lighthouse.suite.cy.js', 'e2e/tests/visuals/**/*'],
-    specPattern: 'e2e/tests/**/*.{js,feature}',
+    specPattern: [
+      'e2e/tests/**/*.{js,feature}',
+      'e2e/features/**/*.cy.js',
+      'e2e/features/**/*.feature',
+    ],
     supportFile: 'e2e/support/index.js',
   },
 });
