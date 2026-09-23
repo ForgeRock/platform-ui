@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -160,6 +160,14 @@ watch(
   &.active:after {
       background-color: $white;
       border-color: $blue;
+  }
+
+  /* The "/ ''" syntax provides alternative text so screen readers ignore this decorative icon (WCAG 1.1.1),
+     and only applies to browsers that support it so the glyph is not dropped entirely */
+  @supports (content: "check_circle" / "") {
+    &.complete:after {
+      content: "check_circle" / "";
+    }
   }
 
   &:before {

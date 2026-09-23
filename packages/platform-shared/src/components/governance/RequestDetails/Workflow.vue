@@ -196,6 +196,18 @@ export default {
       color: $danger;
   }
 
+  /* The "/ ''" syntax provides alternative text so screen readers ignore these decorative icons (WCAG 1.1.1),
+     and only applies to browsers that support it so the glyphs are not dropped entirely */
+  @supports (content: "check_circle" / "") {
+    &.complete:after {
+      content: "check_circle" / "";
+    }
+
+    &.failed:after {
+      content: "cancel" / "";
+    }
+  }
+
   &:before {
     content: "";
     border-left: 2px solid $gray-200;

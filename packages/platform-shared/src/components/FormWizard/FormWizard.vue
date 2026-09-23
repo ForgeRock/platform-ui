@@ -258,6 +258,8 @@ setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
 </script>
 
 <style lang="scss" scoped>
+/* The "/ ''" syntax below provides alternative text so screen readers ignore the decorative completed-step icon (WCAG 1.1.1);
+   it applies only in browsers that support it so the glyph is not dropped entirely in older engines */
 :deep {
   .fr-wizard {
     min-width: 210px;
@@ -309,6 +311,12 @@ setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
     content: "check_circle";
     background-color: $white;
     border: none;
+  }
+
+  @supports (content: "check_circle" / "") {
+    .completed::after {
+      content: "check_circle" / "";
+    }
   }
 
   .current::after {
