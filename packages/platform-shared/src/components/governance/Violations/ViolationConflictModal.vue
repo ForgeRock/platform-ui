@@ -33,7 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
                   <img
                     :src="getApplicationLogo(entitlement.app)"
-                    :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
+                    alt=""
                     :onerror="onImageError"
                     width="24">
                 </div>
@@ -66,7 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
                   <img
                     :src="getApplicationLogo(entitlement.app)"
-                    :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
+                    alt=""
                     :onerror="onImageError"
                     width="24">
                 </div>

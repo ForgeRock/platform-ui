@@ -110,4 +110,14 @@ describe('Violation Conflict Modal', () => {
     expect(item.text()).toMatch('description3');
     expect(item.text()).toMatch('name3');
   });
+
+  it('marks the application logos as decorative with empty alt attributes', () => {
+    const wrapper = mountComponent();
+
+    const images = wrapper.findAll('img');
+    expect(images.length).toBe(3);
+    images.forEach((image) => {
+      expect(image.attributes('alt')).toBe('');
+    });
+  });
 });
