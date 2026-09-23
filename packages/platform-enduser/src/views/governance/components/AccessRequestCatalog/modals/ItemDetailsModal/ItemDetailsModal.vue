@@ -22,10 +22,11 @@ of the MIT license. See the LICENSE file for details. -->
         <div>
           <BImg
             v-if="!modalProps.isRole"
+            data-testid="item-details-logo"
             height="36"
             width="36"
             class="mr-4"
-            :alt="item.appType || $t('governance.accessRequest.newRequest.role')"
+            alt=""
             :src="item.icon"
             fluid />
           <div

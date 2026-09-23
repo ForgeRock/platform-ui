@@ -187,6 +187,24 @@ describe('ItemDetailsModal', () => {
       expect(modalBody.text()).toContain('testLabel');
     });
 
+    it('marks the application logo image as decorative with an empty alt attribute', async () => {
+      wrapper = setup({
+        glossarySchema: [],
+        item: {
+          appType: 'Adobe Admin Console',
+          icon: 'https://cdn.forgerock.com/platform/app-templates/images/adobe.svg',
+          name: 'Adobe Admin Console',
+          applicationId: 'testApp',
+        },
+        itemType: 'application',
+      });
+      await flushPromises();
+
+      const logo = wrapper.find('[data-testid="item-details-logo"]');
+      expect(logo.exists()).toBeTruthy();
+      expect(logo.attributes('alt')).toBe('');
+    });
+
     it('emits the correct event with request data on OK button click', async () => {
       jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
         .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
