@@ -10,10 +10,11 @@ import { cloneDeep } from 'lodash';
 import { getIDMThemes, putIDMResource } from '@e2e/api/journeyApi.e2e';
 
 /**
- * Restores theme fields that a test mutated through the UI. Themes live inside
- * the single `/openidm/config/ui/themerealm` document, so field-level rollback
- * is a snapshot + filtered PUT of the whole document — deleting the theme
- * (deleteThemes) would remove shared test fixtures the next run re-imports.
+ * Snapshots, mutates and restores theme fields through the themerealm API.
+ * Themes live inside the single `/openidm/config/ui/themerealm` document, so
+ * field-level rollback is a snapshot + filtered PUT of the whole document —
+ * deleting the theme (deleteThemes) would remove shared test fixtures the
+ * next run re-imports.
  */
 export default class ThemeApiSteps {
   static mutatedThemeFields = {};
@@ -79,6 +80,26 @@ export default class ThemeApiSteps {
       .then(() => {
         ThemeApiSteps.mutatedThemeFields = {};
       });
+  }
+
+  /**
+   * Mutates the given fields on the named theme and PUTs the whole themerealm
+   * document — the write counterpart of snapshotThemeFields/restoreThemeFields,
+   * for tests that configure themes through the API instead of the admin UI.
+   * Snapshot the same fields first so afterEach can roll the mutation back.
+   * @param {String} themeName theme name as shown in the Hosted Pages list
+   * @param {Object} fields field values to set (e.g. { journeyFocusElement: 'header' })
+   */
+  static updateThemeFields(themeName, fields) {
+    return getIDMThemes().then((response) => {
+      const realm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
+      const theme = response.body.realm[realm].find((t) => t.name === themeName);
+      if (!theme) {
+        throw new Error(`Theme "${themeName}" not found in realm "${realm}"`);
+      }
+      Object.assign(theme, fields);
+      return putIDMResource('config/ui', 'themerealm', response.body);
+    });
   }
 
   /**

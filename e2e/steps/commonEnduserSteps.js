@@ -9,9 +9,11 @@
 import BrowserSteps from './admin/BrowserSteps';
 import LoginSteps from './enduser/EndUserLoginSteps';
 import RegistrationSteps from './enduser/RegistrationSteps';
+import JourneyFocusSteps from './enduser/JourneyFocusSteps';
 
 export default {
   browser: BrowserSteps,
+  journeyFocus: JourneyFocusSteps,
   login: LoginSteps,
   registration: RegistrationSteps,
 };

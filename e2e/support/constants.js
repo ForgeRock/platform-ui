@@ -91,6 +91,7 @@ export const JOURNEYS = {
   EVENT_HOOK_SIMPLE_REGISTRATION: { name: 'QA - Event hook simple registration', path: 'QA%20-%20Event%20hook%20simple%20registration', fileName: 'QA_Event_Hook_Simple_Registration_Journey_template' },
   ACCEPT_TERMS_AND_CONDITIONS: { name: 'QA - Accept Terms and Conditions', path: 'QA%20-%20Accept%20Terms%20and%20Conditions', fileName: 'QA-Accept_Terms_and_Conditions' },
   COUNTRY_SCRIPT_REGISTRATION: { name: 'QA - Country script registration e2e', path: 'QA%20-%20Country%20script%20registration%20e2e', fileName: 'QA_Country_Script_Registration_Journey_template' },
+  QA_FOCUS_FIRST: { name: 'QA - Focus First', path: 'QA%20-%20Focus%20First', fileName: 'QA-Focus_First' },
 };
 
 /**

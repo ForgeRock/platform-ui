@@ -68,4 +68,33 @@ export default class HostedPagesEditPage {
   static clickLogoPreviewEdit(testid) {
     HostedPagesEditPage.logoPreview(testid).find('.material-icons-outlined').click();
   }
+
+  /**
+   * Layout radio card for the given layout label. The card's native radio
+   * input (CardRadioInput) covers the whole card and is the accessible element.
+   * @param {String} label 'Centered Card' | 'Left Justified' | 'Right Justified'
+   */
+  static layoutRadio(label) {
+    return cy.findByRole('radio', { name: new RegExp(`^${label}$`) });
+  }
+
+  /**
+   * Theater Mode switch (FrField type=boolean — FrSwitch renders role=switch
+   * with an sr-only label). Only rendered on non-card layouts.
+   */
+  static get theaterModeSwitch() {
+    return cy.findByRole('switch', { name: 'journeyTheaterMode' });
+  }
+
+  /**
+   * Skip-link checkbox inside the Header section. The visible label text is
+   * the i18n description; the input carries the skipLinkBox testid.
+   */
+  static get skipLinkCheckbox() {
+    return cy.findByTestId('skipLinkBox');
+  }
+
+  static focusOptionRadio(testid) {
+    return cy.findByTestId(testid);
+  }
 }
