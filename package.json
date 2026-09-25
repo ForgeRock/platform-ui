@@ -18,9 +18,9 @@
   "dependencies": {
     "@badeball/cypress-cucumber-preprocessor": "24.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
-    "@forgerock/journey-client": "2.2.0",
+    "@forgerock/journey-client": "2.3.0",
     "@forgerock/platform-shared": "1.0.0",
-    "@forgerock/protect": "2.2.0",
+    "@forgerock/protect": "2.3.0",
     "@neuralegion/cypress-har-generator": "5.16.4",
     "@testing-library/cypress": "10.0.1",
     "abort-controller": "3.0.0",

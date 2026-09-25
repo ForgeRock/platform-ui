@@ -2849,20 +2849,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/journey-client@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/journey-client@npm:2.2.0"
+"@forgerock/journey-client@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/journey-client@npm:2.3.0"
   dependencies:
-    "@forgerock/sdk-logger": 2.2.0
-    "@forgerock/sdk-oidc": 2.2.0
-    "@forgerock/sdk-request-middleware": 2.2.0
-    "@forgerock/sdk-types": 2.2.0
-    "@forgerock/sdk-utilities": 2.2.0
-    "@forgerock/storage": 2.2.0
+    "@forgerock/sdk-logger": 2.3.0
+    "@forgerock/sdk-oidc": 2.3.0
+    "@forgerock/sdk-request-middleware": 2.3.0
+    "@forgerock/sdk-types": 2.3.0
+    "@forgerock/sdk-utilities": 2.3.0
+    "@forgerock/storage": 2.3.0
     "@reduxjs/toolkit": ^2.8.2
     effect: ^3.20.0
     tslib: ^2.5.0
-  checksum: afc4a870da11c7b81a18e4e28c54963002a5d3ac00c713e94d0ad9d48ef7b16f6e29d2c367213e26dd75e9f229e80a064e71f2cded388a0d86c5bae426a23d26
+  checksum: 2623f0b3f543f105c88d332a8dfe4151dcf681d717fef1432abb380301a9122d91f9c7344569356023fa34c1afa8961da881c65455bc9a0edf161c6a6f322232
   languageName: node
   linkType: hard
 
@@ -3231,64 +3231,64 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/protect@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/protect@npm:2.2.0"
-  checksum: ef5174f0a70a199e56cde8ae6955e09f22205ae94ba54a77ee3b828611800e3d492fd6e68d596a8ca0121ce2aad07400ceb73925558fa2a56f630bc416299c44
+"@forgerock/protect@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/protect@npm:2.3.0"
+  checksum: e0882635d24c2a89e58f753537358e338aa80ed56bc360644b57b3f33eca5809b2668c6b3e10bfe5786f2920473dfc6a36fda8b1a8e2125ff13fc0967ba11871
   languageName: node
   linkType: hard
 
-"@forgerock/sdk-logger@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/sdk-logger@npm:2.2.0"
+"@forgerock/sdk-logger@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/sdk-logger@npm:2.3.0"
   dependencies:
-    "@forgerock/sdk-types": 2.2.0
-  checksum: 67d695fa74575762c02308f48d8e0e4d77c93e06f3da0ecff3f9b1330cedc62e96b42b3c30a824236986bcb96e63a24ce6d04fa16045ea0ab9ca95ec5184854d
+    "@forgerock/sdk-types": 2.3.0
+  checksum: be0d476ae680722b59c62a7e33f36afffcb246002497a2e70d3c4e59cc09da36ff2108bb56bc4d5012e53b11d22b3d40485bdaec191e25eb3f5bfd2614ca72be
   languageName: node
   linkType: hard
 
-"@forgerock/sdk-oidc@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/sdk-oidc@npm:2.2.0"
+"@forgerock/sdk-oidc@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/sdk-oidc@npm:2.3.0"
   dependencies:
-    "@forgerock/sdk-types": 2.2.0
-    "@forgerock/sdk-utilities": 2.2.0
-  checksum: a4b3570d864c0a4d51ef3212feef00cb505729ebb64a0c3b2a6e3f49ba17337fe065f9f1412144e111c85b2d53c4e1b1ba1472e57467a0cc84aec1e002a1625a
+    "@forgerock/sdk-types": 2.3.0
+    "@forgerock/sdk-utilities": 2.3.0
+  checksum: 8c655f5844bbe38c079580c4b9ca76776d9e6b0219a54d45fcf912326480b0826c80c6a7f74d28eb84efdcc2b1b3493ee6cfb63c04bedd7437c74f7e6276d610
   languageName: node
   linkType: hard
 
-"@forgerock/sdk-request-middleware@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/sdk-request-middleware@npm:2.2.0"
+"@forgerock/sdk-request-middleware@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/sdk-request-middleware@npm:2.3.0"
   dependencies:
     "@reduxjs/toolkit": ^2.8.2
-  checksum: 2017811784c7a46f5a0cb2dd25d0ecd6e0aae3bf40e1355ca112565af0eb5ed5541ead9d9ee499f482c1ee917f3d142be2f72254f89a1a12e36ab0eab5502a3f
+  checksum: 78e7d60d714a4029e7431a22ea9880acaf235c903542e5891efcf019d345a3c9363c32c1e7efe40b9ce47df969fa2d1610b657443f3abc80d25a8f9e346653bc
   languageName: node
   linkType: hard
 
-"@forgerock/sdk-types@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/sdk-types@npm:2.2.0"
-  checksum: aefd9f7eb065039ff21c282ed063b7f7d725f23a01a89ff476589ce680a7fa8425cf5e76ac9e85c64c255ca72d9753112e08562f37947e4e0d624dc875520c9a
+"@forgerock/sdk-types@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/sdk-types@npm:2.3.0"
+  checksum: fa2672a6320a236a2b29c2e7818972610d3f67e3a84d3b1db122bcf3ad2630baeaf7ca763a24d75cc111229a7402a6984a2b1ae3a12f73fb820fb596a35403d2
   languageName: node
   linkType: hard
 
-"@forgerock/sdk-utilities@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/sdk-utilities@npm:2.2.0"
+"@forgerock/sdk-utilities@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/sdk-utilities@npm:2.3.0"
   dependencies:
-    "@forgerock/sdk-types": 2.2.0
+    "@forgerock/sdk-types": 2.3.0
     effect: ^3.20.0
-  checksum: 9f5899b30b0641176a06f55ddbfb817386b36e8b35626b2f17aece587d7ac82ce10c603169d096af9dc89af3b9ba3f4b7ffb2611c9622f8dd97f7071a32019a8
+  checksum: a32dd6b5110bcd94bf87b077a10be3d9f208f4087494965d16366f9b459e86ab5ec1bf289bca1a23cbaaabe9fe2e809c56d2afe83c10e4d445f9c8996ab7f0f6
   languageName: node
   linkType: hard
 
-"@forgerock/storage@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@forgerock/storage@npm:2.2.0"
+"@forgerock/storage@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/storage@npm:2.3.0"
   dependencies:
-    "@forgerock/sdk-types": 2.2.0
-  checksum: af7e0f89099e352f75b1c5ec0c35fd5aa8dc51e33008b1851fcd2c9435e713dce0f03cfffe6a35ed91e74bada11d5ed6ab87b530ee0ef3a32d58af7153298263
+    "@forgerock/sdk-types": 2.3.0
+  checksum: 98050b3ea2e32f66001cc4e1c0515c877c554ba8d15f9a4b71787935e214c028ae979bdf1727f988a5ec1cc8896c57a525df6e34b59b492427fd29d4b48f0eb5
   languageName: node
   linkType: hard
 
@@ -12423,9 +12423,9 @@ __metadata:
     "@badeball/cypress-cucumber-preprocessor": 24.0.1
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@faker-js/faker": 9.8.0
-    "@forgerock/journey-client": 2.2.0
+    "@forgerock/journey-client": 2.3.0
     "@forgerock/platform-shared": 1.0.0
-    "@forgerock/protect": 2.2.0
+    "@forgerock/protect": 2.3.0
     "@neuralegion/cypress-har-generator": 5.16.4
     "@percy/cli": 1.31.7
     "@percy/cypress": 3.1.6
