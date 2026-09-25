@@ -1070,8 +1070,7 @@ export default {
           callbackSpecificProps,
           index,
           isRequired,
-          // if the app isn't loading update existing component props
-          key: this.loading ? keyFromDate += 1 : this.componentList[i].key,
+          key: keyFromDate += 1,
           listeners: this.getListeners({ callback, index }, listeners),
           type: this.$options.components[`Fr${type}`]
             ? `Fr${type}`
