@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -182,5 +182,77 @@ describe('EntitlementsSearchableList', () => {
 
     const addAllButton = wrapper.find('button');
     expect(addAllButton.exists()).toBe(false);
+  });
+
+  describe('search results announcement', () => {
+    const entitlements = [
+      {
+        name: 'testName',
+        description: 'testDescription',
+        appName: 'testAppName',
+        app: 'testApp',
+        compositeId: 'testCompositeId',
+      },
+      {
+        name: 'testName2',
+        description: 'testDescription2',
+        appName: 'testAppName2',
+        app: 'testApp2',
+        compositeId: 'testCompositeId2',
+      },
+    ];
+
+    async function search(wrapper, query) {
+      await wrapper.find('input').setValue(query);
+      // The count is announced from a debounced settled value
+      jest.advanceTimersByTime(500);
+      await wrapper.vm.$nextTick();
+    }
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('clears the announcer while typing and announces after the input settles', async () => {
+      const wrapper = setup({ entitlements });
+
+      await search(wrapper, 'testName2');
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBe(1);
+
+      // A new keystroke resets immediately; the settled value arrives later
+      await wrapper.find('input').setValue('testName');
+      expect(announcer.props('count')).toBeNull();
+
+      jest.advanceTimersByTime(500);
+      await wrapper.vm.$nextTick();
+      expect(announcer.props('count')).toBe(2);
+    });
+
+    it('re-announces when a modified search returns the same result count', async () => {
+      const wrapper = setup({ entitlements });
+
+      await search(wrapper, 'testName2');
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(1);
+
+      // Same count (1), different search text (matched via appName this time).
+      // the count must pass through null when the query changes so the live region re-announces
+      await search(wrapper, 'testappname2');
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(1);
+    });
+
+    it('announces no results and goes silent when the search is cleared', async () => {
+      const wrapper = setup({ entitlements });
+
+      await search(wrapper, 'nobody');
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+
+      await search(wrapper, '');
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
+    });
   });
 });

@@ -16,6 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
         :prevent-request-with-violation="preventRequestWithViolation"
         :sod-error="sodError" />
     </div>
+    <FrSearchResultsAnnouncer
+      :count="activeQuery && !loading ? totalCount : null" />
     <BTabs
       :value="selectedTab"
       class="my-4"
@@ -137,10 +139,8 @@ of the MIT license. See the LICENSE file for details. -->
                 role="alert" />
               <template v-else>
                 <BButtonToolbar class="p-0 mb-1 justify-content-between align-items-center border-0">
-                  <div
-                    class="mb-0 text-muted"
-                    tabindex="0"
-                    aria-live="polite">
+                  <!-- Visual counter only: announcements come from the always-mounted FrSearchResultsAnnouncer above, so the two regions never compete -->
+                  <div class="mb-0 text-muted">
                     {{ $tc('governance.accessRequest.newRequest.results', totalCount, { totalCount }) }}
                   </div>
                   <FrSortDropdown
@@ -340,6 +340,7 @@ import FrPageHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
@@ -380,6 +381,7 @@ export default {
     FrPageHeader,
     FrPagination,
     FrSearchInput,
+    FrSearchResultsAnnouncer,
     FrSODViolationMessage,
     FrRecommendationIcon,
     FrSortDropdown,
@@ -431,6 +433,12 @@ export default {
   data() {
     return {
       applicationToFilterBy: '',
+      // Gates the results announcer: reset at the start of every search so each settled search
+      // is a fresh empty -> text transition and re-announces even with an unchanged result count
+      activeQuery: false,
+      // True when a user-initiated search is in flight (any searchCatalog call with params);
+      // the initial mount load passes no params and must not announce
+      searchInitiated: false,
       catalogTabs: {
         application: {
           capitalizedTitle: pluralizeValue(capitalize(this.$t('governance.accessRequest.newRequest.application'))),
@@ -601,6 +609,10 @@ export default {
      * @param {Object} updatedParams params changed in this request to add to other saved params before emiting search request
      */
     searchCatalog(updatedParams) {
+      this.activeQuery = false;
+      // Only user-initiated searches (search submit, clear, tab switch, sort, filter, pagination)
+      // pass params; the initial mount load does not and must stay silent
+      this.searchInitiated = Boolean(updatedParams);
       if (updatedParams) {
         const keys = Object.keys(updatedParams);
         keys.forEach((key) => {
@@ -679,6 +691,14 @@ export default {
     catalogItems(items) {
       if (items?.length) {
         this.firstQuery = false;
+      }
+    },
+    // Re-arm the announcer when the search settles, once the parent delivers the new result set.
+    // Keyed on searchInitiated rather than the query text: a tab switch or filter-only search has
+    // no query text but must still announce its (possibly zero) result count
+    loading(isLoading) {
+      if (!isLoading) {
+        this.activeQuery = this.searchInitiated;
       }
     },
   },

@@ -42,6 +42,9 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
       </BCardHeader>
+      <FrSearchResultsAnnouncer
+        :count="activeQuery ? totalCount : null"
+        :resource="$t('common.delegate')" />
       <BTable
         v-if="items.length"
         v-resizable-table="{ persistKey: 'governance-delegates' }"
@@ -147,6 +150,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getTaskProxies, deleteTaskProxy } from '@/api/governance/DirectoryApi';
@@ -175,6 +179,7 @@ export default {
     FrNoData,
     FrPagination,
     FrSearchInput,
+    FrSearchResultsAnnouncer,
   },
   setup() {
     const tableFields = [
@@ -221,6 +226,7 @@ export default {
   ],
   data() {
     return {
+      activeQuery: false,
       isLast: true,
       items: [],
       paginationPage: 1,
@@ -228,6 +234,7 @@ export default {
       searchQuery: '',
       selectedDelegate: {},
       sortDesc: null,
+      totalCount: 0,
     };
   },
   computed: {
@@ -264,6 +271,9 @@ export default {
       return `${this.monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
     },
     loadData() {
+      // Reset the announcer so each search gets a fresh empty -> text transition,
+      // even when a new search returns the same result count
+      this.activeQuery = false;
       const params = {
         pageSize: this.paginationPageSize,
         pageNumber: this.paginationPage,
@@ -285,6 +295,7 @@ export default {
           start: this.getStartDate(delegate._refProperties?.temporalConstraints),
           end: this.getEndDate(delegate._refProperties?.temporalConstraints),
         }));
+        this.totalCount = data.resultCount;
         if ('pagedResultsCookie' in data) {
           this.isLast = data.pagedResultsCookie === null;
         } else {
@@ -293,6 +304,8 @@ export default {
         }
       }).catch((err) => {
         this.showErrorMessage(err, this.$t('governance.delegates.errorGettingDelegates'));
+      }).finally(() => {
+        this.activeQuery = Boolean(this.searchQuery);
       });
     },
     removeDelegate() {

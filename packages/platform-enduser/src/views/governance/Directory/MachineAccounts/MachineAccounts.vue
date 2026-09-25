@@ -24,6 +24,8 @@ of the MIT license. See the LICENSE file for details. -->
                   @search="search(1)" />
               </BButtonToolbar>
             </BCardHeader>
+            <FrSearchResultsAnnouncer
+              :count="activeQuery ? totalPagedResults : null" />
             <template v-if="tableLoading">
               <FrSpinner class="py-5" />
             </template>
@@ -127,6 +129,7 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
@@ -148,6 +151,9 @@ const accounts = ref([]);
 const sortBy = ref('displayName');
 const sortDesc = ref(false);
 const searchQuery = ref('');
+// Gates the results announcer; reset at the start of every search so a new
+// search re-announces even when the result count matches the previous one
+const activeQuery = ref(false);
 const selectedApplications = ref([]);
 const fields = [
   {
@@ -215,6 +221,9 @@ function getQueryFilterForAccounts() {
 async function search(page = null) {
   if (page) currentPage.value = page;
 
+  // Reset the announcer so each search gets a fresh empty -> text transition,
+  // even when a new search returns the same result count
+  activeQuery.value = false;
   tableLoading.value = true;
   const searchParameters = {
     pageNumber: currentPage.value - 1,
@@ -245,6 +254,7 @@ async function search(page = null) {
     accounts.value = [];
   } finally {
     tableLoading.value = false;
+    activeQuery.value = Boolean(searchQuery.value);
   }
 }
 

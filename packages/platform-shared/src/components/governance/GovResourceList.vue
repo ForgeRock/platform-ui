@@ -54,6 +54,11 @@ of the MIT license. See the LICENSE file for details. -->
       </BButtonToolbar>
     </BCardHeader>
     <slot name="toolbar-expanded" />
+    <!-- count collapses 0 to null: BTable's show-empty already renders and announces the no-results state (role="alert"),
+      so the announcer only covers the result-count announcement, without duplicating it -->
+    <FrSearchResultsAnnouncer
+      :count="activeQuery ? totalRows : null"
+      :resource="resourceName" />
     <BTable
       v-resizable-table="{ persistKey: `governance-resource-list-${listName}` }"
       class="mb-0"
@@ -62,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
       show-empty
       tbody-tr-class="cursor-pointer tr-gov-resource-list"
       :busy="isLoading"
-      :empty-text="$t('common.noObjectFound', { object: pluralizeAnyString(resource)})"
+      :empty-text="$t('common.noObjectFound', { object: pluralizeAnyString(resource) })"
       :fields="columns"
       :items="items"
       @row-clicked="$emit('row-clicked', $event)"
@@ -137,6 +142,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
@@ -208,6 +214,9 @@ const lastPage = ref(null);
 const searchHelpText = ref('');
 const hasFocus = ref(false);
 const submitBeforeLengthValid = ref(false);
+// Gates the results announcer off the committed search; reset at the start of
+// every load so a new search re-announces even with an unchanged result count
+const activeQuery = ref(false);
 
 const resourceName = computed(() => {
   switch (props.resource) {
@@ -382,6 +391,9 @@ function queryParamFunction(resourceType, queryString, page, pageSize) {
  */
 async function loadData() {
   isLoading.value = true;
+  // Reset the announcer so each search gets a fresh empty -> text transition,
+  // even when a new search returns the same result count
+  activeQuery.value = false;
   props.columns.forEach((column) => {
     if (props.queryThreshold && 'sortable' in column) {
       if (searchValue.value.length > props.queryThreshold) {
@@ -421,6 +433,9 @@ async function loadData() {
     totalRows.value = 0;
   } finally {
     isLoading.value = false;
+    // BTable's show-empty announces the no-results state (role="alert"), so the
+    // announcer covers only the result count; 0 collapses to null (silent)
+    activeQuery.value = searchValue.value && totalRows.value ? Boolean(searchValue.value) : false;
   }
 }
 

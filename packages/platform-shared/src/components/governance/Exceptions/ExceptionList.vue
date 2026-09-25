@@ -12,6 +12,9 @@ of the MIT license. See the LICENSE file for details. -->
       @get-policy-rule-options="$emit('get-policy-rule-options', $event)"
       @input="handleFilterChange"
       @open-columns-modal="openColumnsModal" />
+    <FrSearchResultsAnnouncer
+      :count="activeQuery && totalRowCount ? totalRowCount : null"
+      :resource="exceptionLabel" />
     <BTable
       @row-selected="(rows) => rows.length && emit('view-exception-details', rows[0])"
       @sort-changed="sortChanged"
@@ -104,7 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * List of Exceptions. Can filter by user and rule.
  */
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   BCard,
   BTable,
@@ -115,6 +118,7 @@ import {
 import dayjs from 'dayjs';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
 import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -251,6 +255,17 @@ const filters = ref({
 });
 
 // parse items information
+const exceptionLabel = i18n.global.t('common.exception');
+
+const searchActive = computed(() => Boolean(filters.value.searchValue));
+
+// Gates the results announcer off the committed search; reset on each filter change (the debounced live search fires without Enter),
+// re-armed when the parent delivers a new result set
+const activeQuery = ref(false);
+watch(() => props.tableRows, () => {
+  activeQuery.value = searchActive.value;
+});
+
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
   return props.tableRows.map((exception) => ({
@@ -385,6 +400,8 @@ async function getData(filterObj) {
  * @param {Object} newFilters New filter values
  */
 function handleFilterChange(newFilters) {
+  // Reset the announcer at the start of each filter-driven search
+  activeQuery.value = false;
   filters.value = newFilters;
   getData(filters.value);
 }

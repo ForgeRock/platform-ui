@@ -302,4 +302,67 @@ describe('ExceptionList', () => {
     expect(wrapper.emitted('handle-search')).toBeTruthy();
     expect(storeSpy).not.toHaveBeenCalled();
   });
+
+  describe('search results announcer', () => {
+    it('does not announce when no search is active', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBeNull();
+    });
+
+    it('announces the result count when a search is active', async () => {
+      const tableRows = [{
+        id: 'exception-1',
+        decision: { status: 'exception', startDate: '2024-05-13T23:12:21+00:00', phases: [{ name: 'testPhase' }] },
+        user: { givenName: 'firstName', sn: 'lastName' },
+        policyRule: { name: 'TestRule' },
+      }];
+      const wrapper = mountComponent({ totalRowCount: 3, tableRows });
+      await flushPromises();
+
+      const filter = wrapper.findComponent('[role=toolbar]');
+      filter.vm.$emit('input', {
+        rule: '',
+        user: '',
+        searchValue: 'test',
+      });
+      // The parent delivers a new result set after the search
+      await wrapper.setProps({ tableRows: [...tableRows] });
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBe(3);
+      expect(announcer.props('resource')).toBe('Exception');
+    });
+
+    it('re-announces when a new search returns the same result count', async () => {
+      const tableRows = [{
+        id: 'exception-1',
+        decision: { status: 'exception', startDate: '2024-05-13T23:12:21+00:00', phases: [{ name: 'testPhase' }] },
+        user: { givenName: 'firstName', sn: 'lastName' },
+        policyRule: { name: 'TestRule' },
+      }];
+      const wrapper = mountComponent({ totalRowCount: 3, tableRows });
+      await flushPromises();
+
+      const filter = wrapper.findComponent('[role=toolbar]');
+      filter.vm.$emit('input', { rule: '', user: '', searchValue: 'test' });
+      await wrapper.setProps({ tableRows: [...tableRows] });
+      await flushPromises();
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBe(3);
+
+      // Same count, different search text — the count must pass through null
+      // at the start of the new search so the live region re-announces
+      filter.vm.$emit('input', { rule: '', user: '', searchValue: 'test2' });
+      await flushPromises();
+      expect(announcer.props('count')).toBeNull();
+
+      await wrapper.setProps({ tableRows: [...tableRows] });
+      await flushPromises();
+      expect(announcer.props('count')).toBe(3);
+    });
+  });
 });

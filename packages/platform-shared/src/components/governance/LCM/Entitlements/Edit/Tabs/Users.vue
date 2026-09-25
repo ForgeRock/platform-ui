@@ -29,6 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
           @search="search(searchValue)" />
       </BButtonToolbar>
     </BCardHeader>
+    <FrSearchResultsAnnouncer
+      :count="activeQuery && totalRows ? totalRows : null"
+      :resource="$t('common.user.user')" />
     <BTable
       :ref="(el) => grid = el"
       class="mb-0"
@@ -229,6 +232,7 @@ import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrRequestSubmitSuccessModal from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccessModal';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
@@ -273,6 +277,9 @@ const requestId = ref('');
 const searchValue = ref('');
 const selected = ref([]);
 const totalRows = ref(0);
+// Gates the results announcer; reset at the start of every search so a new
+// search re-announces even when the result count matches the previous one
+const activeQuery = ref(false);
 const itemToExtendRequest = ref(null);
 const columns = [
   {
@@ -366,6 +373,7 @@ async function loadUsers() {
     totalRows.value = 0;
   } finally {
     isLoading.value = false;
+    activeQuery.value = Boolean(searchValue.value);
   }
 }
 
@@ -578,6 +586,7 @@ async function updateEntitlementMembers(operation) {
  */
 function search(query) {
   searchValue.value = query;
+  activeQuery.value = false;
   loadUsers();
 }
 

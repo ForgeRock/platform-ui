@@ -29,6 +29,8 @@ of the MIT license. See the LICENSE file for details. -->
           :placeholder="$t('common.search')" />
       </div>
     </template>
+    <FrSearchResultsAnnouncer
+      :count="announcedCount" />
     <EntitlementsList :entitlements="filteredEntitlements" />
   </FrListGroup>
 </template>
@@ -38,7 +40,9 @@ import { BButton } from 'bootstrap-vue';
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
-import { computed, ref } from 'vue';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
+import { computed, ref, watch } from 'vue';
+import { debounce } from 'lodash';
 import EntitlementsList from './EntitlementsList';
 
 const props = defineProps({
@@ -65,5 +69,19 @@ const filteredEntitlements = computed(() => {
   return props.entitlements.filter((entitlement) => entitlement.name.toLowerCase().includes(searchQuery)
     || entitlement.appName.toLowerCase().includes(searchQuery)
     || entitlement.description.toLowerCase().includes(searchQuery));
+});
+
+// The search is a client-side filter with no explicit submit: every keystroke re-filters the list.
+// Announcing per keystroke would be suppressed during active typing, so the count is announced from a debounced settled value.
+// The region is cleared immediately when the query changes so each settled search produces a fresh empty -> text transition and re-announces even with an unchanged count.
+const announcedCount = ref(null);
+const updateAnnouncedCount = debounce(() => {
+  announcedCount.value = searchQueryEntitlements.value
+    ? filteredEntitlements.value.length
+    : null;
+}, 500);
+watch(searchQueryEntitlements, () => {
+  announcedCount.value = null;
+  updateAnnouncedCount();
 });
 </script>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -244,6 +244,92 @@ describe('AccessReviews', () => {
 
         const noData = findByTestId(wrapper, 'delegates-no-data');
         expect(noData.exists()).toBeTruthy();
+      });
+    });
+
+    describe('search results announcement', () => {
+      it('passes no count to the announcer when there is no active search', () => {
+        wrapper.vm.searchQuery = '';
+        wrapper.vm.loadData();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
+      });
+
+      it('announces the number of results found after a search', async () => {
+        jest.spyOn(DirectoryApi, 'getTaskProxies').mockResolvedValue({
+          data: { result: [{ user: 'testUser', start: 'testStart', end: 'testEnd' }], resultCount: 1 },
+        });
+
+        wrapper.vm.searchQuery = 'testUser';
+        wrapper.vm.loadData();
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+
+        const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+        expect(announcer.props('count')).toBe(1);
+        expect(announcer.props('resource')).toBe('Delegate');
+      });
+
+      it('announces no results found after a search with no matches', async () => {
+        jest.spyOn(DirectoryApi, 'getTaskProxies').mockResolvedValue({
+          data: { result: [], resultCount: 0 },
+        });
+
+        wrapper.vm.searchQuery = 'nobody';
+        wrapper.vm.loadData();
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+      });
+
+      it('re-announces when a modified search text returns the same result count', async () => {
+        jest.spyOn(DirectoryApi, 'getTaskProxies').mockResolvedValue({
+          data: { result: [{ user: 'testUser', start: 'testStart', end: 'testEnd' }], resultCount: 1 },
+        });
+
+        wrapper.vm.searchQuery = 'testUser';
+        wrapper.vm.loadData();
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(1);
+
+        // Same count (1), different search text — the count must pass through null at the start of the new load
+        // so the live region's text changes and the screen reader re-announces
+        wrapper.vm.searchQuery = 'testUser2';
+        wrapper.vm.loadData();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
+
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(1);
+      });
+
+      it('re-announces no results when a modified search text still returns none', async () => {
+        jest.spyOn(DirectoryApi, 'getTaskProxies').mockResolvedValue({
+          data: { result: [], resultCount: 0 },
+        });
+
+        wrapper.vm.searchQuery = 'nobody';
+        wrapper.vm.loadData();
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+
+        wrapper.vm.searchQuery = 'nobody2';
+        wrapper.vm.loadData();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
+
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
       });
     });
 

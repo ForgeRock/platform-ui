@@ -12,6 +12,9 @@ of the MIT license. See the LICENSE file for details. -->
           :subtitle="$t('governance.administer.roles.subtitle')" />
       </BCol>
     </BRow>
+    <FrSearchResultsAnnouncer
+      :count="activeQuery ? totalRows : null"
+      :resource="$t('common.role')" />
     <BTabs
       content-class="mt-3"
       nav-class="fr-tabs"
@@ -246,6 +249,7 @@ import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/Per
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
@@ -291,6 +295,9 @@ const grid = ref(null);
 const queriedRoles = ref([]);
 const queryFields = ['role.name', 'role.description'];
 const searchValue = ref('');
+// Gates the results announcer off the committed search (not the v-model input, which changes on every keystroke with a stale count);
+// reset at the start of every query so a new search re-announces even with an unchanged result count
+const activeQuery = ref(false);
 const statusOptions = ref(['active', 'draft']);
 const showAddButton = ref(false);
 const showDeleteButton = ref(false);
@@ -330,6 +337,9 @@ async function getPermissions() {
  */
 async function queryRoles(resource = 'role') {
   isLoading.value = true;
+  // Reset the announcer so each search gets a fresh empty -> text transition,
+  // even when a new search returns the same result count
+  activeQuery.value = false;
   try {
     let response = {};
     if (roleStatus.value === 'active') {
@@ -394,6 +404,7 @@ async function queryRoles(resource = 'role') {
     showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: i18n.global.t('common.roles') }));
   } finally {
     isLoading.value = false;
+    activeQuery.value = Boolean(searchValue.value);
   }
 }
 

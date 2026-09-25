@@ -6,6 +6,7 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import AccessRequestCatalog from './index';
@@ -235,5 +236,109 @@ describe('AccessRequestCatalog Component', () => {
     expect(recommendedText.length).toEqual(1);
     const iconSpan = wrapper.find('span[id="predictionIcon-1"]');
     expect(iconSpan.text()).toEqual('thumb_up_off_alt');
+  });
+
+  describe('search results announcement', () => {
+    it('passes no count to the announcer for the initial mount load, which is not user-initiated', async () => {
+      // Mount without the shared helper's tab override: selecting a tab counts as a
+      // user-initiated search, and this test needs the pre-interaction state
+      const wrapper = mount(AccessRequestCatalog, {
+        global: {
+          plugins: [i18n],
+          mocks: {
+            $store: {
+              state: {
+                govAutoIdSettings: {
+                  enableAutoId: true,
+                  highScorePercentThreshold: 80,
+                  lowScorePercentThreshold: 20,
+                },
+              },
+            },
+            $bvModal: {
+              show: jest.fn(),
+            },
+          },
+        },
+        props: {
+          loading: false,
+          catalogItems: [],
+          totalCount: 0,
+        },
+      });
+      await flushPromises();
+
+      // The initial load settles without announcing
+      wrapper.vm.$options.watch.loading.call(wrapper.vm, false);
+      await nextTick();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
+    });
+
+    it('announces the result count once the search settles', async () => {
+      const wrapper = mountComponent({ catalogItems: mockCatalogItems, totalCount: 2 });
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      // Count stays silent while the search is in flight, then announces the settled count
+      wrapper.vm.searchValue = 'role';
+      wrapper.vm.searchCatalog({ page: 1 });
+      await nextTick();
+      expect(announcer.props('count')).toBeNull();
+
+      wrapper.vm.$options.watch.loading.call(wrapper.vm, false);
+      await nextTick();
+      expect(announcer.props('count')).toBe(2);
+    });
+
+    it('re-announces when a modified search returns the same result count', async () => {
+      const wrapper = mountComponent({ catalogItems: mockCatalogItems, totalCount: 2 });
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      wrapper.vm.searchValue = 'role';
+      wrapper.vm.searchCatalog({ page: 1 });
+      wrapper.vm.$options.watch.loading.call(wrapper.vm, false);
+      await nextTick();
+      expect(announcer.props('count')).toBe(2);
+
+      // Same count (2), new search: the count must pass through null at the start of the search so
+      // the live region's text changes and the screen reader re-announces
+      wrapper.vm.searchCatalog({ page: 1 });
+      await nextTick();
+      expect(announcer.props('count')).toBeNull();
+
+      wrapper.vm.$options.watch.loading.call(wrapper.vm, false);
+      await nextTick();
+      expect(announcer.props('count')).toBe(2);
+    });
+
+    it('announces no results found after a search with no matches', async () => {
+      const wrapper = mountComponent({ catalogItems: [], totalCount: 0 });
+      await flushPromises();
+
+      wrapper.vm.searchValue = 'nobody';
+      wrapper.vm.searchCatalog({ page: 1 });
+      wrapper.vm.$options.watch.loading.call(wrapper.vm, false);
+      await nextTick();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+    });
+
+    it('announces no results for a user-initiated search without query text, like a tab switch', async () => {
+      const wrapper = mountComponent({ catalogItems: [], totalCount: 0 });
+      await flushPromises();
+
+      // A tab switch resets the search value and searches without query text, but the zero
+      // result count must still be announced
+      wrapper.vm.searchValue = '';
+      wrapper.vm.searchCatalog({
+        applicationFilter: '',
+        filter: {},
+        page: 1,
+        searchValue: '',
+      });
+      wrapper.vm.$options.watch.loading.call(wrapper.vm, false);
+      await nextTick();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+    });
   });
 });

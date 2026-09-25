@@ -737,4 +737,80 @@ describe('ViolationList', () => {
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Violation successfully forwarded');
     expect(store.commit).toHaveBeenCalledWith('setViolationsCount', 9);
   });
+
+  describe('search results announcer', () => {
+    const mockRow = {
+      id: '1',
+      decision: { status: 'pending' },
+      user: { givenName: 'test', sn: 'user' },
+      policyRule: { name: 'testRule' },
+      reviewers: [],
+    };
+
+    it('does not announce when no search is active', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBeNull();
+    });
+
+    it('announces the result count when a search is active', async () => {
+      const wrapper = mountComponent({ totalRowCount: 5, tableRows: [mockRow] });
+      await flushPromises();
+
+      const filter = wrapper.findComponent('[role=toolbar]');
+      filter.vm.$emit('input', {
+        status: 'pending',
+        rule: '',
+        user: '',
+        startDate: '',
+        endDate: '',
+        searchValue: 'test',
+      });
+      // The parent delivers a new result set after the search
+      await wrapper.setProps({ tableRows: [mockRow] });
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBe(5);
+      expect(announcer.props('resource')).toBe('Violation');
+    });
+
+    it('re-announces when a new search returns the same result count', async () => {
+      const wrapper = mountComponent({ totalRowCount: 5, tableRows: [mockRow] });
+      await flushPromises();
+
+      const filter = wrapper.findComponent('[role=toolbar]');
+      filter.vm.$emit('input', {
+        status: 'pending',
+        rule: '',
+        user: '',
+        startDate: '',
+        endDate: '',
+        searchValue: 'test',
+      });
+      await wrapper.setProps({ tableRows: [mockRow] });
+      await flushPromises();
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBe(5);
+
+      // Same count, different search text — the count must pass through null
+      // at the start of the new search so the live region re-announces
+      filter.vm.$emit('input', {
+        status: 'pending',
+        rule: '',
+        user: '',
+        startDate: '',
+        endDate: '',
+        searchValue: 'test2',
+      });
+      await flushPromises();
+      expect(announcer.props('count')).toBeNull();
+
+      await wrapper.setProps({ tableRows: [mockRow] });
+      await flushPromises();
+      expect(announcer.props('count')).toBe(5);
+    });
+  });
 });

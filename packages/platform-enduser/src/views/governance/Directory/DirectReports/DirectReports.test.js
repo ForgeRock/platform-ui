@@ -173,6 +173,41 @@ describe('DirectReports Component', () => {
     });
   });
 
+  describe('search results announcement', () => {
+    it('passes no count to the announcer when there is no active search', async () => {
+      wrapper.vm.searchQuery = '';
+      await wrapper.vm.loadData();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
+    });
+
+    it('announces the number of results found after a search', async () => {
+      DirectoryApi.getDirectReports.mockResolvedValue({
+        data: { result: mockResultItems, resultCount: 2 },
+      });
+
+      wrapper.vm.searchQuery = 'employee';
+      await wrapper.vm.loadData();
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(2);
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('resource')).toBe('Direct report');
+    });
+
+    it('announces no results found after a search with no matches', async () => {
+      DirectoryApi.getDirectReports.mockResolvedValue({
+        data: { result: [], resultCount: 0 },
+      });
+
+      wrapper.vm.searchQuery = 'nobody';
+      await wrapper.vm.loadData();
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+    });
+  });
+
   it('Sets empty state on inability to load users', async () => {
     DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
     wrapper.vm.loadData();

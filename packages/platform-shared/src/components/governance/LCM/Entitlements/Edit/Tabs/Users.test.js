@@ -6,6 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
@@ -289,6 +290,52 @@ describe('Users', () => {
       wrapper.vm.newMembers = [{ userGrantsLoading: false, userGrants: [{}], selectedAccountId: null }];
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.isSaveDisabled).toBe(false);
+    });
+  });
+
+  describe('search results announcer', () => {
+    it('does not announce when no search is active', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBeNull();
+    });
+
+    it('announces the user count when a search is active', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const searchInput = wrapper.findComponent('.fr-search-input-holder');
+      searchInput.vm.$emit('input', 'searchQuery');
+      searchInput.vm.$emit('search');
+      await flushPromises();
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBe(11);
+      expect(announcer.props('resource')).toBe('User');
+    });
+
+    it('re-announces when a new search returns the same result count', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const searchInput = wrapper.findComponent('.fr-search-input-holder');
+      searchInput.vm.$emit('input', 'searchQuery');
+      searchInput.vm.$emit('search');
+      await flushPromises();
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBe(11);
+
+      // Same count, different search text — the count must pass through null
+      // at the start of the new search so the live region re-announces
+      searchInput.vm.$emit('input', 'searchQuery2');
+      searchInput.vm.$emit('search');
+      await nextTick();
+      expect(announcer.props('count')).toBeNull();
+
+      await flushPromises();
+      expect(announcer.props('count')).toBe(11);
     });
   });
 });

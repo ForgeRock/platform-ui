@@ -36,6 +36,9 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
       </BCardHeader>
+      <FrSearchResultsAnnouncer
+        :count="activeQuery ? totalCount : null"
+        :resource="$t('common.directReport')" />
       <div
         v-if="isLoading"
         data-testid="spinner-directreports">
@@ -151,6 +154,7 @@ import useColumnPicker from '@forgerock/platform-shared/src/composables/useColum
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getDirectReports } from '@/api/governance/DirectoryApi';
@@ -179,6 +183,7 @@ export default {
     FrNoData,
     FrPagination,
     FrSearchInput,
+    FrSearchResultsAnnouncer,
     FrSpinner,
   },
   setup() {
@@ -216,6 +221,7 @@ export default {
   ],
   data() {
     return {
+      activeQuery: false,
       items: [],
       isLastPage: false,
       isLoading: true,
@@ -225,6 +231,7 @@ export default {
       sortDesc: false,
       sortBy: 'userName',
       isNoResultsFirstLoad: false,
+      totalCount: 0,
     };
   },
   computed: {
@@ -247,6 +254,9 @@ export default {
      * Builds url to call API to pull table data of direct reports
      */
     async loadData() {
+      // Reset the announcer so each search gets a fresh empty -> text transition,
+      // even when a new search returns the same result count
+      this.activeQuery = false;
       this.isLoading = true;
       // Page Params
       const params = {
@@ -271,6 +281,7 @@ export default {
 
       await getDirectReports(this.userId, params).then(({ data }) => {
         this.items = data.result;
+        this.totalCount = data.resultCount;
         if ('pagedResultsCookie' in data) {
           this.isLastPage = data.pagedResultsCookie === null;
         } else {
@@ -281,6 +292,7 @@ export default {
         this.showErrorMessage(err, this.$t('governance.directReports.errorGettingDirectReports'));
       });
       this.isLoading = false;
+      this.activeQuery = Boolean(this.searchQuery);
     },
     async sortChanged() {
       this.sortDesc = !this.sortDesc;

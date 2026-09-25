@@ -129,7 +129,7 @@ describe('GovResourceTable', () => {
 
   it('should have a loading spinner then have a table', async () => {
     const { wrapper } = await mountComponent();
-    const myAccessSpinner = wrapper.find('[role="status"]');
+    const myAccessSpinner = wrapper.find('.spinner-border');
     expect(myAccessSpinner.exists()).toBeTruthy();
     wrapper.setProps({ items: mockItems });
     await flushPromises();
@@ -473,7 +473,7 @@ describe('GovResourceTable', () => {
       const { wrapper } = await mountComponent();
       await wrapper.setProps({ loading: true });
       await flushPromises();
-      const spinner = wrapper.find('[role="status"]');
+      const spinner = wrapper.find('.spinner-border');
       expect(spinner.exists()).toBeTruthy();
     });
 
@@ -483,19 +483,19 @@ describe('GovResourceTable', () => {
       await flushPromises();
       const table = findByTestId(wrapper, 'gov-resource-table');
       expect(table.exists()).toBeTruthy();
-      const spinner = wrapper.find('[role="status"]');
+      const spinner = wrapper.find('.spinner-border');
       expect(spinner.exists()).toBeFalsy();
     });
 
     it('loading prop null (default) does not override internal isLoading state', async () => {
       // Mount without a loading prop — internal isLoading starts true (spinner visible)
       const { wrapper } = await mountComponent();
-      expect(wrapper.find('[role="status"]').exists()).toBeTruthy();
+      expect(wrapper.find('.spinner-border').exists()).toBeTruthy();
 
       // Providing items drives isLoading to false via the items watcher
       await wrapper.setProps({ items: mockItems });
       await flushPromises();
-      expect(wrapper.find('[role="status"]').exists()).toBeFalsy();
+      expect(wrapper.find('.spinner-border').exists()).toBeFalsy();
       const table = findByTestId(wrapper, 'gov-resource-table');
       expect(table.exists()).toBeTruthy();
     });

@@ -12,6 +12,9 @@ of the MIT license. See the LICENSE file for details. -->
       @get-policy-rule-options="$emit('get-policy-rule-options', $event)"
       @input="handleFilterChange"
       @open-columns-modal="openColumnsModal" />
+    <FrSearchResultsAnnouncer
+      :count="activeQuery && totalRowCount ? totalRowCount : null"
+      :resource="violationLabel" />
     <BTable
       @row-selected="(rows) => rows.length && emit('viewViolationDetails', rows[0])"
       @sort-changed="sortChanged"
@@ -167,7 +170,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * List of SOD violations. Can filter by status, policy rule, user, and date range.
  */
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   BCard,
   BDropdownDivider,
@@ -186,6 +189,7 @@ import { forwardViolation, allowException } from '@forgerock/platform-shared/src
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
 import FrAvatarGroup from '@forgerock/platform-shared/src/components/AvatarGroup/AvatarGroup';
 import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
@@ -309,6 +313,16 @@ const categoriesEnduser = categories.map((category) => ({
 }));
 
 const isComplete = computed(() => filters.value.status === 'complete');
+const searchActive = computed(() => Boolean(filters.value.searchValue));
+
+// Gates the results announcer off the committed search. Reset on every filter change (the debounced live search fires without Enter),
+// re-armed when the parent delivers a new result set, so a search with an unchanged result count still re-announces
+const activeQuery = ref(false);
+watch(() => props.tableRows, () => {
+  activeQuery.value = searchActive.value;
+});
+
+const violationLabel = i18n.global.t('common.violation');
 
 const defaultColumns = computed(() => (props.isAdmin ? tableFields : tableFieldsEnduser));
 
@@ -532,6 +546,8 @@ function convertDate(date) {
  * @param {Object} newFilters New filter values
  */
 function handleFilterChange(newFilters) {
+  // Reset the announcer at the start of each filter-driven search
+  activeQuery.value = false;
   filters.value = newFilters;
   currentPage.value = 1;
   getData(filters.value);

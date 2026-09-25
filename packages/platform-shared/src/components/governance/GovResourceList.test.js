@@ -8,6 +8,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import SearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import GovResourceMultiselect from './GovResourceList';
 import i18n from '@/i18n';
 
@@ -359,6 +360,35 @@ describe('GovResourceList', () => {
           queryFilter: 'descriptor.idx./entitlement.displayName co "test"',
         },
       );
+    });
+  });
+
+  describe('search results announcer', () => {
+    it('does not announce when no search is active', () => {
+      wrapper = mountComponent({
+        resource: 'user',
+        resourceFunction: jest.fn(),
+      });
+
+      const announcer = wrapper.findComponent({ name: 'SearchResultsAnnouncer' });
+      expect(announcer.props('count')).toBeNull();
+    });
+
+    it('announces the result count when a search is active', async () => {
+      const resourceFunction = jest.fn().mockResolvedValue({ data: { result: [], totalCount: 7 } });
+      wrapper = mountComponent({
+        resource: 'entitlement',
+        resourceFunction,
+      });
+
+      const search = wrapper.findComponent(FrSearchInput);
+      await search.vm.$emit('input', 'test');
+      await flushPromises();
+      await search.vm.$emit('search');
+      await flushPromises();
+
+      const announcer = wrapper.findComponent(SearchResultsAnnouncer);
+      expect(announcer.props('count')).toBe(7);
     });
   });
 });

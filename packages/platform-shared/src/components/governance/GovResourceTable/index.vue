@@ -29,15 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
             :placeholder="$t('common.search')"
             @clear="loadData({ paginationPage: 1, searchQuery: '' }, true)"
             @search="loadData({ paginationPage: 1 }, true)" />
-          <!-- Visually hidden live region for screen readers -->
-          <div
-            v-if="activeQuery && isAccount"
-            role="alert"
-            aria-live="assertive"
-            class="sr-only"
-          >
-            {{ resultCountMessage }}
-          </div>
+          <FrSearchResultsAnnouncer
+            :count="activeQuery ? totalCount : null"
+            :resource="grantType" />
           <div
             v-if="$slots['toolbar-left']"
             class="d-flex align-items-center">
@@ -402,6 +396,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSearchResultsAnnouncer from '@forgerock/platform-shared/src/components/SearchResultsAnnouncer';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { formatConstraintDate, getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
@@ -437,6 +432,7 @@ export default {
     FrRevokeRequestModal,
     FrExtendRequestModal,
     FrSearchInput,
+    FrSearchResultsAnnouncer,
     FrSpinner,
     FrUserEntitlementModal,
     FrRecommendationIcon,
@@ -563,6 +559,7 @@ export default {
         label: i18n.global.t('common.revoke'),
       }],
       activeQuery: false,
+      announcerLoadFromQuery: false,
       allRowsSelected: false,
       blankValueIndicator,
       directAssignment: this.$t('common.direct'),
@@ -656,20 +653,6 @@ export default {
     },
     isAccount() {
       return this.grantType === 'account';
-    },
-    /**
-     * Internationalized message indicating the number of filtered accounts found
-     * - If no accounts match the current search, it returns a localized "no results found" message
-     * - If there are matches, it returns a localized message like "X Account found"
-     * @returns {string} A localized message describing the number of filtered Accounts found
-     */
-    resultCountMessage() {
-      return !this.totalCount
-        ? this.$t('common.noResultsFound')
-        : this.$t('common.numberElementsFound', {
-          number: this.totalCount,
-          element: this.totalCount === 1 ? this.$t('common.account') : this.$t('common.accounts'),
-        });
     },
   },
   methods: {
@@ -795,7 +778,9 @@ export default {
         params.queryString = this.searchQuery;
       }
       this.$emit('load-data', params);
-      this.activeQuery = loadFromQuery;
+      // Reset the announcer so each search gets a fresh empty -> text transition, even when a new search returns the same result count.
+      this.activeQuery = false;
+      this.announcerLoadFromQuery = loadFromQuery;
     },
     /**
      * Selects or unselects  specific table row
@@ -933,6 +918,7 @@ export default {
     items(items) {
       this.isNoResultsFirstLoad = !items.length && this.isNoResultsFirstLoad === null;
       this.isLoading = false;
+      this.activeQuery = this.announcerLoadFromQuery;
     },
     loading(val) {
       if (val !== null) {
