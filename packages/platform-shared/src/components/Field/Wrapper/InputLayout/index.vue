@@ -326,9 +326,11 @@ export default {
     min-width: 80px;
 
     /* stylelint-disable */
-    .polyfill-placeholder,
-    input.form-control:not(:placeholder-shown):focus,
-    input.form-control:autofill {
+    // Input fields only receive the polyfill class when they render a label,
+    // while JsonInput and Multiselect use it as a layout hook on their wrapper
+    // elements — so unlike the focus/autofill legs below, this leg does not require
+    // to gate on empty label.
+    .polyfill-placeholder {
 
       /*
        * if there is no placeholder, we do not need to apply padding to move
@@ -338,6 +340,19 @@ export default {
       &:not([placeholder=""]):not(.iti__tel-input):not(.iti__search-input):not(textarea) {
         padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
         padding-bottom: calc($input-btn-padding-y / 3);
+      }
+    }
+
+    // Clearance padding on focus/autofill only makes sense when a label element
+    // actually renders — without one the padding pushes the value down to clear
+    // nothing, leaving an unwanted gap.
+    &:has(label:not(:empty)) {
+      input.form-control:not(:placeholder-shown):focus,
+      input.form-control:autofill {
+        &:not([placeholder=""]):not(.iti__tel-input):not(.iti__search-input):not(textarea) {
+          padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
+          padding-bottom: calc($input-btn-padding-y / 3);
+        }
       }
     }
 
