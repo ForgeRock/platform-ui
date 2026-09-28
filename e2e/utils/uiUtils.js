@@ -113,3 +113,7 @@ export function checkElementCssByText(text, attribute, value) {
 export function selectRadioOption(optionName, clickOptions = {}) {
   cy.findByRole('radio', { name: new RegExp(optionName, 'i') }).click(clickOptions);
 }
+
+export function waitForAnySpinnerToDisappear() {
+  cy.get('[aria-busy="true"]', { timeout: 20000 }).should('not.exist');
+}

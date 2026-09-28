@@ -528,7 +528,11 @@ Cypress.Commands.add('clickButtonInDialog', (buttonName) => {
  */
 Cypress.Commands.add('registerViaJourney', (journeyUrl, user) => {
   cy.logout();
+
+  cy.intercept('POST', '**/authenticate*').as('authenticateVisitingRegisterJourney');
   cy.visitJourneyUrl(journeyUrl);
+  cy.wait('@authenticateVisitingRegisterJourney', { timeout: 10_000 });
+
   RegistrationJourneyPage.fill(user);
   RegistrationJourneyPage.submit();
 });

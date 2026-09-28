@@ -24,6 +24,7 @@ import {
   selectRadioOption,
   checkElementCssBySelector,
   checkElementCssByText,
+  waitForAnySpinnerToDisappear,
 } from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
 import LOCALES from '../../packages/platform-enduser/e2e/support/constants';
@@ -200,6 +201,8 @@ When('user clicks on {string} {role}', (name, role) => {
       .and('not.have.class', 'disabled')
       .should('be.enabled') // Re-check after previous assertions pass
       .click({ timeout: 8000 });
+
+    waitForAnySpinnerToDisappear();
     return;
   }
 
@@ -210,10 +213,14 @@ When('user clicks on {string} {role}', (name, role) => {
     findControl()
       .should('be.enabled', { timeout: 10000 })
       .click();
+
+    waitForAnySpinnerToDisappear();
     return;
   }
 
   findControl().click();
+
+  waitForAnySpinnerToDisappear();
 });
 
 /**
@@ -839,7 +846,7 @@ Then('page title is {string} after user is idle for {int} seconds', (title, seco
 });
 
 Then('admin dashboard is loaded', () => {
-  cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
+  cy.findAllByTestId('dashboard-welcome-title', { timeout: 20_000 }).should('be.visible');
   const username = Cypress.env('IS_FRAAS') ? Cypress.env('AM_USERNAME') : 'Platform Admin';
   cy.findAllByText(username).should('exist');
 });

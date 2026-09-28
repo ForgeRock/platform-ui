@@ -29,7 +29,8 @@ export default class DashboardAdminPage extends BaseAdminPage {
   }
 
   static get dashboardTitle() {
-    return cy.get('[data-testid="dashboard-welcome-title"]');
+    // Longer timeout here because this is often the first element checked after login.
+    return cy.get('[data-testid="dashboard-welcome-title"]', { timeout: 20_000 });
   }
 
   static get sidebar() {

@@ -16,6 +16,9 @@ module.exports = defineConfig({
   experimentalMemoryManagement: true,
   // Keep only the current test's snapshots/DOM state in the browser.
   numTestsKeptInMemory: 0,
+  // Double the factory timeouts to cope with congested infrastructure.
+  defaultCommandTimeout: 8_000,
+  requestTimeout: 10_000,
   video: true,
   retries: {
     // Retry tests twice when running in CI (cypress run)
