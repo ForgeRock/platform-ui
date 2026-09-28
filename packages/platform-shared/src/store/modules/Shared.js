@@ -69,7 +69,6 @@ const defaultState = {
   enableSamlSigningCheckbox: false,
   enableMonitoringUI: false,
   devAppTemplatesEnabled: false,
-  servicesMigrationEnabled: false,
   secretMappingsEnabled: false,
 };
 
@@ -291,10 +290,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_DEV_IDM?.toString() === 'true') {
       state.devIdmEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_SERVICES_MIGRATION?.toString() === 'true') {
-      state.servicesMigrationEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_SECRET_MAPPINGS?.toString() === 'true') {
