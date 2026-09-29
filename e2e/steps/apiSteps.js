@@ -25,6 +25,7 @@ import JourneyApiSteps from './api/JourneyApiSteps';
 import JourneyNodeApiSteps from './api/JourneyNodeApiSteps';
 import LocalizationApiSteps from './api/LocalizationApiSteps';
 import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
+import OAuth2ProviderApiSteps from './api/OAuth2ProviderApiSteps';
 import OrganizationApiSteps from './api/OrganizationApiSteps';
 import RealmApiSteps from './api/RealmApiSteps';
 import RelationshipApiSteps from './api/RelationshipApiSteps';
@@ -56,6 +57,7 @@ export default {
   localization: LocalizationApiSteps,
   managedObject: ManagedObjectApiSteps,
   oauth2Clients: Oauth2ClientApiSteps,
+  oauth2Provider: OAuth2ProviderApiSteps,
   organizations: OrganizationApiSteps,
   realm: RealmApiSteps,
   relationships: RelationshipApiSteps,
