@@ -3044,7 +3044,8 @@
           },
           "removeReviewerButtonText": "Remove Reviewer",
           "reviewerLabel": "Reviewer",
-          "title": "Add a Reviewer"
+          "title": "Add a Reviewer",
+          "editTitle": "Edit Reviewer"
         },
         "editReviewerErrorMessage": "Error saving reviewer",
         "editReviewerSuccessfullyMessage": "Reviewer permissions saved",

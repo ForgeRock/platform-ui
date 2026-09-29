@@ -75,33 +75,26 @@ of the MIT license. See the LICENSE file for details. -->
           </BBadge>
         </template>
         <template #cell(actions)="{ item }">
-          <BDropdown
-            no-caret
-            toggle-class="p-1"
-            variant="link">
-            <template #button-content>
-              <FrIcon
-                icon-class="text-dark md-24"
-                name="more_horiz" />
+          <FrActionsCell
+            :delete-option="false"
+            :divider="false"
+            edit-option
+            :test-id="item.id"
+            @edit-clicked="editReviewer(item)">
+            <template #custom-bottom-actions>
+              <template v-if="reviewers.length > 1">
+                <BDropdownDivider />
+                <BDropdownItem
+                  @click="deleteReviewer(item.id)">
+                  <FrIcon
+                    icon-class="mr-2"
+                    name="delete">
+                    {{ $t('common.remove') }}
+                  </FrIcon>
+                </BDropdownItem>
+              </template>
             </template>
-            <BDropdownItem @click="editReviewer(item)">
-              <FrIcon
-                icon-class="mr-2"
-                name="edit">
-                {{ $t('common.edit') }}
-              </FrIcon>
-            </BDropdownItem>
-            <template v-if="reviewers.length > 1">
-              <BDropdownDivider />
-              <BDropdownItem @click="deleteReviewer(item.id)">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="delete">
-                  {{ $t('common.remove') }}
-                </FrIcon>
-              </BDropdownItem>
-            </template>
-          </BDropdown>
+          </FrActionsCell>
         </template>
       </BTable>
     </div>
@@ -135,10 +128,10 @@ import {
   BMediaBody,
   BImg,
   BBadge,
-  BDropdown,
   BDropdownItem,
   BDropdownDivider,
 } from 'bootstrap-vue';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
 
@@ -147,6 +140,7 @@ export default {
   components: {
     BModal,
     BTable,
+    FrActionsCell,
     FrIcon,
     BButton,
     BMedia,
@@ -154,7 +148,6 @@ export default {
     BMediaBody,
     BImg,
     BBadge,
-    BDropdown,
     BDropdownItem,
     BDropdownDivider,
   },
@@ -187,7 +180,7 @@ export default {
         },
         {
           key: 'actions',
-          label: '',
+          label: this.$t('common.actions'),
           class: 'w-114px fr-no-resize sticky-right',
         },
       ],

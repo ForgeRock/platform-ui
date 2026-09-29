@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    :aria-label="$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title')"
+    :aria-label="modalTitle"
     body-class="p-0"
     :footer-class="footerClass"
     content-class="border-0"
@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
           name="arrow_back" />
       </BButton>
       <h2 class="h5 modal-title">
-        {{ $t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title') }}
+        {{ modalTitle }}
       </h2>
       <BButtonClose
         variant="link"
@@ -290,6 +290,13 @@ export default {
   computed: {
     footerClass() {
       return this.isAllowedDeletion ? 'justify-content-between' : '';
+    },
+    // The dialog is used for both adding and editing a reviewer; the title must
+    // reflect which one is happening ("Add a Reviewer" vs "Edit Reviewer").
+    modalTitle() {
+      return this.reviewer
+        ? this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.editTitle')
+        : this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title');
     },
     ...mapState(useUserStore, ['userId']),
     /**

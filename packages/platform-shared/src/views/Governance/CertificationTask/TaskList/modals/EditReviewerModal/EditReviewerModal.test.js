@@ -302,6 +302,25 @@ describe('EditReviewerModal', () => {
     expect(title.classes()).toContain('h5');
   });
 
+  it('renders the add-reviewer title when no reviewer is being edited', () => {
+    expect(wrapper.find('.modal-title').text()).toBe('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title');
+    // aria-label tracks the visible title so the dialog keeps a matching accessible name
+    expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').attributes('aria-label')).toBe('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title');
+  });
+
+  it('renders the edit-reviewer title when editing an existing reviewer', async () => {
+    await wrapper.setProps({
+      reviewer: {
+        id: 'managed/user/2cdfc1d4-a206-435b-b22e-a5ed8804f4af',
+        permissions: {},
+      },
+    });
+
+    expect(wrapper.find('.modal-title').text()).toBe('governance.certificationTask.lineItemReviewersModal.editReviewerModal.editTitle');
+    // aria-label tracks the visible title so the dialog keeps a matching accessible name
+    expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').attributes('aria-label')).toBe('governance.certificationTask.lineItemReviewersModal.editReviewerModal.editTitle');
+  });
+
   it('should render default modalId', () => {
     expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').exists()).toBeTruthy();
   });

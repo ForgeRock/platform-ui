@@ -111,7 +111,9 @@ const { floatingStyle } = floatingElementPosition({
   enabled: props.useFloatingMenu,
   isVisible: isOpen,
   floatingRef: menuListRef,
-  floatingElementStyles: { width: 'fit-content', zIndex: 1020 },
+  // z-index above the Bootstrap modal (1050) so menus stay clickable when a
+  // floating menu is used inside a modal (e.g. the reviewers table modal).
+  floatingElementStyles: { width: 'fit-content', zIndex: 1055 },
 });
 
 /**
