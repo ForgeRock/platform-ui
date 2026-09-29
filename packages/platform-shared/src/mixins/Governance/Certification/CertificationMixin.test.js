@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import CertificationMixin from './index';
 
@@ -43,6 +43,7 @@ describe('CertificationMixin', () => {
               totalCount: 2,
             },
           })),
+          showErrorMessage: jest.fn(),
         },
         plugins: [store],
         mixins: [CertificationMixin],
@@ -102,6 +103,17 @@ describe('CertificationMixin', () => {
       result: ['test'],
       totalCount: 2,
     });
+  });
+
+  it('Stops table loading and shows error message when getting the items list fails', async () => {
+    wrapper.vm.getItems = jest.fn().mockReturnValue(Promise.reject(new Error('Request failed')));
+
+    wrapper.setData({ tableLoading: true });
+    wrapper.vm.getList();
+    await flushPromises();
+
+    expect(wrapper.vm.tableLoading).toBe(false);
+    expect(wrapper.vm.showErrorMessage).toHaveBeenCalledWith('', 'governance.certificationTask.errors.certificationListError');
   });
 
   it('Gets items list page 4', async () => {
