@@ -273,6 +273,8 @@ const viewMode = ref(isCategorized.value ? VIEW_MODE_CATEGORIES : VIEW_MODE_LIST
 
 const pendingColumns = ref([]);
 const hiddenColumns = ref([]);
+// Element focused just before the modal was opened; focus is restored to it on close.
+let previouslyFocusedElement = null;
 const listSearchQuery = ref('');
 const activeColumnsHeader = ref(null);
 const computedModalId = props.modalId || `column-picker-${uuidv4()}`;
@@ -442,10 +444,18 @@ function onCancel() {
 }
 
 /**
- * Resets search query and emits hidden event when the modal is closed.
+ * Resets search query, restores focus to the element that opened the modal and emits hidden event when the modal is closed.
+ * The modal is controlled through the `show` prop, so bootstrap-vue does not restore focus to an opening
+ * trigger element for us. We track the element focused when the modal was opened and restore focus to it
+ * on close so keyboard/SR users do not land somewhere arbitrary.
  */
 function onHidden() {
   listSearchQuery.value = '';
+  const focusTarget = previouslyFocusedElement;
+  previouslyFocusedElement = null;
+  if (focusTarget && focusTarget !== document.body && document.contains(focusTarget)) {
+    nextTick(() => focusTarget.focus());
+  }
   emit('update:show', false);
   emit('hidden');
 }
@@ -455,6 +465,7 @@ function onHidden() {
  */
 watch(() => props.show, (isVisible) => {
   if (isVisible) {
+    previouslyFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const availableKeys = allAvailableColumns.value.map((c) => getColumnId(c));
     hiddenColumns.value = cloneDeep(props.activeColumns).filter((c) => isIgnored(c));
     pendingColumns.value = cloneDeep(props.activeColumns)

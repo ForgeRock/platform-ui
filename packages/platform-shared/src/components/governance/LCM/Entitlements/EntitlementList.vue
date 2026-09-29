@@ -27,12 +27,24 @@ of the MIT license. See the LICENSE file for details. -->
       <template #toolbar-right>
         <BButton
           class="ml-2 toolbar-link-text text-dark"
+          :aria-expanded="showFilters.toString()"
+          aria-controls="entitlement-filters-panel"
+          aria-labelledby="entitlement-filter-toggle-label"
+          data-testid="filter-toggle"
           @click="showFilters = !showFilters"
           variant="link">
-          <FrIcon name="filter_list" />
+          <FrIcon name="filter_list">
+            <span
+              class="sr-only"
+              id="entitlement-filter-toggle-label">
+              {{ showFilters ? $t('governance.toolbar.hideFilters') : $t('governance.toolbar.showFilters') }}
+            </span>
+          </FrIcon>
         </BButton>
         <BButton
           class="ml-2 toolbar-link-text text-dark"
+          :aria-label="$t('common.customizeColumns')"
+          data-testid="column-picker-toggle"
           @click="openColumnsModal"
           variant="link">
           <FrIcon
@@ -41,7 +53,9 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </template>
       <template #toolbar-expanded>
-        <BCollapse :visible="showFilters">
+        <BCollapse
+          id="entitlement-filters-panel"
+          :visible="showFilters">
           <div class="border-bottom p-4">
             <BRow>
               <BCol

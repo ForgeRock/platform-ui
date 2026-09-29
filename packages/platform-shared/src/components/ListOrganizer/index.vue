@@ -11,6 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
       <BButton
         :variant="columnOrganizerKey ? 'link' : 'outline-secondary'"
         :class="columnOrganizerKey ? 'text-dark' : ''"
+        :aria-label="modalTitle || $t('common.customizeColumns')"
+        data-testid="column-picker-toggle"
         @click="open">
         <FrIcon
           icon-class="md-24"

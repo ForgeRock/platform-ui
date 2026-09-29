@@ -7,6 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ExceptionToolbar from './ExceptionToolbar';
 import i18n from '@/i18n';
 
@@ -38,6 +39,42 @@ describe('ExceptionToolbar', () => {
 
   afterEach(() => {
     jest.useRealTimers();
+  });
+
+  it('filter toggle button has an accessible name and expanded state', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    const filterToggle = findByTestId(wrapper, 'filter-toggle');
+    expect(filterToggle.attributes('aria-expanded')).toBe('false');
+    expect(filterToggle.attributes('aria-controls')).toBe('exceptions-filter-collapse');
+    expect(filterToggle.attributes('aria-labelledby')).toBe('exception-filter-toggle-label');
+
+    await filterToggle.trigger('click');
+    expect(filterToggle.attributes('aria-expanded')).toBe('true');
+    expect(wrapper.find('#exception-filter-toggle-label').text()).toBe('Hide Filters');
+
+    await filterToggle.trigger('click');
+    expect(filterToggle.attributes('aria-expanded')).toBe('false');
+    expect(wrapper.find('#exception-filter-toggle-label').text()).toBe('Show Filters');
+  });
+
+  it('column picker button has an accessible name', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    const columnsToggle = findByTestId(wrapper, 'column-picker-toggle');
+    expect(columnsToggle.exists()).toBe(true);
+    expect(columnsToggle.attributes('aria-label')).toBe('Customize Columns');
+  });
+
+  it('column picker button emits open-columns-modal on click', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    await findByTestId(wrapper, 'column-picker-toggle').trigger('click');
+
+    expect(wrapper.emitted('open-columns-modal')).toHaveLength(1);
   });
 
   it('can change the policy rule', async () => {

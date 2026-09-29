@@ -6,6 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
@@ -84,6 +85,15 @@ describe('UserList', () => {
   });
 
   CommonsApi.getFilterSchema.mockResolvedValue({ data: { user: [] } });
+
+  it('column picker button has an accessible name', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const columnsToggle = findByTestId(wrapper, 'column-picker-toggle');
+    expect(columnsToggle.exists()).toBe(true);
+    expect(columnsToggle.attributes('aria-label')).toBe('Customize Columns');
+  });
 
   it('has columns for name and email', async () => {
     wrapper = mountComponent();

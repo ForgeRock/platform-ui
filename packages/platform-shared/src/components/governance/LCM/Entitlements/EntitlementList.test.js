@@ -279,6 +279,37 @@ describe('EntitlementList', () => {
     expect(entitlementRow.text()).toMatch('Group');
   });
 
+  it('filter toggle button has an accessible name and expanded state', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const filterToggle = wrapper.find('[data-testid="filter-toggle"]');
+    expect(filterToggle.attributes('aria-expanded')).toBe('false');
+    expect(filterToggle.attributes('aria-controls')).toBe('entitlement-filters-panel');
+    expect(filterToggle.attributes('aria-labelledby')).toBe('entitlement-filter-toggle-label');
+
+    await filterToggle.trigger('click');
+    expect(filterToggle.attributes('aria-expanded')).toBe('true');
+
+    const label = wrapper.find('#entitlement-filter-toggle-label');
+    expect(label.text()).toBe('Hide Filters');
+
+    await filterToggle.trigger('click');
+    expect(filterToggle.attributes('aria-expanded')).toBe('false');
+    expect(wrapper.find('#entitlement-filter-toggle-label').text()).toBe('Show Filters');
+  });
+
+  it('column picker button has an accessible name and opens the column picker modal', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const columnsToggle = wrapper.find('[data-testid="column-picker-toggle"]');
+    expect(columnsToggle.attributes('aria-label')).toBe('Customize Columns');
+
+    await columnsToggle.trigger('click');
+    expect(wrapper.vm.pickerProps.show).toBe(true);
+  });
+
   it('can filter by application', async () => {
     wrapper = mountComponent();
     await flushPromises();

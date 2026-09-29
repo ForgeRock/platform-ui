@@ -72,6 +72,48 @@ function mountComponent(props = {}) {
 }
 
 describe('ColumnPicker', () => {
+  it('restores focus to the element focused before the modal opened on close', async () => {
+    const trigger = document.createElement('button');
+    trigger.textContent = 'customize columns';
+    document.body.appendChild(trigger);
+    trigger.focus();
+    expect(document.activeElement).toBe(trigger);
+
+    const wrapper = mountComponent();
+    await wrapper.vm.$nextTick();
+
+    // Simulate focus having moved inside the open modal
+    document.body.focus();
+
+    // Closing the modal emits update:show false and restores focus to the trigger
+    // onHidden is bound via @hidden on the stubbed BModal; trigger it there
+    wrapper.findComponent({ name: 'BModal' }).vm.$emit('hidden');
+    await wrapper.vm.$nextTick();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(document.activeElement).toBe(trigger);
+
+    trigger.remove();
+  });
+
+  it('does not attempt to focus document.body when body is focused when the modal opens', async () => {
+    // No trigger element: document.activeElement is document.body by default in jsdom.
+    // onHidden must not try to restore focus to body.
+    const focusSpy = jest.spyOn(document.body, 'focus');
+
+    const wrapper = mountComponent();
+    await wrapper.vm.$nextTick();
+
+    wrapper.findComponent({ name: 'BModal' }).vm.$emit('hidden');
+    await wrapper.vm.$nextTick();
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(focusSpy).not.toHaveBeenCalled();
+
+    focusSpy.mockRestore();
+    wrapper.findComponent({ name: 'BModal' }).vm.$emit('hidden');
+  });
+
   it('uses an h2 modal title with h5 styling', () => {
     const wrapper = mountComponent();
     const modal = wrapper.findComponent({ name: 'BModal' });

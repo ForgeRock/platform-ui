@@ -28,7 +28,9 @@ of the MIT license. See the LICENSE file for details. -->
             <BButton
               @click="openColumnsModal"
               variant="link-dark"
-              class="ml-2">
+              class="ml-2"
+              :aria-label="$t('common.customizeColumns')"
+              data-testid="column-picker-toggle">
               <FrIcon
                 icon-class="md-24"
                 name="view_column" />

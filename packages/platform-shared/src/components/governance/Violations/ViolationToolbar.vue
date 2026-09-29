@@ -28,6 +28,8 @@ of the MIT license. See the LICENSE file for details. -->
       </BDropdown>
       <div>
         <BButton
+          aria-labelledby="violation-filter-toggle-label"
+          data-testid="filter-toggle"
           @click="showFilters = !showFilters"
           class="toolbar-link-text text-dark"
           :aria-label="$t('common.filters')"
@@ -36,12 +38,19 @@ of the MIT license. See the LICENSE file for details. -->
           variant="link-dark">
           <FrIcon
             icon-class="md-24"
-            name="filter_list" />
+            name="filter_list">
+            <span
+              class="sr-only"
+              id="violation-filter-toggle-label">
+              {{ showFilters ? $t('governance.toolbar.hideFilters') : $t('governance.toolbar.showFilters') }}
+            </span>
+          </FrIcon>
         </BButton>
         <BButton
           variant="link-dark"
           class="mr-2 text-dark"
           :aria-label="$t('common.customizeColumns')"
+          data-testid="column-picker-toggle"
           @click="emit('open-columns-modal')">
           <FrIcon
             icon-class="md-24"
