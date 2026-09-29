@@ -26,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-required="isRequiredAria">
       <BFormDatepicker
         v-model="inputValue"
+        v-calendar-grid
         :dropleft="dropleft"
         button-only
         label-help=""
@@ -45,6 +46,7 @@ import { isEqual, cloneDeep } from 'lodash';
 import {
   BFormDatepicker,
 } from 'bootstrap-vue';
+import calendarGrid from '@forgerock/platform-shared/src/directives/calendarGrid';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
@@ -57,6 +59,9 @@ import InputMixin from '../Wrapper/InputMixin';
  */
 export default {
   name: 'DateInput',
+  directives: {
+    'calendar-grid': calendarGrid,
+  },
   mixins: [
     InputMixin,
     TranslationMixin,

@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BFormDatepicker
     data-testid="datepicker"
     v-model="inputValue"
+    v-calendar-grid
     v-bind="$attrs"
     v-on="$listeners"
     hide-header
@@ -61,6 +62,7 @@ import {
 
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import calendarGrid from '@forgerock/platform-shared/src/directives/calendarGrid';
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
 import { v4 as uuid } from 'uuid';
@@ -70,6 +72,9 @@ import { v4 as uuid } from 'uuid';
  */
 export default {
   name: 'Datepicker',
+  directives: {
+    'calendar-grid': calendarGrid,
+  },
   components: {
     BFormDatepicker,
     FrIcon,
