@@ -59,6 +59,28 @@ async function advanceToStepOne(wrapper) {
   await flushPromises();
 }
 
+/**
+ * Mounts the modal ready to submit a grant: preselects a single application,
+ * entitlement, and account by setting the entitlement-selection step (stepIndex 1)
+ * state directly, avoiding multiselect DOM interaction complexity.
+ */
+async function mountReadyToGrant() {
+  const wrapper = mountComponent({
+    parentResourceName: 'role',
+    userId: 'user-1',
+    entitlementOptions: [{ text: 'EntitlementText', value: 'value', assignmentId: 'assign-1' }],
+  });
+  await flushPromises();
+
+  wrapper.vm.stepIndex = 1;
+  wrapper.vm.selectedApplication = 'managed/application/app-1';
+  wrapper.vm.selectedEntitlements = ['value'];
+  wrapper.vm.selectedAccountId = 'acc-only';
+  await flushPromises();
+
+  return wrapper;
+}
+
 describe('GovAssignResourceModal Component', () => {
   it('queries applications via getApplicationList with disconnected filter when resourceType is roles', async () => {
     mountComponent({ parentResourceName: 'role', resourceType: 'roles' });
@@ -239,27 +261,7 @@ describe('GovAssignResourceModal Component', () => {
   });
 
   it('emits assign-resources with { entitlements, accountId } shape', async () => {
-    CommonsApi.getUserGrants.mockResolvedValue({
-      data: {
-        result: [
-          { descriptor: { idx: { '/account': { displayName: 'Only Account' } } }, keys: { accountId: 'acc-only' } },
-        ],
-      },
-    });
-
-    const wrapper = mountComponent({
-      parentResourceName: 'role',
-      userId: 'user-1',
-      entitlementOptions: [{ text: 'EntitlementText', value: 'value', assignmentId: 'assign-1' }],
-    });
-    await flushPromises();
-
-    // Set up step-2 state directly to avoid multiselect DOM interaction complexity
-    wrapper.vm.stepIndex = 1;
-    wrapper.vm.selectedApplication = 'managed/application/app-1';
-    wrapper.vm.selectedEntitlements = ['value'];
-    wrapper.vm.selectedAccountId = 'acc-only';
-    await flushPromises();
+    const wrapper = await mountReadyToGrant();
 
     wrapper.findAll('[type="button"]').filter((item) => item.text().includes('Grant Entitlements'))[0].trigger('click');
     await flushPromises();
@@ -269,6 +271,44 @@ describe('GovAssignResourceModal Component', () => {
     expect(payload).toMatchObject({
       entitlements: [{ entitlementId: 'value', assignmentId: 'assign-1' }],
       accountId: 'acc-only',
+    });
+  });
+
+  it('resolves assignmentId from an entitlement that is no longer in entitlementOptions at submit time', async () => {
+    const wrapper = await mountReadyToGrant();
+
+    // Simulate a search replacing the options with a result page that no longer
+    // contains the selected entitlement (as happens when clearing the search input)
+    await wrapper.setProps({ entitlementOptions: [{ text: 'Other Entitlement', value: 'other', assignmentId: 'assign-2' }] });
+    await flushPromises();
+
+    wrapper.findAll('[type="button"]').filter((item) => item.text().includes('Grant Entitlements'))[0].trigger('click');
+    await flushPromises();
+
+    expect(wrapper.emitted('assign-resources')).toBeTruthy();
+    const [payload] = wrapper.emitted('assign-resources')[0];
+    expect(payload).toMatchObject({
+      entitlements: [{ entitlementId: 'value', assignmentId: 'assign-1' }],
+    });
+  });
+
+  it('resets the entitlement options cache when the modal is reopened', async () => {
+    const wrapper = await mountReadyToGrant();
+
+    // Search replaces the options during the first session; the cache accumulates the selection
+    await wrapper.setProps({ entitlementOptions: [{ text: 'Other Entitlement', value: 'other', assignmentId: 'assign-2' }] });
+    await flushPromises();
+    expect(wrapper.vm.entitlementOptionsCache).toHaveProperty('value');
+
+    // Reopening the modal starts a new session — the previous session's cache must not
+    // leak into it, and the cache is re-seeded from the current entitlementOptions prop
+    const modal = wrapper.findComponent({ name: 'BModal' });
+    modal.vm.$emit('hidden');
+    modal.vm.$emit('show');
+    await flushPromises();
+
+    expect(wrapper.vm.entitlementOptionsCache).toEqual({
+      other: { text: 'Other Entitlement', value: 'other', assignmentId: 'assign-2' },
     });
   });
 

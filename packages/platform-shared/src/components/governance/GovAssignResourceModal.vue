@@ -162,6 +162,7 @@ import {
   defineProps,
   onMounted,
   ref,
+  watch,
 } from 'vue';
 import { capitalize, debounce } from 'lodash';
 import {
@@ -237,6 +238,11 @@ const props = defineProps({
 const emit = defineEmits(['assign-resources', 'get-entitlements']);
 
 // Data
+// Every entitlement option seen this modal session, keyed by value. The cache resets
+// when the modal opens; searching replaces entitlementOptions with the current result
+// page, so an option selected earlier may no longer be present when the form is
+// submitted — this cache keeps the assignmentId resolvable at submit time.
+const entitlementOptionsCache = ref({});
 const accountGrants = ref([]);
 const accountGrantsLoading = ref(false);
 const appLogoSource = ref('');
@@ -319,7 +325,19 @@ async function fetchAccountGrants() {
   }
 }
 
+/**
+ * Adds the given options to the cache, so the assignmentId of an entitlement selected
+ * earlier remains resolvable at submit time even after a search replaces the options.
+ */
+function cacheEntitlementOptions(options) {
+  options.forEach((option) => {
+    entitlementOptionsCache.value[option.value] = option;
+  });
+}
+
 function initializeData() {
+  entitlementOptionsCache.value = {};
+  cacheEntitlementOptions(props.entitlementOptions);
   selectedEntitlements.value = [];
   accountGrants.value = [];
   selectedAccountId.value = null;
@@ -344,10 +362,12 @@ function setValuesFromApplicationSelect(option) {
   appLogoSource.value = getApplicationLogo(option);
 }
 
+watch(() => props.entitlementOptions, cacheEntitlementOptions, { immediate: true });
+
 function submitAssignment() {
   const entitlements = selectedEntitlements.value.map((id) => ({
     entitlementId: id,
-    assignmentId: props.entitlementOptions.find((o) => o.value === id)?.assignmentId,
+    assignmentId: entitlementOptionsCache.value[id]?.assignmentId,
   }));
   emit('assign-resources', { entitlements, accountId: selectedAccountId.value, justification: justificationText.value });
 }
