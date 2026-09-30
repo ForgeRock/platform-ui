@@ -203,9 +203,56 @@ export default class RoleDetailPage extends BaseAdminPage {
     return RoleDetailPage.assignApplicationDialog.findByRole('button', { name: 'Cancel' });
   }
 
+  /** Previous button inside the Assign Application modal (shown on the account-details step). */
+  static get assignApplicationPreviousButton() {
+    return RoleDetailPage.assignApplicationDialog.findByRole('button', { name: 'Previous' });
+  }
+
+  /** Account Type select inside the Assign Application modal (roles context). */
+  static get assignApplicationAccountTypeInput() {
+    return RoleDetailPage.assignApplicationDialog.findByRole('combobox', { name: 'Account Type' });
+  }
+
+  /** An Account Type option inside the Assign Application modal's dropdown. */
+  static assignApplicationAccountTypeOption(label) {
+    return cy.findByRole('option', { name: new RegExp(`^${label}$`, 'i') });
+  }
+
+  /** A string field input on the account-details step, by label (RegExp matches "(optional)" labels). */
+  static assignApplicationFieldInput(fieldName) {
+    return RoleDetailPage.assignApplicationDialog.findByLabelText(fieldName);
+  }
+
+  /** Validation error text under the Account Type field inside the Assign Application modal. */
+  static get assignApplicationAccountTypeError() {
+    return RoleDetailPage.assignApplicationDialog.findByText(
+      'This application is already assigned with this account type. Choose a different account type.',
+    );
+  }
+
   /** A row in the Applications table by application name. */
   static applicationRow(appName) {
     return cy.findByRole('table').findByRole('row', { name: new RegExp(appName) });
+  }
+
+  /** All rows in the Applications table for an application. */
+  static applicationRows(appName) {
+    return cy.findByRole('table').findAllByRole('row', { name: new RegExp(appName) });
+  }
+
+  /** An Account Type cell in the Applications table. */
+  static applicationAccountTypeCell(accountType) {
+    return cy.findByRole('table').findByRole('cell', { name: new RegExp(`^${accountType}$`, 'i') });
+  }
+
+  /** "Account Type" column header in the Applications table. */
+  static get applicationsAccountTypeColumnHeader() {
+    return cy.findByRole('columnheader', { name: 'Account Type' });
+  }
+
+  /** Account Type cell for an application row. */
+  static applicationRowAccountType(appName, accountType = 'Default') {
+    return RoleDetailPage.applicationRow(appName).findByRole('cell', { name: accountType });
   }
 
   /** "There are no records to show" empty row in the Applications table. */
