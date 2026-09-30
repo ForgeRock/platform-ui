@@ -10,13 +10,13 @@ import AdminsApiSteps from './api/AdminsApiSteps';
 import AIAgentApiSteps from './api/AIAgentApiSteps';
 import ApplicationApiSteps from './api/ApplicationApiSteps';
 import AssignmentApiSteps from './api/AssignmentApiSteps';
-import EmailProviderApiSteps from './api/EmailProviderApiSteps';
-import ManagedObjectApiSteps from './api/ManagedObjectApiSteps';
+import AuthenticationMethodsApiSteps from './api/AuthenticationMethodsApiSteps';
 import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import CspApiSteps from './api/CspApiSteps';
 import CustomDomainApiSteps from './api/CustomDomainApiSteps';
 import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
 import CustomNodesApiSteps from './api/CustomNodesApiSteps';
+import EmailProviderApiSteps from './api/EmailProviderApiSteps';
 import EndUserApiSteps from './api/EndUserApiSteps';
 import EventHookApiSteps from './api/EventHookApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
@@ -24,6 +24,7 @@ import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
 import JourneyNodeApiSteps from './api/JourneyNodeApiSteps';
 import LocalizationApiSteps from './api/LocalizationApiSteps';
+import ManagedObjectApiSteps from './api/ManagedObjectApiSteps';
 import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
 import OAuth2ProviderApiSteps from './api/OAuth2ProviderApiSteps';
 import OrganizationApiSteps from './api/OrganizationApiSteps';
@@ -42,6 +43,7 @@ export default {
   application: ApplicationApiSteps,
   applications: ApplicationApiSteps,
   assignments: AssignmentApiSteps,
+  authenticationMethods: AuthenticationMethodsApiSteps,
   authScripts: AuthScriptApiSteps,
   csp: CspApiSteps,
   customDomain: CustomDomainApiSteps,
