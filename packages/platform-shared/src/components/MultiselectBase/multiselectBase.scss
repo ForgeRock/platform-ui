@@ -297,7 +297,11 @@ fieldset[disabled] {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   z-index: 50;
-  -webkit-overflow-scrolling: touch;
+  /* IAM-12152: force the dropdown onto its own compositor layer. WebKit paints an
+     absolutely-positioned scrollable dropdown in DOM order beneath later static
+     siblings (e.g. the journey Next button) despite z-index; promoting it fixes
+     the Safari paint order. translate3d is lint-approved; translateZ is not. */
+  transform: translate3d(0, 0, 0);
 }
 .multiselect__content {
   list-style: none;
