@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -62,7 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <BDropdownItem
             data-testid="forward-review-button"
-            @click="$bvModal.show('task-header-forward');">
+            @click="showForwardModal($event);">
             <FrIcon
               icon-class="mr-2"
               name="redo">
@@ -146,6 +146,14 @@ export default {
     },
   },
   methods: {
+    /**
+     * Show the forward modal with the dropdown toggle as the return-focus trigger.
+     * @param {Event} event the menu item's click event
+     */
+    showForwardModal(event) {
+      const toggle = event.target.closest('.dropdown')?.querySelector('.dropdown-toggle');
+      this.$bvModal.show('task-header-forward', toggle);
+    },
     onForwardAllTasks({ comment = '', newActorId }) {
       this.$emit('change-saving');
       forwardCertification(this.actorId, this.campaignDetails.id, newActorId, comment)

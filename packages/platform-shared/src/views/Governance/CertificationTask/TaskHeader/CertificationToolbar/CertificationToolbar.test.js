@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -47,7 +47,7 @@ describe('CertificationToolbar', () => {
       expect(wrapper.vm.isSaving).toEqual(false);
     });
 
-    it('clicking forward button should open the forward modal', async () => {
+    it('clicking forward button should open the forward modal with the dropdown toggle as return-focus trigger', async () => {
       const wrapper = mountComponent();
 
       await wrapper.setProps({
@@ -66,7 +66,11 @@ describe('CertificationToolbar', () => {
       await forwardReviewButton.trigger('click');
       await flushPromises();
 
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('task-header-forward');
+      const [modalId, triggerEl] = wrapper.vm.$bvModal.show.mock.calls[0];
+      expect(modalId).toBe('task-header-forward');
+      // the toggle must be passed so focus returns to it on modal close
+      expect(triggerEl).not.toBeNull();
+      expect(triggerEl.classList.contains('dropdown-toggle')).toBe(true);
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledTimes(1);
     });
 
