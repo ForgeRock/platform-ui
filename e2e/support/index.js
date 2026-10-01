@@ -33,7 +33,7 @@ configure({
     // message can be null on some retry-wrapped query failures — guard so the
     // handler itself does not crash and mask the original error
     const messageIncludeSuggestions = message?.includes('Here are the accessible roles');
-    const firstLineOfMessage = message?.split('\n')[0];
+    const firstLineOfMessage = message?.split('\n')[0] ?? message ?? '';
 
     const outputMessage = messageIncludeSuggestions ? firstLineOfMessage : message;
 

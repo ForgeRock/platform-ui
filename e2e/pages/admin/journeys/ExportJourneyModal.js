@@ -15,8 +15,15 @@ export default class ExportJourneyModal {
     return ExportJourneyModal.dialog.findByRole('button', { name: 'Export' });
   }
 
-  static get journeysSection() {
-    return ExportJourneyModal.dialog.findByRole('heading', { name: /^Journeys \(\d+\)$/ });
+  /**
+   * The modal body only renders after the export data for every selected
+   * journey has been fetched, so the heading does not exist in the DOM until
+   * then — which can exceed the default 4s timeout on slow tenants.
+   *
+   * @param {object} options - Options forwarded to findByRole (e.g. { timeout }).
+   */
+  static journeysSection(options = {}) {
+    return ExportJourneyModal.dialog.findByRole('heading', { name: /^Journeys \(\d+\)$/, ...options });
   }
 
   static get dependenciesHeading() {
