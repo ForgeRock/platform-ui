@@ -21,6 +21,7 @@ import EndUserApiSteps from './api/EndUserApiSteps';
 import EventHookApiSteps from './api/EventHookApiSteps';
 import FederationApiSteps from './api/FederationApiSteps';
 import HelixApiSteps from './api/HelixApiSteps';
+import IdentityProviderApiSteps from './api/IdentityProviderApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
 import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
@@ -60,6 +61,7 @@ export default {
   eventHooks: EventHookApiSteps,
   federation: FederationApiSteps,
   helix: HelixApiSteps,
+  identityProviders: IdentityProviderApiSteps,
   inviteAdmins: InviteAdminsApiSteps,
   jobs: JobsApiSteps,
   journey: JourneyApiSteps,
