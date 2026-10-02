@@ -45,6 +45,45 @@ describe('setFeatureFlags', () => {
     shared.mutations.setFeatureFlags(state, { VUE_APP_ENABLE_PING_ONE_RECOGNIZE: 'false' });
     expect(state.pingOneRecognizeEnabled).toBe(false);
   });
+
+  it('sets mcpFeatureEnabled and login2Enabled when their env vars are true', () => {
+    const state = { mcpFeatureEnabled: false, login2Enabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_FRAAS: 'true',
+      VUE_APP_ENABLE_REMOTE_MCP_FEATURE: 'true',
+      VUE_APP_ENABLE_LOGIN2: 'true',
+    });
+    expect(state.mcpFeatureEnabled).toBe(true);
+    expect(state.login2Enabled).toBe(true);
+  });
+
+  it('does not set mcpFeatureEnabled or login2Enabled when their env vars are absent', () => {
+    const state = { mcpFeatureEnabled: false, login2Enabled: false };
+    shared.mutations.setFeatureFlags(state, { VUE_APP_FRAAS: 'true' });
+    expect(state.mcpFeatureEnabled).toBe(false);
+    expect(state.login2Enabled).toBe(false);
+  });
+
+  it('does not set mcpFeatureEnabled or login2Enabled when their env vars are false', () => {
+    const state = { mcpFeatureEnabled: false, login2Enabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_FRAAS: 'true',
+      VUE_APP_ENABLE_REMOTE_MCP_FEATURE: 'false',
+      VUE_APP_ENABLE_LOGIN2: 'false',
+    });
+    expect(state.mcpFeatureEnabled).toBe(false);
+    expect(state.login2Enabled).toBe(false);
+  });
+
+  it('does not set mcpFeatureEnabled or login2Enabled outside FRaaS builds', () => {
+    const state = { mcpFeatureEnabled: false, login2Enabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_ENABLE_REMOTE_MCP_FEATURE: 'true',
+      VUE_APP_ENABLE_LOGIN2: 'true',
+    });
+    expect(state.mcpFeatureEnabled).toBe(false);
+    expect(state.login2Enabled).toBe(false);
+  });
 });
 
 describe('should handle relative paths for FRaaS urls', () => {

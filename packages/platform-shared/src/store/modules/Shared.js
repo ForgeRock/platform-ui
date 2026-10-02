@@ -55,6 +55,8 @@ const defaultState = {
   maxSessionExpirationTime: null,
   proxyConnectEnabled: false,
   mtlsEnabled: false,
+  mcpFeatureEnabled: false,
+  login2Enabled: false,
   fraasMtlsFqdn: null,
   pingFederateUrl: null,
   promoteAppsViaApi: false,
@@ -221,6 +223,14 @@ const mutations = {
 
       if (env.VUE_APP_ENABLE_MTLS?.toString() === 'true') {
         state.mtlsEnabled = true;
+      }
+
+      if (env.VUE_APP_ENABLE_REMOTE_MCP_FEATURE?.toString() === 'true') {
+        state.mcpFeatureEnabled = true;
+      }
+
+      if (env.VUE_APP_ENABLE_LOGIN2?.toString() === 'true') {
+        state.login2Enabled = true;
       }
 
       if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
