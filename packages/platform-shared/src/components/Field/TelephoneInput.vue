@@ -270,12 +270,20 @@ const isAriaInvalid = computed(() => {
 });
 
 /**
- * Patches the country dropdown rendered by intl-tel-input to include an aria-label for accessibility.
+ * Patch library-rendered nodes of intl-tel-input with accessible names, for accessibility:
+ * - the country dropdown, which the library renders without an accessible name;
+ * - the country search input, whose aria-label the library copies from the same i18n string
+ *   as its placeholder, which would make the accessible name placeholder-derived (WCAG 3.3.2).
  */
-function patchCountryDropdown() {
-  const countryDropdown = telephoneInput.value?.parentElement?.querySelector('.iti__country-container .iti__dropdown-content[role="dialog"]');
+function patchIntlTelInputA11y() {
+  const telephoneInputContainer = telephoneInput.value?.parentElement;
+  const countryDropdown = telephoneInputContainer?.querySelector('.iti__country-container .iti__dropdown-content[role="dialog"]');
   if (countryDropdown) {
     countryDropdown.setAttribute('aria-label', i18n.global.t('common.telephoneInput.selectCountry'));
+  }
+  const searchInput = telephoneInputContainer?.querySelector('.iti__search-input');
+  if (searchInput) {
+    searchInput.setAttribute('aria-label', i18n.global.t('common.telephoneInput.searchCountry'));
   }
 }
 
@@ -342,10 +350,10 @@ function createIntlTelInput() {
     },
   });
 
-  // Fix missing aria-label on country dropdown for accessibility, once
-  // the intl-tel-input instance is initialized and the dropdown is rendered in the DOM
+  // Patch library-rendered accessible names once the intl-tel-input instance is
+  // initialized and its dropdown and search input are rendered in the DOM
   telephoneInputInstance.promise.then(() => {
-    patchCountryDropdown();
+    patchIntlTelInputA11y();
     setLabelPosition();
     setInputPaddingLeft();
   });

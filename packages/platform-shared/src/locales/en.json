@@ -414,6 +414,7 @@
       "noCountrySelected": "Select country",
       "countryListAriaLabel": "List of countries",
       "searchPlaceholder": "Search",
+      "searchCountry": "Search country",
       "clearSearchAriaLabel": "Clear search",
       "searchEmptyState": "No results found",
       "searchSummaryAria": "{count} results found"

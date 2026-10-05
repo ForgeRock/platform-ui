@@ -58,6 +58,23 @@ describe('TelephoneInput Component', () => {
       expect(countryDropdown).toBeTruthy();
       expect(countryDropdown.getAttribute('aria-label')).toBe('Select country code');
     }, 15000);
+    it('should have an aria-label on the country search input that is independent of its placeholder', async () => {
+      wrapper = await setupMount({ label: 'Phone Number' });
+      await flushPromises();
+
+      // Wait for intl-tel-input library to fully initialize
+      if (wrapper.vm.telephoneInputInstance?.promise) {
+        await wrapper.vm.telephoneInputInstance.promise;
+      }
+
+      const searchInput = wrapper.element.querySelector('.iti__search-input');
+      expect(searchInput).toBeTruthy();
+      // intl-tel-input copies its placeholder text into the aria-label (i18n.searchPlaceholder),
+      // which the custom placeholder-as-label axe rule flags as a placeholder-derived name
+      // (WCAG 3.3.2) — the patch must override it with a persistent, distinct accessible name.
+      expect(searchInput.getAttribute('placeholder')).toBe('Search');
+      expect(searchInput.getAttribute('aria-label')).toBe('Search country');
+    }, 15000);
   });
 
   it('renders InputLayout component with a label for a fallback id', async () => {
