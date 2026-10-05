@@ -75,7 +75,7 @@
     "mochawesome-report-generator": "5.1.0",
     "nano-staged": "0.8.0",
     "nock": "13.0.4",
-    "postcss-html": "1.4.1",
+    "postcss-html": "1.5.0",
     "puppeteer-core": "22.5.0",
     "sass": "1.52.1",
     "sass-loader": "8.0.2",

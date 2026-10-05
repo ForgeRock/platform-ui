@@ -12509,7 +12509,7 @@ __metadata:
     nano-staged: 0.8.0
     nock: 13.0.4
     nodemailer: 8.0.5
-    postcss-html: 1.4.1
+    postcss-html: 1.5.0
     puppeteer-core: 22.5.0
     sass: 1.52.1
     sass-loader: 8.0.2
@@ -15755,6 +15755,13 @@ __metadata:
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
   checksum: 8a95213a5a77deb6cbe94d86340e8d9ace2b93bc367790b260101d2f36a2eaf4e4e22d9fa9cf459b38af3a32fb4190e638024cf82ec95ef708680e405ea7cc78
+  languageName: node
+  linkType: hard
+
+"js-tokens@npm:^8.0.0":
+  version: 8.0.3
+  resolution: "js-tokens@npm:8.0.3"
+  checksum: b749c808290ec1932fdf5486412074c64da6f48387a89d58f00e84058db89a7707f62d2a066fd673030dd6776bf656b50f6e0fa34135f9b3cacccde39a508977
   languageName: node
   linkType: hard
 
@@ -19071,14 +19078,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-html@npm:1.4.1":
-  version: 1.4.1
-  resolution: "postcss-html@npm:1.4.1"
+"postcss-html@npm:1.5.0":
+  version: 1.5.0
+  resolution: "postcss-html@npm:1.5.0"
   dependencies:
-    htmlparser2: ^7.1.2
+    htmlparser2: ^8.0.0
+    js-tokens: ^8.0.0
     postcss: ^8.4.0
     postcss-safe-parser: ^6.0.0
-  checksum: e0fa63501390dff8ac35d9487250d835508a8ceb88a72f647288394b03412e62f43904ecfff36895ad19cab4108f8f7f7bf6540cf99aaf939f4ce82c0054616d
+  checksum: 33c2b7aeaed0f245e34ba80f6e2094d064b73e4087554991ea53556c4ef1a0f1633ef23265369265c959c282b4ec45e6485135177e75f8ff3a62f9704793410d
   languageName: node
   linkType: hard
 
