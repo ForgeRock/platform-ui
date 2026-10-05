@@ -408,7 +408,7 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
         cy.findByRole('tab', { name: 'Authorization Roles' }).click();
         cy.findAllByRole('row').should('have.length', 2);
         cy.findByRole('cell', { name: internalRoleName });
-        // Ensure user can add and delete internal roles
+        cy.get('#appContent').should('have.attr', 'aria-label');
         cy.findByRole('button', { name: 'Add Authorization Roles' }).click();
         cy.findByRole('dialog')
           .findAllByLabelText('Authorization Roles')
@@ -423,7 +423,6 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
           .first()
           .type('{enter}');
         cy.contains('.multiselect__tag', internalRoleName);
-        cy.findByRole('dialog').findAllByLabelText('Authorization Roles').first().type('{esc}');
         cy.findByRole('button', { name: 'Cancel' }).click();
         cy.intercept('GET', '**/openidm/managed/**').as('search');
         cy.findByRole('searchbox', { name: 'Search' })

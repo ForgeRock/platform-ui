@@ -74,6 +74,22 @@ describe('useRouteFocus', () => {
     wrapper.unmount();
   });
 
+  it('does not call focus while a modal is open', async () => {
+    const modal = document.createElement('div');
+    modal.className = 'modal show';
+    document.body.appendChild(modal);
+
+    const { wrapper, handleRouteAfterEnter } = await mountWithRouteFocus();
+    handleRouteAfterEnter();
+    expect(element.focus).not.toHaveBeenCalled();
+
+    // Focus resumes once the modal is gone
+    modal.remove();
+    handleRouteAfterEnter();
+    expect(element.focus).toHaveBeenCalledTimes(1);
+    wrapper.unmount();
+  });
+
   // (b) same-route navigation triggers focus via router.afterEach (core IAM-10141 fix)
   it('calls focus on same-route navigation (to.fullPath === from.fullPath)', async () => {
     const { wrapper, router } = await mountWithRouteFocus();

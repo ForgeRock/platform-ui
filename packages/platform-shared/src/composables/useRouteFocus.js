@@ -50,6 +50,10 @@ export default function useRouteFocus(selector = '#appContent', navSelector = '#
   });
 
   function focusTarget() {
+    if (document.querySelector('.modal.show')) {
+      return;
+    }
+
     const element = document.querySelector(selector);
 
     if (!element || typeof element.focus !== 'function') {
