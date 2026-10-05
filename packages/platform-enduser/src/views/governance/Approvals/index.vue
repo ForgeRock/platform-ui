@@ -401,7 +401,9 @@ export default {
      */
     viewDetails(item) {
       const itemStatus = item.rawData.decision?.status;
-      const routeStatus = itemStatus === 'pending' || !itemStatus ? 'active' : itemStatus;
+      // non-terminal statuses (pending, in-progress) route as 'active' so ApprovalDetails
+      // sends actorStatus=active and shows the actions panel
+      const routeStatus = ['complete', 'cancelled'].includes(itemStatus) ? itemStatus : 'active';
       this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id, status: routeStatus } });
     },
     /**

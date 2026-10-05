@@ -500,4 +500,44 @@ describe('Approvals', () => {
     await flushPromises();
     expect(wrapper.vm.modalItem).toMatchObject(newOpenModalMock);
   });
+
+  it('routes to details with normalized status', async () => {
+    AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
+      Promise.resolve({
+        data: {
+          result: [mockRequest],
+          totalCount: 1,
+        },
+      }),
+    );
+    const pushSpy = jest.spyOn(router, 'push').mockImplementation(() => {});
+    const { wrapper } = mountComponent();
+    await flushPromises();
+
+    // in-progress is a non-terminal status and routes as 'active'
+    wrapper.vm.viewDetails({ details: { id: 3 }, rawData: { decision: { status: 'in-progress' } } });
+    expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({
+      params: { requestId: 3, status: 'active' },
+    }));
+
+    // complete routes through as-is
+    wrapper.vm.viewDetails({ details: { id: 4 }, rawData: { decision: { status: 'complete' } } });
+    expect(pushSpy).toHaveBeenLastCalledWith(expect.objectContaining({
+      params: { requestId: 4, status: 'complete' },
+    }));
+
+    // cancelled routes through as-is
+    wrapper.vm.viewDetails({ details: { id: 5 }, rawData: { decision: { status: 'cancelled' } } });
+    expect(pushSpy).toHaveBeenLastCalledWith(expect.objectContaining({
+      params: { requestId: 5, status: 'cancelled' },
+    }));
+
+    // missing status falls back to 'active'
+    wrapper.vm.viewDetails({ details: { id: 6 }, rawData: {} });
+    expect(pushSpy).toHaveBeenLastCalledWith(expect.objectContaining({
+      params: { requestId: 6, status: 'active' },
+    }));
+
+    pushSpy.mockRestore();
+  });
 });
