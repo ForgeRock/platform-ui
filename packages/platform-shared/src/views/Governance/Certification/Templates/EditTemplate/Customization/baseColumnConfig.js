@@ -56,6 +56,12 @@ export const baseColumnConfig = {
     'review.flags',
     'review.comments',
   ],
+  resource: [
+    'application.application',
+    'resource.resource',
+    'review.flags',
+    'review.comments',
+  ],
 };
 
 // Out-of-the-box certification column declarations. An entry may carry
@@ -89,6 +95,9 @@ export const OOTBColumns = {
   'agent.model': {
     label: 'Model',
     hideSortable: true,
+  },
+  'resource.resource': {
+    label: 'Resource',
   },
   'review.flags': {
     label: 'Flags',

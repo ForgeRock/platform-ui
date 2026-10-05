@@ -13,7 +13,7 @@ import {
   isEqual,
   isNil,
 } from 'lodash';
-import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getGovernanceFilter, getBasicBooleanFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import BaseTemplate from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate/templateBase.json';
 import { types, uiTypeMap, isAgentType } from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/templateTypes';
 import { getNameFromDisplayName, getDisplayNamefromName } from '@forgerock/platform-shared/src/views/Governance/utils/events';
@@ -37,6 +37,41 @@ export function getDayDuration(duration, interval) {
   return 0;
 }
 
+/**
+ * Normalizes a get-filter-schema API response into the shape filter components
+ * expect: an object keyed by certification object type (user, entitlement,
+ * application, account, role, resource) with arrays of filterable properties.
+ *
+ * Accepts both response shapes:
+ * - keyed: { user: [...], entitlement: [...] }
+ * - flat:  { schema: [{ key, displayName, type, objectType }, ...] } where
+ *          entries are grouped by their objectType path (e.g.
+ *          '/iga/governance/resource'); entries without an objectType are
+ *          treated as top-level properties of every object type present.
+ *          If no entry carries an objectType, the data is returned unchanged
+ *          rather than collapsed to an empty object.
+ *
+ * @param {Object} data raw get-filter-schema response body
+ * @returns {Object} schema keyed by object type
+ */
+export function normalizeFilterSchema(data = {}) {
+  if (Array.isArray(data.schema)) {
+    const objectTypes = [...new Set(data.schema
+      .filter((entry) => entry.objectType)
+      .map((entry) => entry.objectType.split('/').pop()))];
+
+    if (objectTypes.length === 0) {
+      return data;
+    }
+
+    return objectTypes.reduce((acc, objectType) => ({
+      ...acc,
+      [objectType]: data.schema.filter((entry) => !entry.objectType || entry.objectType.endsWith(`/${objectType}`)),
+    }), {});
+  }
+  return data;
+}
+
 export function getAllFilter() {
   return {
     operator: 'ALL',
@@ -52,6 +87,56 @@ export function getAllNonAuthoritativeApplications() {
       targetValue: false,
     },
   };
+}
+
+/**
+ * Exclusion applied to resource certification templates so NHI-marked resources
+ * are never certified under the regular resource campaign type (NHI resources
+ * belong to the dedicated NHI certification type).
+ *
+ * @param {Object|null} filter existing resource filter, or null
+ * @returns {Object} filter excluding resources where isNHI is true
+ */
+export function getNonNhiResourceFilter(filter) {
+  const nhiExclusion = {
+    operator: 'EQUALS',
+    operand: {
+      targetName: 'isNHI',
+      targetValue: false,
+    },
+  };
+  if (filter) {
+    return getBasicBooleanFilter('AND', [filter, nhiExclusion]);
+  }
+  return nhiExclusion;
+}
+
+/**
+ * Inverse of getNonNhiResourceFilter for template rehydration: removes the
+ * known isNHI=false operand from a resource certification filter, leaving the
+ * filter the admin originally selected.
+ *
+ * @param {Object} filter resource filter saved on a resource certification template
+ * @returns {Object} the filter without the isNHI exclusion
+ */
+export function unwrapNonNhiResourceFilter(filter) {
+  const isNhiExclusion = (operand) => (
+    operand.operator === 'EQUALS'
+    && operand.operand?.targetName === 'isNHI'
+    && operand.operand?.targetValue === false
+  );
+  if (isNhiExclusion(filter)) {
+    return getAllFilter();
+  }
+  if (filter?.operator === 'AND' && Array.isArray(filter.operand)) {
+    const withoutExclusion = filter.operand.filter((operand) => !isNhiExclusion(operand));
+    if (withoutExclusion.length !== filter.operand.length) {
+      if (withoutExclusion.length === 0) return getAllFilter();
+      if (withoutExclusion.length === 1) return withoutExclusion[0];
+      return getBasicBooleanFilter('AND', withoutExclusion);
+    }
+  }
+  return filter;
 }
 
 export function getSingleFilter(field, value) {
@@ -272,7 +357,7 @@ function checkForEqualityFilter(filter, field) {
   return false;
 }
 
-export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant, enableRoleGrant, enableEntitlementCompositionGrant, enableIdentityProfileGrant, enableRoleCompositionGrant) {
+export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant, enableRoleGrant, enableEntitlementCompositionGrant, enableIdentityProfileGrant, enableRoleCompositionGrant, enableResourceGrant) {
   const filterGrant = [];
   if (enableAccountGrant) filterGrant.push('accountGrant');
   if (enableEntitlementGrant) filterGrant.push('entitlementGrant');
@@ -280,6 +365,7 @@ export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant,
   if (enableEntitlementCompositionGrant) filterGrant.push('entitlement');
   if (enableIdentityProfileGrant) filterGrant.push('user');
   if (enableRoleCompositionGrant) filterGrant.push('role');
+  if (enableResourceGrant) filterGrant.push('resource');
 
   return filterGrant;
 }
@@ -376,6 +462,18 @@ export function buildSavePayload(type, forms, eventBased) {
       break;
   }
 
+  let resourceFilter = null;
+  switch (what.resourceSelection) {
+    case i18n.global.t('governance.editTemplate.allResources'):
+      resourceFilter = getAllFilter();
+      break;
+    case i18n.global.t('governance.editTemplate.filterResources'):
+      resourceFilter = getGovernanceFilter(what.resourceFilter);
+      break;
+    default:
+      break;
+  }
+
   if (what.enableIdentityProfileGrant) {
     saveObj.targetFilter = {
       type: getFilterGrantByType(false, false, false, false, true),
@@ -393,7 +491,7 @@ export function buildSavePayload(type, forms, eventBased) {
     }
   } else {
     saveObj.targetFilter = {
-      type: getFilterGrantByType(what.enableAccountGrant, what.enableEntitlementGrant, what.enableRoleGrant, what.enableEntitlementCompositionGrant, false, what.enableRoleCompositionGrant),
+      type: getFilterGrantByType(what.enableAccountGrant, what.enableEntitlementGrant, what.enableRoleGrant, what.enableEntitlementCompositionGrant, false, what.enableRoleCompositionGrant, what.enableResourceGrant),
       user: userFilter,
       application: appFilter,
       account: accountFilter,
@@ -416,6 +514,12 @@ export function buildSavePayload(type, forms, eventBased) {
       saveObj.targetFilter.entitlement = entitlementFilter;
     }
 
+    if (what.enableResourceGrant) {
+      saveObj.targetFilter.resource = type === types.RESOURCE
+        ? getNonNhiResourceFilter(resourceFilter)
+        : resourceFilter;
+    }
+
     Object.keys(saveObj.targetFilter).forEach((key) => {
       if (saveObj.targetFilter[key] === null) delete saveObj.targetFilter[key];
     });
@@ -428,7 +532,7 @@ export function buildSavePayload(type, forms, eventBased) {
   saveObj.excludeConditionalAccess = what.excludeConditionalAccess;
   saveObj.excludeRoleBasedAccess = what.excludeRoleBasedAccess;
 
-  if (type === 'ENTITLEMENTCOMPOSITION' || type === 'IDENTITYPROFILE' || type === 'ROLECOMPOSITION' || isAgent) {
+  if (type === 'ENTITLEMENTCOMPOSITION' || type === 'IDENTITYPROFILE' || type === 'ROLECOMPOSITION' || isAgent || type === 'RESOURCE') {
     delete saveObj.excludeConditionalAccess;
     delete saveObj.excludeRoleBasedAccess;
   }
@@ -462,6 +566,7 @@ export function buildSavePayload(type, forms, eventBased) {
   if (certifierType === 'role') certifierId = who.certRole;
   if (certifierType === 'entitlementOwner') certifierType = 'entitlementOwner';
   if (certifierType === 'roleOwner') certifierType = 'roleOwner';
+  if (certifierType === 'applicationOwner') certifierType = 'applicationOwner';
   if (certifierType === 'organizationAdmin') certifierType = 'organization';
   if (certifierType === 'custom') certifierPath = `user.${who.certifierPath}`;
   // custodian saves through the custom machinery: the glossary actors field is a
@@ -625,6 +730,10 @@ export function buildSavePayload(type, forms, eventBased) {
     columnConfig.agentAccess = customization.columnConfig?.agentAccess;
     columnSortConfig.agentProfile = customization.sortableColumnConfig?.agentProfile || [];
     columnSortConfig.agentAccess = customization.sortableColumnConfig?.agentAccess || [];
+  }
+  if (what.enableResourceGrant) {
+    columnConfig.resource = customization.columnConfig.resource;
+    columnSortConfig.resource = customization.sortableColumnConfig?.resource || [];
   }
   saveObj.uiConfig = {
     columnConfig,
@@ -793,6 +902,19 @@ export function getFormValuesFromTemplate(template, eventBased) {
     entitlementFilter = template.targetFilter.entitlement;
   }
 
+  let resourceFilter = {};
+  let resourceSelection = i18n.global.t('governance.editTemplate.allResources');
+  if (template.certificationType === uiTypeMap.RESOURCE && template.targetFilter.resource !== undefined) {
+    const unwrapped = unwrapNonNhiResourceFilter(template.targetFilter.resource);
+    if (!isEqual(unwrapped, getAllFilter())) {
+      resourceSelection = i18n.global.t('governance.editTemplate.filterResources');
+      resourceFilter = unwrapped;
+    }
+  } else if (template.targetFilter.resource !== undefined && !isEqual(template.targetFilter.resource, getAllFilter())) {
+    resourceSelection = i18n.global.t('governance.editTemplate.filterResources');
+    resourceFilter = template.targetFilter.resource;
+  }
+
   // role filter
   let roleFilter = {};
   let roleSelection = i18n.global.t('governance.editTemplate.allRoles');
@@ -819,8 +941,11 @@ export function getFormValuesFromTemplate(template, eventBased) {
     enableIdentityProfileGrant: template.certificationType === uiTypeMap.IDENTITYPROFILE
       && template.targetFilter.type.includes('user'),
     enableRoleCompositionGrant: template.targetFilter.type.includes('role'),
+    enableResourceGrant: template.targetFilter.type.includes('resource'),
     entitlementFilter,
     entitlementSelection,
+    resourceFilter,
+    resourceSelection,
     excludeConditionalAccess,
     excludeRoleBasedAccess,
     includeChildOrganizations,
@@ -828,6 +953,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
     numApplications: 0,
     numEntitlements: 0,
     numUsers: 0,
+    numResources: 0,
     organizationSelection,
     orgFilter,
     roleFilter,
@@ -888,6 +1014,9 @@ export function getFormValuesFromTemplate(template, eventBased) {
       break;
     case 'roleOwner':
       certType = 'roleOwner';
+      break;
+    case 'applicationOwner':
+      certType = 'applicationOwner';
       break;
     case 'organization':
       certType = 'organizationAdmin';
@@ -1024,6 +1153,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
       roleComposition: template.uiConfig?.columnConfig?.roleComposition || [],
       agentProfile: template.uiConfig?.columnConfig?.agentProfile || [],
       agentAccess: template.uiConfig?.columnConfig?.agentAccess || [],
+      resource: template.uiConfig?.columnConfig?.resource || [],
     },
     sortableColumnConfig: {
       accounts: template.uiConfig?.columnSortConfig?.accounts || [],
@@ -1034,6 +1164,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
       roleComposition: template.uiConfig?.columnSortConfig?.roleComposition || [],
       agentProfile: template.uiConfig?.columnSortConfig?.agentProfile || [],
       agentAccess: template.uiConfig?.columnSortConfig?.agentAccess || [],
+      resource: template.uiConfig?.columnSortConfig?.resource || [],
     },
   };
   return forms;

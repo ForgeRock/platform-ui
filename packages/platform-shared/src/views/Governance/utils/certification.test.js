@@ -18,6 +18,9 @@ import {
   getFormValuesFromTemplate,
   getAllFilter,
   getAllNonAuthoritativeApplications,
+  getNonNhiResourceFilter,
+  normalizeFilterSchema,
+  unwrapNonNhiResourceFilter,
 } from './certification';
 import { EXPIRATION_TIMING } from './certificationConstants';
 
@@ -88,6 +91,7 @@ describe('certification', () => {
       enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
       enableRoleCompositionGrant: false,
+      enableResourceGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -97,8 +101,11 @@ describe('certification', () => {
       numApplications: 0,
       numEntitlements: 0,
       numUsers: 0,
+      numResources: 0,
       organizationSelection: [],
       orgFilter: 'allOrgs',
+      resourceFilter: {},
+      resourceSelection: 'All resources',
       roleFilter: {},
       roleSelection: 'All roles',
       singleApp: [],
@@ -178,6 +185,7 @@ describe('certification', () => {
       enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
       enableRoleCompositionGrant: false,
+      enableResourceGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -187,8 +195,11 @@ describe('certification', () => {
       numApplications: 0,
       numEntitlements: 0,
       numUsers: 0,
+      numResources: 0,
       organizationSelection: [],
       orgFilter: 'allOrgs',
+      resourceFilter: {},
+      resourceSelection: 'All resources',
       roleFilter: {},
       roleSelection: 'All roles',
       singleApp: [],
@@ -319,6 +330,7 @@ describe('certification', () => {
       enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
       enableRoleCompositionGrant: false,
+      enableResourceGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -328,8 +340,11 @@ describe('certification', () => {
       numApplications: 0,
       numEntitlements: 0,
       numUsers: 0,
+      numResources: 0,
       organizationSelection: [],
       orgFilter: 'allOrgs',
+      resourceFilter: {},
+      resourceSelection: 'All resources',
       roleFilter: {},
       roleSelection: 'All roles',
       singleApp: [],
@@ -437,6 +452,7 @@ describe('certification', () => {
       enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
       enableRoleCompositionGrant: false,
+      enableResourceGrant: false,
       entitlementFilter: {
         operand: [
           {
@@ -464,8 +480,11 @@ describe('certification', () => {
       numApplications: 0,
       numEntitlements: 0,
       numUsers: 0,
+      numResources: 0,
       organizationSelection: [],
       orgFilter: 'allOrgs',
+      resourceFilter: {},
+      resourceSelection: 'All resources',
       roleFilter: {},
       roleSelection: 'All roles',
       singleApp: [],
@@ -497,6 +516,7 @@ describe('certification', () => {
       enableEntitlementCompositionGrant: false,
       enableIdentityProfileGrant: false,
       enableRoleCompositionGrant: false,
+      enableResourceGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -506,8 +526,11 @@ describe('certification', () => {
       numApplications: 0,
       numEntitlements: 0,
       numUsers: 0,
+      numResources: 0,
       organizationSelection: ['organization-id-1', 'organization-id-2'],
       orgFilter: 'specificOrgs',
+      resourceFilter: {},
+      resourceSelection: 'All resources',
       roleFilter: {},
       roleSelection: 'All roles',
       singleApp: [],
@@ -599,6 +622,83 @@ describe('certification', () => {
       expect(() => getFormValuesFromTemplate(template)).toThrowError('Error reading certifier type from template');
     });
 
+    it('should rehydrate resource certification fields', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.certificationType = 'resource';
+      template.targetFilter.type = ['resource'];
+      template.targetFilter.resource = {
+        operator: 'AND',
+        operand: [{
+          operator: 'EQUALS',
+          operand: { targetName: 'isNHI', targetValue: true },
+        }],
+      };
+      template.stages = [{ certifierType: 'applicationOwner' }];
+
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrWhat.enableResourceGrant).toBe(true);
+      expect(form.FrWhat.resourceSelection).toBe('Resources matching a filter');
+      expect(form.FrWhat.resourceFilter).toEqual(template.targetFilter.resource);
+      expect(form.FrWho.certType).toBe('applicationOwner');
+    });
+
+    it('should rehydrate allResources selection when resource filter is ALL', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.certificationType = 'resource';
+      template.targetFilter.type = ['resource'];
+      template.targetFilter.resource = { operator: 'ALL', operand: [] };
+
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrWhat.enableResourceGrant).toBe(true);
+      expect(form.FrWhat.resourceSelection).toBe('All resources');
+      expect(form.FrWhat.resourceFilter).toEqual({});
+    });
+
+    it('should unwrap the saved isNHI exclusion when rehydrating a resource template', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.certificationType = 'resource';
+      template.targetFilter.type = ['resource'];
+      template.targetFilter.resource = getNonNhiResourceFilter({ operator: 'ALL', operand: [] });
+
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrWhat.resourceSelection).toBe('All resources');
+      expect(form.FrWhat.resourceFilter).toEqual({});
+    });
+
+    it('should unwrap the isNHI exclusion from a saved resource filter on rehydrate', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.certificationType = 'resource';
+      template.targetFilter.type = ['resource'];
+      const adminFilter = {
+        operator: 'AND',
+        operand: [{
+          operator: 'EQUALS',
+          operand: { targetName: 'displayName', targetValue: 'prod-*' },
+        }],
+      };
+      template.targetFilter.resource = getNonNhiResourceFilter(adminFilter);
+
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrWhat.resourceSelection).toBe('Resources matching a filter');
+      expect(form.FrWhat.resourceFilter).toEqual(adminFilter);
+    });
+
+    it('should rehydrate resource column configuration', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.uiConfig = {
+        columnConfig: {
+          resource: ['application.application', 'resource.resource'],
+        },
+        columnSortConfig: {
+          resource: ['resource.resource'],
+        },
+      };
+
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrCustomization.columnConfig.resource).toEqual(['application.application', 'resource.resource']);
+      expect(form.FrCustomization.sortableColumnConfig.resource).toEqual(['resource.resource']);
+    });
+
     it('should set processRemediation value correctly', () => {
       const template = cloneDeep(defaultTemplate);
       template.remediationRule = 'BasicRevocation';
@@ -627,6 +727,7 @@ describe('certification', () => {
         roleComposition: [],
         agentProfile: [],
         agentAccess: [],
+        resource: [],
       });
     });
 
@@ -642,6 +743,7 @@ describe('certification', () => {
         roleComposition: [],
         agentProfile: [],
         agentAccess: [],
+        resource: [],
       });
     });
 
@@ -1667,6 +1769,132 @@ describe('certification', () => {
 
       expect(Object.prototype.hasOwnProperty.call(savePayload.events.reminder, 'actors')).toBe(false);
     });
+
+    describe('resource buildSavePayload', () => {
+      const resourceWhat = {
+        enableAccountGrant: false,
+        enableEntitlementGrant: false,
+        enableRoleGrant: false,
+        enableEntitlementCompositionGrant: false,
+        enableIdentityProfileGrant: false,
+        enableRoleCompositionGrant: false,
+        enableResourceGrant: true,
+        resourceSelection: 'All resources',
+        resourceFilter: {},
+        appSelection: 'All applications',
+        appFilter: {},
+        orgFilter: 'allOrgs',
+        organizationSelection: [],
+        enableCertDecisionFilter: false,
+        excludeConditionalAccess: true,
+        excludeRoleBasedAccess: true,
+      };
+
+      it('sends "resource" in targetFilter.type when resource grant is enabled', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat = { ...resourceWhat };
+        forms.FrCustomization = { columnConfig: {} };
+
+        const savePayload = buildSavePayload('RESOURCE', forms);
+        expect(savePayload.certificationType).toBe('resource');
+        expect(savePayload.targetFilter.type).toContain('resource');
+      });
+
+      it('wraps the ALL resource filter with the isNHI exclusion', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat = { ...resourceWhat };
+        forms.FrCustomization = { columnConfig: {} };
+
+        const savePayload = buildSavePayload('RESOURCE', forms);
+        expect(savePayload.targetFilter.resource).toEqual(getNonNhiResourceFilter({ operator: 'ALL', operand: [] }));
+        expect(savePayload.targetFilter.resource.operand[1]).toEqual({
+          operator: 'EQUALS',
+          operand: { targetName: 'isNHI', targetValue: false },
+        });
+      });
+
+      it('sends governance filter wrapped with the isNHI exclusion when resourceSelection matches a filter', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat = {
+          ...resourceWhat,
+          resourceSelection: 'Resources matching a filter',
+          resourceFilter: {
+            operator: 'AND',
+            subfilters: [{
+              operator: 'EQUALS',
+              field: 'isNHI',
+              value: true,
+            }],
+          },
+        };
+        forms.FrCustomization = { columnConfig: {} };
+
+        const savePayload = buildSavePayload('RESOURCE', forms);
+        expect(savePayload.targetFilter.resource.operand[0]).toEqual({
+          operator: 'AND',
+          operand: [{
+            operator: 'EQUALS',
+            operand: { targetName: 'isNHI', targetValue: true },
+          }],
+        });
+        expect(savePayload.targetFilter.resource.operator).toBe('AND');
+        expect(savePayload.targetFilter.resource.operand[1]).toEqual({
+          operator: 'EQUALS',
+          operand: { targetName: 'isNHI', targetValue: false },
+        });
+      });
+
+      it('sends applicationOwner certifierType unchanged', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat = { ...resourceWhat };
+        forms.FrCustomization = { columnConfig: {} };
+        forms.FrWho = { certType: 'applicationOwner' };
+
+        const savePayload = buildSavePayload('RESOURCE', forms);
+        expect(savePayload.stages[0].certifierType).toBe('applicationOwner');
+      });
+
+      it('saves resource column configuration with lowercase resource key', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat = { ...resourceWhat };
+        forms.FrCustomization = {
+          columnConfig: {
+            resource: ['application.application', 'resource.resource', 'review.flags', 'review.comments'],
+          },
+          sortableColumnConfig: {
+            resource: ['resource.resource'],
+          },
+        };
+
+        const savePayload = buildSavePayload('RESOURCE', forms);
+        expect(savePayload.uiConfig.columnConfig.resource).toEqual(['application.application', 'resource.resource', 'review.flags', 'review.comments']);
+        expect(savePayload.uiConfig.columnSortConfig.resource).toEqual(['resource.resource']);
+        expect(savePayload.uiConfig.columnConfig.Resource).toBeUndefined();
+      });
+
+      it('round-trips a saved resource filter back to the admin-selected filter', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat = {
+          ...resourceWhat,
+          resourceSelection: 'Resources matching a filter',
+          resourceFilter: { operator: 'EQUALS', field: 'displayName', value: 'test' },
+        };
+        forms.FrCustomization = { columnConfig: {} };
+
+        const saved = buildSavePayload('RESOURCE', forms).targetFilter.resource;
+        const template = cloneDeep(defaultTemplate);
+        template.certificationType = 'resource';
+        template.targetFilter.type = ['resource'];
+        template.targetFilter.resource = saved;
+
+        const form = getFormValuesFromTemplate(template);
+        expect(form.FrWhat.resourceSelection).toBe('Resources matching a filter');
+        expect(form.FrWhat.resourceFilter).toEqual({
+          operator: 'EQUALS',
+          operand: { targetName: 'displayName', targetValue: 'test' },
+        });
+      });
+    });
   });
 
   describe('getCampaignDuration', () => {
@@ -1688,6 +1916,96 @@ describe('certification', () => {
     it('should return duration in years for 365 days or more', () => {
       expect(getCampaignDuration(365)).toBe('1 year');
       expect(getCampaignDuration(730)).toBe('2 years');
+    });
+  });
+
+  describe('normalizeFilterSchema', () => {
+    it('should pass through an already-keyed response', () => {
+      const keyed = { user: [{ name: 'userName' }], resource: [{ key: 'isNHI' }] };
+      expect(normalizeFilterSchema(keyed)).toEqual(keyed);
+    });
+
+    it('should return an empty object for empty or missing data', () => {
+      expect(normalizeFilterSchema()).toEqual({});
+      expect(normalizeFilterSchema({})).toEqual({});
+    });
+
+    it('should group a flat schema response by objectType', () => {
+      const flat = {
+        schema: [
+          {
+            key: 'isNHI', displayName: 'Is NHI', type: 'boolean', objectType: '/iga/governance/resource',
+          },
+          {
+            key: 'glossary.active', displayName: 'Active', type: 'boolean', objectType: '/iga/governance/resource',
+          },
+          {
+            key: 'displayName', displayName: 'Display Name', type: 'string', objectType: '/iga/governance/user',
+          },
+        ],
+      };
+      const result = normalizeFilterSchema(flat);
+      expect(Object.keys(result).sort()).toEqual(['resource', 'user']);
+      expect(result.resource).toHaveLength(2);
+      expect(result.resource[0].key).toBe('isNHI');
+      expect(result.user).toHaveLength(1);
+    });
+
+    it('should include entries without objectType in every object type', () => {
+      const flat = {
+        schema: [
+          { key: 'isNHI', displayName: 'Is NHI', type: 'boolean' },
+          {
+            key: 'displayName', displayName: 'Display Name', type: 'string', objectType: '/iga/governance/resource',
+          },
+        ],
+      };
+      const result = normalizeFilterSchema(flat);
+      expect(result.resource).toHaveLength(2);
+      expect(result.resource.some((entry) => entry.key === 'isNHI')).toBe(true);
+    });
+
+    it('should return the data unchanged when a flat schema has no objectType entries', () => {
+      const flat = {
+        schema: [
+          { key: 'isNHI', displayName: 'Is NHI', type: 'boolean' },
+          { key: 'displayName', displayName: 'Display Name', type: 'string' },
+        ],
+      };
+      expect(normalizeFilterSchema(flat)).toEqual(flat);
+    });
+  });
+
+  describe('getNonNhiResourceFilter / unwrapNonNhiResourceFilter', () => {
+    it('wraps a null filter as a bare isNHI exclusion', () => {
+      expect(getNonNhiResourceFilter(null)).toEqual({
+        operator: 'EQUALS',
+        operand: { targetName: 'isNHI', targetValue: false },
+      });
+    });
+
+    it('wraps an existing filter with AND and the isNHI exclusion', () => {
+      const existing = { operator: 'ALL', operand: [] };
+      const wrapped = getNonNhiResourceFilter(existing);
+      expect(wrapped.operator).toBe('AND');
+      expect(wrapped.operand[0]).toEqual(existing);
+      expect(wrapped.operand[1]).toEqual({
+        operator: 'EQUALS',
+        operand: { targetName: 'isNHI', targetValue: false },
+      });
+      expect(unwrapNonNhiResourceFilter(wrapped)).toEqual(existing);
+    });
+
+    it('unwraps a bare isNHI exclusion to ALL', () => {
+      expect(unwrapNonNhiResourceFilter(getNonNhiResourceFilter(null))).toEqual({ operator: 'ALL', operand: [] });
+    });
+
+    it('returns filters without an exclusion unchanged', () => {
+      const filter = {
+        operator: 'AND',
+        operand: [{ operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'x' } }],
+      };
+      expect(unwrapNonNhiResourceFilter(filter)).toEqual(filter);
     });
   });
 });

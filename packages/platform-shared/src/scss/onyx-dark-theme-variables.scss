@@ -26,7 +26,8 @@ $dk-light-yellow: $yellow-800;
 $dk-light-green: $green-800;
 $dk-light-teal: $teal-700;
 $dk-light-cyan: $cyan-800;
-
+/* stylelint-disable-next-line function-allowed-list */
+$dk-light-purple: tint-color($purple, 40%);
 $dk-secondary: $gray-400;
 $dk-light: darken($gray-900, 4%);
 $dk-dark: $gray-500;
@@ -295,14 +296,14 @@ $dk-fr-sidetabs-active-bg: $dk-component-active-bg;
 $dk-fr-sidetabs-active-color: $white;
 $dk-fr-sidetabs-border: $dk-border-color;
 $dk-fr-sidetabs-active-border-color: transparent;
-$dk-fr-sidetabs-padding-y: .5rem; 
+$dk-fr-sidetabs-padding-y: .5rem;
 $dk-fr-sidetabs-padding-x: .5rem;
 $dk-fr-sidetabs-badge-background-color: $light;
 $dk-fr-sidetabs-badge-color: $dark;
 $dk-fr-sidetabs-active-badge-background-color: $primary;
 $dk-fr-sidetabs-active-badge-color: $black;
 $dk-fr-sidetabs-item-border: none;
-$dk-fr-sidetabs-item-padding-y: .75rem; 
+$dk-fr-sidetabs-item-padding-y: .75rem;
 $dk-fr-sidetabs-item-padding-x: 1rem;
 $dk-fr-sidetabs-item-border-radius: $border-radius;
 

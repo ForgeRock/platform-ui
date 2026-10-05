@@ -39,7 +39,10 @@ export function getCellData(data) {
   const attributePath = isGlossaryAttribute
     ? `glossary.idx./${category}.${sanitizedKey}`
     : `${category}.${sanitizedKey}`;
-  const columnData = get(item, attributePath);
+  let columnData = get(item, attributePath);
+  if (isNil(columnData) && category === 'resource' && sanitizedKey === 'resource') {
+    columnData = get(item, 'descriptor.idx./resource.displayName') ?? get(item, 'resource.displayName');
+  }
   // only returns blank value indicator if the column data is null or undefined
   return isNil(columnData) ? blankValueIndicator : columnData;
 }
@@ -126,7 +129,7 @@ const OOTBColumns = {
     category: 'application',
     class: 'text-truncate fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'entitlementComposition'],
+    showFor: ['accounts', 'entitlements', 'entitlementComposition', 'resource'],
     exportFields: ['application.name'],
     value: 'application.application',
   },
@@ -219,7 +222,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-175px text-truncate fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition', 'resource'],
     value: 'review.flags',
   },
   comments: {
@@ -229,7 +232,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-140px fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition', 'resource'],
     value: 'review.comments',
   },
   actions: {
@@ -238,8 +241,19 @@ const OOTBColumns = {
     label: i18n.global.t('common.actions'),
     sortable: false,
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile', 'roleComposition', 'resource'],
     value: 'actions',
+  },
+  resource: {
+    key: 'resource',
+    label: i18n.global.t('governance.certificationTask.resource'),
+    sortable: true,
+    category: 'resource',
+    class: 'text-truncate fr-access-cell',
+    show: true,
+    showFor: ['resource'],
+    exportFields: ['descriptor.idx./resource.displayName'],
+    value: 'resource.resource',
   },
 };
 
@@ -344,6 +358,7 @@ export function getInitialColumns(grantType, entitlementUserId, showAccountDrill
     { ...OOTBColumns.application },
     { ...OOTBColumns.entitlement },
     { ...OOTBColumns.account },
+    { ...OOTBColumns.resource },
     { ...OOTBColumns.prediction },
     { ...OOTBColumns.flags },
     { ...OOTBColumns.comments },
@@ -370,7 +385,7 @@ const categories = [
   {
     name: 'review',
     header: i18n.global.t('governance.certificationTask.columns.review'),
-    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition', 'agentProfile', 'agentAccess'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition', 'agentProfile', 'agentAccess', 'resource'],
     items: [
       { ...OOTBColumns.prediction },
       { ...OOTBColumns.flags },
@@ -399,7 +414,7 @@ const categories = [
   {
     name: 'application',
     header: i18n.global.t('governance.certificationTask.columns.application'),
-    showFor: ['accounts', 'entitlements', 'entitlementComposition'],
+    showFor: ['accounts', 'entitlements', 'entitlementComposition', 'resource'],
     items: [
       { ...OOTBColumns.application },
     ],
@@ -426,6 +441,14 @@ const categories = [
     showFor: ['accounts', 'entitlements'],
     items: [
       { ...OOTBColumns.account },
+    ],
+  },
+  {
+    name: 'resource',
+    header: i18n.global.t('governance.certificationTask.columns.resource'),
+    showFor: ['resource'],
+    items: [
+      { ...OOTBColumns.resource },
     ],
   },
 ];

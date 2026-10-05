@@ -21,6 +21,7 @@ const CAMPAIGNS_BY_TYPE_KEYS_COLORS = {
   roleComposition: '#eb498f',
   agentProfile: '#20c997',
   agentAccess: '#a25ddc',
+  resource: '#6f42c1',
 };
 
 const CAMPAIGNS_BY_STATUS_KEYS_COLORS = {

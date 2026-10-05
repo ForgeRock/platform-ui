@@ -248,6 +248,7 @@
     "language": "Language",
     "lastUpdated": "Last Updated",
     "lastUpdatedAtTime": "Last updated {time}",
+    "lastImport": "Last Import",
     "lastUpdatedBy": "Last Updated By",
     "learnMore": "Learn more",
     "list": "List",
@@ -270,6 +271,7 @@
     "new": "New",
     "newObject": "New {object}",
     "next": "Next",
+    "nhi": "Is NHI",
     "no": "No",
     "node": "Node",
     "nodeLower": "node",
@@ -355,6 +357,7 @@
     "request": "Request",
     "requestSubmitted": "Request Submitted",
     "resource": "Resource",
+    "resources": "Resources",
     "require": "require",
     "required": "Required",
     "reset": "Reset",
@@ -417,6 +420,7 @@
     "sorting": "Sorting",
     "sortOrder": "Sort order",
     "source": "Source",
+    "sourceId": "Source ID",
     "sources": "Sources",
     "specifiedDate": "Specified Date",
     "start": "Start",
@@ -1923,7 +1927,8 @@
         "extendEndDate": "Extend End Date",
         "createAgent": "Create Agent",
         "modifyAgent": "Modify Agent",
-        "deleteAgent": "Delete Agent"
+        "deleteAgent": "Delete Agent",
+        "modifyResource": "Modify Resource"
       },
       "priorities": {
         "priorities": "Priorities",
@@ -2008,6 +2013,7 @@
       "changeResumeDate": "Change Resume Date",
       "customRequestAltText": "Custom Request",
       "noRequests": "No {status} Access Requests",
+      "errorGettingResource": "Error getting resource",
       "queryEntitlementsError": "There was an error querying the entitlements for this request",
       "queryMembersError": "There was an error querying the members for this request",
       "recommended": "Recommended",
@@ -2354,7 +2360,9 @@
       "agentProfileCertification": "AI Agent Profile Certification",
       "agentProfileCertificationMessage": "Certify the technical details and ownership metadata of AI agents registered in your tenant.",
       "agentAccessCertification": "AI Agent Access Certification",
-      "agentAccessCertificationMessage": "Certify the applications, entitlements, and data scopes granted to AI agents."
+      "agentAccessCertificationMessage": "Certify the applications, entitlements, and data scopes granted to AI agents.",
+      "resourceCertification": "Resource Certification",
+      "resourceCertificationMessage": "Certify the technical details and glossary metadata of resources."
     },
     "certification": {
       "accessReviewHistory": "Access Review History",
@@ -2377,7 +2385,8 @@
         "identityProfile": "Identity Profile",
         "roleComposition": "Role Composition",
         "agentProfile": "AI Agent Profile",
-        "agentAccess": "AI Agent Access"
+        "agentAccess": "AI Agent Access",
+        "resource": "Resource"
       },
       "campaignType": "Campaign Type",
       "campaignsByStatusLabels": {
@@ -2925,6 +2934,7 @@
       "selectAllTasksThisPage": "All on this page",
       "deselectAll": "Deselect all",
       "roleDetails": "Role Details",
+      "resource": "Resource",
       "export": "Export Items",
       "actions": {
         "addComment": "Add Comment",
@@ -2950,7 +2960,8 @@
         "ownAccess": "Review My Access",
         "agentProfile": "agent profile",
         "agentAccess": "agent access",
-        "roleComposition": "role composition"
+        "roleComposition": "role composition",
+        "resource": "resource"
       },
       "columns": {
         "review": "Review",
@@ -2958,7 +2969,8 @@
         "application": "Application",
         "entitlement": "Entitlement",
         "account": "Account",
-        "agent": "Agent Attributes"
+        "agent": "Agent Attributes",
+        "resource": "Resource"
       },
       "actionsModal": {
         "certifyTitle": "Certify Access",
@@ -3038,7 +3050,8 @@
           "entitlementComposition": "entitlements",
           "roles": "role grants",
           "identityProfile": "users",
-          "roleComposition": "roles"
+          "roleComposition": "roles",
+          "resource": "resources"
         },
         "xlsx": "XLSX",
         "xlsxDescription": "Export in XLSX format. Maximum: 10,000 rows"
@@ -3112,6 +3125,7 @@
         },
         "applicationDetailsTabText": "Application Details",
         "contentDetailsTabText": "Contents",
+        "resourceDetailsTabText": "Resource Details",
         "accountsTab": {
           "noItems": "No Accounts Items"
         },
@@ -3196,7 +3210,8 @@
         "IDENTITYPROFILE": "Identity Profile",
         "ROLECOMPOSITION": "Role Composition",
         "AGENTPROFILE": "AI Agent Profile",
-        "AGENTACCESS": "AI Agent Access"
+        "AGENTACCESS": "AI Agent Access",
+        "RESOURCE": "Resource"
       },
       "templateType": {
         "identity": "Identity Certification",
@@ -3206,7 +3221,8 @@
         "identityProfile": "Identity Profile Certification",
         "roleComposition": "Role Composition Certification",
         "agentProfile": "AI Agent Profile Certification",
-        "agentAccess": "AI Agent Access Certification"
+        "agentAccess": "AI Agent Access Certification",
+        "resource": "Resource Certification"
       },
       "whichAgents": "Which agents",
       "whichAgentsDescription": "Select the agents to include, based on platform and attributes.",
@@ -3237,6 +3253,7 @@
       "allApplications": "All applications",
       "allCertifiers": "All certifiers",
       "allEntitlements": "All entitlements",
+      "allResources": "All resources",
       "allowBulkCertify": "Allow bulk decisions",
       "allowBulkCertifyDescription": "Allow the certifier to do bulk certification either on a page, search results, or the entire certification.",
       "allowExceptions": "Allow exceptions",
@@ -3266,6 +3283,8 @@
       "certifyApplicationsSuffix": "of the following conditions are met",
       "certifyEntitlementsPrefix": "Certify Entitlements if",
       "certifyEntitlementsSuffix": "of the following conditions are met",
+      "certifyResourcesPrefix": "Certify Resources if",
+      "certifyResourcesSuffix": "of the following conditions are met",
       "certifyRolesPrefix": "Certify Roles if",
       "certifyRolesSuffix": "of the following conditions are met",
       "certifyUsersPrefix": "Certify users if",
@@ -3322,6 +3341,7 @@
       "filterApplications": "Applications matching a filter",
       "filterCertDecision": "Filter by last certification decision",
       "filterEntitlements": "Entitlements matching a filter",
+      "filterResources": "Resources matching a filter",
       "filterRoles": "Roles matching a filter",
       "filterUsers": "Users matching a filter",
       "forward": "Forward",
@@ -3371,6 +3391,7 @@
       "requireJustificationOnException": "Require Justification on exception",
       "role": "Role",
       "roleOwner": "Role Owner",
+      "applicationOwner": "Application Owner",
       "runEvery": "Run every",
       "saveTemplate": "Save Template",
       "schedule": "Schedule",

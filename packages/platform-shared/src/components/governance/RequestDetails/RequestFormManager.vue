@@ -120,6 +120,7 @@ const showSaveButton = computed(() => (
     || requestType.value === requestTypes.CREATE_ENTITLEMENT.value
     || requestType.value === requestTypes.CREATE_USER.value
     || requestType.value === requestTypes.MODIFY_USER.value
+    || requestType.value === requestTypes.MODIFY_RESOURCE.value
   ) && !props.readOnly));
 
 /**
@@ -212,6 +213,14 @@ async function setFormValues(request) {
       };
       showDefaultForm.value = true;
       break;
+    case requestTypes.MODIFY_RESOURCE.value:
+      defaultFormOptions.value = {
+        resource: request.request?.resource?.object || {},
+        applicationId: request.resource?.applicationId,
+        objectType: request.resource?.objectType,
+      };
+      showDefaultForm.value = true;
+      break;
     default:
       // custom request form
       if (isCustomRequestType.value) {
@@ -297,6 +306,24 @@ function getEntitlementRequestPayload(requestPayload, glossary, object) {
 }
 
 /**
+ * Merges edited resource values into the request payload.
+ *
+ * @param {Object} requestPayload - The cloned original request.
+ * @param {Object} object - The edited resource object.
+ * @returns {Object} - The modified request payload with resource details.
+ */
+function getResourceRequestPayload(requestPayload, object = {}) {
+  requestPayload.request.resource = {
+    ...requestPayload.request.resource,
+    object: {
+      ...requestPayload.request.resource?.object,
+      ...object,
+    },
+  };
+  return requestPayload.request;
+}
+
+/**
  * Emits the save event with the current form values.
  * Builds the request payload based on the request type and form values.
  */
@@ -330,6 +357,9 @@ async function handleSave() {
         ...requestPayload.common.blob.form,
         ...formValue.value,
       };
+      break;
+    case requestTypes.MODIFY_RESOURCE.value:
+      requestPayload = getResourceRequestPayload(clonedRequest, defaultFormValues.value.resource);
       break;
     default:
       requestPayload = cloneDeep(props.request.request);

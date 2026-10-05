@@ -343,6 +343,10 @@
     border-color: $red !important;
   }
 
+  .border-purple {
+    border-color: $purple !important;
+  }
+
   /* Icons */
   .fr-helix-logo {
     background-image: url('~@forgerock/platform-shared/src/assets/images/helix.svg');
@@ -703,6 +707,10 @@
 
   .border-red {
     border-color: $dk-light-red !important;
+  }
+
+  .border-purple {
+    border-color: $dk-light-purple !important;
   }
 
   /* Table sort icons */

@@ -256,6 +256,18 @@ of the MIT license. See the LICENSE file for details. -->
               </BButton>
             </div>
           </template>
+          <template #cell(resource)="{ item }">
+            <BButton
+              v-if="item.resource"
+              @click.stop="openResourceModal(item)"
+              class="text-dark"
+              variant="link">
+              {{ item.resource.displayName || blankValueIndicator }}
+            </BButton>
+            <div v-else>
+              {{ blankValueIndicator }}
+            </div>
+          </template>
           <template #cell(entitlement)="{ item }">
             <div class="d-flex justify-content-between align-items-center">
               <BButton
@@ -520,6 +532,11 @@ of the MIT license. See the LICENSE file for details. -->
       :application="currentApplicationSelectedModal"
       :display-data="currentApplicationDisplayData"
       :glossary-schema="glossarySchema.application" />
+    <FrResourceModal
+      v-if="currentResourceSelectedModal"
+      :resource="currentResourceSelectedModal"
+      :display-data="currentResourceDisplayData"
+      :glossary-schema="glossarySchema.resource" />
     <FrAccountModal
       v-if="currentAccountSelectedModal"
       :grant="currentAccountSelectedModal" />
@@ -623,6 +640,7 @@ import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-sha
 import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import { buildAgentView, loadAgentViewConfig } from '@forgerock/platform-shared/src/utils/governance/agentView';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { normalizeFilterSchema } from '@forgerock/platform-shared/src/views/Governance/utils/certification';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -660,6 +678,7 @@ import {
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
 import FrApplicationModal from './modals/ApplicationModal';
+import FrResourceModal from './modals/ResourceModal';
 import FrConfirmActionModal, { STEPS } from './modals/ConfirmActionModal';
 import FrCommentsModal from './modals/CommentsModal';
 import FrEditReviewerModal from './modals/EditReviewerModal';
@@ -716,6 +735,7 @@ export default {
     FrConfirmActionModal,
     FrAddCommentModal,
     FrApplicationModal,
+    FrResourceModal,
     FrCommentsModal,
     FrDownloadItemsModal,
     FrEditReviewerModal,
@@ -901,6 +921,8 @@ export default {
       currentAgentSelectedModal: null,
       currentApplicationDisplayData: {},
       currentApplicationSelectedModal: null,
+      currentResourceDisplayData: {},
+      currentResourceSelectedModal: null,
       currentCommentsSelectedModal: [],
       currentEntitlementDisplayData: {},
       currentEntitlementSelected: null,
@@ -946,6 +968,7 @@ export default {
         application: [],
         entitlement: [],
         role: [],
+        resource: [],
       },
       filterSchema: {
         user: [],
@@ -1054,6 +1077,7 @@ export default {
         application: data['/openidm/managed/application'],
         entitlement: data['/openidm/managed/assignment'],
         role: data['/openidm/managed/role'],
+        resource: data['/iga/governance/resource'],
       };
     } catch (error) {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
@@ -1077,7 +1101,7 @@ export default {
     let filterProperties = {};
     try {
       const { data } = await getFilterSchema();
-      filterProperties = data || {};
+      filterProperties = normalizeFilterSchema(data || {});
       this.filterProperties = filterProperties;
       this.filterSchema.user = filterProperties.user || [];
     } catch (error) {
@@ -1356,6 +1380,7 @@ export default {
       if (certificationGrantType === 'identityProfile') grantType = 'user';
       if (certificationGrantType === 'agentProfile') grantType = 'accountGrant';
       if (certificationGrantType === 'roleComposition') grantType = 'role';
+      if (certificationGrantType === 'resource') grantType = 'resource';
 
       return getBasicFilter('EQUALS', 'item.type', grantType);
     },
@@ -2045,6 +2070,17 @@ export default {
         // displayData is optional — fall back to per-UUID API calls in GlossaryDisplayForm
       }
       this.$bvModal.show('CertificationTaskApplicationModal');
+    },
+    async openResourceModal(item) {
+      this.currentResourceDisplayData = {};
+      this.currentResourceSelectedModal = item.resource;
+      try {
+        const { data } = await getCertificationItemById(this.campaignId, item.id);
+        this.currentResourceDisplayData = data?._displayData || {};
+      } catch {
+        // displayData is optional — fall back to per-UUID API calls in GlossaryDisplayForm
+      }
+      this.$bvModal.show('CertificationTaskResourceModal');
     },
     async openEntitlementModal(item) {
       this.currentEntitlementDisplayData = {};

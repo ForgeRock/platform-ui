@@ -9,15 +9,18 @@ import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import { getAllNonAuthoritativeApplications } from '@/views/Governance/utils/certification';
 import ApplicationFilter from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 
 describe('ApplicationFilter View', () => {
   let wrapper;
 
   CommonsApi.getResource.mockResolvedValue({ data: { result: [] } });
+  ApplicationsApi.getApplications.mockResolvedValue({ data: { result: [] } });
 
   const basicAppFilter = {
     operand: {
@@ -27,7 +30,7 @@ describe('ApplicationFilter View', () => {
     operator: 'EQUALS',
   };
 
-  function mountComponent(filterData) {
+  function mountComponent(filterData, extraProps = {}) {
     wrapper = mount(ApplicationFilter, {
       global: {
         mocks: {
@@ -41,6 +44,7 @@ describe('ApplicationFilter View', () => {
           singleApp: [],
           ...filterData,
         },
+        ...extraProps,
       },
     });
   }
@@ -63,6 +67,37 @@ describe('ApplicationFilter View', () => {
       wrapper.vm.filterFields.appFilter = basicAppFilter;
       const result = wrapper.vm.getApplicationFilters();
       expect(result).toEqual(getGovernanceFilter(basicAppFilter));
+    });
+  });
+
+  describe('non-NHI application filtering', () => {
+    it('does not override the resource function by default', () => {
+      expect(wrapper.vm.resourceFunction).toBeUndefined();
+      expect(wrapper.vm.queryParamFunction({}, 'application', false)).toBeUndefined();
+    });
+
+    it('queries disconnected applications with at least one non-NHI object type', () => {
+      mountComponent({}, { filterNonNhiApplications: true });
+      expect(wrapper.vm.queryParamFunction('', 'application', false)).toEqual({
+        disconnected: true,
+        pageSize: 10,
+        queryFilter: 'objectTypes.isNHI eq "false"',
+      });
+      expect(wrapper.vm.queryParamFunction('web', 'application', false)).toEqual({
+        disconnected: true,
+        pageSize: 10,
+        queryFilter: 'name co "web" and objectTypes.isNHI eq "false"',
+      });
+      expect(wrapper.vm.queryParamFunction('app-1', 'application', true)).toEqual({
+        disconnected: true,
+        queryFilter: 'id eq "app-1" and objectTypes.isNHI eq "false"',
+      });
+    });
+
+    it('maps disconnected application records to options', () => {
+      mountComponent({}, { filterNonNhiApplications: true });
+      expect(wrapper.vm.optionFunction({ id: 'a1', name: 'App One' })).toEqual({ text: 'App One', value: 'a1' });
+      expect(wrapper.vm.optionFunction({ id: 'a2', application: { name: 'App Two', id: 'a2' } })).toEqual({ text: 'App Two', value: 'a2' });
     });
   });
 });

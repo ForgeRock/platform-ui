@@ -26,6 +26,7 @@ import {
   showRecommendationBanner,
   useRequestTypeOptions,
   getAccessFilterConfig,
+  getPhaseName,
 } from './AccessRequestUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
@@ -846,5 +847,42 @@ describe('getAccessFilterConfig requestType field', () => {
     const config = getAccessFilterConfig(components, { statusOptions: [], filterData });
     const statusItem = config.status.components.find((c) => c.id === 'statuses');
     expect(statusItem.props['aria-label']).toBe('Status');
+  });
+});
+
+describe('getPhaseName', () => {
+  it('returns the first phase assigned to the user', () => {
+    const request = {
+      decision: {
+        actors: {
+          active: [
+            { user: { userName: 'jane' } },
+            { phase: 'phase-2', user: { userName: 'john' } },
+          ],
+        },
+      },
+      phases: [{ name: 'phase-1' }],
+    };
+    expect(getPhaseName(request)).toBe('phase-1');
+  });
+
+  it('falls back to the first assigned phase when there are no active actors', () => {
+    const request = {
+      phases: [{ name: 'phase-1' }],
+    };
+    expect(getPhaseName(request)).toBe('phase-1');
+  });
+
+  it('falls back to the last decision phase when no assigned phases exist', () => {
+    const request = {
+      decision: {
+        phases: [{ name: 'phase-1' }, { name: 'phase-2' }],
+      },
+    };
+    expect(getPhaseName(request)).toBe('phase-2');
+  });
+
+  it('returns undefined when no phase information exists', () => {
+    expect(getPhaseName({})).toBeUndefined();
   });
 });

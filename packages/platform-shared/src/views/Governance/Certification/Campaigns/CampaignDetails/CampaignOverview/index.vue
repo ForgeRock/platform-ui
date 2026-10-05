@@ -249,7 +249,7 @@ of the MIT license. See the LICENSE file for details. -->
         lg="4"
       >
         <FrVisualizationCard
-          v-if="isEntitlementComposition || isIdentityProfile || isRoleComposition"
+          v-if="isEntitlementComposition || isIdentityProfile || isRoleComposition || isResource"
           class="h-100"
           data-testid="chart-previous-decision"
           :title="$t('governance.certificationDetails.previousDecisionChartLabel')"
@@ -567,6 +567,9 @@ export default {
     },
     isRoleComposition() {
       return this.campaign.certificationType === uiTypeMap.ROLECOMPOSITION;
+    },
+    isResource() {
+      return this.campaign.certificationType === uiTypeMap.RESOURCE;
     },
     canEditCampaign() {
       return this.campaign.status === CampaignStates.IN_PROGRESS || this.campaign.status === CampaignStates.EXPIRING;

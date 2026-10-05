@@ -248,6 +248,11 @@ describe('getInitialColumns', () => {
     expect(result.map((c) => c.key)).toEqual(['role', 'user', 'flags', 'comments', 'actions']);
   });
 
+  it('returns OOTB columns filtered by grantType "resource"', () => {
+    const result = getInitialColumns('resource', null, false, null, null);
+    expect(result.map((c) => c.key)).toEqual(['application', 'resource', 'flags', 'comments', 'actions']);
+  });
+
   it('returns OOTB columns filtered by "accountEntitlement" if entitlementUserId is provided', () => {
     const result = getInitialColumns('accounts', 'someUserId', false, null, null);
     expect(result.map((c) => c.key)).toEqual(['entitlement', 'flags', 'comments', 'actions']);
@@ -578,5 +583,65 @@ describe('processItemsForExport', () => {
         'User Name': null, Role: 'Role 2',
       },
     ]);
+  });
+});
+
+describe('getCellData resource fallback', () => {
+  it('falls back to descriptor display name for the resource column', () => {
+    const data = {
+      field: { category: 'resource', key: 'resource' },
+      item: {
+        descriptor: { idx: { '/resource': { displayName: 'Nadia Osei' } } },
+        resource: { displayName: 'Nadia Osei' },
+      },
+    };
+    const result = getCellData(data);
+    expect(result).toBe('Nadia Osei');
+  });
+
+  it('falls back to resource.displayName when descriptor is missing', () => {
+    const data = {
+      field: { category: 'resource', key: 'resource' },
+      item: {
+        resource: { displayName: 'Nadia Osei' },
+      },
+    };
+    const result = getCellData(data);
+    expect(result).toBe('Nadia Osei');
+  });
+
+  it('returns blankValueIndicator when resource fallbacks are empty', () => {
+    const data = {
+      field: { category: 'resource', key: 'resource' },
+      item: {
+        resource: { displayName: null },
+      },
+    };
+    const result = getCellData(data);
+    expect(result).toBe(blankValueIndicator);
+  });
+
+  it('does not use the fallback for other resource columns', () => {
+    const data = {
+      field: { category: 'resource', key: 'displayName' },
+      item: {
+        resource: {},
+        descriptor: { idx: { '/resource': { displayName: 'Nadia Osei' } } },
+      },
+    };
+    const result = getCellData(data);
+    expect(result).toBe(blankValueIndicator);
+  });
+
+  it('does not use the fallback for other categories', () => {
+    const data = {
+      field: { category: 'application', key: 'application' },
+      item: {
+        application: {},
+        descriptor: { idx: { '/resource': { displayName: 'Nadia Osei' } } },
+      },
+    };
+    const result = getCellData(data);
+    expect(result).toBe(blankValueIndicator);
   });
 });

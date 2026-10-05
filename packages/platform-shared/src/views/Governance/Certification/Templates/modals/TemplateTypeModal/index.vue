@@ -192,6 +192,26 @@ of the MIT license. See the LICENSE file for details. -->
                 </BMediaBody>
               </BMedia>
             </FrCardRadioInput>
+            <FrCardRadioInput
+              class="mb-3"
+              :radio-value="types.RESOURCE"
+              name="selectedCampaignTemplateType"
+              v-model="selectedCampaignTemplateType">
+              <BMedia no-body>
+                <FrIcon
+                  name="inventory_2"
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border color-purple border-purple" />
+                <BMediaBody>
+                  <h3
+                    class="h5">
+                    {{ $t('governance.campaignTemplateTypeModal.resourceCertification') }}
+                  </h3>
+                  <div class="d-block">
+                    {{ $t('governance.campaignTemplateTypeModal.resourceCertificationMessage') }}
+                  </div>
+                </BMediaBody>
+              </BMedia>
+            </FrCardRadioInput>
           </div>
         </BCol>
       </BRow>

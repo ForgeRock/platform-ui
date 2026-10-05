@@ -1407,6 +1407,44 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskApplicationModal');
     });
 
+    it('openResourceModal sets resource data and opens resource modal', async () => {
+      const wrapper = shallowMountComponent();
+      CertificationApi.getCertificationItemById.mockResolvedValue({ data: { _displayData: { some: 'displayData' } } });
+      const item = {
+        id: '0298c5d1-dda7-47d6-9961-7cd563e40f52',
+        resource: {
+          displayName: 'Nadia Osei',
+          id: 'app-1/user/009',
+          objectType: 'user',
+          isNHI: true,
+          sourceId: '009',
+        },
+      };
+
+      await wrapper.vm.openResourceModal(item);
+      await flushPromises();
+
+      expect(wrapper.vm.currentResourceSelectedModal).toEqual(item.resource);
+      expect(wrapper.vm.currentResourceDisplayData).toEqual({ some: 'displayData' });
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskResourceModal');
+    });
+
+    it('openResourceModal opens modal with fallback when displayData fetch fails', async () => {
+      const wrapper = shallowMountComponent();
+      CertificationApi.getCertificationItemById.mockRejectedValue(new Error('not found'));
+      const item = {
+        id: 'item-1',
+        resource: { displayName: 'Nadia Osei' },
+      };
+
+      await wrapper.vm.openResourceModal(item);
+      await flushPromises();
+
+      expect(wrapper.vm.currentResourceSelectedModal).toEqual(item.resource);
+      expect(wrapper.vm.currentResourceDisplayData).toEqual({});
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskResourceModal');
+    });
+
     it('openAccountModal sets account data and opens account modal', async () => {
       const wrapper = shallowMountComponent();
       const content = {

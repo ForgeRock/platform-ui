@@ -287,6 +287,12 @@ export default {
           label: this.$t('governance.certificationTask.certificationTabs.roleComposition'),
         });
       }
+      if (this.isResourceTargetFilter) {
+        tabs.push({
+          key: 'resource',
+          label: this.$t('governance.certificationTask.certificationTabs.resource'),
+        });
+      }
       return tabs;
     },
     isComplete() {
@@ -312,6 +318,9 @@ export default {
     },
     isRoleCompositionTargetFilter() {
       return this.isGrantType('role');
+    },
+    isResourceTargetFilter() {
+      return this.isGrantType('resource');
     },
     showGroupByField() {
       return this.isAccountTargetFilter && this.isEntitlementTargetFilter && !this.isRoleTargetFilter && this.showGroupByAccount;

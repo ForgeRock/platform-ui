@@ -671,6 +671,7 @@ export default {
         { text: this.$t('governance.certification.activeCampaignsLabels.roleMembership'), value: 'roleMembership' },
         { text: this.$t('governance.certification.activeCampaignsLabels.identityProfile'), value: 'identityProfile' },
         { text: this.$t('governance.certification.activeCampaignsLabels.roleComposition'), value: 'roleComposition' },
+        { text: this.$t('governance.certification.activeCampaignsLabels.resource'), value: 'resource' },
       ];
     },
     campaignModal() {

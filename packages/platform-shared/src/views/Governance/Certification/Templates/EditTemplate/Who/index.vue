@@ -144,6 +144,7 @@ export default {
         entitlementOwner: this.$t('governance.editTemplate.entitlementOwner'),
         roleOwner: this.$t('governance.editTemplate.roleOwner'),
         custodian: this.$t('governance.editTemplate.custodian'),
+        applicationOwner: this.$t('governance.editTemplate.applicationOwner'),
         custom: this.$t('governance.editTemplate.custom'),
       };
 

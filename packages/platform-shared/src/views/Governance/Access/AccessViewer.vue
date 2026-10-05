@@ -158,6 +158,7 @@ import FrEntitlementModal from '@forgerock/platform-shared/src/components/govern
 import FrRoleModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/RoleModal/RoleModal';
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { normalizeFilterSchema } from '@forgerock/platform-shared/src/views/Governance/utils/certification';
 import FrUserDetails from '@forgerock/platform-shared/src/components/governance/UserDetails';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -527,7 +528,7 @@ onMounted(async () => {
       entitlementGrant: responses[2].data['/openidm/managed/assignment'],
       roleMembership: responses[2].data['/openidm/managed/role'],
     };
-    filterSchema.value = responses[3].data;
+    filterSchema.value = normalizeFilterSchema(responses[3].data || {});
     autoIdSettings.value = responses[4].data;
   } catch (error) {
     loading.value = false;

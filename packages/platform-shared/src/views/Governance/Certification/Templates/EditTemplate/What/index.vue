@@ -162,14 +162,15 @@ of the MIT license. See the LICENSE file for details. -->
           class="pt-3"
           :organization-options="organizationOptions"
           :filter-data="value"
-          :properties="grantFilterProperties" />
+          :properties="grantFilterProperties"
+          v-bind="filter === 'FrApplicationFilter' && isResource ? { filterNonNhiApplications: true } : {}" />
       </BCollapse>
 
       <div
         v-if="anyGrantEnabled && !isAgentProfile"
         class="mt-3">
         <FrField
-          v-if="(formFields.enableEntitlementGrant || formFields.enableAccountGrant) && !isEntitlementComposition && !isIdentityProfile && !isRoleComposition"
+          v-if="(formFields.enableEntitlementGrant || formFields.enableAccountGrant) && !isEntitlementComposition && !isIdentityProfile && !isRoleComposition && !isResource"
           :value="formFields.excludeRoleBasedAccess"
           @input="formFields.excludeRoleBasedAccess = $event; updateFilter()"
           class="mb-3"
@@ -177,7 +178,7 @@ of the MIT license. See the LICENSE file for details. -->
           type="checkbox"
           :label="$t('governance.editTemplate.excludeRoleBased')" />
         <FrField
-          v-if="formFields.enableRoleGrant && !isEntitlementComposition && !isIdentityProfile && !isRoleComposition"
+          v-if="formFields.enableRoleGrant && !isEntitlementComposition && !isIdentityProfile && !isRoleComposition && !isResource"
           :value="formFields.excludeConditionalAccess"
           @input="formFields.excludeConditionalAccess = $event; updateFilter()"
           class="mb-3"
@@ -254,6 +255,7 @@ import FrEntitlementFilter from '@forgerock/platform-shared/src/views/Governance
 import FrOrganizationFilter from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate/What/filters/OrganizationFilter';
 import FrRoleFilter from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate/What/filters/RoleFilter';
 import FrUserFilter from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate/What/filters/UserFilter';
+import FrResourceFilter from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate/What/filters/ResourceFilter';
 import { getDecisionCount } from '@forgerock/platform-shared/src/api/governance/TemplateApi';
 import { getAgentConfig } from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import {
@@ -264,6 +266,7 @@ import {
   getFilterGrantByType,
   getAllNonAuthoritativeApplications,
   getAllFilter,
+  getNonNhiResourceFilter,
 } from '@forgerock/platform-shared/src/views/Governance/utils/certification';
 import i18n from '@/i18n';
 import {
@@ -293,6 +296,7 @@ const componentFilterMap = {
   [filterTypes.ORGANIZATION]: 'FrOrganizationFilter',
   [filterTypes.ROLES]: 'FrRoleFilter',
   [filterTypes.USERS]: 'FrUserFilter',
+  [filterTypes.RESOURCES]: 'FrResourceFilter',
 };
 
 const uiTypeMapping = {
@@ -304,6 +308,7 @@ const uiTypeMapping = {
   [types.ROLECOMPOSITION]: uiTypeMap.ROLECOMPOSITION,
   [types.AGENTPROFILE]: uiTypeMap.AGENTPROFILE,
   [types.AGENTACCESS]: uiTypeMap.AGENTACCESS,
+  [types.RESOURCE]: uiTypeMap.RESOURCE,
 };
 
 export default {
@@ -321,6 +326,7 @@ export default {
     FrField,
     FrOrganizationFilter,
     FrRoleFilter,
+    FrResourceFilter,
     FrUserFilter,
     FrValidationError,
   },
@@ -363,6 +369,7 @@ export default {
         enableRoleGrant: false,
         enableIdentityProfileGrant: false,
         enableRoleCompositionGrant: false,
+        enableResourceGrant: false,
         excludeConditionalAccess: true,
         excludeRoleBasedAccess: true,
         platform: 'all',
@@ -378,6 +385,7 @@ export default {
         decision: 0,
         entitlement: 0,
         role: 0,
+        resource: 0,
       },
       filters: {
         user: null,
@@ -385,6 +393,7 @@ export default {
         account: null,
         decision: null,
         entitlement: null,
+        resource: null,
       },
       types,
       validatedCheckboxName: '',
@@ -397,7 +406,8 @@ export default {
         || this.formFields.enableRoleGrant
         || this.formFields.enableIdentityProfileGrant
         || this.formFields.enableEntitlementCompositionGrant
-        || this.formFields.enableRoleCompositionGrant;
+        || this.formFields.enableRoleCompositionGrant
+        || this.formFields.enableResourceGrant;
     },
     errors() {
       // ponytail: AGENTPROFILE has no grant checkboxes to require; AGENTACCESS reuses IDENTITY validation.
@@ -419,13 +429,13 @@ export default {
         {
           label: this.$t('common.users'),
           value: this.counts.user,
-          enabled: !this.eventBased && !this.isEntitlementComposition && !this.isRoleComposition,
+          enabled: !this.eventBased && !this.isEntitlementComposition && !this.isRoleComposition && !this.isResource,
           testId: 'user-count',
         },
         {
           label: this.$t('common.applications'),
           value: this.counts.application,
-          enabled: this.formFields.enableAccountGrant || this.formFields.enableEntitlementGrant || this.formFields.enableEntitlementCompositionGrant,
+          enabled: this.formFields.enableAccountGrant || this.formFields.enableEntitlementGrant || this.formFields.enableEntitlementCompositionGrant || this.formFields.enableResourceGrant,
           testId: 'application-count',
         },
         {
@@ -446,6 +456,12 @@ export default {
           enabled: this.formFields.enableRoleGrant || this.formFields.enableRoleCompositionGrant,
           testId: 'role-count',
         },
+        {
+          label: this.$t('common.resources'),
+          value: this.counts.resource,
+          enabled: this.formFields.enableResourceGrant,
+          testId: 'resource-count',
+        },
       ];
       return counts.filter((count) => (count.enabled));
     },
@@ -461,6 +477,9 @@ export default {
     },
     isRoleComposition() {
       return this.type === types.ROLECOMPOSITION;
+    },
+    isResource() {
+      return this.type === types.RESOURCE;
     },
     isAgentType() {
       return isAgentType(this.type);
@@ -535,6 +554,14 @@ export default {
       this.formFields.enableRoleCompositionGrant = true;
     }
 
+    if (this.type === types.RESOURCE) {
+      this.formFields.enableAccountGrant = false;
+      this.formFields.enableEntitlementGrant = false;
+      this.formFields.enableRoleGrant = false;
+      this.formFields.enableRoleCompositionGrant = false;
+      this.formFields.enableResourceGrant = true;
+    }
+
     [this.validatedCheckboxName] = findFieldNamesMatchingName('enableAccountGrant', this.formValues);
 
     if (this.isAgentType) {
@@ -573,11 +600,14 @@ export default {
      */
     displayFilter(filterComponent) {
       if (filterComponent === 'FrApplicationFilter') {
-        return this.formFields.enableEntitlementGrant || this.formFields.enableAccountGrant || this.formFields.enableEntitlementCompositionGrant;
+        return this.formFields.enableEntitlementGrant || this.formFields.enableAccountGrant || this.formFields.enableEntitlementCompositionGrant || this.formFields.enableResourceGrant;
       }
       if (filterComponent === 'FrAccountFilter') return this.formFields.enableAccountGrant;
       if (filterComponent === 'FrEntitlementFilter') {
         return this.formFields.enableEntitlementGrant || this.formFields.enableEntitlementCompositionGrant;
+      }
+      if (filterComponent === 'FrResourceFilter') {
+        return this.formFields.enableResourceGrant;
       }
       if (filterComponent === 'FrRoleFilter') return this.formFields.enableRoleGrant || this.formFields.enableRoleCompositionGrant;
       return true;
@@ -608,8 +638,12 @@ export default {
       const { objects } = data;
       // agent cert types: keep the distinct agent accounts (data.distinctAgents) readable
       // as counts.agents for the Agents box; objects breakdown covers the grant keys
-      this.counts = { ...objects, agents: data.distinctAgents };
-      this.$emit('set-counts', data);
+      // target-count's per-type breakdown doesn't intersect the application filter
+      // with resource grants; the top-level count does, so resource certification
+      // takes its resource count from there
+      const counts = this.isResource ? { ...objects, resource: data.count } : objects;
+      this.counts = { ...counts, agents: data.distinctAgents };
+      this.$emit('set-counts', { ...data, objects: counts });
     },
     /**
      * Update filters based on child filters. Merges all child filters into one object to emit to parent
@@ -632,12 +666,17 @@ export default {
       // check if all filters are present before getting count
       // this prevents unnecessary api calls when we only need one with all the filters
       if (this.allFiltersPresent(this.filters)) {
-        const grantTypes = getFilterGrantByType(this.formFields.enableAccountGrant, this.formFields.enableEntitlementGrant, this.formFields.enableRoleGrant, this.formFields.enableEntitlementCompositionGrant, this.formFields.enableIdentityProfileGrant, this.formFields.enableRoleCompositionGrant);
+        const grantTypes = getFilterGrantByType(this.formFields.enableAccountGrant, this.formFields.enableEntitlementGrant, this.formFields.enableRoleGrant, this.formFields.enableEntitlementCompositionGrant, this.formFields.enableIdentityProfileGrant, this.formFields.enableRoleCompositionGrant, this.formFields.enableResourceGrant);
         const filtersClone = cloneDeep(this.filters);
 
         Object.keys(filtersClone).forEach((key) => {
           if (filtersClone[key] === null) delete filtersClone[key];
         });
+
+        // resource certification excludes NHI resources, so the counts must match
+        if (this.isResource && filtersClone.resource) {
+          filtersClone.resource = getNonNhiResourceFilter(filtersClone.resource);
+        }
 
         const options = {};
         if (this.formFields.excludeConditionalAccess) options.excludeConditionalAccess = true;

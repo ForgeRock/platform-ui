@@ -102,7 +102,7 @@ const categorySelects = computed(() => [
     key: 'application',
     label: 'Application',
     options: getSelectOptionsForCategory('application'),
-    showFor: ['accounts', 'entitlements', 'entitlementComposition'],
+    showFor: ['accounts', 'entitlements', 'entitlementComposition', 'resource'],
   },
   {
     key: 'account',
@@ -138,10 +138,16 @@ const categorySelects = computed(() => [
     showFor: ['agentAccess'],
   },
   {
+    key: 'resource',
+    label: 'Resource',
+    options: getSelectOptionsForCategory('resource'),
+    showFor: ['resource'],
+  },
+  {
     key: 'review',
     label: 'Review',
     options: getSelectOptionsForCategory('review'),
-    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition', 'agentProfile', 'agentAccess'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition', 'agentProfile', 'agentAccess', 'resource'],
   },
 ]);
 

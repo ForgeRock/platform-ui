@@ -16,6 +16,7 @@ export const types = {
   ROLECOMPOSITION: 'ROLECOMPOSITION',
   AGENTPROFILE: 'AGENTPROFILE',
   AGENTACCESS: 'AGENTACCESS',
+  RESOURCE: 'RESOURCE',
 };
 
 // maps from ui type to iga type
@@ -28,6 +29,7 @@ export const uiTypeMap = {
   ROLECOMPOSITION: 'roleComposition',
   AGENTPROFILE: 'agentProfile',
   AGENTACCESS: 'agentAccess',
+  RESOURCE: 'resource',
 };
 
 // enum values sent to the backend for the optional `platform` campaign filter
@@ -39,6 +41,7 @@ export const filterTypes = {
   ACCOUNTS: 'ACCOUNTS',
   ENTITLEMENTS: 'ENTITLEMENTS',
   ROLES: 'ROLES',
+  RESOURCES: 'RESOURCES',
 };
 
 // maps from ui filter type to iga filter keys
@@ -49,6 +52,7 @@ export const filterTypeMap = {
   ACCOUNTS: 'account',
   ENTITLEMENTS: 'entitlement',
   ROLES: 'role',
+  RESOURCES: 'resource',
 };
 
 // Identity certification
@@ -106,6 +110,12 @@ export const AGENTACCESS = {
   certifierOptions: ['user', 'role', 'custodian', 'custom'],
 };
 
+// Resource certification
+export const RESOURCE = {
+  filters: [filterTypes.APPLICATIONS, filterTypes.RESOURCES],
+  certifierOptions: ['user', 'role', 'applicationOwner'],
+};
+
 // All certification types
 export const typeSpecificFields = {
   IDENTITY,
@@ -117,6 +127,7 @@ export const typeSpecificFields = {
   ROLECOMPOSITION,
   AGENTPROFILE,
   AGENTACCESS,
+  RESOURCE,
 };
 
 // ponytail: agent cert types share behavior; centralize the check so callers don't drift.

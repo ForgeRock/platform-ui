@@ -82,12 +82,23 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ summary.numAccounts }}
               </dd>
             </template>
-            <template v-if="(summary.enableAccountGrant || summary.enableEntitlementGrant || summary.enableEntitlementCompositionGrant) && !isAgentProfile">
+            <template v-if="(summary.enableAccountGrant || summary.enableEntitlementGrant || summary.enableEntitlementCompositionGrant || summary.enableResourceGrant) && !isAgentProfile">
               <dt class="mb-1">
                 <small>{{ $t('common.applications') }}</small>
               </dt>
               <dd class="mb-4">
                 {{ summary.numApplications }}
+              </dd>
+            </template>
+            <template v-if="summary.enableResourceGrant">
+              <dt
+                class="mb-1"
+                data-testid="summary-resource">
+                <small>{{ $t('common.resources') }}</small>
+              </dt>
+              <dd
+                data-testid="summary-resource-count">
+                {{ summary.numResources }}
               </dd>
             </template>
             <template v-if="summary.enableEntitlementGrant || summary.enableEntitlementCompositionGrant">
@@ -130,7 +141,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="!isEntitlementComposition && !isIdentityProfile && !isRoleComposition && !isAgentType">
+            <template v-if="!isEntitlementComposition && !isIdentityProfile && !isRoleComposition && !isAgentType && !isResource">
               <dt class="mb-1">
                 <small>{{ $t('common.users') }}</small>
               </dt>
@@ -314,7 +325,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="!isEntitlementComposition && !isRoleComposition && !isAgentType">
+            <template v-if="!isEntitlementComposition && !isRoleComposition && !isAgentType && !isResource">
               <dt class="mb-1">
                 <small>{{ startCaseTranslationKey('governance.editTemplate.allowSelfCert') }}</small>
               </dt>
@@ -556,6 +567,7 @@ export default {
         entitlementOwner: 'governance.editTemplate.entitlementOwner',
         roleOwner: 'governance.editTemplate.roleOwner',
         custodian: 'governance.editTemplate.custodian',
+        applicationOwner: 'governance.editTemplate.applicationOwner',
         custom: 'governance.editTemplate.custom',
       };
       const key = certTypeKeyMap[this.summary.who.certType];
@@ -591,6 +603,9 @@ export default {
     },
     isRoleComposition() {
       return this.summary.type === types.ROLECOMPOSITION;
+    },
+    isResource() {
+      return this.summary.type === types.RESOURCE;
     },
   },
 };

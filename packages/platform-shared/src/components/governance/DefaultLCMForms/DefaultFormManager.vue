@@ -26,6 +26,13 @@ of the MIT license. See the LICENSE file for details. -->
       :type="requestType === requestTypes.CREATE_ENTITLEMENT.value ? 'CREATE' : 'UPDATE'"
       @update:glossaryValues="handleInput({ entitlementValues, glossaryValues: $event })"
       @update:entitlementValues="handleInput({ entitlementValues: $event, glossaryValues })" />
+    <FrDefaultResourceForm
+      v-else-if="currentFormComponent === defaultForms.resource"
+      :application-id="options.applicationId"
+      :object-type="options.objectType"
+      :resource="options.resource"
+      :read-only="readOnly"
+      @update:resourceValues="handleInput($event)" />
   </div>
 </template>
 <script setup>
@@ -38,6 +45,7 @@ import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/Ac
 import FrAddUserForm from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/User/AddUserForm';
 import FrModifyUserForm from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/User/ModifyUserForm';
 import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
+import FrDefaultResourceForm from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/Resource/DefaultResourceForm';
 
 const emit = defineEmits(['input']);
 
@@ -65,6 +73,7 @@ const defaultForms = {
   createUser: 'createUser',
   modifyUser: 'modifyUser',
   entitlement: 'entitlement',
+  resource: 'resource',
 };
 
 const glossaryValues = ref({});
@@ -87,6 +96,10 @@ function handleInput(event) {
     entitlementValues.value = event.entitlementValues;
     emit('input', { glossary: glossaryValues.value, entitlement: entitlementValues.value });
   }
+
+  if (props.requestType === 'modifyResource') {
+    emit('input', { resource: event });
+  }
 }
 
 /**
@@ -101,6 +114,9 @@ async function setFormComponent() {
   }
   if (props.requestType === 'createEntitlement' || props.requestType === 'modifyEntitlement') {
     currentFormComponent.value = defaultForms.entitlement;
+  }
+  if (props.requestType === 'modifyResource') {
+    currentFormComponent.value = defaultForms.resource;
   }
 }
 

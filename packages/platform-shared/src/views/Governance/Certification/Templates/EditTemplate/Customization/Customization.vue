@@ -80,6 +80,7 @@ const availableGrantTypes = [
   { value: 'entitlementComposition', text: i18n.global.t('common.entitlementComposition') },
   { value: 'identityProfile', text: i18n.global.t('common.identityProfile') },
   { value: 'roleComposition', text: i18n.global.t('common.roleComposition') },
+  { value: 'resource', text: i18n.global.t('common.resource') },
 ];
 
 // ponytail: agent certs key off the template type, not grant flags — AGENTPROFILE keeps
@@ -113,6 +114,9 @@ const grantTypes = computed(() => {
   if (props.summary?.enableRoleCompositionGrant) {
     types.push(availableGrantTypes.find((type) => type.value === 'roleComposition'));
   }
+  if (props.summary?.enableResourceGrant) {
+    types.push(availableGrantTypes.find((type) => type.value === 'resource'));
+  }
   return types;
 });
 
@@ -136,6 +140,7 @@ function init() {
     if (templateConfig.roleComposition?.length) columnConfig.roleComposition = [...templateConfig.roleComposition];
     if (templateConfig.agentProfile?.length) columnConfig.agentProfile = [...templateConfig.agentProfile];
     if (templateConfig.agentAccess?.length) columnConfig.agentAccess = [...templateConfig.agentAccess];
+    if (templateConfig.resource?.length) columnConfig.resource = [...templateConfig.resource];
   }
   updatedColumnConfig.value = columnConfig;
 
@@ -149,6 +154,7 @@ function init() {
     roleComposition: savedSortable.roleComposition || [],
     agentProfile: savedSortable.agentProfile || [],
     agentAccess: savedSortable.agentAccess || [],
+    resource: savedSortable.resource || [],
   };
 }
 

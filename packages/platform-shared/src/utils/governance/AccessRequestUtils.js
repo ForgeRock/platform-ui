@@ -143,6 +143,10 @@ export const requestTypes = {
     label: 'governance.accessRequest.requestTypes.roleRemove',
     value: 'roleRemove',
   },
+  MODIFY_RESOURCE: {
+    label: 'governance.accessRequest.requestTypes.modifyResource',
+    value: 'modifyResource',
+  },
   EXTEND_END_DATE: {
     label: 'governance.accessRequest.requestTypes.extendEndDate',
     value: 'extendEndDate',
@@ -290,6 +294,7 @@ export function getRequestObjectType(requestType, requestCommonObject = {}) {
   if (requestType.toLowerCase().includes('entitlement') || requestCommonObject.grantType === 'entitlementGrant') return 'entitlement';
   if (requestType.toLowerCase().includes('role') || requestCommonObject.grantType === 'roleMembership') return 'role';
   if (requestType === 'createUser' || requestType === 'deleteUser' || requestType === 'modifyUser') return 'lcmUser';
+  if (requestType === 'modifyResource') return 'resource';
   return '';
 }
 
@@ -398,10 +403,13 @@ function getRequestedResumeDate(request) {
  * @returns {Object} The basic request display object.
  */
 function getBasicRequestDisplay(request) {
+  const resourceName = request.descriptor?.idx?.['/resource']?.displayName;
+
   return {
     details: {
       id: request.id,
       type: request.requestTypeDisplayName || request.requestType,
+      ...(resourceName && { name: resourceName }),
       priority: request.request?.common?.priority,
       date: getRequestedDateText(request.decision?.startDate),
       requestedBy: getRequestedByText(request.requester),
@@ -433,6 +441,12 @@ export function getNameString(request, objectType) {
     const user = request.user || request.request?.user?.object;
     if (!(user?.givenName && user?.sn && user?.userName)) return '';
     return i18n.global.t('common.userFullNameUserName', { givenName: user.givenName, sn: user.sn, userName: user.userName });
+  }
+
+  if (objectType === 'resource') {
+    return request.descriptor?.idx?.['/resource']?.displayName
+    || request.resource?.displayName
+    || request.request?.resource?.object?.displayName;
   }
 
   return request[objectType]?.name;
@@ -601,6 +615,7 @@ export function getRequestTypeOptions() {
     { text: i18n.global.t(requestTypes.CREATE_USER.label), value: requestTypes.CREATE_USER.value },
     { text: i18n.global.t(requestTypes.MODIFY_USER.label), value: requestTypes.MODIFY_USER.value },
     { text: i18n.global.t(requestTypes.DELETE_USER.label), value: requestTypes.DELETE_USER.value },
+    { text: i18n.global.t(requestTypes.MODIFY_RESOURCE.label), value: requestTypes.MODIFY_RESOURCE.value },
   ];
 }
 

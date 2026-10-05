@@ -277,9 +277,9 @@ function getItemCreatedDate(item) {
 watch(() => prop.requests, (newRequests) => {
   items.value = buildRequestDisplay(newRequests, prop.autoIdSettings, prop.schema.user).map((item) => ({
     ...item,
-    itemName: item.details?.isCustom || !item.details.name
-      ? item.details.type
-      : `${item.details.type}: ${item.details.name}`,
+    itemName: item.details?.name
+      ? `${item.details.type}: ${item.details.name}`
+      : item.details.type,
   }));
 }, { immediate: true });
 

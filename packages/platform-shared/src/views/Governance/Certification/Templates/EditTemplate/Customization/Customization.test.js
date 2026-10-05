@@ -133,6 +133,7 @@ describe('Customization', () => {
         roleComposition: ['role.role', 'review.flags', 'review.comments'],
         agentProfile: ['agent.agent', 'agent.platform', 'review.flags', 'review.comments'],
         agentAccess: ['agent.agent', 'review.flags', 'review.comments'],
+        resource: ['application.application', 'resource.resource', 'review.flags', 'review.comments'],
       },
       sortableColumnConfig: {
         accounts: [],
@@ -143,6 +144,7 @@ describe('Customization', () => {
         identityProfile: [],
         agentProfile: [],
         agentAccess: [],
+        resource: [],
       },
     });
   });

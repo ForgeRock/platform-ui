@@ -53,7 +53,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import FrFormWizard from '@forgerock/platform-shared/src/components/FormWizard/FormWizard';
 import FrEventDetails from '@forgerock/platform-shared/src/views/Governance/Events/EventEdit/EventDetails';
 import { postTemplate, updateTemplate } from '@forgerock/platform-shared/src/api/governance/TemplateApi';
-import { buildSavePayload, getFormValuesFromTemplate } from '@forgerock/platform-shared/src/views/Governance/utils/certification';
+import { buildSavePayload, getFormValuesFromTemplate, normalizeFilterSchema } from '@forgerock/platform-shared/src/views/Governance/utils/certification';
 import { getEmailNotificationTemplates } from '@forgerock/platform-shared/src/api/governance/NotificationTemplateApi';
 import FrAdditionalOptions from './AdditionalOptions';
 import FrDetailsForm from './DetailsForm';
@@ -198,6 +198,7 @@ export default {
       numUsers: 0,
       numDecisions: 0,
       numAgents: 0,
+      numResources: 0,
       types,
       tabComponents,
       forms: {
@@ -228,6 +229,7 @@ export default {
           enableRoleGrant: false,
           enableIdentityProfileGrant: false,
           enableRoleCompositionGrant: false,
+          enableResourceGrant: false,
           entitlementFilter: {},
           entitlementSelection: this.$t('governance.editTemplate.allEntitlements'),
           excludeConditionalAccess: true,
@@ -237,8 +239,11 @@ export default {
           numEntitlements: 0,
           numRoles: 0,
           numUsers: 0,
+          numResources: 0,
           roleFilter: {},
           roleSelection: this.$t('governance.editTemplate.allRoles'),
+          resourceFilter: {},
+          resourceSelection: this.$t('governance.editTemplate.allResources'),
           singleApp: [],
           singleUser: '',
           singleUserInfo: {},
@@ -423,6 +428,7 @@ export default {
         numEntitlements: this.numEntitlements,
         numRoles: this.numRoles,
         numUsers: this.numUsers,
+        numResources: this.numResources,
         numDecisions: this.numDecisions,
         numAgents: this.numAgents,
         enableAccountGrant: this.forms.FrWhat.enableAccountGrant,
@@ -431,6 +437,7 @@ export default {
         enableRoleGrant: this.forms.FrWhat.enableRoleGrant,
         enableIdentityProfileGrant: this.forms.FrWhat.enableIdentityProfileGrant,
         enableRoleCompositionGrant: this.forms.FrWhat.enableRoleCompositionGrant,
+        enableResourceGrant: this.forms.FrWhat.enableResourceGrant,
         notifications: {
           assignmentNotification: this.forms.FrNotifications.initialNotification,
           escalation: this.forms.FrAdditionalOptions.escalation,
@@ -474,7 +481,7 @@ export default {
   mounted() {
     getFilterSchema(this.type)
       .then(({ data }) => {
-        this.grantFilterProperties = data;
+        this.grantFilterProperties = normalizeFilterSchema(data);
       })
       .catch((err) => {
         this.showErrorMessage(err, this.$t('governance.certification.getFilterSchemaError'));
@@ -549,6 +556,7 @@ export default {
       this.numAccounts = objects.account || 0;
       this.numEntitlements = objects.entitlement || 0;
       this.numRoles = objects.role || 0;
+      this.numResources = objects.resource || 0;
     },
   },
   watch: {

@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import { getResource, getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as TemplateApi from '@/api/governance/TemplateApi';
@@ -18,6 +19,7 @@ mockValidation();
 
 jest.mock('@/api/governance/TemplateApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AgentApi', () => ({
   getAgentConfig: jest.fn().mockResolvedValue({ data: { templates: [] } }),
 }));
@@ -28,6 +30,7 @@ describe('What View', () => {
   getResource.mockReturnValue(Promise.resolve({ data: {} }));
   getFilterSchema.mockReturnValue(Promise.resolve({ data: {} }));
   TemplateApi.getDecisionCount = jest.fn().mockImplementation(() => Promise.resolve({ data: { count: 1 } }));
+  ApplicationsApi.getApplications.mockResolvedValue({ data: { result: [] } });
 
   const mountComponent = (props) => {
     wrapper = mount(What, {
@@ -358,6 +361,27 @@ describe('What View', () => {
           { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'svc-*' } },
         ],
       });
+    });
+  });
+
+  describe('Resource', () => {
+    beforeEach(() => jest.resetModules());
+    it('has application and resource filters', () => {
+      mountComponent({ type: templateTypes.types.RESOURCE });
+      expect(findByTestId(wrapper, 'FrApplicationFilter').exists()).toBeTruthy();
+      expect(findByTestId(wrapper, 'FrResourceFilter').exists()).toBeTruthy();
+    });
+    it('takes the resource count from the top-level count, not the per-type breakdown', async () => {
+      TemplateApi.getDecisionCount.mockImplementation(() => Promise.resolve({
+        data: { count: 10, objects: { application: 1, resource: 20 } },
+      }));
+      mountComponent({ type: templateTypes.types.RESOURCE });
+      await flushPromises();
+
+      await wrapper.vm.setDecisionCount({}, ['resource'], {});
+      expect(wrapper.vm.counts.resource).toBe(10);
+      const emitted = wrapper.emitted('set-counts');
+      expect(emitted[emitted.length - 1][0].objects.resource).toBe(10);
     });
   });
 });
