@@ -178,6 +178,23 @@ export default class JourneyEditorPage {
     return JourneyEditorPage.nodeByName(name).parents('.fr-node.vdr');
   }
 
+  // ── Canvas scrolling ──────────────────────────────────────────────────────
+
+  // The canvas element itself is the scroll container (`.fr-tree-canvas-interactive`).
+  static scrollCanvasBy(x, y) {
+    return JourneyEditorPage.canvas.then(($canvas) => {
+      $canvas[0].scrollLeft += x;
+      $canvas[0].scrollTop += y;
+    });
+  }
+
+  static scrollCanvasToOrigin() {
+    return JourneyEditorPage.canvas.then(($canvas) => {
+      $canvas[0].scrollLeft = 0;
+      $canvas[0].scrollTop = 0;
+    });
+  }
+
   // ── Errors ────────────────────────────────────────────────────────────────
 
   static get errorIndicator() {

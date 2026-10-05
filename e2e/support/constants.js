@@ -92,6 +92,7 @@ export const JOURNEYS = {
   ACCEPT_TERMS_AND_CONDITIONS: { name: 'QA - Accept Terms and Conditions', path: 'QA%20-%20Accept%20Terms%20and%20Conditions', fileName: 'QA-Accept_Terms_and_Conditions' },
   COUNTRY_SCRIPT_REGISTRATION: { name: 'QA - Country script registration e2e', path: 'QA%20-%20Country%20script%20registration%20e2e', fileName: 'QA_Country_Script_Registration_Journey_template' },
   QA_FOCUS_FIRST: { name: 'QA - Focus First', path: 'QA%20-%20Focus%20First', fileName: 'QA-Focus_First' },
+  JOURNEY_EDITOR_RESPONSIVENESS: { name: 'QA-Journey_Editor_Responsiveness', path: 'QA-Journey_Editor_Responsiveness', fileName: 'QA-Journey_Editor_Responsiveness_template' },
 };
 
 /**
