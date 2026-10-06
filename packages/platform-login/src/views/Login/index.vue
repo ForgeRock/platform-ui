@@ -1078,7 +1078,7 @@ export default {
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
           const { policyRequirements = [], policies = [] } = { ...callback.getOutputByName('policies') };
           const {
-            defaultText, fieldType, label, name, value,
+            defaultText, fieldType, label, name, callbackPrompt, value,
           } = this.getField(callback, index);
           const fieldDataType = getAlternateFieldType(policyRequirements, policies) || fieldType;
           const errors = this.getTranslatedPolicyFailures(callback);
@@ -1095,7 +1095,9 @@ export default {
             name,
             type: isOtp ? 'string' : fieldDataType,
             value: value || defaultText,
-            autocomplete: (Array.isArray(autocompleteValues) && autocompleteValues?.length) ? autocompleteValues.join(' ') : getAutocompleteValue(label),
+            // Autocomplete must match on the pre-resolution (English) prompt:
+            // getAutocompleteValue's lookup table keys are English label text.
+            autocomplete: (Array.isArray(autocompleteValues) && autocompleteValues?.length) ? autocompleteValues.join(' ') : getAutocompleteValue(callbackPrompt),
             validationImmediate: !!errors.length,
             ...(validation && { validation }),
             ...(isOtp && { inputmode: 'numeric' }),

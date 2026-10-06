@@ -1,10 +1,11 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { get, isString } from 'lodash';
 import i18n from '@/i18n';
 
 const overridePrefix = 'overrides';
@@ -18,6 +19,54 @@ const overridePrefix = 'overrides';
  */
 export function translationExists(path) {
   return i18n.global.t(path) !== path;
+}
+
+/**
+ * Resolve a journey callback's display label from the localized attribute map
+ * (`common.policyValidationMessages.attributes.<name>`), excluding English
+ * locales (including regional variants like en-GB) so English always shows the
+ * prompt. Falls back to the prompt when the callback has no usable name or no
+ * locale in the chain holds the entry.
+ *
+ * @param {Object} callback journey step callback (e.g. AttributeInputCallback)
+ * @param {String} [callbackPrompt] pre-resolved callback prompt; resolved from the callback when omitted
+ * @returns {String} localized attribute label or the callback prompt
+ */
+export function getLocalizedFieldLabel(callback, callbackPrompt) {
+  try {
+    let resolvedPrompt = callbackPrompt;
+    if (resolvedPrompt === undefined) {
+      resolvedPrompt = '';
+      if (callback.getPrompt) {
+        resolvedPrompt = callback.getPrompt();
+      } else if (callback.getOutputByName) {
+        resolvedPrompt = callback.getOutputByName('prompt', '');
+      }
+    }
+
+    const name = callback.getName ? callback.getName() : '';
+    if (!isString(name) || !name.length) {
+      return resolvedPrompt;
+    }
+
+    const { locale, fallbackLocale } = i18n.global;
+    const fallbackLocales = Array.isArray(fallbackLocale) ? fallbackLocale : [fallbackLocale];
+    const candidateLocales = [locale, ...fallbackLocales]
+      .filter((candidate, index, candidates) => candidate && candidates.indexOf(candidate) === index)
+      .filter((candidate) => candidate.split('-')[0] !== 'en');
+
+    for (let index = 0; index < candidateLocales.length; index += 1) {
+      const candidate = candidateLocales[index];
+      const value = get(i18n.global.getLocaleMessage(candidate), `common.policyValidationMessages.attributes.${name}`);
+      if (isString(value) && value.length) {
+        return value;
+      }
+    }
+
+    return resolvedPrompt;
+  } catch (e) {
+    return callback && callback.getPrompt ? callback.getPrompt() : '';
+  }
 }
 
 /**

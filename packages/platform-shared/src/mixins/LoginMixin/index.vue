@@ -9,6 +9,7 @@ import {
 import { callbackType, PingOneRecognizeCallback } from '@forgerock/journey-client';
 import { WebAuthn, WebAuthnStepType } from '@forgerock/journey-client/webauthn';
 import createRealmPath from '../../utils/createRealmPath';
+import { getLocalizedFieldLabel } from '../../utils/translations';
 import NotificationMixin from '../NotificationMixin';
 
 export const FrCallbackType = {
@@ -156,7 +157,10 @@ export function getTranslatedPolicyFailures(callback) {
 }
 
 /**
- * @description gets field information to show when rendering login forms
+ * @description gets field information to show when rendering login forms.
+ * The label is localized via getLocalizedFieldLabel (non-English locales) and
+ * the raw callback prompt is returned alongside it as `callbackPrompt` for
+ * callers needing the English text (e.g. autocomplete matching).
  * @param {Object} callback specific step callback
  * @param {Object} index callback index
  * @returns {Object} field props needed for Field component
@@ -188,8 +192,13 @@ export function getField(callback, index) {
       noop();
     }
   }
+  const callbackPrompt = label;
+  if (callback.getName) {
+    label = getLocalizedFieldLabel(callback, callbackPrompt);
+  }
   return {
     label,
+    callbackPrompt,
     fieldType,
     name: `callback_${index}`,
     value: callback.getInputValue(),

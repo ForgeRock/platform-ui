@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,6 +13,7 @@ import {
   isTranslationKey,
   getTranslation,
   getEnumTranslation,
+  getLocalizedFieldLabel,
 } from './translations';
 import * as i18n from '@/i18n';
 
@@ -183,6 +184,143 @@ describe('translation util', () => {
     it('returns translated values if the text is a translation key', () => {
       setupUiLocaleMock();
       expect(getTranslation('overrides.testkey')).toBe('test value');
+    });
+  });
+
+  describe('getLocalizedFieldLabel function', () => {
+    const attributesMail = {
+      common: {
+        policyValidationMessages: {
+          attributes: {
+            mail: 'E-Mail-Adresse',
+          },
+        },
+      },
+    };
+
+    function setupI18n(mockData) {
+      i18n.default = createI18n({
+        silentFallbackWarn: true,
+        silentTranslationWarn: true,
+        ...mockData,
+      });
+    }
+
+    it('resolves the localized attribute label for a non-English locale', () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': attributesMail,
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = { getName: () => 'mail', getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('E-Mail-Adresse');
+    });
+
+    it('resolves through the fallback chain without consulting English', () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': {},
+          de: attributesMail,
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = { getName: () => 'mail', getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('E-Mail-Adresse');
+    });
+
+    it('returns the prompt for the English locale even when the en attributes map has an entry', () => {
+      setupI18n({
+        locale: 'en',
+        fallbackLocale: 'en',
+        messages: {
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = { getName: () => 'mail', getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('Email Address');
+    });
+
+    it('returns the prompt for an English regional variant even when that variant has an attributes entry', () => {
+      setupI18n({
+        locale: 'en-GB',
+        fallbackLocale: ['en'],
+        messages: {
+          'en-GB': { common: { policyValidationMessages: { attributes: { mail: 'Email address' } } } },
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = { getName: () => 'mail', getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('Email Address');
+    });
+
+    it('returns the prompt when no non-English locale in the chain has the attributes entry', () => {
+      setupI18n({
+        locale: 'cs',
+        fallbackLocale: ['en'],
+        messages: {
+          cs: {},
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = { getName: () => 'mail', getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('Email Address');
+    });
+
+    it('returns the prompt when the callback has no getName method', () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': attributesMail,
+        },
+      });
+      const callback = { getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('Email Address');
+    });
+
+    it('returns the prompt when getName returns an empty string', () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': attributesMail,
+        },
+      });
+      const callback = { getName: () => '', getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('Email Address');
+    });
+
+    it('derives the prompt from getOutputByName when getPrompt is absent', () => {
+      setupI18n({
+        locale: 'en',
+        messages: {
+          en: attributesMail,
+        },
+      });
+      const callback = { getName: () => 'mail', getOutputByName: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('Email Address');
+    });
+
+    it('does not throw when the i18n instance has no fallback locale config or messages', () => {
+      setupI18n({
+        locale: 'de-DE',
+        messages: {},
+      });
+      const callback = { getName: () => 'mail', getPrompt: () => 'Email Address' };
+      expect(getLocalizedFieldLabel(callback)).toBe('Email Address');
+    });
+
+    it('returns the prompt when the callback is missing entirely rather than throwing', () => {
+      setupI18n({
+        locale: 'de-DE',
+        messages: {},
+      });
+      expect(getLocalizedFieldLabel(null)).toBe('');
     });
   });
 

@@ -7,7 +7,9 @@
 
 import { shallowMount } from '@vue/test-utils';
 import axios from 'axios';
+import { createI18n } from 'vue-i18n';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import * as i18n from '@/i18n';
 import LoginMixin from './index';
 
 let wrapper;
@@ -293,6 +295,185 @@ describe('LoginMixin', () => {
         expect(props.callbackSpecificProps.operationID).toBeUndefined();
         expect(props.callbackSpecificProps.seedEntropy).toBe(false);
       });
+    });
+  });
+
+  describe('getField', () => {
+    const attributesMail = {
+      common: {
+        policyValidationMessages: {
+          attributes: {
+            mail: 'E-Mail-Adresse',
+          },
+        },
+      },
+    };
+
+    // Snapshot the real app instance before any test swaps the module's
+    // `default` export, so the afterEach restore below is not a self-assignment.
+    const realI18n = i18n;
+
+    function setupI18n(mockData) {
+      i18n.default = createI18n({
+        silentFallbackWarn: true,
+        silentTranslationWarn: true,
+        ...mockData,
+      });
+    }
+
+    function attributeInputCallbackStub({ name = 'mail', prompt = 'Email Address', value = '' } = {}) {
+      return {
+        getType: jest.fn().mockReturnValue('StringAttributeInputCallback'),
+        getName: jest.fn().mockReturnValue(name),
+        getPrompt: jest.fn().mockReturnValue(prompt),
+        getInputValue: jest.fn().mockReturnValue(value),
+        getOutputByName: jest.fn().mockReturnValue(''),
+      };
+    }
+
+    function nameCallbackStub({ prompt = 'User Name', value = '' } = {}) {
+      return {
+        getType: jest.fn().mockReturnValue('NameCallback'),
+        getPrompt: jest.fn().mockReturnValue(prompt),
+        getInputValue: jest.fn().mockReturnValue(value),
+        getOutputByName: jest.fn().mockReturnValue(''),
+      };
+    }
+
+    afterEach(() => {
+      // Restore the snapshotted real app instance so other suites are unaffected
+      i18n.default = realI18n;
+    });
+
+    it('resolves the label from the localized attributes map for a non-English locale and returns the raw prompt separately', () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': attributesMail,
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = attributeInputCallbackStub();
+
+      expect(wrapper.vm.getField(callback, 0)).toEqual({
+        label: 'E-Mail-Adresse',
+        callbackPrompt: 'Email Address',
+        fieldType: 'string',
+        name: 'callback_0',
+        value: '',
+        defaultText: '',
+      });
+    });
+
+    it('returns the prompt as the label for the English locale, bit-identical to the pre-change output', () => {
+      setupI18n({
+        locale: 'en',
+        fallbackLocale: 'en',
+        messages: {
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = attributeInputCallbackStub();
+
+      expect(wrapper.vm.getField(callback, 2)).toEqual({
+        label: 'Email Address',
+        callbackPrompt: 'Email Address',
+        fieldType: 'string',
+        name: 'callback_2',
+        value: '',
+        defaultText: '',
+      });
+    });
+
+    it('returns the prompt as the label when no non-English locale in the chain has the attributes entry', () => {
+      setupI18n({
+        locale: 'cs',
+        fallbackLocale: ['en'],
+        messages: {
+          cs: {},
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = attributeInputCallbackStub();
+
+      expect(wrapper.vm.getField(callback, 0).label).toBe('Email Address');
+    });
+
+    it('returns the prompt as the label for a callback without getName, in a non-English locale', () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': attributesMail,
+        },
+      });
+      const callback = nameCallbackStub();
+
+      const field = wrapper.vm.getField(callback, 1);
+      expect(field.label).toBe('User Name');
+      expect(field.callbackPrompt).toBe('User Name');
+      expect(field.fieldType).toBe('string');
+    });
+
+    it('returns the prompt as the label for a callback without getName in the English locale', () => {
+      setupI18n({
+        locale: 'en',
+        messages: {
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+      const callback = nameCallbackStub();
+
+      const field = wrapper.vm.getField(callback, 1);
+      expect(field.label).toBe('User Name');
+      expect(field.callbackPrompt).toBe('User Name');
+    });
+
+    it('derives the label from getOutputByName when getPrompt is absent, without consulting the localized attributes map', () => {
+      // The { value } wrapper models the pre-journey-client output shape the
+      // legacy getField branch reads via .value; the current SDK's
+      // getOutputByName returns the unwrapped value (see translations.js).
+      // Do not "fix" translations.js to match this mock.
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': attributesMail,
+        },
+      });
+      const callback = {
+        getType: jest.fn().mockReturnValue('NameCallback'),
+        getInputValue: jest.fn().mockReturnValue(''),
+        getOutputByName: jest.fn().mockImplementation((outputName) => {
+          if (outputName === 'prompt') {
+            return { value: 'Email Address' };
+          }
+          return '';
+        }),
+      };
+
+      const field = wrapper.vm.getField(callback, 0);
+      expect(field.label).toBe('Email Address');
+      expect(field.callbackPrompt).toBe('Email Address');
+    });
+
+    it('sets fieldType to password for a PasswordCallback and number for a NumberAttributeInputCallback', () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': attributesMail,
+        },
+      });
+
+      const passwordCallback = nameCallbackStub({ prompt: 'Password' });
+      passwordCallback.getType = jest.fn().mockReturnValue('PasswordCallback');
+      expect(wrapper.vm.getField(passwordCallback, 0).fieldType).toBe('password');
+
+      const numberCallback = attributeInputCallbackStub({ name: 'phone', prompt: 'Phone Number' });
+      numberCallback.getType = jest.fn().mockReturnValue('NumberAttributeInputCallback');
+      expect(wrapper.vm.getField(numberCallback, 1).fieldType).toBe('number');
     });
   });
 });

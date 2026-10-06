@@ -13,13 +13,15 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
 import { createTestingPinia } from '@pinia/testing';
+import { createI18n } from 'vue-i18n';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { createJourneyStep as rehydrateStep } from '@forgerock/journey-client/_utils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { stringify } from '@forgerock/sdk-utilities';
 import { WebAuthn, WebAuthnStepType } from '@forgerock/journey-client/webauthn';
-import i18n from '@/i18n';
+import i18n, * as i18nModule from '@/i18n';
 import * as urlUtil from '../../utils/urlUtil';
 import { getAlternateFieldType } from '../../utils/loginUtils';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
@@ -2220,13 +2222,16 @@ describe('Component Test', () => {
     description: 'New here? <a href="#/service/Registration">Create an account</a><br><a href="#/service/ForgottenUsername">Forgot username?</a><a href="#/service/ResetPassword"> Forgot password?</a>',
   };
 
-  const mountLogin = async (overrideData = {}, props = {}) => {
+  const mountLogin = async (overrideData = {}, props = {}, options = {}) => {
     const wrapper = mount(Login, {
       global: {
         plugins: [createTestingPinia()],
         stubs: {
           'router-link': true,
-          FrField: true,
+          // FrField is stubbed by default (most suites assert on componentList
+          // props, not the rendered field); the rendered-field tests un-stub
+          // it to exercise the real FrField → BasicInput → InputLayout stack.
+          ...(options.stubFrField === false ? {} : { FrField: true }),
           FrPasswordCallback: true,
         },
         mocks: {
@@ -2542,6 +2547,240 @@ describe('Component Test', () => {
       expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).label).toBe(`Nom d’utilisateur${asteriskMarkup}`);
       expect(translationSpy).toHaveBeenCalledWith('User Name');
       translationSpy.mockRestore();
+    });
+  });
+
+  describe('buildTreeForm autocomplete and label sources', () => {
+    const mailCallbackPayload = {
+      authId: 'eyxQ',
+      callbacks: [
+        {
+          type: 'StringAttributeInputCallback',
+          output: [
+            { name: 'name', value: 'mail' },
+            { name: 'prompt', value: 'Email Address' },
+            { name: 'required', value: false },
+            { name: 'policies', value: { policyRequirements: [], policies: [] } },
+            { name: 'failedPolicies', value: [] },
+            { name: 'validateOnly', value: false },
+            { name: 'value', value: '' },
+          ],
+          input: [{ name: 'IDToken1', value: '' }],
+          _id: 0,
+        },
+      ],
+      header: 'Sign In',
+    };
+
+    // Snapshot the real app instance at describe scope, before any test can
+    // swap the module's `default` export: the default import `i18n` compiles
+    // to a live read of the namespace's `default` slot, so referencing it
+    // after a swap (e.g. `i18nModule.default = i18n`) would read back the mock
+    // and make the afterEach restore a self-assignment no-op.
+    const realI18n = i18n;
+
+    function setupI18n(mockData) {
+      // Swap the module's `default` export via its namespace object; a plain
+      // `i18n.default = ...` on the default import would only set a property
+      // on the instance object, not rebind the export other modules read.
+      i18nModule.default = createI18n({
+        silentFallbackWarn: true,
+        silentTranslationWarn: true,
+        ...mockData,
+      });
+    }
+
+    beforeEach(() => {
+      // Self-contained mount support: the shared getConfigurationInfo spy is
+      // normally leaked into this range by the "Loads login callback
+      // components" describe above; set it here so these tests also pass
+      // when run in isolation (-t).
+      jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
+    });
+
+    afterEach(() => {
+      // Restore the snapshotted real app instance so later suites in this
+      // file (e.g. "Theming and callbacks", which plugin the real i18n) see
+      // it. Must use the snapshot, not the `i18n` binding: by afterEach time
+      // that binding reads the already-swapped module slot.
+      i18nModule.default = realI18n;
+    });
+
+    it('derives autocomplete from the English prompt while the label is localized', async () => {
+      setupI18n({
+        locale: 'de-DE',
+        fallbackLocale: ['de', 'en'],
+        messages: {
+          'de-DE': { common: { policyValidationMessages: { attributes: { mail: 'E-Mail-Adresse' } } } },
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+
+      const wrapper = await mountLogin({ loading: true, step: rehydrateStep(mailCallbackPayload) });
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      const field = wrapper.vm.componentList[0];
+      expect(field.callbackSpecificProps.label).toBe('E-Mail-Adresse');
+      expect(field.callbackSpecificProps.autocomplete).toBe('email');
+    });
+
+    it('derives autocomplete and label from the prompt for the English locale', async () => {
+      setupI18n({
+        locale: 'en',
+        fallbackLocale: 'en',
+        messages: {
+          en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+        },
+      });
+
+      const wrapper = await mountLogin({ loading: true, step: rehydrateStep(mailCallbackPayload) });
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      const field = wrapper.vm.componentList[0];
+      expect(field.callbackSpecificProps.label).toBe('Email Address');
+      expect(field.callbackSpecificProps.autocomplete).toBe('email');
+    });
+
+    // The resolved label must flow unchanged through the real
+    // FrField → BasicInput → InputLayout stack onto the visible <label>,
+    // data-vv-as, and vee-validate's {_field_} error interpolation.
+    describe('rendered field stack (label, data-vv-as, {_field_} interpolation)', () => {
+      let wrapper;
+
+      const requiredMailCallbackPayload = {
+        ...mailCallbackPayload,
+        callbacks: [
+          {
+            ...mailCallbackPayload.callbacks[0],
+            output: [
+              { name: 'name', value: 'mail' },
+              { name: 'prompt', value: 'Email Address' },
+              { name: 'required', value: false },
+              {
+                name: 'policies',
+                value: {
+                  policyRequirements: ['REQUIRED'],
+                  policies: [{ policyId: 'required', policyRequirements: ['REQUIRED'] }],
+                },
+              },
+              { name: 'failedPolicies', value: [] },
+              { name: 'validateOnly', value: false },
+              { name: 'value', value: '' },
+            ],
+          },
+        ],
+      };
+
+      const mountAndRender = async (i18nSeed) => {
+        setupI18n(i18nSeed);
+        // Register the production rule set so the `required` rule interpolates
+        // {_field_} through GENERIC_FIELD_REQUIRED, exactly as App.vue does.
+        // This mutates the global vee-validate registry; the describe's
+        // afterEach restores the stub rules so later suites are unaffected.
+        ValidationRules.extendRules(ValidationRules.getRules(i18nModule.default));
+
+        wrapper = await mountLogin(
+          { loading: true, step: rehydrateStep(requiredMailCallbackPayload) },
+          {},
+          { stubFrField: false },
+        );
+        wrapper.vm.buildTreeForm();
+        await flushPromises();
+        // buildTreeForm must run with loading: true (it reads componentList[i]
+        // to update keys when not loading); loading false afterwards lets the
+        // template render the callbacks panel with the built componentList.
+        await wrapper.setData({ loading: false });
+        await flushPromises();
+        return wrapper;
+      };
+
+      const renderedField = (fieldWrapper) => {
+        const input = fieldWrapper.find('input[data-vv-as]');
+        const label = fieldWrapper.find('label');
+        return { input, label };
+      };
+
+      // The error element only renders after a failing validation, so it must
+      // be looked up after the blur (the testid's fieldName is the input's
+      // `name` attribute — both are the `name` prop, `callback_<index>`).
+      const firstValidationError = (fieldWrapper, input) => fieldWrapper
+        .find(`[data-testid="${input.attributes('name')}-validation-error-0"]`);
+
+      afterEach(() => {
+        // Restore the module-level stub rules: extendRules above replaced the
+        // global `required` rule with one bound to the mock i18n instance.
+        defineRule('required', (value) => required(value) || 'required');
+        defineRule('email', (value) => email(value) || 'email should be valid');
+        if (wrapper) {
+          wrapper.unmount();
+          wrapper = undefined;
+        }
+      });
+
+      it('renders the localized label on the visible label, data-vv-as, and the {_field_} error interpolation for a non-English locale', async () => {
+        const fieldWrapper = await mountAndRender({
+          locale: 'de-DE',
+          fallbackLocale: ['de', 'en'],
+          messages: {
+            'de-DE': {
+              common: {
+                policyValidationMessages: {
+                  attributes: { mail: 'E-Mail-Adresse' },
+                  GENERIC_FIELD_REQUIRED: '{_field_} ist erforderlich',
+                },
+              },
+            },
+            en: { common: { policyValidationMessages: { attributes: { mail: 'Email' } } } },
+          },
+        });
+
+        const { input, label } = renderedField(fieldWrapper);
+
+        expect(fieldWrapper.vm.componentList[0].callbackSpecificProps.label).toBe('E-Mail-Adresse');
+        expect(label.text()).toBe('E-Mail-Adresse');
+        expect(input.attributes('data-vv-as')).toBe('E-Mail-Adresse');
+
+        // Blur the empty field to trigger the required rule and its {_field_}
+        // interpolation (the Jira repro: blur empty field on a localized tenant).
+        await input.trigger('blur');
+        await flushPromises();
+
+        const firstError = firstValidationError(fieldWrapper, input);
+        expect(firstError.exists()).toBe(true);
+        expect(firstError.text()).toBe('E-Mail-Adresse ist erforderlich');
+      });
+
+      it('renders the prompt verbatim on all surfaces for the English locale, bit-identical to pre-change output', async () => {
+        const fieldWrapper = await mountAndRender({
+          locale: 'en',
+          fallbackLocale: 'en',
+          messages: {
+            en: {
+              common: {
+                policyValidationMessages: {
+                  attributes: { mail: 'Email' },
+                  GENERIC_FIELD_REQUIRED: '{_field_} is required',
+                },
+              },
+            },
+          },
+        });
+
+        const { input, label } = renderedField(fieldWrapper);
+
+        expect(fieldWrapper.vm.componentList[0].callbackSpecificProps.label).toBe('Email Address');
+        expect(label.text()).toBe('Email Address');
+        expect(input.attributes('data-vv-as')).toBe('Email Address');
+
+        await input.trigger('blur');
+        await flushPromises();
+
+        const firstError = firstValidationError(fieldWrapper, input);
+        expect(firstError.exists()).toBe(true);
+        expect(firstError.text()).toBe('Email Address is required');
+      });
     });
   });
 
