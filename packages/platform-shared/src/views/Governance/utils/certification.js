@@ -236,7 +236,7 @@ export function buildSavePayload(type, forms, eventBased) {
       saveObj.targetFilter.entitlement = entitlementFilter;
     }
 
-    if (what.enableRoleGrant) {
+    if (what.enableRoleGrant || what.enableRoleCompositionGrant) {
       saveObj.targetFilter.role = roleFilter;
     }
 
@@ -543,7 +543,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
   let roleFilter = {};
   let roleSelection = i18n.global.t('governance.editTemplate.allRoles');
 
-  if (!isEqual(template.targetFilter.role, getAllFilter())) {
+  if (template.targetFilter.role !== undefined && !isEqual(template.targetFilter.role, getAllFilter())) {
     roleSelection = i18n.global.t('governance.editTemplate.filterRoles');
     roleFilter = template.targetFilter.role;
   }

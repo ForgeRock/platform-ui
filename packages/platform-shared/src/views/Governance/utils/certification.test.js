@@ -661,6 +661,17 @@ describe('certification', () => {
       expect(form.FrNotifications.expirationEmail).toBeUndefined();
       expect(form.FrNotifications.expirationTiming).toBe(EXPIRATION_TIMING.WHEN);
     });
+
+    it('should default to all roles for a role composition template with no saved role filter', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.certificationType = 'roleComposition';
+      template.targetFilter.type = ['role'];
+      delete template.targetFilter.role;
+
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrWhat.roleSelection).toBe('All roles');
+      expect(form.FrWhat.roleFilter).toEqual({});
+    });
   });
 
   describe('buildSavePayload', () => {
@@ -818,6 +829,26 @@ describe('certification', () => {
 
       expect(savePayload.uiConfig.columnConfig).toEqual({
         roleComposition: ['prop1'],
+      });
+    });
+
+    it('saves the role filter for role composition templates', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrCustomization = {
+        columnConfig: {
+          roleComposition: ['role.role'],
+        },
+      };
+      forms.FrWhat = {
+        enableRoleCompositionGrant: true,
+        roleSelection: 'Roles matching a filter',
+        roleFilter: { operator: 'AND', subfilters: [{ field: 'name', operator: 'EQUALS', value: 'testRole' }] },
+      };
+
+      const savePayload = buildSavePayload('roleComposition', forms);
+      expect(savePayload.targetFilter.role).toEqual({
+        operator: 'AND',
+        operand: [{ operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'testRole' } }],
       });
     });
 
