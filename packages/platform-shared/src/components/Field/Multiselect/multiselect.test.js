@@ -6,9 +6,12 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import i18n from '@/i18n';
 import MultiSelect from './index';
 import { findByTestId, runA11yTest } from '../../../utils/testHelpers';
+
+mockValidation(['required']);
 
 describe('Multiselect', () => {
   const defaultProps = {
@@ -35,6 +38,55 @@ describe('Multiselect', () => {
       const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
       expect(multiselectInput.attributes('aria-expanded')).toBe('false');
       expect(multiselectInput.attributes('aria-labelledby')).toBe('floatingLabelInput1-label');
+    });
+
+    it('associates the description with the combobox input via aria-describedby', () => {
+      const wrapper = setup({ id: 'stub-id', description: 'Add a maximum of 10 users.' });
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
+      expect(multiselectInput.attributes('aria-describedby')).toBe('stub-id_helpText');
+      expect(wrapper.find('#stub-id_helpText').text()).toBe('Add a maximum of 10 users.');
+    });
+
+    it('associates a validation error with the combobox input via aria-describedby', async () => {
+      const wrapper = setup({
+        id: 'stub-id',
+        validation: 'required',
+        validationImmediate: true,
+      });
+      await flushPromises();
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
+      expect(multiselectInput.attributes('aria-describedby')).toBe('stub-name0-error');
+      expect(multiselectInput.attributes('aria-invalid')).toBe('true');
+    });
+
+    it('composes the error and description ids when both are present', async () => {
+      const wrapper = setup({
+        id: 'stub-id',
+        description: 'Add a maximum of 10 users.',
+        validation: 'required',
+        validationImmediate: true,
+      });
+      await flushPromises();
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
+      expect(multiselectInput.attributes('aria-describedby')).toBe('stub-name0-error stub-id_helpText');
+    });
+
+    it('does not bind aria-describedby or aria-invalid when there is no description, error, or interaction', () => {
+      const wrapper = setup();
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
+      expect(multiselectInput.attributes('aria-describedby')).toBeUndefined();
+      expect(multiselectInput.attributes('aria-invalid')).toBeUndefined();
+    });
+
+    it('uses the describedbyId prop as aria-describedby when there is no description or error', () => {
+      const wrapper = setup({ describedbyId: 'external-description' });
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
+      expect(multiselectInput.attributes('aria-describedby')).toBe('external-description');
     });
   });
 

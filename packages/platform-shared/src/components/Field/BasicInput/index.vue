@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is-html="isHtml"
       :label="label"
       :class="{ 'has-prepend-btn': hasPrependBtn }">
-      <template #default="{ labelHeight }">
+      <template #default="{ labelHeight, helpTextId }">
         <!--
           slot scoped variable labelHeight is used to change the height of the input as follows:
           - the label height is calculated as labelHeight + 2px (border of label)
@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
           :style="labelHeight && {height: `${labelHeight}px`, 'padding-top': `${labelHeight - 27}px`}"
           @input="removeNonNumericChars($event)"
           :autocomplete="$attrs.autocomplete"
-          :aria-describedby="ariaDescribedBy"
+          :aria-describedby="ariaDescribedBy(helpTextId)"
           :aria-required="isRequiredAria"
           :aria-invalid="isAriaInvalid"
           @animationstart="floatingLabel && animationStart"
@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
           :autocomplete="$attrs.autocomplete"
           :inputmode="$attrs.inputmode"
           :style="labelHeight && {height: `${labelHeight}px`, 'padding-top': `${labelHeight - 27}px`}"
-          :aria-describedby="ariaDescribedBy"
+          :aria-describedby="ariaDescribedBy(helpTextId)"
           :aria-required="isRequiredAria"
           :aria-invalid="isAriaInvalid"
           :maxlength="$attrs.maxlength"
@@ -184,13 +184,6 @@ export default {
       default: '',
     },
     /**
-     * Id of describeBy element
-     */
-    describedbyId: {
-      type: String,
-      default: '',
-    },
-    /**
      * When true will show the value of a password as text instead of it being hidden
      */
     forceShowPassword: {
@@ -203,13 +196,6 @@ export default {
     inputClass: {
       type: String,
       default: '',
-    },
-    /**
-    *  Sets aria-invalid as the value provided
-     */
-    ariaInvalid: {
-      type: Boolean,
-      default: false,
     },
     /**
      * For number fields, emit `null` (instead of `''`) when the input is cleared,
@@ -325,21 +311,6 @@ export default {
       }
       return inputClasses;
     },
-    /**
-     * Returns the ids of the elements describing this field for the input's `aria-describedby` attribute.
-     * Error ids are only included while the field is focused or when `validationImmediate` is true or when errors.length is true;
-     * otherwise falls back to the `describedbyId` prop (or undefined if that is empty).
-     */
-    ariaDescribedBy() {
-      if (
-        (!this.isFocused && !this.validationImmediate && !this.errors.length)
-        || (this.meta.valid && !this.errors.length)
-        || !this.fieldErrors
-        || !this.combinedErrors
-      ) return this.describedbyId || undefined;
-
-      return createAriaDescribedByList(this.name, this.combinedErrors);
-    },
     combinedErrors() {
       return uniq(this.errors.concat(this.fieldErrors));
     },
@@ -367,6 +338,26 @@ export default {
     },
   },
   methods: {
+    /**
+     * Returns the ids of the elements describing this field for the input's `aria-describedby` attribute.
+     * Error ids are only included while the field is focused or when `validationImmediate` is true or when errors.length is true;
+     * otherwise falls back to the `describedbyId` prop and the id of the rendered help text (when a description exists),
+     * composed together as `aria-describedby` accepts multiple ids — neither external target nor rendered description is dropped.
+     *
+     * @param {String} helpTextId - id of the description rendered by InputLayout, passed through the default slot scope
+     */
+    ariaDescribedBy(helpTextId) {
+      const describedBy = [this.describedbyId, helpTextId].filter(Boolean).join(' ') || undefined;
+      if (
+        (!this.isFocused && !this.validationImmediate && !this.errors.length)
+        || (this.meta.valid && !this.errors.length)
+        || !this.fieldErrors
+        || !this.combinedErrors
+      ) return describedBy;
+
+      const errorIds = createAriaDescribedByList(this.name, this.combinedErrors);
+      return [errorIds, describedBy].filter(Boolean).join(' ') || undefined;
+    },
     /**
      * Handles the focus event on the input element.
      * Sets isFocused to true, emits a focused event to the parent,

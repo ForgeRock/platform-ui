@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -132,5 +132,64 @@ describe('InputLayout', () => {
     const asterisk = wrapper.find('label span[aria-hidden="true"]');
     expect(asterisk.exists()).toBe(false);
     expect(wrapper.find('label').text()).toContain('Username <span aria-hidden="true">*</span>');
+  });
+
+  it('InputLayout exposes helpTextId slot prop and ids the description when there is one', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        id: 'justification',
+        description: 'Help text',
+      },
+      slots: {
+        default: '<template #default="{ helpTextId }"><span class="test_default" :aria-describedby="helpTextId">default</span></template>',
+      },
+      global: {
+        mocks: { $t: (id) => id },
+      },
+    });
+
+    const slotContent = wrapper.find('.test_default');
+    expect(slotContent.attributes('aria-describedby')).toBe('justification_helpText');
+    expect(wrapper.find('small#justification_helpText').exists()).toBe(true);
+  });
+
+  it('InputLayout helpTextId slot prop is undefined without a description', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        id: 'justification',
+      },
+      slots: {
+        default: '<template #default="{ helpTextId }"><span class="test_default" :aria-describedby="helpTextId">default</span></template>',
+      },
+      global: {
+        mocks: { $t: (id) => id },
+      },
+    });
+
+    // No description: no aria-describedby attribute should be bound at all
+    expect(wrapper.find('.test_default').attributes('aria-describedby')).toBeUndefined();
+  });
+
+  it('InputLayout exposes helpTextId slot prop on the non-floating-label branch', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        id: 'justification',
+        description: 'Help text',
+        floatingLabel: false,
+      },
+      slots: {
+        default: '<template #default="{ helpTextId }"><span class="test_default" :aria-describedby="helpTextId">default</span></template>',
+      },
+      global: {
+        mocks: { $t: (id) => id },
+      },
+    });
+
+    expect(wrapper.find('.floating-label').exists()).toBe(false);
+    expect(wrapper.find('.test_default').attributes('aria-describedby')).toBe('justification_helpText');
+    expect(wrapper.find('small#justification_helpText').exists()).toBe(true);
   });
 });

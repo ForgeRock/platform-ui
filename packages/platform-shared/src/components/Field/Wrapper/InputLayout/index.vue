@@ -28,7 +28,8 @@ of the MIT license. See the LICENSE file for details. -->
         </label>
         <slot
           :label-height="labelHeight"
-          :label-id="labelId" />
+          :label-id="labelId"
+          :help-text-id="helpTextId" />
       </div>
       <div
         v-else
@@ -46,7 +47,9 @@ of the MIT license. See the LICENSE file for details. -->
           class="pe-none overflow-hidden text-nowrap">
           {{ labelTranslation }}
         </label>
-        <slot :label-id="labelId" />
+        <slot
+          :label-id="labelId"
+          :help-text-id="helpTextId" />
       </div>
       <span
         class="d-flex input-buttons"
@@ -82,12 +85,12 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-if="description">
       <small
         v-if="isHtml"
-        :id="`${id}_helpText`"
+        :id="helpTextId"
         v-html="descriptionTranslation"
         class="form-text text-muted text-break" />
       <small
         v-else
-        :id="`${id}_helpText`"
+        :id="helpTextId"
         class="form-text text-muted text-break">
         {{ descriptionTranslation }}
       </small>
@@ -210,11 +213,18 @@ export default {
     };
   },
   computed: {
-    labelTranslation() {
-      return getTranslation(this.label);
-    },
     descriptionTranslation() {
       return getTranslation(this.description);
+    },
+    /**
+     * Compute the help text element ID when description exists otherwise return undefined
+     * to avoid binding aria-describedby attribute.
+     */
+    helpTextId() {
+      return this.description ? `${this.id}_helpText` : undefined;
+    },
+    labelTranslation() {
+      return getTranslation(this.label);
     },
   },
 };

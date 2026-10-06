@@ -391,4 +391,93 @@ describe('GovResourceList', () => {
       expect(announcer.props('count')).toBe(7);
     });
   });
+
+  describe('search constraint hint association', () => {
+    const hintColumns = [
+      {
+        key: 'name',
+        label: i18n.global.t('common.name'),
+        sortable: false,
+      },
+      {
+        key: 'email',
+        label: i18n.global.t('common.email'),
+        sortable: false,
+      },
+    ];
+
+    const mountWithThreshold = (resourceFunction = jest.fn().mockResolvedValue({ data: { result: [], totalCount: 0 } })) => mountComponent({
+      // 'entitlement' avoids the user-resource path in loadData that fetches user
+      // permissions through an un-mocked Axios instance; the hint logic is
+      // resource-agnostic.
+      resource: 'entitlement',
+      resourceFunction,
+      queryThreshold: 3,
+      columns: hintColumns,
+    });
+
+    it('renders the search hint with a unique id, no live region, and no role on the hint itself', () => {
+      wrapper = mountWithThreshold();
+
+      const hint = wrapper.find('small[id^="fr-search-help-"]');
+      expect(hint.exists()).toBe(true);
+      // The hint is the input's aria-describedby target and is read on focus; a live region
+      // on the same element would announce the identical text a second time on focus.
+      expect(hint.attributes('aria-live')).toBeUndefined();
+      // The former role="searchbox" on the hint was intentionally removed — it exposed
+      // the hint as a phantom textbox and suppressed the describedby resolution.
+      expect(hint.attributes('role')).toBeUndefined();
+    });
+
+    it('populates the hint even while the field is unfocused so the description resolves', () => {
+      wrapper = mountWithThreshold();
+
+      const hint = wrapper.find('small[id^="fr-search-help-"]');
+      // Below threshold, unfocused: the constraint applies and must be described.
+      expect(hint.text()).toBe('Type at least 3 characters');
+    });
+
+    it('passes the hint id to the search input as aria-describedby', async () => {
+      wrapper = mountWithThreshold();
+
+      const searchInput = wrapper.find('input[type="search"]');
+      const hint = wrapper.find('small[id^="fr-search-help-"]');
+      await searchInput.trigger('focus');
+      await flushPromises();
+
+      expect(searchInput.attributes('aria-describedby')).toBe(hint.attributes('id'));
+      expect(hint.text()).toContain('Type at least 3 characters');
+    });
+
+    it('announces the state transition from constraint to press-enter through the sr-only live region while typing', async () => {
+      wrapper = mountWithThreshold();
+
+      const searchInput = wrapper.find('input[type="search"]');
+      await searchInput.trigger('focus');
+      await flushPromises();
+
+      // Below threshold: live region stays empty on focus (no duplicate of the hint)
+      const liveRegion = wrapper.find('span[aria-live="polite"]');
+      expect(liveRegion.exists()).toBe(true);
+      expect(liveRegion.text()).toBe('');
+
+      // Crossing the threshold while typing announces the new state through the live region
+      await searchInput.setValue('tes');
+      await flushPromises();
+      expect(liveRegion.text()).toContain('Press Enter');
+      // At/above threshold while still focused, "Press Enter" remains as the hint
+      expect(wrapper.find('small[id^="fr-search-help-"]').text()).toContain('Press Enter');
+
+      // Blur the field: "Press Enter" is transient (focus-scoped) and clears, while the
+      // value still satisfies the threshold
+      await searchInput.trigger('blur');
+      await flushPromises();
+      expect(wrapper.find('small[id^="fr-search-help-"]').text()).toBe('');
+
+      // Dropping back below the threshold announces the constraint again
+      await searchInput.setValue('t');
+      await flushPromises();
+      expect(liveRegion.text()).toContain('Type at least 3 characters');
+    });
+  });
 });

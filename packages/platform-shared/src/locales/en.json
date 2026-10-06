@@ -1192,7 +1192,7 @@
         "noFields": "No profile fields available",
         "profileImageModal": {
           "title": "Update Profile Picture",
-          "formHelp": "Enter a URL where your profile picture is hosted (eg. http://mysite.com/img/profile.jpg).",
+          "formHelp": "Enter a URL where your profile picture is hosted (e.g. https://mysite.com/img/profile.jpg).",
           "imageHelp": "The image should be either png or jpg format and should have an aspect ratio of 1:1 (meaning the width and height should be equal), otherwise image aspect distortion will occur.",
           "aspectHelp": "The image will be scaled up or down to fit within the avatar's bounding box.",
           "profileImageUrl": "Profile Image URL",

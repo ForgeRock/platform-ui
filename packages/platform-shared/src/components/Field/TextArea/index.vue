@@ -14,29 +14,33 @@ of the MIT license. See the LICENSE file for details. -->
     :current-length="inputValue?.length"
     :max-length="maxLength"
     :floating-label="floatingLabel">
-    <textarea
-      ref="input"
-      :value="inputValue"
-      @input="inputValue = $event.target.value; $emit('input', inputValue)"
-      v-on="validationListeners"
-      :autofocus="autofocus"
-      :class="[{'polyfill-placeholder': floatLabels }, 'form-control', 'mh-50px', addClass]"
-      :cols="cols"
-      :data-vv-as="label"
-      :disabled="disabled"
-      :id="internalId"
-      :name="name"
-      :placeholder="floatingLabel ? false : placeholder"
-      :rows="rows"
-      :max-rows="maxRows"
-      :readonly="readonly"
-      :data-testid="testid"
-      :aria-required="isRequiredAria"
-      @click="handleFocusEvent"
-      @focus="handleFocusEvent"
-      @keydown="$emit('keydown', $event)"
-      @blur="onBlur($event, inputValue)"
-    />
+    <template #default="{ helpTextId }">
+      <textarea
+        ref="input"
+        :value="inputValue"
+        @input="inputValue = $event.target.value; $emit('input', inputValue)"
+        v-on="validationListeners"
+        :autofocus="autofocus"
+        :class="[{'polyfill-placeholder': floatLabels }, 'form-control', 'mh-50px', addClass]"
+        :cols="cols"
+        :data-vv-as="label"
+        :disabled="disabled"
+        :id="internalId"
+        :name="name"
+        :aria-describedby="describedByIds(helpTextId)"
+        :aria-invalid="isAriaInvalid"
+        :placeholder="floatingLabel ? false : placeholder"
+        :rows="rows"
+        :max-rows="maxRows"
+        :readonly="readonly"
+        :data-testid="testid"
+        :aria-required="isRequiredAria"
+        @click="handleFocusEvent"
+        @focus="handleFocusEvent"
+        @keydown="$emit('keydown', $event)"
+        @blur="onBlur($event, inputValue)"
+      />
+    </template>
     <template #defaultButtons>
       <BInputGroupAppend v-if="copy">
         <button
@@ -70,10 +74,11 @@ import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
 import { ref, toRef, watch } from 'vue';
 import * as clipboard from 'clipboard-polyfill/text';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import { BInputGroupAppend, BTooltip } from 'bootstrap-vue';
 import { debounce } from 'lodash';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -149,7 +154,7 @@ export default {
   },
   setup(props) {
     const {
-      value: inputValue, errors: fieldErrors, handleBlur, validate,
+      value: inputValue, errors: fieldErrors, meta, handleBlur, validate,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
       validateOnMount: props.validationImmediate, initialValue: '', bails: false, validateOnValueUpdate: false, label: toRef(props, 'label'),
     });
@@ -183,7 +188,9 @@ export default {
       },
     };
 
-    return { inputValue, fieldErrors, validationListeners };
+    return {
+      inputValue, fieldErrors, meta, validationListeners,
+    };
   },
   mounted() {
     // Ensure the input is focused if autofocus is true
@@ -240,8 +247,38 @@ export default {
         this.showErrorMessage(error, this.$t('common.copyFail'));
       });
     },
+    /**
+     * Returns the ids of the elements describing textarea for `aria-describedby` attribute:
+     * the ids of the validation errors, when present, followed by the `describedbyId` prop
+     * and the id of the help text, when a description exists, composed together (as
+     * `aria-describedby` accepts multiple ids, matching BasicInput/DateInput/SelectInput).
+     *
+     * @param {String} helpTextId - id of the description rendered by InputLayout, passed through the default slot scope
+     */
+    describedByIds(helpTextId) {
+      const _helpTextId = [this.describedbyId, helpTextId].filter(Boolean).join(' ') || undefined;
+      if (!this.combinedErrors.length) {
+        return _helpTextId || undefined;
+      }
+
+      const errorIds = createAriaDescribedByList(this.name, this.combinedErrors);
+      return [errorIds, _helpTextId].filter(Boolean).join(' ') || undefined;
+    },
   },
   computed: {
+    /**
+     * Determines the `aria-invalid` attribute's state on validation.
+     *
+     * @returns {string|boolean} 'true' or 'false' as strings if the conditions dictate the field is invalid or valid respectively,
+     * or false as a boolean if the field is neither touched nor requires immediate validation.
+     */
+    isAriaInvalid() {
+      if (!this.meta.touched && !this.validationImmediate) {
+        return false;
+      }
+      const ariaInvalid = this.ariaInvalid || !!this.combinedErrors.length;
+      return ariaInvalid.toString();
+    },
     combinedErrors() {
       return this.errors.concat(this.fieldErrors);
     },

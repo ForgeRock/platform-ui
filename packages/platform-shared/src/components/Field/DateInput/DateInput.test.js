@@ -129,6 +129,92 @@ describe('DateInput', () => {
     });
   });
 
+  describe('error association', () => {
+    const mountDateInput = (props = {}) => mount(DateInput, {
+      props: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        id: 'endDate-date',
+        name: 'endDate-date',
+        ...props,
+      },
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
+      },
+    });
+
+    it('associates a parent error with the input via aria-describedby (IAM-10359)', async () => {
+      const wrapper = mountDateInput({ errors: ['End date must be after the start date.'] });
+
+      const input = wrapper.find('input[type="date"]');
+      await flushPromises();
+
+      expect(input.attributes('aria-describedby')).toBe('enddate-date0-error');
+      expect(input.attributes('aria-invalid')).toBeUndefined();
+
+      const error = wrapper.find('[data-testid="endDate-date-validation-error-0"]');
+      expect(error.exists()).toBe(true);
+      expect(error.text()).toBe('End date must be after the start date.');
+    });
+
+    it('associates the description with the input via aria-describedby', () => {
+      const wrapper = mountDateInput({ description: 'Enter the access end date.' });
+
+      const input = wrapper.find('input[type="date"]');
+      expect(input.attributes('aria-describedby')).toBe('endDate-date_helpText');
+      expect(wrapper.find('#endDate-date_helpText').text()).toBe('Enter the access end date.');
+    });
+
+    it('composes the error and description ids when both are present', async () => {
+      const wrapper = mountDateInput({
+        errors: ['End date must be after the start date.'],
+        description: 'Enter the access end date.',
+      });
+
+      const input = wrapper.find('input[type="date"]');
+      await flushPromises();
+
+      expect(input.attributes('aria-describedby')).toBe('enddate-date0-error endDate-date_helpText');
+    });
+
+    it('does not set aria-describedby when there is no description or error', () => {
+      const wrapper = mountDateInput();
+
+      expect(wrapper.find('input[type="date"]').attributes('aria-describedby')).toBeUndefined();
+    });
+
+    it('sets aria-invalid to true when validationImmediate is enabled with parent errors', async () => {
+      const wrapper = mountDateInput({
+        errors: ['End date must be after the start date.'],
+        validationImmediate: true,
+      });
+
+      const input = wrapper.find('input[type="date"]');
+      await flushPromises();
+
+      expect(input.attributes('aria-invalid')).toBe('true');
+    });
+
+    it('uses the describedbyId prop as aria-describedby when there is no description or error', () => {
+      const wrapper = mountDateInput({ describedbyId: 'external-description' });
+
+      const input = wrapper.find('input[type="date"]');
+      expect(input.attributes('aria-describedby')).toBe('external-description');
+    });
+
+    it('sets aria-invalid to true when the ariaInvalid prop is true and the field is touched', async () => {
+      const wrapper = mountDateInput({ ariaInvalid: true });
+
+      const input = wrapper.find('input[type="date"]');
+      await input.trigger('blur');
+      await flushPromises();
+
+      expect(input.attributes('aria-invalid')).toBe('true');
+    });
+  });
+
   describe('@a11y', () => {
     it('has no accessibility violations', async () => {
       const wrapper = mount(DateInput, {

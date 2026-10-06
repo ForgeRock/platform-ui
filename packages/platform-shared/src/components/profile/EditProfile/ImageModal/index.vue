@@ -38,13 +38,11 @@ of the MIT license. See the LICENSE file for details. -->
           v-model="imageURL"
           name="profileImage"
           :label="$t('pages.profile.editProfile.profileImageModal.profileImageUrl')"
+          :description="$t('pages.profile.editProfile.profileImageModal.formHelp')"
           @input="updateImageError(false)"
           :errors="errors"
         />
       </BFormGroup>
-      <small class="text-muted">
-        {{ $t('pages.profile.editProfile.profileImageModal.formHelp') }}
-      </small>
       <div
         id="profile-image-tips"
         class="p-4 mt-4 bg-light">

@@ -13,44 +13,48 @@ of the MIT license. See the LICENSE file for details. -->
     :floating-label="floatingLabel"
     :readonly-label="disabled"
     :show-hover-title="showHoverTitle">
-    <FrMultiselectBase
-      ref="vms"
-      :id="internalId"
-      :model-value="inputValue"
-      @update:modelValue="inputHandler"
-      v-bind="$attrs"
-      :option-height="optionHeightCalculation"
-      :class="classes"
-      :data-testid="testid"
-      :testid="testid"
-      :is-required-aria="isRequiredAria"
-      :name="name"
-      :options="selectOptions"
-      track-by="value"
-      :disabled="disabled"
-      :placeholder="internalPlaceholder"
-      :searchable="searchable"
-      :internal-search="internalSearch"
-      :show-labels="false"
-      :allow-empty="allowEmpty"
-      :autofocus="autofocus"
-      label="text"
-      :combobox-labelledby="inputLabelledby"
-      @select="$emit('select', $event)"
-      @open="openHandler"
-      @close="closeHandler"
-      @blur="handleBlur(undefined, true)"
-      @tag="$emit('tag', $event)"
-      @search-change="$emit('search-change', $event)">
-      <template
-        v-for="(key, slotName) in $slots"
-        #[slotName]="slotData">
-        <!-- @slot passthrough slot -->
-        <slot
-          :name="slotName"
-          v-bind="slotData" />
-      </template>
-    </FrMultiselectBase>
+    <template #default="{ helpTextId }">
+      <FrMultiselectBase
+        ref="vms"
+        :id="internalId"
+        :model-value="inputValue"
+        @update:modelValue="inputHandler"
+        v-bind="$attrs"
+        :option-height="optionHeightCalculation"
+        :class="classes"
+        :data-testid="testid"
+        :testid="testid"
+        :is-required-aria="isRequiredAria"
+        :name="name"
+        :options="selectOptions"
+        track-by="value"
+        :disabled="disabled"
+        :placeholder="internalPlaceholder"
+        :searchable="searchable"
+        :internal-search="internalSearch"
+        :show-labels="false"
+        :allow-empty="allowEmpty"
+        :autofocus="autofocus"
+        label="text"
+        :combobox-labelledby="inputLabelledby"
+        :describedby-id="describedByIds(helpTextId)"
+        :aria-invalid="isAriaInvalid"
+        @select="$emit('select', $event)"
+        @open="openHandler"
+        @close="closeHandler"
+        @blur="handleBlur(undefined, true)"
+        @tag="$emit('tag', $event)"
+        @search-change="$emit('search-change', $event)">
+        <template
+          v-for="(key, slotName) in $slots"
+          #[slotName]="slotData">
+          <!-- @slot passthrough slot -->
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+      </FrMultiselectBase>
+    </template>
     <template
       v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
@@ -71,6 +75,7 @@ import {
 } from 'vue';
 import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
+import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import FrMultiselectBase from '../../MultiselectBase/MultiselectBase';
 import i18n from '@/i18n';
 import FrInputLayout from '../Wrapper/InputLayout';
@@ -84,6 +89,20 @@ export default {
     FrMultiselectBase,
   },
   props: {
+    /**
+     * Id of describeBy element
+     */
+    describedbyId: {
+      type: String,
+      default: '',
+    },
+    /**
+    *  Sets aria-invalid as the value provided
+    */
+    ariaInvalid: {
+      type: Boolean,
+      default: false,
+    },
     allowEmpty: {
       type: Boolean,
       default: false,
@@ -307,7 +326,7 @@ export default {
     }
 
     const {
-      value: inputValue, errors: fieldErrors, handleBlur, validate,
+      value: inputValue, errors: fieldErrors, meta, handleBlur, validate,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
       validateOnMount: props.validationImmediate,
       initialValue: processValue(props.value, undefined),
@@ -320,6 +339,19 @@ export default {
 
     const internalPlaceholder = computed(() => (props.placeholder || props.searchable ? i18n.global.t('common.typeToSearch') : ''));
     const combinedErrors = computed(() => [...props.errors, ...fieldErrors.value]);
+    /**
+     * Determines the `aria-invalid` attribute's state based on field interactions and validation status.
+     * Passed to MultiselectBase as a string (empty when not invalid) so the attribute only renders when meaningful.
+     * `meta` is guarded because SelectInput can render outside a vee-validate form context
+     * (e.g. standalone usage and unit tests) where useField provides no meta object.
+     */
+    const isAriaInvalid = computed(() => {
+      if (!meta.value?.touched && !props.validationImmediate) {
+        return '';
+      }
+      const invalid = props.ariaInvalid || !!combinedErrors.value.length;
+      return invalid ? 'true' : 'false';
+    });
     const classes = computed(() => [
       { 'polyfill-placeholder': floatLabels.value },
       { 'h-100': props.floatingLabel },
@@ -406,10 +438,29 @@ export default {
       if (props.floatingLabel && !!inputValue.value) floatLabels.value = !!newVal;
     });
 
+    /**
+     * Returns the ids of the elements describing this field for the combobox's
+     * `aria-describedby` attribute: the ids of the validation errors, when present, followed
+     * by the id of the help text, when a description exists. When there are no errors it
+     * falls back to the `describedbyId` prop and the help text id, composed together.
+     *
+     * @param {String} helpTextId - id of the description rendered by InputLayout, passed through the default slot scope
+     */
+    function describedByIds(helpTextId) {
+      const describedBy = [props.describedbyId, helpTextId].filter(Boolean).join(' ') || undefined;
+      if (!combinedErrors.value.length) {
+        return describedBy;
+      }
+
+      const errorIds = createAriaDescribedByList(props.name, combinedErrors.value);
+      return [errorIds, describedBy].filter(Boolean).join(' ') || undefined;
+    }
+
     return {
       classes,
       closeHandler,
       combinedErrors,
+      describedByIds,
       fieldErrors,
       floatLabels,
       handleBlur,
@@ -417,6 +468,7 @@ export default {
       inputValue,
       internalId,
       internalPlaceholder,
+      isAriaInvalid,
       openHandler,
       selectOptions,
       vms,

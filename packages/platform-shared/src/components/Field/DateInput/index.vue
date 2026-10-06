@@ -12,42 +12,46 @@ of the MIT license. See the LICENSE file for details. -->
       :is-html="isHtml"
       :floating-label="floatingLabel"
       :label="label">
-      <input
-        v-model="inputValue"
-        v-on="validationListeners"
-        ref="input"
-        type="date"
-        :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
-        :data-vv-as="label"
-        :disabled="disabled"
-        :id="internalId"
-        :name="name"
-        :readonly="readonly"
-        :aria-required="isRequiredAria">
-      <BFormDatepicker
-        v-model="inputValue"
-        v-calendar-grid
-        :dropleft="dropleft"
-        button-only
-        label-help=""
-        ref="datePicker"
-        :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control date-button position-absolute']"
-        :disabled="disabled"
-        :id="internalId"
-        :name="name"
-        :min="minDate"
-        :aria-label="labelTranslation"
-        @shown="onShown"
-        @hidden="deactivateFocusTrap">
-        <template #button-content>
-          <span class="sr-only">
-            {{ `${fieldLabel || labelTranslation} ${$t('common.dateTimePicker.openCalendar')}` }}
-          </span>
-          <FrIcon
-            name="calendar_today"
-          />
-        </template>
-      </BFormDatepicker>
+      <template #default="{ helpTextId }">
+        <input
+          v-model="inputValue"
+          v-on="validationListeners"
+          ref="input"
+          type="date"
+          :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
+          :data-vv-as="label"
+          :disabled="disabled"
+          :id="internalId"
+          :name="name"
+          :readonly="readonly"
+          :aria-describedby="describedByIds(helpTextId)"
+          :aria-invalid="isAriaInvalid"
+          :aria-required="isRequiredAria">
+        <BFormDatepicker
+          v-model="inputValue"
+          v-calendar-grid
+          :dropleft="dropleft"
+          button-only
+          label-help=""
+          ref="datePicker"
+          :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control date-button position-absolute']"
+          :disabled="disabled"
+          :id="internalId"
+          :name="name"
+          :min="minDate"
+          :aria-label="labelTranslation"
+          @shown="onShown"
+          @hidden="deactivateFocusTrap">
+          <template #button-content>
+            <span class="sr-only">
+              {{ `${fieldLabel || labelTranslation} ${$t('common.dateTimePicker.openCalendar')}` }}
+            </span>
+            <FrIcon
+              name="calendar_today"
+            />
+          </template>
+        </BFormDatepicker>
+      </template>
     </FrInputLayout>
   </div>
 </template>
@@ -60,6 +64,7 @@ import {
 import calendarGrid from '@forgerock/platform-shared/src/directives/calendarGrid';
 import DatepickerFocusTrapMixin from '@forgerock/platform-shared/src/mixins/DatepickerFocusTrapMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
 import { toRef } from 'vue';
@@ -110,7 +115,7 @@ export default {
   },
   setup(props) {
     const {
-      value: inputValue, errors: fieldErrors, handleBlur,
+      value: inputValue, errors: fieldErrors, meta, handleBlur,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
 
     // validationListeners: Contains custom event listeners for validation.
@@ -120,7 +125,9 @@ export default {
       blur: (evt) => handleBlur(evt, true),
     };
 
-    return { inputValue, fieldErrors, validationListeners };
+    return {
+      inputValue, fieldErrors, meta, validationListeners,
+    };
   },
   methods: {
     onShown() {
@@ -184,16 +191,47 @@ export default {
         this.oldValue = cloneDeep(newVal);
       }
     },
+    /**
+     * Returns the ids of the elements describing this field for the input's `aria-describedby` attribute:
+     * the ids of the validation errors, when present, followed by the id of the help text, when a description exists.
+     * When there are no errors it falls back to the help text id (preferred, as the rendered description should win),
+     * then the `describedbyId` prop, or undefined if neither is set.
+     *
+     * @param {String} helpTextId - id of the description rendered by InputLayout, passed through the default slot scope
+     */
+    describedByIds(helpTextId) {
+      const describedBy = [this.describedbyId, helpTextId].filter(Boolean).join(' ') || undefined;
+      if (!this.combinedErrors.length) {
+        return describedBy;
+      }
+
+      const errorIds = createAriaDescribedByList(this.name, this.combinedErrors);
+      return [errorIds, describedBy].filter(Boolean).join(' ') || undefined;
+    },
   },
   computed: {
-    labelTranslation() {
-      return this.getTranslation(this.label);
+    /**
+     * Determines the `aria-invalid` attribute's state based on field interactions and validation status,
+     * following the same logic as BasicInput and TextArea.
+     *
+     * @returns {string|boolean} 'true' or 'false' as strings if the conditions dictate the field is invalid or valid respectively,
+     * or false as a boolean if the field is neither touched nor requires immediate validation.
+     */
+    isAriaInvalid() {
+      if (!this.meta.touched && !this.validationImmediate) {
+        return false;
+      }
+      const ariaInvalid = this.ariaInvalid || !!this.combinedErrors.length;
+      return ariaInvalid.toString();
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
     },
     datePickerDialogLabel() {
       return this.dialogLabel || this.$t('common.dateTimePicker.selectDate');
     },
-    combinedErrors() {
-      return this.errors.concat(this.fieldErrors);
+    labelTranslation() {
+      return this.getTranslation(this.label);
     },
   },
   mounted() {

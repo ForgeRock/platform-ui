@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
         ref="searchInput"
         :id="searchFieldId"
         :placeholder="placeholder"
+        :aria-describedby="describedbyId || undefined"
         @focus="$emit('search-input-focus')"
         @blur="$emit('search-input-blur')"
         @keydown.enter="$emit('search')"
@@ -115,6 +116,14 @@ export default {
     readOnly: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * Id of an element describing this input (e.g. a search constraint hint).
+     * Renders as aria-describedby on the input when provided.
+     */
+    describedbyId: {
+      type: String,
+      default: '',
     },
   },
   data() {

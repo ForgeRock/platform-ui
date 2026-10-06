@@ -127,6 +127,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Id of describeBy element
+     */
+    describedbyId: {
+      type: String,
+      default: '',
+    },
+    /**
+    *  Sets aria-invalid as the value provided
+    */
+    ariaInvalid: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

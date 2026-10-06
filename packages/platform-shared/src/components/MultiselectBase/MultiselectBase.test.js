@@ -6,7 +6,7 @@
  */
 
 import { mount, shallowMount, flushPromises } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import FrMultiselectBase from './MultiselectBase';
 
 const global = {
@@ -199,6 +199,71 @@ describe('MultiSelectBase', () => {
       expect(wrapper.findAll('[role="option"]')[1].attributes('aria-selected')).toBe('true');
       expect(wrapper.findAll('[role="option"]')[2].attributes('aria-selected')).toBe('false');
       expect(wrapper.findAll('[role="option"]')[2].find('.multiselect__option').classes()).toContain('multiselect__option--highlight');
+    });
+
+    it('binds aria-describedby and aria-invalid on the search input in input combobox mode', async () => {
+      const wrapper = setup({ describedbyId: 'stub-help-id', ariaInvalid: 'true', _uid: 'test' });
+      await flushPromises();
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+      expect(multiselectInput.attributes('aria-describedby')).toBe('stub-help-id');
+      expect(multiselectInput.attributes('aria-invalid')).toBe('true');
+
+      // The wrapper is not the combobox in this mode and must not duplicate the association
+      const multiselectContainer = findByTestId(wrapper, 'multi-select-container-multiselectBaseTestid');
+      expect(multiselectContainer.attributes('aria-describedby')).toBeUndefined();
+      expect(multiselectContainer.attributes('aria-invalid')).toBeUndefined();
+    });
+
+    it('binds aria-describedby and aria-invalid on the wrapper in wrapper combobox mode', async () => {
+      const wrapper = setup({
+        describedbyId: 'stub-help-id',
+        ariaInvalid: 'false',
+        searchable: false,
+        _uid: 'test',
+      });
+      await flushPromises();
+
+      const multiselectContainer = findByTestId(wrapper, 'multi-select-container-multiselectBaseTestid');
+      expect(multiselectContainer.attributes('aria-describedby')).toBe('stub-help-id');
+      expect(multiselectContainer.attributes('aria-invalid')).toBe('false');
+    });
+
+    it('binds the full combobox contract including aria-describedby on the inner input, which owns the combobox role', async () => {
+      // ARIA 1.2: the input owns the combobox role; the wrapper must not duplicate it.
+      const wrapper = setup({
+        describedbyId: 'stub-help-id',
+        ariaInvalid: 'true',
+        multiple: true,
+        _uid: 'test',
+      });
+      await flushPromises();
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+      expect(multiselectInput.attributes('role')).toBe('combobox');
+      expect(multiselectInput.attributes('aria-describedby')).toBe('stub-help-id');
+      expect(multiselectInput.attributes('aria-invalid')).toBe('true');
+
+      const multiselectContainer = findByTestId(wrapper, 'multi-select-container-multiselectBaseTestid');
+      expect(multiselectContainer.attributes('role')).toBeUndefined();
+    });
+
+    it('always binds aria-labelledby on the input so the name never relies on the placeholder', async () => {
+      // Placeholder fallback fails the placeholder-as-label axe rule (WCAG 3.3.2).
+      const wrapper = setup({ multiple: true, _uid: 'test' });
+      await flushPromises();
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+      expect(multiselectInput.attributes('aria-labelledby')).toBe('multiselectBaseId-label');
+    });
+
+    it('does not bind aria-describedby or aria-invalid when no describedbyId is given', async () => {
+      const wrapper = setup({ _uid: 'test' });
+      await flushPromises();
+
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+      expect(multiselectInput.attributes('aria-describedby')).toBeUndefined();
+      expect(multiselectInput.attributes('aria-invalid')).toBeUndefined();
     });
   });
   describe('keyboard functionality', () => {
@@ -2685,6 +2750,34 @@ describe('Multiselect.vue', () => {
       expect(() => { jest.advanceTimersByTime(1500); }).not.toThrow();
 
       jest.useRealTimers();
+    });
+  });
+
+  describe('@a11y', () => {
+    it('multiselect with a singleLabel slot and composition-provided label passes axe, including placeholder-as-label', async () => {
+      // MultiselectBase renders no label element — composition (InputLayout) does; without
+      // one the input's name falls back to the placeholder and axe flags it (WCAG 3.3.2).
+      const wrapper = mount({
+        components: { FrMultiselectBase },
+        template: `
+          <div>
+            <label :id="'a11yProbeId-label'" class="sr-only">Users</label>
+            <FrMultiselectBase
+              name="stub-name"
+              testid="a11yProbeTestid"
+              id="a11yProbeId"
+              :options="[1, 2, 3]"
+              :is-required-aria="true"
+              :multiple="true"
+              label="Users"
+              _uid="a11y-probe">
+              <template #singleLabel="{ option }">{{ option }}</template>
+            </FrMultiselectBase>
+          </div>
+        `,
+      });
+      await flushPromises();
+      await runA11yTest(wrapper);
     });
   });
 });

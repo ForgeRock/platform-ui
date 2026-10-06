@@ -166,4 +166,15 @@ describe('InputMixin', () => {
 
     expect(wrapper.vm.name).toBe(uuidValue);
   });
+
+  it('describedbyId and ariaInvalid props are declared with the expected defaults', () => {
+    const wrapper = shallowMount(TestComponent, {
+      props: {
+        name: 'testMixin',
+      },
+    });
+
+    expect(wrapper.vm.describedbyId).toBe('');
+    expect(wrapper.vm.ariaInvalid).toBe(false);
+  });
 });

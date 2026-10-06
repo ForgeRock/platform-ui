@@ -149,6 +149,22 @@ describe('BasicInput', () => {
         expect(input.attributes('aria-describedby')).toBe('stub-describedbyid');
       });
 
+      it('when given describedbyId and a description, both are referenced', () => {
+        const wrapper = setup({ id: 'stub-name', describedbyId: 'stub-describedbyid', description: 'stub-description' });
+
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.attributes('aria-describedby')).toBe('stub-describedbyid stub-name_helpText');
+        expect(wrapper.find('#stub-name_helpText').exists()).toBe(true);
+      });
+
+      it('when a description is rendered, the help text id is referenced', () => {
+        const wrapper = setup({ id: 'stub-name', description: 'stub-description' });
+
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.attributes('aria-describedby')).toBe('stub-name_helpText');
+        expect(wrapper.find('#stub-name_helpText').text()).toBe('stub-description');
+      });
+
       it('when describedbyId is not given', () => {
         const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
         const wrapper = setup();
@@ -254,6 +270,21 @@ describe('BasicInput', () => {
 
           const error = findByTestId(wrapper, 'stub-name-validation-error-0');
           expect(error.text()).toBe('Please provide a value');
+        });
+
+        // Note: when an error occurs and the field also has a rendered description.
+        it('when component errors and a description is rendered, both are referenced', async () => {
+          const wrapper = setup({ id: 'stub-name', validation: 'required', description: 'stub-description' });
+
+          const input = findByTestId(wrapper, 'input-stub-testid');
+          await input.setValue('');
+          await input.trigger('blur');
+          await input.trigger('focus');
+
+          await flushPromises();
+          jest.runAllTimers();
+
+          expect(input.attributes('aria-describedby')).toBe('stub-name0-error stub-name_helpText');
         });
 
         // Note: when an error is provided to the component by its parent on load.

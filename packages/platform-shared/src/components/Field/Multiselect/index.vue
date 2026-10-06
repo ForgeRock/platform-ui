@@ -12,51 +12,55 @@ of the MIT license. See the LICENSE file for details. -->
     :label="label"
     :floating-label="floatingLabel"
     :readonly-label="disabled">
-    <FrMultiselectBase
-      v-if="selectOptions"
-      track-by="multiselectId"
-      :data-testid="testid"
-      :testid="testid"
-      ref="vms"
-      :id="internalId"
-      :model-value="inputValue"
-      @update:modelValue="inputHandler"
-      :class="classes"
-      :close-on-select="closeOnSelect"
-      :disabled="disabled"
-      :hide-selected="true"
-      :is-required-aria="isRequiredAria"
-      :multiple="true"
-      :name="name"
-      :option-height="optionHeightCalculation"
-      :options="selectOptions"
-      :placeholder="defaultPlaceholder"
-      :searchable="defaultSearchable"
-      :internal-search="internalSearch"
-      :show-labels="false"
-      :tag-placeholder="$t('common.placeholders.addOption')"
-      :taggable="taggable"
-      :autofocus="autofocus"
-      label="text"
-      :combobox-labelledby="inputLabelledby"
-      @remove="$emit('remove', $event)"
-      @select="$emit('select', $event)"
-      @close="closeHandler"
-      @open="openHandler"
-      @search-change="searchChange"
-      @tag="addTag">
-      <template #noResult>
-        {{ $t('common.noResult') }}
-      </template>
-      <template
-        v-for="(key, slotName) in $slots"
-        #[slotName]="slotData">
-        <!-- @slot pass-through slot -->
-        <slot
-          :name="slotName"
-          v-bind="slotData" />
-      </template>
-    </FrMultiselectBase>
+    <template #default="{ helpTextId }">
+      <FrMultiselectBase
+        v-if="selectOptions"
+        track-by="multiselectId"
+        :data-testid="testid"
+        :testid="testid"
+        ref="vms"
+        :id="internalId"
+        :model-value="inputValue"
+        @update:modelValue="inputHandler"
+        :class="classes"
+        :close-on-select="closeOnSelect"
+        :disabled="disabled"
+        :hide-selected="true"
+        :is-required-aria="isRequiredAria"
+        :multiple="true"
+        :name="name"
+        :option-height="optionHeightCalculation"
+        :options="selectOptions"
+        :placeholder="defaultPlaceholder"
+        :searchable="defaultSearchable"
+        :internal-search="internalSearch"
+        :show-labels="false"
+        :tag-placeholder="$t('common.placeholders.addOption')"
+        :taggable="taggable"
+        :autofocus="autofocus"
+        label="text"
+        :combobox-labelledby="inputLabelledby"
+        :describedby-id="describedByIds(helpTextId)"
+        :aria-invalid="isAriaInvalid"
+        @remove="$emit('remove', $event)"
+        @select="$emit('select', $event)"
+        @close="closeHandler"
+        @open="openHandler"
+        @search-change="searchChange"
+        @tag="addTag">
+        <template #noResult>
+          {{ $t('common.noResult') }}
+        </template>
+        <template
+          v-for="(key, slotName) in $slots"
+          #[slotName]="slotData">
+          <!-- @slot pass-through slot -->
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+      </FrMultiselectBase>
+    </template>
     <template
       v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
@@ -78,6 +82,7 @@ import {
 import { useField } from 'vee-validate';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import { getEnumTranslation } from '@forgerock/platform-shared/src/utils/translations';
+import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import {
   toRef, ref, computed, watch,
 } from 'vue';
@@ -95,6 +100,20 @@ export default {
     FrMultiselectBase,
   },
   props: {
+    /**
+     * Id of describeBy element
+     */
+    describedbyId: {
+      type: String,
+      default: '',
+    },
+    /**
+    *  Sets aria-invalid as the value provided
+    */
+    ariaInvalid: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * Autofocus field when rendered.
      */
@@ -332,13 +351,26 @@ export default {
     }
 
     const {
-      value: inputValue, errors: fieldErrors,
+      value: inputValue, errors: fieldErrors, meta,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
       validateOnMount: props.validationImmediate,
       initialValue: processValue(props.value),
       bails: false,
     });
     const combinedErrors = computed(() => [...props.errors, ...fieldErrors.value]);
+    /**
+     * Determines the `aria-invalid` attribute's state based on field interactions and validation
+     * status, following the same logic as SelectInput. Passed to MultiselectBase as a string
+     * (empty when not invalid) so the attribute only renders when meaningful. `meta` is guarded
+     * because this component can render outside a vee-validate form context.
+     */
+    const isAriaInvalid = computed(() => {
+      if (!meta?.value?.touched && !props.validationImmediate) {
+        return '';
+      }
+      const invalid = props.ariaInvalid || !!combinedErrors.value.length;
+      return invalid ? 'true' : 'false';
+    });
     const floatLabels = ref(setFloatLabels(false, inputValue.value));
     const searchValue = ref('');
 
@@ -450,17 +482,37 @@ export default {
       }
     });
 
+    /**
+     * Returns the ids of the elements describing this field for the combobox's
+     * `aria-describedby` attribute: the ids of the validation errors, when present, followed
+     * by the id of the help text, when a description exists. When there are no errors it
+     * falls back to the `describedbyId` prop and the help text id, composed together.
+     *
+     * @param {String} helpTextId - id of the description rendered by InputLayout, passed through the default slot scope
+     */
+    function describedByIds(helpTextId) {
+      const describedBy = [props.describedbyId, helpTextId].filter(Boolean).join(' ') || undefined;
+      if (!combinedErrors.value.length) {
+        return describedBy;
+      }
+
+      const errorIds = createAriaDescribedByList(props.name, combinedErrors.value);
+      return [errorIds, describedBy].filter(Boolean).join(' ') || undefined;
+    }
+
     return {
       addTag,
       classes,
       closeHandler,
       combinedErrors,
+      describedByIds,
       defaultPlaceholder,
       defaultSearchable,
       fieldErrors,
       inputHandler,
       inputValue,
       internalId,
+      isAriaInvalid,
       openHandler,
       searchChange,
       searchValue,

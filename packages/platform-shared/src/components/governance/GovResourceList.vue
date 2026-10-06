@@ -23,6 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrSearchInput
           v-if="queryThreshold > 0"
           :placeholder="$t('common.search')"
+          :describedby-id="searchHelpTextId"
           @clear="search('')"
           v-model="searchValue"
           @search="search(searchValue)"
@@ -33,14 +34,22 @@ of the MIT license. See the LICENSE file for details. -->
           :class="{'fr-search-focus': hasFocus, 'flex-grow-1': false}">
           <template #append>
             <BInputGroupText>
+              <!-- aria-describedby target for the search input. Always rendered (populated
+                whenever the value is below the query threshold) and plain text inside <small>
+                — no nested <div>, which is invalid HTML and breaks accname resolution. -->
               <small
-                role="searchbox"
-                class="d-none d-md-block text-muted"
-                :class="{'pr-3': searchValue.length > 0, 'mr-3': searchValue.length > 0}">
-                <div :class="{'text-danger': submitBeforeLengthValid, shake: submitBeforeLengthValid}">
-                  {{ searchHelpText }}
-                </div>
+                :id="searchHelpTextId"
+                class="form-text text-muted text-break d-none d-md-block"
+                :class="{ 'text-danger': submitBeforeLengthValid, shake: submitBeforeLengthValid}">
+                {{ searchHelpText }}
               </small>
+              <!-- Separate live region so focus-driven text isn't announced twice: the hint
+                above is already read on focus via aria-describedby. -->
+              <span
+                class="sr-only"
+                aria-live="polite">
+                {{ searchStateAnnouncement }}
+              </span>
             </BInputGroupText>
           </template>
         </FrSearchInput>
@@ -138,6 +147,7 @@ import {
 import { pluralizeAnyString } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getPermissionsForUsers } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
+import { v4 as uuid } from 'uuid';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -212,6 +222,12 @@ const sortBy = ref('');
 const sortDesc = ref(null);
 const lastPage = ref(null);
 const searchHelpText = ref('');
+// Unique per component instance
+const searchHelpTextId = ref(`fr-search-help-${uuid()}`);
+
+// sr-only live region text announcing search-state changes while typing — never on
+// focus/blur, since the hint above is already read on focus (would announce twice).
+const searchStateAnnouncement = ref('');
 const hasFocus = ref(false);
 const submitBeforeLengthValid = ref(false);
 // Gates the results announcer off the committed search; reset at the start of
@@ -306,31 +322,53 @@ function getQueryStringFields(resourceType) {
   }
 }
 
-function setHelpTextFromSearchLength() {
-  hasFocus.value = true;
-
-  if (!props.queryThreshold && searchValue.value.length === 0) {
+/**
+ * Syncs the hint text with the current search value and focus state: the constraint hint
+ * stays populated while the value is below the query threshold (so the aria-describedby
+ * target always has content); the transient "Press Enter" hint only applies while focused.
+ */
+function updateSearchHelpText() {
+  if (!props.queryThreshold) {
     searchHelpText.value = '';
   } else if (searchValue.value.length < props.queryThreshold) {
     searchHelpText.value = i18n.global.t('listResource.searchInProgressText', { queryThreshold: props.queryThreshold });
-  } else {
+  } else if (hasFocus.value) {
     searchHelpText.value = i18n.global.t('listResource.searchActiveText');
+  } else {
+    // Unfocused and above threshold: nothing left to describe.
+    searchHelpText.value = '';
   }
 
-  if (searchValue.value.length === 0) {
-    submitBeforeLengthValid.value = false;
-  } else if (searchValue.value.length >= props.queryThreshold) {
+  if (searchValue.value.length === 0 || searchValue.value.length >= props.queryThreshold) {
     submitBeforeLengthValid.value = false;
   }
+}
+
+function setHelpTextFromSearchLength() {
+  hasFocus.value = true;
+  updateSearchHelpText();
 }
 
 function filterChange(filter) {
+  const previousLength = searchValue.value.length;
   searchValue.value = filter;
-  setHelpTextFromSearchLength();
+  updateSearchHelpText();
+
+  // Announce via the live region only on threshold crossings while typing; focus-driven
+  // text comes from the visible hint instead.
+  const wasBelow = previousLength < props.queryThreshold;
+  const isBelow = searchValue.value.length < props.queryThreshold;
+  if (wasBelow !== isBelow) {
+    searchStateAnnouncement.value = isBelow
+      ? i18n.global.t('listResource.searchInProgressText', { queryThreshold: props.queryThreshold })
+      : i18n.global.t('listResource.searchActiveText');
+  }
 }
 function removeHelpText() {
   hasFocus.value = false;
-  searchHelpText.value = '';
+  updateSearchHelpText();
+  // Clear the live region so no stale announcement precedes the next focus.
+  searchStateAnnouncement.value = '';
 }
 
 /**
@@ -547,6 +585,16 @@ watch(
     loadData();
   },
   { deep: true },
+);
+
+// Initialize the hint on render and when the threshold changes, so the description
+// is populated before the first focus/keystroke.
+watch(
+  () => props.queryThreshold,
+  () => {
+    updateSearchHelpText();
+  },
+  { immediate: true },
 );
 
 </script>

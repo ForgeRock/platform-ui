@@ -320,6 +320,22 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  /**
+   * Id of an element describing this select (e.g. its help text or validation errors).
+   * Renders as aria-describedby on the combobox element: the wrapper div when a
+   * singleLabel slot is provided (wrapper combobox mode), otherwise the inner search input.
+   */
+  describedbyId: {
+    type: String,
+    default: '',
+  },
+  /**
+   * Sets aria-invalid on the combobox element, following the same mode rules as describedbyId.
+   */
+  ariaInvalid: {
+    type: String,
+    default: '',
+  },
   label: {
     type: String,
     default: '',
@@ -680,6 +696,8 @@ const comboboxAttributes = computed(() => ({
   'aria-controls': `listbox-${props.id}`,
   'aria-labelledby': props.comboboxLabelledby || `${props.id}-label`,
   'aria-required': props.isRequiredAria,
+  'aria-describedby': props.describedbyId || null,
+  'aria-invalid': props.ariaInvalid || null,
 }));
 const searchStatusMessage = ref('');
 const updateSearchStatusMessage = debounce((value) => {

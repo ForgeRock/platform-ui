@@ -111,6 +111,20 @@ describe('SearchInput Component', () => {
     expect(wrapper.emitted().search).toBeTruthy();
   });
 
+  it('does not set aria-describedby without the describedbyId prop', () => {
+    mountComponent();
+    expect(wrapper.find('input[type="search"]').attributes('aria-describedby')).toBeUndefined();
+  });
+
+  it('sets aria-describedby from the describedbyId prop', () => {
+    mountComponent({
+      props: {
+        describedbyId: 'search-hint-1',
+      },
+    });
+    expect(wrapper.find('input[type="search"]').attributes('aria-describedby')).toBe('search-hint-1');
+  });
+
   describe('@a11y', () => {
     it('should not have any a11y violations', async () => {
       mountComponent();
