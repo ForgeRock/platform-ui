@@ -1623,7 +1623,9 @@ export default {
             if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
               initialStep = createJourneyStep(realmAndTreeInitialStep.step.payload);
             }
-            if (this.isFirstStep && step?.type !== 'LoginFailure' && step?.type !== 'unknown_error') {
+            // A resumed journey's first step is mid-journey; don't cache it as the initial step.
+            if (this.isFirstStep && !this.suspendedId
+              && step?.type !== 'LoginFailure' && step?.type !== 'unknown_error') {
               sessionStorage.setItem('initialStep', JSON.stringify(
                 {
                   key: realmAndTreeKey,
@@ -1651,6 +1653,11 @@ export default {
                 if (this.step && this.step.callbacks) {
                   this.componentList = [];
                   this.buildTreeForm();
+                } else {
+                  this.clearTreeForm();
+                }
+                if ((!initialStep || !initialStep.callbacks) && !this.linkToTreeStart) {
+                  this.linkToTreeStart = this.getStartOverLink(stepParams);
                 }
                 this.finaliseLoginFailure(stepParams);
               });
@@ -1716,17 +1723,7 @@ export default {
                 this.retryWithNewAuthId(previousStep, stepParams);
               } else if (suspendedIdWasSet && isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
-                // Start Over reconstructs the original journey URL using the auth-index context
-                // captured at suspend time (covers service, module, composite_advice, etc.).
-                // Falls back to getLinkToTreeStart when no suspend context exists (e.g. a
-                // non-suspended LoginFailure timeout), and to realm root as a last resort.
-                if (this.suspendedStartContext) {
-                  this.linkToTreeStart = getLinkToAuthIndexStart(this.suspendedStartContext, stepParams);
-                } else if (stepParams.tree) {
-                  this.linkToTreeStart = getLinkToTreeStart(stepParams);
-                } else {
-                  this.linkToTreeStart = getLinkToRealmRoot(stepParams);
-                }
+                this.linkToTreeStart = this.getStartOverLink(stepParams);
                 this.loading = false;
                 this.loginFailure = true;
               } else {
@@ -1737,6 +1734,12 @@ export default {
                   if (this.step && this.step.callbacks) {
                     this.componentList = [];
                     this.buildTreeForm();
+                  } else {
+                    this.clearTreeForm();
+                  }
+                  if ((!initialStep || !initialStep.callbacks) && !this.linkToTreeStart) {
+                    // No step to restore: offer Start Over so the banner isn't a dead end.
+                    this.linkToTreeStart = this.getStartOverLink(stepParams);
                   }
                   this.finaliseLoginFailure(stepParams);
                 });
@@ -1744,8 +1747,8 @@ export default {
               this.isFirstStep = true;
               break;
             default:
-              // retry only when previous was undefined (first step)
-              this.retry = !previousStep;
+              // Not on resume: its first step is mid-journey, so a 110 must show the timeout error.
+              this.retry = !previousStep && !suspendedIdWasSet;
 
               // check if we are still polling with the same callbacks and set loading to false
               if (preventClear && previousStep) {
@@ -1778,6 +1781,31 @@ export default {
           this.submitting = false;
           this.$emit('set-theme', this.realm, this.treeId, this.nodeThemeId);
         });
+    },
+    // Start Over url: suspend-time auth-index context, else tree start, else realm root.
+    getStartOverLink(stepParams) {
+      if (this.suspendedStartContext) {
+        return getLinkToAuthIndexStart(this.suspendedStartContext, stepParams);
+      }
+      if (stepParams.tree) {
+        return getLinkToTreeStart(stepParams);
+      }
+      return getLinkToRealmRoot(stepParams);
+    },
+    // Clear a dead step's form; stale callbacks would otherwise be clickable and restart the journey.
+    clearTreeForm() {
+      this.componentList = [];
+      this.idpComponent = undefined;
+      this.webAuthnComponentGroup = [];
+      this.header = '';
+      this.description = '';
+      this.pageNodeFooterLocalized = null;
+      this.nextButtonVisible = false;
+      this.nextButtonDisabledArray = [false];
+      this.screenReaderMessage = '';
+      this.screenReaderMessageType = '';
+      this.rememberMeVisible = false;
+      this.showScriptElms = false;
     },
     /**
      * Set loading/loginFailure state after restoring initialStep on a LoginFailure or unknown_error

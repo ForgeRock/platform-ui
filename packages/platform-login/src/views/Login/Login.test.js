@@ -894,6 +894,128 @@ describe('Login.vue', () => {
     wrapper.setData({ realm: '/', suspendedId: undefined });
   });
 
+  it('suspended resume then mid-tree session timeout: shows the timeout banner with a journey-scoped Start Over link instead of silently restarting (IAM-12096)', async () => {
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    sessionStorage.clear();
+    const messageNodeStep = rehydrateStep({
+      authId: 'resumed-auth-id',
+      callbacks: [{
+        type: 'ConfirmationCallback',
+        output: [
+          { name: 'prompt', value: 'Continue?' },
+          { name: 'optionType', value: 0 },
+          { name: 'defaultOption', value: 0 },
+          { name: 'options', value: ['Yes', 'No'] },
+          { name: 'optionValues', value: [0, 1] },
+        ],
+      }],
+    });
+    // Plain object: createJourneyStep always yields type 'Step'.
+    const timeoutFailure = {
+      type: 'LoginFailure',
+      payload: {
+        code: 401,
+        message: 'Session has timed out',
+        reason: 'Unauthorized',
+        detail: { errorCode: '110' },
+      },
+      callbacks: [],
+    };
+    mockStart.mockResolvedValueOnce(messageNodeStep);
+    mockNext.mockResolvedValueOnce(timeoutFailure);
+
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: undefined,
+      suspendedId: 'expired-suspend-id',
+      suspendedStartContext: { type: 'service', value: 'ResetPassword' },
+      step: null,
+      retry: undefined,
+    });
+
+    wrapper.vm.nextStep();
+    await flushPromises();
+    expect(wrapper.vm.step.type).toBe('Step');
+    expect(wrapper.vm.retry).toBe(false);
+    expect(sessionStorage.getItem('initialStep')).toBeNull();
+
+    wrapper.vm.nextStep(undefined, false);
+    await flushPromises();
+
+    expect(mockStart).toHaveBeenCalledTimes(1);
+    expect(wrapper.vm.errorMessage).toBe('Session has timed out');
+    expect(wrapper.vm.loginFailure).toBe(true);
+    expect(wrapper.vm.linkToTreeStart).toBe(
+      '/am/XUI/?realm=alpha&authIndexType=service&authIndexValue=ResetPassword',
+    );
+    // Dead step's form must be cleared.
+    expect(wrapper.vm.componentList).toHaveLength(0);
+    expect(wrapper.vm.nextButtonVisible).toBe(false);
+    expect(wrapper.vm.idpComponent).toBeUndefined();
+    expect(wrapper.vm.webAuthnComponentGroup).toHaveLength(0);
+    expect(wrapper.vm.header).toBe('');
+
+    sessionStorage.clear();
+    queryStringSpy.mockRestore();
+    wrapper.setData({
+      realm: '/',
+      suspendedId: undefined,
+      suspendedStartContext: undefined,
+    });
+  });
+
+  it('step-2 timeout on a normal journey still retries silently with a new authId (guards FRAAS-6431 behaviour, IAM-12096)', async () => {
+    const queryStringSpy = jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('');
+    sessionStorage.clear();
+    const step1 = rehydrateStep({
+      authId: 'step1-auth-id',
+      callbacks: [{
+        type: 'NameCallback',
+        input: [{ name: 'IDToken1', value: '' }],
+        output: [{ name: 'prompt', value: 'Email' }],
+      }],
+    });
+    const timeoutFailure = {
+      type: 'LoginFailure',
+      payload: {
+        code: 401,
+        message: 'Session has timed out',
+        reason: 'Unauthorized',
+        detail: { errorCode: '110' },
+      },
+      callbacks: [],
+    };
+    mockStart.mockResolvedValueOnce(step1);
+    // Silent retry: 2nd start() returns a fresh authId, then the step is resubmitted via next().
+    mockStart.mockResolvedValueOnce(rehydrateStep({ authId: 'fresh-auth-id', callbacks: [] }));
+    mockNext.mockResolvedValueOnce(timeoutFailure);
+    mockNext.mockResolvedValueOnce(rehydrateStep({ authId: 'next-auth-id', callbacks: [] }));
+
+    wrapper.setData({
+      realm: 'alpha',
+      treeId: 'ResetPassword',
+      suspendedId: undefined,
+      suspendedStartContext: undefined,
+      step: null,
+      retry: undefined,
+    });
+
+    wrapper.vm.nextStep();
+    await flushPromises();
+    expect(wrapper.vm.retry).toBe(true);
+
+    wrapper.vm.nextStep(undefined, false);
+    await flushPromises();
+
+    expect(mockStart).toHaveBeenCalledTimes(2);
+    expect(wrapper.vm.step.payload.authId).toBe('next-auth-id');
+    expect(wrapper.vm.errorMessage).toBe('');
+
+    sessionStorage.clear();
+    queryStringSpy.mockRestore();
+    wrapper.setData({ realm: '/', treeId: undefined });
+  });
+
   it('keeps params like noSession after returning from a redirect', () => {
     // Redirect resumption params (code/state/scope) are forwarded via treeResumptionParameters
     // and only appear in stepParams.query when set. Non-resumption params (e.g. noSession) always appear.
@@ -1934,6 +2056,26 @@ describe('Login.vue', () => {
       expect(guardWrapper.vm.loading).toBe(false);
       expect(guardWrapper.vm.step).toBeUndefined();
       expect(buildTreeFormSpy).not.toHaveBeenCalled();
+    });
+
+    it('on step 2+ of a resumed journey with no initialStep: shows a journey-scoped Start Over link so the banner is not a dead end (IAM-12096)', async () => {
+      const fakePreviousStep = { type: 'Step', payload: { authId: 'step2-auth-id' }, callbacks: [] };
+      jest.spyOn(guardWrapper.vm, 'allowListingsEnabled').mockReturnValue(false);
+      sessionStorage.clear();
+
+      guardWrapper.vm.suspendedStartContext = { type: 'service', value: 'ResetPassword' };
+      guardWrapper.vm.linkToTreeStart = '';
+      guardWrapper.vm.step = fakePreviousStep;
+
+      guardWrapper.vm.nextStep(undefined, false);
+      await flushPromises();
+
+      expect(guardWrapper.vm.loginFailure).toBe(true);
+      expect(guardWrapper.vm.step).toBeUndefined();
+      expect(guardWrapper.vm.linkToTreeStart).toContain('authIndexType=service&authIndexValue=ResetPassword');
+
+      guardWrapper.vm.suspendedStartContext = undefined;
+      guardWrapper.vm.linkToTreeStart = '';
     });
   });
 
