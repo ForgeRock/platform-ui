@@ -1613,6 +1613,59 @@ describe('TaskList', () => {
 
         expect(() => wrapper.vm.focusFirstFilterElement()).not.toThrow();
       });
+
+      it('moves focus into the filters panel when the panel is expanded', async () => {
+        const wrapper = shallowMountComponent();
+        const focusSpy = jest.fn();
+        const mockFirstFocusable = { focus: focusSpy };
+        jest.spyOn(wrapper.vm.$refs.filtersSectionRef, 'querySelector').mockReturnValue(mockFirstFocusable);
+
+        wrapper.vm.leftPanelExpanded = true;
+        await flushPromises();
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+
+      it('returns focus to the filter toggle when the panel collapses while focus was inside it', async () => {
+        // Attach the tree to the document — jsdom's focus() is a no-op on
+        // detached elements. Vue re-writes $refs on re-render, so spy on the
+        // stub's $el rather than replacing the ref.
+        const wrapper = shallowMountComponent();
+        document.body.appendChild(wrapper.element);
+        wrapper.vm.leftPanelExpanded = true;
+        await flushPromises();
+        const focusSpy = jest.spyOn(wrapper.vm.$refs.certFilterButton.$el, 'focus').mockName('focus');
+        const fakePanelControl = document.createElement('button');
+        wrapper.vm.$refs.filtersSectionRef.appendChild(fakePanelControl);
+        fakePanelControl.focus();
+        expect(document.activeElement).toBe(fakePanelControl);
+
+        wrapper.vm.leftPanelExpanded = false;
+        await flushPromises();
+
+        expect(focusSpy).toHaveBeenCalled();
+        wrapper.element.remove();
+      });
+
+      it('does not move focus on collapse when focus was outside the panel', async () => {
+        const wrapper = shallowMountComponent();
+        document.body.appendChild(wrapper.element);
+        wrapper.vm.leftPanelExpanded = true;
+        await flushPromises();
+        const focusSpy = jest.spyOn(wrapper.vm.$refs.certFilterButton.$el, 'focus').mockName('focus');
+        // A real focusable outside the panel (body.focus() is a no-op in jsdom).
+        const outsideControl = document.createElement('button');
+        document.body.appendChild(outsideControl);
+        outsideControl.focus();
+        expect(document.activeElement).toBe(outsideControl);
+
+        wrapper.vm.leftPanelExpanded = false;
+        await flushPromises();
+
+        expect(focusSpy).not.toHaveBeenCalled();
+        outsideControl.remove();
+        wrapper.element.remove();
+      });
     });
 
     describe('focus return after modal close', () => {

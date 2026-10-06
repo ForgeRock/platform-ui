@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BTooltip>
         <BButton
           v-if="!entitlementUserId"
+          ref="certFilterButton"
           @click="leftPanelExpanded = !leftPanelExpanded"
           aria-controls="filters-section"
           :aria-expanded="leftPanelExpanded"
@@ -72,6 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="d-flex flex-column flex-lg-row h-100 w-100">
       <div
         v-show="leftPanelExpanded"
+        id="filters-section"
         ref="filtersSectionRef">
         <BCard
           class="fr-left-panel d-flex flex-column h-100 p-0 rounded-0"
@@ -2079,6 +2081,19 @@ export default {
         }
       },
       flush: 'post',
+    },
+    leftPanelExpanded(expanded) {
+      // Capture focus while the panel is still visible — v-show hides it before nextTick.
+      const previousActive = document.activeElement;
+      this.$nextTick(() => {
+        if (expanded) {
+          this.focusFirstFilterElement();
+        } else if (this.$refs.filtersSectionRef?.contains(previousActive)) {
+          const toggle = this.$refs.certFilterButton;
+          const toggleEl = toggle instanceof Element ? toggle : toggle?.$el;
+          if (toggleEl) toggleEl.focus();
+        }
+      });
     },
   },
 };
