@@ -34,6 +34,7 @@ import {
 } from 'vue';
 import {
   debounce,
+  isEqual,
 } from 'lodash';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -148,11 +149,11 @@ async function getInitialValues(resourceIds) {
  * @param {String} queryString - The query string to filter the resource list.
  */
 async function getResourceList(queryString, setValue) {
-  if (props.preloadedOptions.length && props.preloadedOptions.length === props.value.length) {
+  if (!initialValuesLoad.value && props.preloadedOptions.length && props.preloadedOptions.length === props.value.length) {
     initialValues.value = props.preloadedOptions;
     initialValuesLoad.value = true;
     selectValue.value = [...props.value];
-  } else if (setValue || (!optionsLoad.value && props.value.length)) {
+  } else if ((setValue && !isEqual(props.value, selectValue.value)) || (!optionsLoad.value && props.value.length)) {
     getInitialValues(props.value);
   } else {
     initialValuesLoad.value = true;

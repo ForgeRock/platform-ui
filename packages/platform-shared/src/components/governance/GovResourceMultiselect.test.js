@@ -84,6 +84,28 @@ describe('GovResourceMultiselect', () => {
     expect(wrapper.vm.selectOptions).toEqual(expect.arrayContaining(preloaded));
   });
 
+  it('keeps newly selected values when a later search runs with preloadedOptions', async () => {
+    jest.useFakeTimers();
+    try {
+      wrapper = mountComponent({
+        value: ['app1'],
+        preloadedOptions: [{ text: 'App 1', value: 'app1' }],
+      });
+      await flushPromises();
+      const input = wrapper.findComponent('[name="testName"]');
+
+      input.vm.$emit('input', ['app1', 'app2']);
+      input.vm.$emit('search-change', '');
+      jest.advanceTimersByTime(600);
+      await flushPromises();
+
+      expect(wrapper.vm.selectValue).toEqual(['app1', 'app2']);
+      expect(wrapper.vm.selectOptions).toEqual(expect.arrayContaining([{ text: 'App 1', value: 'app1' }]));
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it('falls back to getInitialValues when preloadedOptions is empty', async () => {
     wrapper = mountComponent({ value: ['app3'], preloadedOptions: [] });
     await flushPromises();
