@@ -70,10 +70,12 @@ of the MIT license. See the LICENSE file for details. -->
             <FrObjectTypes
               v-if="applicationDetails"
               :application-id="applicationDetails.id"
+              :application="savedApplication"
               :logo-source="logoSource"
               :object-types="applicationDetails.objectTypes || []"
               @object-type-added="loadApplication"
-              @object-type-deleted="loadApplication" />
+              @object-type-deleted="loadApplication"
+              @application-updated="updateApplicationDetails" />
           </BTab>
           <BTab
             class="mt-4"
@@ -212,6 +214,11 @@ const router = useRouter();
 const { setBreadcrumb } = useBreadcrumb();
 
 const applicationDetails = ref(null);
+// Last application state known to be saved on the server. The object-type
+// editor receives this snapshot instead of the live applicationDetails draft,
+// so a Details save never persists unconfirmed edits made on the Application
+// Details tab (whose Save button owns them and gates them on validation).
+const savedApplication = ref(null);
 const isLoading = ref(true);
 const isSaving = ref(false);
 const isDeleting = ref(false);
@@ -250,6 +257,33 @@ function setGlossaryCreateFlag(flag) {
   isGlossaryCreate.value = flag;
 }
 
+/**
+ * Adopts the aiAgentSource change saved by the object-type editor's Details
+ * save. The child strips metadata and clears aiAgentSource by omitting the
+ * key, so the key's presence or absence is the signal: set it when present,
+ * delete it when omitted. Only this field is adopted — the rest of the
+ * payload is the saved snapshot the child was given, and spreading it back
+ * would clobber unsaved edits currently in applicationDetails. The snapshot
+ * is updated so the next Details save starts from the newly saved state.
+ *
+ * @param {Object} appPayload - Full application payload (metadata already stripped) saved by the Details tab.
+ */
+function updateApplicationDetails(appPayload) {
+  if (!applicationDetails.value) return;
+  const hasSource = typeof appPayload?.aiAgentSource === 'string' && appPayload.aiAgentSource.length > 0;
+  if (hasSource) {
+    applicationDetails.value.aiAgentSource = appPayload.aiAgentSource;
+  } else {
+    delete applicationDetails.value.aiAgentSource;
+  }
+  savedApplication.value = { ...savedApplication.value };
+  if (hasSource) {
+    savedApplication.value.aiAgentSource = appPayload.aiAgentSource;
+  } else {
+    delete savedApplication.value.aiAgentSource;
+  }
+}
+
 async function saveApp() {
   isSaving.value = true;
   try {
@@ -264,6 +298,9 @@ async function saveApp() {
       savePromises.push(glossarySave);
     }
     await Promise.all(savePromises);
+    // Promote the just-saved state so the object-type editor's Details save
+    // starts from it and never re-persists an older snapshot.
+    savedApplication.value = { ...appPayload };
     displayNotification('success', i18n.global.t('applications.edit.messages.updateSuccess'));
   } catch (error) {
     showErrorMessage(error, i18n.global.t('applications.edit.messages.updateFail'));
@@ -333,11 +370,13 @@ async function loadApplication() {
   try {
     const { data } = await getApplication(props.applicationId, { disconnected: true });
     applicationDetails.value = data;
+    savedApplication.value = { ...data };
     await loadOwnerRelationshipProperty(data.ownerIds);
   } catch {
     // Temporary fallback
     if (props.baseApplication) {
       applicationDetails.value = props.baseApplication;
+      savedApplication.value = { ...props.baseApplication };
       await loadOwnerRelationshipProperty(props.baseApplication.ownerIds);
     } else {
       loadError.value = i18n.global.t('governance.application.errorRetrievingApplication');

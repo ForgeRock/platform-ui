@@ -5,9 +5,13 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount, flushPromises } from '@vue/test-utils';
+import { shallowMount, mount, flushPromises } from '@vue/test-utils';
+import { createStore } from 'vuex';
 import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import * as AgentConfigApi from '@forgerock/platform-shared/src/api/governance/AgentConfigApi';
+import { clearAgentConfig } from '@forgerock/platform-shared/src/components/governance/Applications/ObjectType/DetailsForm';
+import ObjectTypes from '@forgerock/platform-shared/src/components/governance/Applications/ObjectType/ObjectTypes';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
@@ -16,13 +20,20 @@ import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src
 import EditUnmanagedApplication from './EditUnmanagedApplication';
 
 jest.mock('@/i18n', () => ({
-  global: { t: (k) => k },
+  // DetailsForm calls global.te() before translating agent template names;
+  // this mock exposes no agent template keys, so te() returns false and the
+  // raw template id renders (matching real vue-i18n behavior for unknown keys).
+  global: { t: (k) => k, te: () => false },
 }));
 jest.mock('@/store', () => ({
-  state: { isFraas: false, realm: 'alpha' },
+  // SharedStore.isAirGapped is read by applicationImageResolver.resolveImage
+  // whenever the full component tree renders (logoSource), which only the
+  // boundary tests exercise through a full mount.
+  state: { isFraas: false, realm: 'alpha', SharedStore: { isAirGapped: false } },
 }));
 jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/AgentConfigApi');
 jest.mock('@forgerock/platform-shared/src/api/ConfigApi');
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
@@ -50,6 +61,17 @@ const appData = {
   ownerIds: ['user-1'],
 };
 
+const objectTypeData = {
+  id: 'User',
+  type: 'account',
+  name: 'User',
+  properties: {},
+};
+
+const store = createStore({
+  state: { SharedStore: { governanceDevEnabled: true } },
+});
+
 function setup(props = {}) {
   return shallowMount(EditUnmanagedApplication, {
     global: {
@@ -62,16 +84,33 @@ function setup(props = {}) {
   });
 }
 
+function setupFull(props = {}) {
+  return mount(EditUnmanagedApplication, {
+    global: {
+      plugins: [store],
+      mocks: { $t: (k) => k },
+    },
+    props: {
+      applicationId: 'app-1',
+      ...props,
+    },
+  });
+}
+
 describe('EditUnmanagedApplication', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    clearAgentConfig();
     ApplicationsApi.getApplication.mockResolvedValue({ data: appData });
     ApplicationsApi.updateApplication.mockResolvedValue({ data: appData });
     ApplicationsApi.deleteUnmanagedApplication.mockResolvedValue({});
+    ApplicationsApi.getObjectType.mockResolvedValue({ data: objectTypeData });
+    ApplicationsApi.updateObjectType.mockResolvedValue({ data: objectTypeData });
     GlossaryApi.saveGlossaryAttributesByAppId.mockResolvedValue({});
     GlossaryApi.updateGlossaryAttributesByAppId.mockResolvedValue({});
     ConfigApi.getConfig.mockResolvedValue({ data: { objects: [] } });
     ManagedResourceApi.getManagedResourceList.mockResolvedValue({ data: { result: [] } });
+    AgentConfigApi.getAgentConfig.mockResolvedValue({ data: { templates: [{ id: 'aws.bedrock' }, { id: 'azure.openai' }] } });
     compareRealmSpecificResourceName.mockReturnValue(false);
   });
 
@@ -331,6 +370,168 @@ describe('EditUnmanagedApplication', () => {
 
       expect(wrapper.vm.relationshipProperty).toBeNull();
       expect(wrapper.vm.applicationDetails.name).toBe('My App');
+    });
+  });
+
+  describe('@object types boundary', () => {
+    const boundaryAppData = {
+      ...appData,
+      objectTypes: [objectTypeData],
+    };
+
+    /**
+     * Mounts the view with the real FrObjectTypes child (object-types tab
+     * activated so the lazy application-details panel never renders) so the
+     * application prop contract and the application-updated event boundary can
+     * be exercised end to end at the parent-child boundary.
+     *
+     * @param {Object} application application data returned by getApplication
+     * @returns {Object} mounted wrapper
+     */
+    function setupBoundary(application) {
+      ApplicationsApi.getApplication.mockResolvedValue({ data: application });
+      return setupFull({ tab: 'object-types' });
+    }
+
+    /**
+     * Mirrors the DetailsForm save payload contract: metadata destructured out
+     * (key omitted, not undefined), source included or omitted per selection.
+     *
+     * @param {Object} application the parent application state
+     * @param {string|undefined} source selected source or undefined when cleared
+     * @returns {Object} payload shape emitted by DetailsForm
+     */
+    function detailsPayload(application, source) {
+      const { metadata, ...payload } = application;
+      if (source) {
+        payload.aiAgentSource = source;
+      } else {
+        delete payload.aiAgentSource;
+      }
+      return payload;
+    }
+
+    it('passes the full application including aiAgentSource to the object type editor', async () => {
+      const application = { ...boundaryAppData, aiAgentSource: 'aws.bedrock' };
+      const wrapper = setupBoundary(application);
+      await flushPromises();
+
+      const objectTypesComponent = wrapper.findComponent(ObjectTypes);
+      expect(objectTypesComponent.exists()).toBe(true);
+      expect(objectTypesComponent.props('application')).toEqual(application);
+      expect(objectTypesComponent.props('applicationId')).toBe('app-1');
+      expect(objectTypesComponent.props('objectTypes')).toEqual([objectTypeData]);
+      expect(objectTypesComponent.props('logoSource')).toBeTruthy();
+    });
+
+    it('round-trips a Details source selection into applicationDetails and the next saveApp', async () => {
+      const application = { ...boundaryAppData, metadata: { revision: 'r1' } };
+      const wrapper = setupBoundary(application);
+      await flushPromises();
+
+      const detailsForm = wrapper.findComponent({ name: 'DetailsForm' });
+      expect(detailsForm.exists()).toBe(true);
+      detailsForm.vm.form.aiAgents = true;
+      detailsForm.vm.form.agentSource = 'azure.openai';
+      detailsForm.vm.saveHandler();
+      await flushPromises();
+
+      const objectPutPayload = ApplicationsApi.updateObjectType.mock.calls[0][2];
+      expect(objectPutPayload).not.toHaveProperty('aiAgentSource');
+      const [appPutId, appPutPayload] = ApplicationsApi.updateApplication.mock.calls[0];
+      expect(appPutId).toBe('app-1');
+      expect(appPutPayload.aiAgentSource).toBe('azure.openai');
+      expect(appPutPayload.metadata).toBeUndefined();
+
+      expect(wrapper.vm.applicationDetails.aiAgentSource).toBe('azure.openai');
+      expect(wrapper.vm.applicationDetails.metadata).toEqual({ revision: 'r1' });
+
+      await wrapper.vm.saveApp();
+      await flushPromises();
+      const [, nextPutPayload] = ApplicationsApi.updateApplication.mock.calls.pop();
+      expect(nextPutPayload.aiAgentSource).toBe('azure.openai');
+      expect(nextPutPayload.metadata).toBeUndefined();
+    });
+
+    it('round-trips a cleared Details source by removing it from applicationDetails', async () => {
+      const application = { ...boundaryAppData, aiAgentSource: 'aws.bedrock' };
+      const wrapper = setupBoundary(application);
+      await flushPromises();
+
+      const detailsForm = wrapper.findComponent({ name: 'DetailsForm' });
+      expect(detailsForm.vm.form.aiAgents).toBe(true);
+      expect(detailsForm.vm.form.agentSource).toBe('aws.bedrock');
+      detailsForm.vm.form.aiAgents = false;
+      detailsForm.vm.saveHandler();
+      await flushPromises();
+
+      // The Details form omits aiAgentSource entirely when cleared; the parent
+      // must not retain the previous value or re-send it on the next save.
+      expect(wrapper.vm.applicationDetails).not.toHaveProperty('aiAgentSource');
+
+      await wrapper.vm.saveApp();
+      await flushPromises();
+      const [, nextPutPayload] = ApplicationsApi.updateApplication.mock.calls.pop();
+      expect(nextPutPayload).not.toHaveProperty('aiAgentSource');
+    });
+
+    it('retains the prior application state when the Details application PUT fails', async () => {
+      const application = { ...boundaryAppData, aiAgentSource: 'aws.bedrock' };
+      ApplicationsApi.updateApplication.mockRejectedValueOnce(new Error('failed'));
+      const wrapper = setupBoundary(application);
+      await flushPromises();
+
+      const detailsForm = wrapper.findComponent({ name: 'DetailsForm' });
+      detailsForm.vm.form.aiAgents = true;
+      detailsForm.vm.form.agentSource = 'azure.openai';
+      detailsForm.vm.saveHandler();
+      await flushPromises();
+
+      expect(ApplicationsApi.updateApplication).toHaveBeenCalledWith('app-1', expect.objectContaining({ aiAgentSource: 'azure.openai' }));
+      expect(showErrorMessage).toHaveBeenCalled();
+      expect(wrapper.findComponent(ObjectTypes).vm.isSavingDetails).toBe(false);
+      expect(wrapper.vm.applicationDetails.aiAgentSource).toBe('aws.bedrock');
+    });
+
+    it('does not leak an in-progress, unsaved Application Details edit into the object-type editor or its Details save', async () => {
+      const application = { ...boundaryAppData, description: 'Original description' };
+      const wrapper = setupBoundary(application);
+      await flushPromises();
+
+      // Live-edit the Application Details tab's model without saving it.
+      wrapper.vm.updateModel({ path: 'description', value: 'Unsaved draft edit' });
+      await flushPromises();
+      expect(wrapper.vm.applicationDetails.description).toBe('Unsaved draft edit');
+
+      // The object-type editor's application prop — and any Details save
+      // built from it — must still reflect the last *saved* application
+      // state, not the unconfirmed draft.
+      const objectTypesComponent = wrapper.findComponent(ObjectTypes);
+      expect(objectTypesComponent.props('application').description).toBe('Original description');
+
+      const detailsForm = wrapper.findComponent({ name: 'DetailsForm' });
+      detailsForm.vm.form.aiAgents = true;
+      detailsForm.vm.form.agentSource = 'azure.openai';
+      detailsForm.vm.saveHandler();
+      await flushPromises();
+
+      const [, appPutPayload] = ApplicationsApi.updateApplication.mock.calls[0];
+      expect(appPutPayload.description).toBe('Original description');
+      // The unsaved draft must survive the Details save untouched, ready for
+      // the Application Details tab's own Save action.
+      expect(wrapper.vm.applicationDetails.description).toBe('Unsaved draft edit');
+    });
+
+    it('adopts a Details payload while retaining metadata held outside the payload', async () => {
+      const application = { ...boundaryAppData, metadata: { revision: 'r1' } };
+      const wrapper = setupBoundary(application);
+      await flushPromises();
+
+      wrapper.vm.updateApplicationDetails(detailsPayload(application, 'azure.openai'));
+      await flushPromises();
+
+      expect(wrapper.vm.applicationDetails.aiAgentSource).toBe('azure.openai');
+      expect(wrapper.vm.applicationDetails.metadata).toEqual({ revision: 'r1' });
     });
   });
 

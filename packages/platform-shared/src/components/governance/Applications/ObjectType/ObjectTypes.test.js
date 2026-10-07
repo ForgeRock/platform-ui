@@ -5,15 +5,19 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount, flushPromises } from '@vue/test-utils';
+import { shallowMount, mount, flushPromises } from '@vue/test-utils';
+import { createStore } from 'vuex';
 import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import * as AgentConfigApi from '@forgerock/platform-shared/src/api/governance/AgentConfigApi';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import ObjectTypes from './ObjectTypes';
 
 jest.mock('@/i18n', () => ({
   global: { t: (k) => k },
 }));
 jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/AgentConfigApi');
 jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
   showErrorMessage: jest.fn(),
   displayNotification: jest.fn(),
@@ -30,9 +34,14 @@ const objectTypeData = {
   properties: {},
 };
 
+const store = createStore({
+  state: { SharedStore: { governanceDevEnabled: true } },
+});
+
 function setup(props = {}) {
   return shallowMount(ObjectTypes, {
     global: {
+      plugins: [store],
       mocks: { $t: (k) => k },
     },
     props: {
@@ -43,12 +52,42 @@ function setup(props = {}) {
   });
 }
 
+function setupFull(props = {}) {
+  return mount(ObjectTypes, {
+    global: {
+      plugins: [store],
+      mocks: { $t: (k) => k },
+    },
+    props: {
+      applicationId: 'app-1',
+      objectTypes: [],
+      ...props,
+    },
+  });
+}
+
+function setupFlagged(flagEnabled) {
+  return shallowMount(ObjectTypes, {
+    global: {
+      plugins: [createStore({ state: { SharedStore: { governanceDevEnabled: flagEnabled } } })],
+      mocks: { $t: (k) => k },
+    },
+    props: {
+      applicationId: 'app-1',
+      objectTypes: [objectTypeData],
+    },
+  });
+}
+
 describe('ObjectTypes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     ApplicationsApi.getObjectType.mockResolvedValue({ data: objectTypeData });
     ApplicationsApi.createObjectType.mockResolvedValue({ data: objectTypeData });
     ApplicationsApi.deleteObjectType.mockResolvedValue({});
+    ApplicationsApi.updateObjectType.mockResolvedValue({ data: objectTypeData });
+    ApplicationsApi.updateApplication.mockResolvedValue({ data: {} });
+    AgentConfigApi.getAgentConfig.mockResolvedValue({ data: { templates: [] } });
   });
 
   afterAll(() => jest.restoreAllMocks());
@@ -134,6 +173,176 @@ describe('ObjectTypes', () => {
       const wrapper = setup({ objectTypes: [objectTypeData] });
       await flushPromises();
       expect(wrapper.vm.loadedObjectType).toBeNull();
+    });
+  });
+
+  describe('@details', () => {
+    it('omits the Details tab when governanceDevEnabled is off, leaving Properties first', async () => {
+      const wrapper = setupFlagged(false);
+      await flushPromises();
+
+      expect(wrapper.vm.navItems.map((item) => item.displayName)).toEqual([
+        'governance.applications.edit.objectTypesTab.propertiesTab',
+        'governance.applications.edit.objectTypesTab.dataTab',
+        'governance.unmanagedApplications.correlationTab.navLabel',
+      ]);
+      expect(wrapper.vm.selectedInnerTab).toBe(0);
+    });
+
+    it('shows the Details tab when governanceDevEnabled is on', async () => {
+      const wrapper = setupFlagged(true);
+      await flushPromises();
+
+      expect(wrapper.vm.navItems[0].displayName).toBe('governance.applications.edit.objectTypesTab.details.navLabel');
+    });
+
+    it('places Details before Properties, Data, and account-only Correlation in nav order', async () => {
+      const wrapper = setup({ objectTypes: [objectTypeData] });
+      await flushPromises();
+
+      expect(wrapper.vm.navItems.map((item) => item.displayName)).toEqual([
+        'governance.applications.edit.objectTypesTab.details.navLabel',
+        'governance.applications.edit.objectTypesTab.propertiesTab',
+        'governance.applications.edit.objectTypesTab.dataTab',
+        'governance.unmanagedApplications.correlationTab.navLabel',
+        'governance.applications.edit.objectTypesTab.agentClassification.title',
+      ]);
+    });
+
+    it('places Details before Properties and Data for resource object types with no Correlation tab', async () => {
+      const resourceType = {
+        id: 'Device', type: 'resource', name: 'Device', properties: {},
+      };
+      ApplicationsApi.getObjectType.mockResolvedValueOnce({ data: resourceType });
+      const wrapper = setup({ objectTypes: [resourceType] });
+      await flushPromises();
+
+      expect(wrapper.vm.navItems.map((item) => item.displayName)).toEqual([
+        'governance.applications.edit.objectTypesTab.details.navLabel',
+        'governance.applications.edit.objectTypesTab.propertiesTab',
+        'governance.applications.edit.objectTypesTab.dataTab',
+      ]);
+    });
+
+    it('passes the loaded object type and application to the Details form', async () => {
+      const application = { id: 'app-1', name: 'App', aiAgentSource: 'aws.bedrock' };
+      const wrapper = setupFull({ objectTypes: [objectTypeData], application });
+      await flushPromises();
+
+      const detailsForm = wrapper.findComponent({ name: 'DetailsForm' });
+      expect(detailsForm.exists()).toBe(true);
+      expect(detailsForm.props('objectType')).toEqual(objectTypeData);
+      expect(detailsForm.props('application')).toEqual(application);
+    });
+
+    it('resets the inner tab when switching object types', async () => {
+      const secondType = {
+        id: 'Device', type: 'resource', name: 'Device', properties: {},
+      };
+      const wrapper = setup({ objectTypes: [objectTypeData, secondType] });
+      await flushPromises();
+
+      wrapper.vm.selectedInnerTab = 2;
+      wrapper.vm.selectedObjectTypeTab = 1;
+      await flushPromises();
+
+      expect(wrapper.vm.selectedInnerTab).toBe(0);
+    });
+
+    it('issues both object-type and application PUTs and emits the updated application on Details save', async () => {
+      const application = { id: 'app-1', name: 'App' };
+      const wrapper = setup({ objectTypes: [objectTypeData], application });
+      await flushPromises();
+
+      const objectTypePayload = { ...objectTypeData, isNHI: false };
+      const applicationPayload = { id: 'app-1', name: 'App', aiAgentSource: 'aws.bedrock' };
+      await wrapper.vm.saveDetails({ objectType: objectTypePayload, application: applicationPayload });
+
+      expect(ApplicationsApi.updateObjectType).toHaveBeenCalledWith('app-1', 'User', objectTypePayload);
+      expect(ApplicationsApi.updateApplication).toHaveBeenCalledWith('app-1', applicationPayload);
+      expect(wrapper.vm.loadedObjectType).toEqual(objectTypePayload);
+      expect(wrapper.emitted('applicationUpdated')[0][0]).toEqual(applicationPayload);
+      expect(wrapper.vm.isSavingDetails).toBe(false);
+    });
+
+    it('skips the application PUT and update event when the parent provides no application', async () => {
+      const wrapper = setup({ objectTypes: [objectTypeData] });
+      await flushPromises();
+
+      const objectTypePayload = { ...objectTypeData, isNHI: false };
+      await wrapper.vm.saveDetails({ objectType: objectTypePayload, application: {} });
+
+      expect(ApplicationsApi.updateObjectType).toHaveBeenCalledWith('app-1', 'User', objectTypePayload);
+      expect(ApplicationsApi.updateApplication).not.toHaveBeenCalled();
+      expect(wrapper.emitted('applicationUpdated')).toBeFalsy();
+      expect(wrapper.vm.loadedObjectType).toEqual(objectTypePayload);
+      expect(wrapper.vm.isSavingDetails).toBe(false);
+      expect(showErrorMessage).not.toHaveBeenCalled();
+    });
+
+    it('clears the saving indicator and retains the prior object type when the object-type PUT fails, but still adopts a successful application update', async () => {
+      ApplicationsApi.updateObjectType.mockRejectedValueOnce(new Error('failed'));
+      const wrapper = setup({ objectTypes: [objectTypeData], application: { id: 'app-1' } });
+      await flushPromises();
+
+      const objectTypePayload = { ...objectTypeData, isNHI: true };
+      const applicationPayload = { id: 'app-1', aiAgentSource: 'aws.bedrock' };
+      await wrapper.vm.saveDetails({ objectType: objectTypePayload, application: applicationPayload });
+
+      expect(wrapper.vm.isSavingDetails).toBe(false);
+      expect(wrapper.vm.loadedObjectType).toEqual(objectTypeData);
+      expect(wrapper.emitted('applicationUpdated')[0][0]).toEqual(applicationPayload);
+      expect(showErrorMessage).toHaveBeenCalled();
+    });
+
+    it('clears the saving indicator and adopts the new object type even when the application PUT fails', async () => {
+      ApplicationsApi.updateApplication.mockRejectedValueOnce(new Error('failed'));
+      const wrapper = setup({ objectTypes: [objectTypeData], application: { id: 'app-1' } });
+      await flushPromises();
+
+      const objectTypePayload = { ...objectTypeData, isNHI: true };
+      await wrapper.vm.saveDetails({ objectType: objectTypePayload, application: { id: 'app-1' } });
+
+      expect(wrapper.vm.isSavingDetails).toBe(false);
+      // The object-type PUT succeeded independently, so local state advances
+      // to match the backend — retrying re-sends the same, already-applied
+      // object-type payload harmlessly rather than diverging from it.
+      expect(wrapper.vm.loadedObjectType).toEqual(objectTypePayload);
+      expect(wrapper.emitted('applicationUpdated')).toBeFalsy();
+      expect(showErrorMessage).toHaveBeenCalled();
+    });
+
+    it('does not clobber a mid-save object-type switch with the saved type', async () => {
+      const secondType = {
+        id: 'Device', type: 'resource', name: 'Device', properties: {},
+      };
+      const wrapper = setup({
+        objectTypes: [objectTypeData, secondType],
+        application: { id: 'app-1' },
+      });
+      await flushPromises();
+
+      // Save type A with a deferred request, then switch to type B before it resolves.
+      let resolveObjectSave;
+      ApplicationsApi.updateObjectType.mockReturnValueOnce(new Promise((resolve) => {
+        resolveObjectSave = resolve;
+      }));
+      const objectTypePayload = { ...objectTypeData, isNHI: true };
+      const savePromise = wrapper.vm.saveDetails({ objectType: objectTypePayload, application: { id: 'app-1' } });
+
+      ApplicationsApi.getObjectType.mockResolvedValueOnce({ data: secondType });
+      wrapper.vm.selectedObjectTypeTab = 1;
+      await flushPromises();
+      expect(wrapper.vm.loadedObjectType).toEqual(secondType);
+
+      // A's resolution must not reassign loadedObjectType back to A under a B header.
+      resolveObjectSave({ data: {} });
+      await savePromise;
+      await flushPromises();
+
+      expect(wrapper.vm.loadedObjectType).toEqual(secondType);
+      expect(wrapper.vm.isSavingDetails).toBe(false);
+      expect(showErrorMessage).not.toHaveBeenCalled();
     });
   });
 });

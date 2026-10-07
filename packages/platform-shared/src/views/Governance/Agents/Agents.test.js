@@ -97,6 +97,8 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 8)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
@@ -107,7 +109,7 @@ describe('Agents Unit', () => {
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
     await flushPromises();
-    expect(AccountApi.getAccounts).toHaveBeenCalledTimes(12);
+    expect(AccountApi.getAccounts).toHaveBeenCalledTimes(14);
 
     expect(wrapper.vm.agents.length).toBe(10);
     expect(wrapper.vm.agents[0]).toEqual(expect.objectContaining(
@@ -148,6 +150,8 @@ describe('Agents Unit', () => {
       'azure.aifoundry': 7,
       'sf.agentforce': 6,
       'ping.aiagent': 8,
+      databricks: 1,
+      snowflake: 9,
       custom: 0,
       noCustodians: 9,
       unreviewed: 25,
@@ -167,8 +171,13 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageNumber: 0, pageSize: 20 })));
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -178,7 +187,7 @@ describe('Agents Unit', () => {
     wrapper.vm.pageSizeChange(20);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(13, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(15, {
       pagedResultsOffset: 0,
       pageSize: 20,
       sortKeys: 'descriptor.idx./account.displayName',
@@ -199,9 +208,13 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 8)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 10 }, 10)));
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -210,7 +223,7 @@ describe('Agents Unit', () => {
     wrapper.vm.tabActivated(1);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(13, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(15, {
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
@@ -231,9 +244,13 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 8)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 10 }, 10)));
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -243,7 +260,7 @@ describe('Agents Unit', () => {
     wrapper.vm.updateApplications(['271fbe6672-780c-4226-af35-01a2546723c1']);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(13, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(15, {
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
@@ -264,6 +281,8 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(createData({ pageSize: 0 }, 7))
       .mockResolvedValueOnce(createData({ pageSize: 0 }, 6))
       .mockResolvedValueOnce(createData({ pageSize: 0 }, 8))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 1))
+      .mockResolvedValueOnce(createData({ pageSize: 0 }, 9))
       .mockResolvedValueOnce(createData({ pageSize: 0 }, 0))
       .mockResolvedValueOnce(createData({ pageSize: 0 }, recentlyDiscovered))
       .mockResolvedValueOnce(createData({ pageSize: 0 }, noCustodians))
@@ -339,7 +358,10 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 8)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
     wrapper.vm.navigateToEdit = jest.fn();
@@ -359,7 +381,17 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 7)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 8)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
     await flushPromises();
 
     wrapper.vm.navigateToEdit('id-3');

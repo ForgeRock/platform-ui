@@ -19,6 +19,8 @@ const AGENT_TEMPLATES = {
   AZURE: 'azure.aifoundry',
   SALESFORCE: 'sf.agentforce',
   PING: 'ping.aiagent',
+  DATABRICKS: 'databricks',
+  SNOWFLAKE: 'snowflake',
 };
 
 const APPLICATION_PROPS = {

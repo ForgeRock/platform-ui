@@ -140,6 +140,13 @@ of the MIT license. See the LICENSE file for details. -->
         class="flex-grow-1 fr-object-type-tabs"
         nav-class="d-none"
         lazy>
+        <BTab v-if="governanceDevEnabled">
+          <FrDetailsForm
+            :object-type="loadedObjectType"
+            :application="application"
+            :is-saving="isSavingDetails"
+            @save="saveDetails" />
+        </BTab>
         <BTab>
           <FrObjectTypePropertyList
             :application-id="applicationId"
@@ -209,9 +216,12 @@ import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
-import { createObjectType, deleteObjectType, getObjectType } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import {
+  createObjectType, deleteObjectType, getObjectType, updateApplication, updateObjectType,
+} from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrAgentClassification from './AgentClassification';
+import FrDetailsForm from './DetailsForm';
 import FrObjectTypeCorrelation from './ObjectTypeCorrelation';
 import FrObjectTypeDataList from './ObjectTypeDataList';
 import FrObjectTypePropertyList from './ObjectTypePropertyList';
@@ -230,9 +240,13 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  application: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
-const emit = defineEmits(['object-type-added', 'object-type-deleted']);
+const emit = defineEmits(['object-type-added', 'object-type-deleted', 'applicationUpdated']);
 
 const store = useStore();
 const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
@@ -245,6 +259,7 @@ const isLoading = ref(false);
 const loadedObjectType = ref(null);
 const isAdding = ref(false);
 const isDeleting = ref(false);
+const isSavingDetails = ref(false);
 const showAddModal = ref(false);
 
 const emptyAddForm = () => ({ id: '', type: 'account' });
@@ -255,10 +270,17 @@ const selectedObjectType = computed(() => props.objectTypes[selectedObjectTypeTa
 const hasAccountType = computed(() => props.objectTypes.some((ot) => ot.type === 'account'));
 
 const navItems = computed(() => {
-  const items = [
+  const items = [];
+  // Details is feature-flagged behind governanceDevEnabled like Agent
+  // Classification; when off, Properties stays first and the editor behaves
+  // exactly as before this feature.
+  if (governanceDevEnabled.value) {
+    items.push({ displayName: i18n.global.t('governance.applications.edit.objectTypesTab.details.navLabel') });
+  }
+  items.push(
     { displayName: i18n.global.t('governance.applications.edit.objectTypesTab.propertiesTab') },
     { displayName: i18n.global.t('governance.applications.edit.objectTypesTab.dataTab') },
-  ];
+  );
   if (loadedObjectType.value?.type === 'account') {
     items.push({ displayName: i18n.global.t('governance.unmanagedApplications.correlationTab.navLabel') });
     if (governanceDevEnabled.value) {
@@ -324,6 +346,46 @@ async function removeObjectType() {
     showErrorMessage(error, i18n.global.t('governance.applications.edit.objectTypesTab.deleteObjectTypeError'));
   } finally {
     isDeleting.value = false;
+  }
+}
+
+async function saveDetails({ objectType, application }) {
+  if (!loadedObjectType.value) return;
+  // The application prop is optional; when the parent provides no application
+  // (empty default), Details has no full application payload to persist, so
+  // the application PUT is skipped rather than sent with a partial or empty
+  // body that could drop unrelated application fields.
+  const hasApplication = Object.keys(props.application).length > 0;
+  isSavingDetails.value = true;
+  try {
+    const requests = [updateObjectType(props.applicationId, loadedObjectType.value.id, objectType)];
+    if (hasApplication) {
+      requests.push(updateApplication(props.applicationId, application));
+    }
+    const results = await Promise.allSettled(requests);
+    // Both PUTs carry full payloads, so a retry after a partial failure
+    // re-sends an already-applied request harmlessly. Advance local state
+    // for whichever writes succeeded so the UI stays in sync with the
+    // backend instead of silently rolling a committed object-type change.
+    const objectTypeFailed = results[0].status === 'rejected';
+    const applicationFailed = hasApplication && results[1].status === 'rejected';
+    // The switcher is not disabled while saving, so the administrator can move
+    // to another object type mid-request. Only assign the saved type back if
+    // it is still the one on screen; otherwise the stale type would clobber
+    // the newly loaded one while every child tab operates on it.
+    if (!objectTypeFailed && loadedObjectType.value?.id === objectType.id) {
+      loadedObjectType.value = objectType;
+    }
+    if (!applicationFailed && hasApplication) {
+      emit('applicationUpdated', application);
+    }
+    if (objectTypeFailed || applicationFailed) {
+      showErrorMessage(null, i18n.global.t('governance.applications.edit.objectTypesTab.details.saveError'));
+    } else {
+      displayNotification('success', i18n.global.t('governance.applications.edit.objectTypesTab.details.saveSuccess'));
+    }
+  } finally {
+    isSavingDetails.value = false;
   }
 }
 
