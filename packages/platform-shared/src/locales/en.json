@@ -683,6 +683,7 @@
         "numeric": "numeric characters",
         "periods": "periods",
         "positiveInteger": "positive integer",
+        "slashes": "slashes",
         "spaces": "spaces",
         "underscores": "underscores"
       },

@@ -30,6 +30,7 @@ export function getRules(i18n) {
       numeric: { regex: '[0-9]', name: i18n.global.t('common.policyValidationMessages.customValidation.numeric') },
       positive_integer: { regex: '[1-9][0-9]*', name: i18n.global.t('common.policyValidationMessages.customValidation.positiveInteger') },
       period: { regex: '\\.', name: i18n.global.t('common.policyValidationMessages.customValidation.periods') },
+      slash: { regex: '/', name: i18n.global.t('common.policyValidationMessages.customValidation.slashes') },
       space: { regex: ' ', name: i18n.global.t('common.policyValidationMessages.customValidation.spaces') },
       under: { regex: '_', name: i18n.global.t('common.policyValidationMessages.customValidation.underscores') },
     };
