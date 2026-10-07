@@ -238,12 +238,50 @@ export default {
           this.showErrorMessage(error, this.$t('pages.access.invalidEdit'));
         });
       } else {
+        await this.focusFirstInvalidField();
         this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
       }
     },
     updateField(index, newValue) {
       this.clonedDisplayProperties[index].value = newValue;
       this.$forceUpdate();
+    },
+    /**
+     * Moves keyboard focus to the first field that failed validation, so screen-reader and
+     * keyboard users are taken straight to the problem instead of having to hunt for it.
+     * Field names registered with vee-validate have a uid appended (e.g. "fieldName-id-<uuid>"),
+     * so error keys are resolved back to the display property keys used in the form.
+     * Disabled fields cannot receive focus, so they are skipped in favour of the next invalid field.
+     */
+    async focusFirstInvalidField() {
+      await this.$nextTick();
+      const errors = this.$refs.observer.getErrors();
+      const invalidFields = Object.keys(errors).filter((fieldName) => errors[fieldName]?.length > 0);
+      if (!invalidFields.length) return;
+      const fieldKeys = this.clonedDisplayProperties.map((field) => field.key);
+      invalidFields.some((invalidField) => {
+        // vee-validate registers fields as "<key>-id-<uuid>"; resolve the error key back to the
+        // display property key it belongs to instead of naively truncating, which would misresolve
+        // keys that legitimately contain "-id-"
+        const baseFieldName = fieldKeys
+          .find((key) => invalidField === key || invalidField.startsWith(`${key}-id-`))
+          || invalidField;
+
+        const fieldElement = this.$refs.observer.$el.querySelector(`[name="${CSS.escape(baseFieldName)}"]`);
+        if (fieldElement && !fieldElement.disabled) {
+          fieldElement.focus();
+          return true;
+        }
+        // Compound fields (e.g. multiselect, tags): their named input (search field) or first
+        // focusable element within the field wrapper is the better focus target than the raw input
+        const fieldWrapper = this.$refs.observer.$el.querySelector(`[id="${CSS.escape(baseFieldName)}"]`);
+        const fieldFocus = fieldWrapper?.querySelector('input, [tabindex="0"]');
+        if (fieldFocus && !fieldFocus.disabled) {
+          fieldFocus.focus();
+          return true;
+        }
+        return false;
+      });
     },
     /**
      * Determines the exact field type component to use.

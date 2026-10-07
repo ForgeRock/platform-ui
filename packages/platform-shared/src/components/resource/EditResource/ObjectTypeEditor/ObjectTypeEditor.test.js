@@ -7,11 +7,15 @@
 
 import { mount } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
+import { defineRule } from 'vee-validate';
 import ObjectTypeEditor from './index';
 
+defineRule('required', (value) => !!String(value ?? '').length);
+
 describe('ObjectTypeEditor', () => {
-  function mountComponent(propsData) {
+  function mountComponent(propsData, mountOptions = {}) {
     const wrapper = mount(ObjectTypeEditor, {
+      ...mountOptions,
       global: {
         mocks: {
           $t: () => {},
@@ -94,6 +98,123 @@ describe('ObjectTypeEditor', () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].startsWith('testKey')).toBe(true);
     expect(mockCalls[0][1]).toBe('errorMessage');
+    wrapper.unmount();
+  });
+
+  it('moves focus to the first invalid field when form validation fails on save', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'First Field',
+          value: 'initialValue',
+          key: 'firstKey',
+          type: 'string',
+        },
+        {
+          title: 'Second Field',
+          value: '',
+          key: 'secondKey',
+          type: 'string',
+          validation: 'required',
+        },
+      ],
+      formFields: { firstKey: 'initialValue', secondKey: '' },
+    }, { attachTo: document.body });
+
+    const patchSpy = jest.fn();
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
+      {
+        patch: patchSpy,
+      }
+    ));
+
+    await wrapper.vm.saveResource();
+
+    // The invalid-validation path should return before making any HTTP call
+    expect(patchSpy).not.toHaveBeenCalled();
+
+    const focusedElement = document.activeElement;
+    expect(focusedElement).not.toBeNull();
+    expect(focusedElement.tagName).toBe('INPUT');
+    expect(focusedElement.name.startsWith('secondKey')).toBe(true);
+    wrapper.unmount();
+  });
+
+  it('moves focus to the correct field when the schema key contains "-id-"', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'ID Field',
+          value: '',
+          key: 'my-id-field',
+          type: 'string',
+          validation: 'required',
+        },
+      ],
+      formFields: { 'my-id-field': '' },
+    }, { attachTo: document.body });
+
+    // getRequestService is invoked at the top of saveResource, before validation, so it must be mocked
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
+      {
+        patch: () => Promise.resolve(),
+      }
+    ));
+
+    await wrapper.vm.saveResource();
+
+    const focusedElement = document.activeElement;
+    expect(focusedElement.tagName).toBe('INPUT');
+    expect(focusedElement.name.startsWith('my-id-field')).toBe(true);
+    wrapper.unmount();
+  });
+
+  it('focusFirstInvalidField returns early when there are no validation errors', async () => {
+    const wrapper = mountComponent();
+
+    jest.spyOn(wrapper.vm.$refs.observer, 'getErrors').mockReturnValue({});
+
+    await wrapper.vm.focusFirstInvalidField();
+
+    expect(document.activeElement.tagName).toBe('BODY');
+    wrapper.unmount();
+  });
+
+  it('focusFirstInvalidField uses the field-wrapper fallback when no named input exists', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'Tags Field',
+          value: '',
+          key: 'tagKey',
+          type: 'string',
+        },
+      ],
+      formFields: { tagKey: '' },
+    });
+
+    // Wrapper element as FrField renders it: root div with id = field key, containing a focusable input
+    const focusableInput = document.createElement('input');
+    const fieldWrapper = document.createElement('div');
+    fieldWrapper.id = 'tagKey';
+    fieldWrapper.appendChild(focusableInput);
+    document.body.appendChild(fieldWrapper);
+
+    jest.spyOn(wrapper.vm.$refs.observer, 'getErrors').mockReturnValue({ 'tagKey-id-abc': ['Tag is required'] });
+    const querySelectorSpy = jest.spyOn(wrapper.vm.$refs.observer.$el, 'querySelector')
+      .mockImplementation((selector) => {
+        if (selector.startsWith('[name=')) return null;
+        if (selector.startsWith('[id=')) return fieldWrapper;
+        return null;
+      });
+
+    await wrapper.vm.focusFirstInvalidField();
+
+    // The error key resolved back to the display property key before querying
+    expect(querySelectorSpy).toHaveBeenCalledWith('[name="tagKey"]');
+    expect(document.activeElement).toBe(focusableInput);
+
+    fieldWrapper.remove();
     wrapper.unmount();
   });
 
