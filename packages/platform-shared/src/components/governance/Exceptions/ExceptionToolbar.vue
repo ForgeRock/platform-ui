@@ -29,7 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
     <BCollapse
       v-model="showFilters"
       id="exceptions-filter-collapse">
-      <BRow class="p-4 border-bottom">
+      <BRow
+        ref="filterSectionRef"
+        class="p-4 border-bottom">
         <template v-if="isAdmin">
           <BCol lg="6">
             <FrField
@@ -77,7 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
  * A button toggles the visibility of the filter inputs
  * A button allows to customise the visibility and order of the columns
  */
-import { ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import {
   BButton,
@@ -126,6 +128,20 @@ const searchValue = ref('');
 const selectedRule = ref('');
 const selectedUser = ref('');
 const showFilters = ref(false);
+const filterSectionRef = ref(null);
+
+/**
+ * Moves keyboard focus to the first focusable control in the revealed filter
+ * section (WCAG 2.4.3 focus order).
+ */
+watch(showFilters, (shown) => {
+  if (!shown) return;
+  nextTick(() => {
+    const section = filterSectionRef.value?.$el ?? filterSectionRef.value;
+    const firstControl = section?.querySelector('input, select, button');
+    if (firstControl) firstControl.focus();
+  });
+});
 
 /**
  * emit a filter object representing all the current form values

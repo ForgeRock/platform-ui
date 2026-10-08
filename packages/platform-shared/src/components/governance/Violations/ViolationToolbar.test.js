@@ -160,4 +160,16 @@ describe('Violation Toolbar', () => {
     expect(filterButton.attributes('aria-expanded')).toBe('true');
     expect(wrapper.find('#violations-filter-collapse').exists()).toBe(true);
   });
+
+  it('moves focus to the search input when the filter section is revealed', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+    document.body.appendChild(wrapper.element);
+
+    wrapper.find('[aria-controls="violations-filter-collapse"]').trigger('click');
+    await flushPromises();
+
+    expect(document.activeElement).toBe(wrapper.find('input[type="search"]').element);
+    wrapper.element.remove();
+  });
 });

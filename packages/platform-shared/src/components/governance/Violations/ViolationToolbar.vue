@@ -9,14 +9,12 @@ of the MIT license. See the LICENSE file for details. -->
         toggle-class="px-0 text-dark"
         variant="link-dark">
         <template #button-content>
-          <BButton
-            class="p-0 toolbar-link-text text-dark"
-            variant="link-dark">
+          <span class="toolbar-link-text text-dark">
             <span class="font-weight-bold mr-1">
               {{ `${$t('common.status')}:` }}
             </span>
             {{ selectedStatus.text }}
-          </BButton>
+          </span>
         </template>
         <template #default>
           <BDropdownItem
@@ -54,7 +52,9 @@ of the MIT license. See the LICENSE file for details. -->
     <BCollapse
       v-model="showFilters"
       id="violations-filter-collapse">
-      <BRow class="p-4 border-bottom">
+      <BRow
+        ref="filterSectionRef"
+        class="p-4 border-bottom">
         <template v-if="isAdmin">
           <BCol lg="6">
             <FrField
@@ -115,7 +115,7 @@ of the MIT license. See the LICENSE file for details. -->
  * The inputs are: policy rule, user, starting date range, and ending date range
  * A button toggles the visibility of the filter inputs
  */
-import { ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import {
   BButton,
@@ -178,6 +178,20 @@ const statusOptions = [
 ];
 const searchFieldHasFocus = ref(false);
 const searchValue = ref('');
+const filterSectionRef = ref(null);
+
+/**
+ * Moves keyboard focus to the first focusable control in the revealed filter
+ * section (WCAG 2.4.3 focus order).
+ */
+watch(showFilters, (shown) => {
+  if (!shown) return;
+  nextTick(() => {
+    const section = filterSectionRef.value?.$el ?? filterSectionRef.value;
+    const firstControl = section?.querySelector('input, select, button');
+    if (firstControl) firstControl.focus();
+  });
+});
 
 // Functions
 /**
