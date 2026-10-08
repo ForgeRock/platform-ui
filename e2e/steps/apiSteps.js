@@ -29,6 +29,7 @@ import RealmApiSteps from './api/RealmApiSteps';
 import RelationshipApiSteps from './api/RelationshipApiSteps';
 import RoleApiSteps from './api/RoleApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
+import SamlApplicationApiSteps from './api/SamlApplicationApiSteps';
 import ThemeApiSteps from './api/ThemeApiSteps';
 import UserApiSteps from './api/UserApiSteps';
 
@@ -57,6 +58,7 @@ export default {
   realm: RealmApiSteps,
   relationships: RelationshipApiSteps,
   roles: RoleApiSteps,
+  samlApplications: SamlApplicationApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   themes: ThemeApiSteps,
   user: UserApiSteps,

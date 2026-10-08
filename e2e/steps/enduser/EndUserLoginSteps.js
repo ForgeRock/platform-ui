@@ -15,6 +15,17 @@ export default class LoginSteps {
     return cy.wrap(null).then(() => cy.loginAsEnduser(Cypress.env('endUserName'), Cypress.env('endUserPassword'), false));
   }
 
+  /**
+   * Log in as a specific enduser — for users created with a userName override,
+   * where the generated credentials recorded by createEndUser do not match the
+   * created account.
+   * @param {string} userName - Username of the account to log in as
+   * @param {string} password - Password of the account to log in as
+   */
+  static loginAs(userName, password) {
+    return cy.wrap(null).then(() => cy.loginAsEnduser(userName, password, false));
+  }
+
   static visitLoginJourney() {
     const url = generateJourneyURL(JOURNEYS.DEFAULT_LOGIN.name);
     cy.visit(url);

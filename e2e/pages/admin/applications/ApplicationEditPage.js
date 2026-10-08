@@ -26,6 +26,12 @@ export default class ApplicationEditPage {
     return cy.findByRole('heading', { name: /native \/ spa/i }, { timeout: 15000 });
   }
 
+  // The SAML template's display name rendered as the header subtitle — only
+  // rendered once the app record and schema have loaded
+  static get editPageSamlHeading() {
+    return cy.findByRole('heading', { name: /^saml$/i }, { timeout: 15000 });
+  }
+
   // ── Tabs ─────────────────────────────────────────────────────────────────────
 
   static get signOnTab() {
@@ -48,9 +54,55 @@ export default class ApplicationEditPage {
     return cy.findByLabelText(label);
   }
 
+  // ── Details tab ──────────────────────────────────────────────────────────────
+
+  static get detailsNameField() {
+    // Lazy-loaded tab: generous timeout while the app record, schema and tab
+    // content finish loading
+    return cy.get('#applicationDetails').findByLabelText('Name', { timeout: 15000 });
+  }
+
+  // ── Owners (Details tab) ─────────────────────────────────────────────────────
+
+  static ownerChip(ownerUsername) {
+    return cy.get('#applicationDetails').contains('.multiselect__tag', ownerUsername);
+  }
+
+  static ownerChipRemoveButton(ownerUsername) {
+    return ApplicationEditPage.ownerChip(ownerUsername).findByRole('button', { name: 'Remove' });
+  }
+
+  // ── Delete panel (Details tab bottom) ────────────────────────────────────────
+
+  static get deletePanel() {
+    return cy.get('[data-testid="delete-panel"]');
+  }
+
+  static get deleteApplicationButton() {
+    return ApplicationEditPage.deletePanel.findByRole('button', { name: /delete application/i });
+  }
+
+  static get deleteConfirmDialog() {
+    return cy.findByRole('dialog', { name: /delete application\?/i });
+  }
+
+  static get deleteConfirmButton() {
+    return ApplicationEditPage.deleteConfirmDialog.findByRole('button', { name: /^delete$/i });
+  }
+
   // ── Actions ──────────────────────────────────────────────────────────────────
 
   static get saveButton() {
     return cy.findByRole('button', { name: 'Save' });
+  }
+
+  // Status toggle above the tabs — button text matches the current status
+  // ("Active" or "Inactive"); only rendered for Consumer (OIDC) templates
+  static get statusButton() {
+    return cy.findByRole('button', { name: /active|inactive/i });
+  }
+
+  static statusOption(status) {
+    return cy.findByRole('menuitem', { name: new RegExp(status, 'i') });
   }
 }

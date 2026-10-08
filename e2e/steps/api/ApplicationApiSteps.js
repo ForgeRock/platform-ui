@@ -6,7 +6,13 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import createApplication, { createOAuth2Client, deleteApplication, deleteOAuth2Client } from '@e2e/api/applicationsApi.e2e';
+import createApplication, {
+  createOAuth2Client,
+  deleteApplication,
+  deleteOAuth2Client,
+  getApplication,
+} from '@e2e/api/applicationsApi.e2e';
+import { deleteSaml2Entity } from '@e2e/api/saml2Api.e2e';
 
 export default class ApplicationApiSteps {
   static createdManagedAppIds = [];
@@ -62,12 +68,25 @@ export default class ApplicationApiSteps {
    * @returns {Cypress.Chainable} The response from the create application request
    */
   static createNativeSpaApplication({ appName, clientId, ownerId }) {
+    return ApplicationApiSteps.createNativeSpaApplicationWithOwners({ appName, clientId, ownerIds: [ownerId] });
+  }
+
+  /**
+   * Create a native/SPA custom application with one or more owners. The owners
+   * array shape mirrors what the UI wizard saves (one owners edge per user).
+   * @param {Object} options
+   * @param {string} options.appName - Name of the managed application (also used as clientName)
+   * @param {string} options.clientId - Client id for the AM OAuth2 client
+   * @param {string[]} options.ownerIds - Managed user ids set as the application owners
+   * @returns {Cypress.Chainable} The response from the create application request
+   */
+  static createNativeSpaApplicationWithOwners({ appName, clientId, ownerIds }) {
     const userResource = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
     return createOAuth2Client(clientId, appName).then(() => {
       ApplicationApiSteps.createdClientIds.push(clientId);
       return createApplication({
         name: appName,
-        owners: [{ _ref: `managed/${userResource}/${ownerId}`, _refProperties: {} }],
+        owners: ownerIds.map((ownerId) => ({ _ref: `managed/${userResource}/${ownerId}`, _refProperties: {} })),
         templateName: 'native',
         templateVersion: '1.0',
         ssoEntities: { oidcId: clientId },
@@ -79,36 +98,68 @@ export default class ApplicationApiSteps {
     });
   }
 
+  /**
+   * Delete every tracked application and OAuth2 client. Managed applications
+   * are deleted first, tolerating already-deleted apps and removing any AM
+   * SAML entity providers their ssoEntities reference (hosted IdP, then remote
+   * SP), then the OAuth2 clients. A failure to delete leaves the tenant dirty
+   * and fails the test.
+   */
   static deleteCreatedApplications() {
-    return cy.wrap(null).then(() => {
-      const managedIds = [...ApplicationApiSteps.createdManagedAppIds];
-      const clientIds = [...ApplicationApiSteps.createdClientIds];
-      const applicationIds = [...ApplicationApiSteps.createdApplicationIds];
-      ApplicationApiSteps.createdManagedAppIds = [];
-      ApplicationApiSteps.createdClientIds = [];
-      ApplicationApiSteps.createdApplicationIds = [];
+    const managedIds = [
+      ...ApplicationApiSteps.createdManagedAppIds,
+      ...ApplicationApiSteps.createdApplicationIds,
+    ];
+    const clientIds = [...ApplicationApiSteps.createdClientIds];
+    ApplicationApiSteps.createdManagedAppIds = [];
+    ApplicationApiSteps.createdClientIds = [];
+    ApplicationApiSteps.createdApplicationIds = [];
 
-      const deleteManaged = managedIds.length
-        ? cy.wrap(managedIds).each((id) => deleteApplication(id).then((response) => {
-          if (!response.isOkStatusCode) {
-            throw new Error(`Failed to delete managed application ${id} — tenant may be in a dirty state. Status: ${response.status}`);
-          }
-        }))
-        : cy.wrap(null);
+    const deleteManagedApps = managedIds.length
+      ? cy.wrap(managedIds).each((id) => ApplicationApiSteps.deleteManagedApplication(id))
+      : cy.wrap(null);
 
-      return deleteManaged
+    return deleteManagedApps.then(() => {
+      if (!clientIds.length) return cy.wrap(null);
+      return cy.wrap(clientIds).each((id) => deleteOAuth2Client(id).then((response) => {
+        if (!response.isOkStatusCode) {
+          throw new Error(`Failed to delete OAuth2 client ${id} — tenant may be in a dirty state. Status: ${response.status}`);
+        }
+      }));
+    });
+  }
+
+  /**
+   * Delete one managed application: AM SAML entity providers from its
+   * ssoEntities first, then the application itself. Both steps tolerate the
+   * resource already being gone (e.g. deleted through the UI under test).
+   * @param {string} id - Managed application id to delete
+   * @returns {Cypress.Chainable}
+   */
+  static deleteManagedApplication(id) {
+    return getApplication(id).then((getResponse) => {
+      if (!getResponse.isOkStatusCode) return null;
+
+      const ssoEntities = getResponse.body.ssoEntities || {};
+      return cy.wrap(null)
         .then(() => {
-          if (!clientIds.length) return cy.wrap(null);
-          return cy.wrap(clientIds).each((id) => deleteOAuth2Client(id).then((response) => {
-            if (!response.isOkStatusCode) {
-              throw new Error(`Failed to delete OAuth2 client ${id} — tenant may be in a dirty state. Status: ${response.status}`);
-            }
-          }));
+          if (ssoEntities.idpPrivateId) {
+            return deleteSaml2Entity(ssoEntities.idpPrivateId, 'hosted');
+          }
+          return null;
         })
         .then(() => {
-          if (!applicationIds.length) return cy.wrap(null);
-          return cy.wrap(applicationIds).each((id) => deleteApplication(id));
-        });
+          if (ssoEntities.spPrivateId) {
+            return deleteSaml2Entity(ssoEntities.spPrivateId, 'remote');
+          }
+          return null;
+        })
+        .then(() => deleteApplication(id).then((deleteResponse) => {
+          // 404 means the app was already deleted (e.g. through the UI)
+          if (!deleteResponse.isOkStatusCode && deleteResponse.status !== 404) {
+            throw new Error(`Failed to delete managed application ${id} — tenant may be in a dirty state. Status: ${deleteResponse.status}`);
+          }
+        }));
     });
   }
 }

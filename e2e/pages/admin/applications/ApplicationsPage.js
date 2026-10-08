@@ -28,6 +28,18 @@ export default class ApplicationsPage {
     return cy.findByRole('table');
   }
 
+  // Wrapping div that holds either the applications table or the "no
+  // applications" empty state (FrNoData), depending on the list contents
+  static get gridBody() {
+    return cy.get('.tab-content.mt-4');
+  }
+
+  // Empty state rendered when the applications list has no entries — its
+  // title comes from applications.edit.listApps.noDataTitle
+  static get emptyState() {
+    return cy.get('.fr-no-data').contains("You haven't added any applications yet");
+  }
+
   static applicationRow(appName) {
     return ApplicationsPage.table.contains('tr', appName);
   }

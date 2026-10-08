@@ -46,6 +46,25 @@ export function deleteApplication(applicationId, accessToken = Cypress.env('ACCE
 }
 
 /**
+ * Gets an application via API
+ * @param {string} applicationId - The application ID to get
+ * @param {string} accessToken - Optional access token, defaults to environment ACCESS_TOKEN
+ * @returns {Cypress.Chainable} The response from the get application request
+ */
+export function getApplication(applicationId, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  const applicationResource = Cypress.env('IS_FRAAS') ? 'alpha_application' : 'application';
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/managed/${applicationResource}/${applicationId}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    failOnStatusCode: false,
+  });
+}
+
+/**
  * Creates an OAuth2 client in AM
  * @param {string} clientId - The OAuth2 client ID
  * @param {string} clientName - The display name for the client
@@ -89,6 +108,66 @@ export function createOAuth2Client(clientId, clientName) {
         publicKeyLocation: 'jwks_uri',
       },
     },
+  });
+}
+
+/**
+ * Patches an application via API with an if-match revision guard
+ * @param {string} applicationId - The application ID to patch
+ * @param {Array} body - The JSON patch operations
+ * @param {string} ifMatchRev - The _rev the patch applies to
+ * @param {Object} [options]
+ * @param {boolean} [options.failOnStatusCode] - Whether non-2xx responses fail the test (default true)
+ * @returns {Cypress.Chainable} The response from the patch application request
+ */
+export function patchApplication(applicationId, body, ifMatchRev, { failOnStatusCode = true } = {}) {
+  const applicationResource = Cypress.env('IS_FRAAS') ? 'alpha_application' : 'application';
+  return cy.request({
+    method: 'PATCH',
+    url: `https://${Cypress.env('FQDN')}/openidm/managed/${applicationResource}/${applicationId}`,
+    headers: {
+      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
+      'content-type': 'application/json',
+      'if-match': ifMatchRev,
+    },
+    body,
+    failOnStatusCode,
+  });
+}
+
+/**
+ * Lists an application's owners — the owners relationship sub-resource the UI
+ * also reads (the plain application GET does not return relationship fields).
+ * @param {string} applicationId - The application ID
+ * @returns {Cypress.Chainable} The response from the owners list request
+ */
+export function getApplicationOwners(applicationId) {
+  const applicationResource = Cypress.env('IS_FRAAS') ? 'alpha_application' : 'application';
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/managed/${applicationResource}/${applicationId}/owners?_queryFilter=true`,
+    headers: {
+      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
+      'content-type': 'application/json',
+    },
+  });
+}
+
+/**
+ * Gets an OAuth2 client from AM
+ * @param {string} clientId - The OAuth2 client ID
+ * @returns {Cypress.Chainable} The response from the get OAuth2 client request
+ */
+export function getOAuth2Client(clientId) {
+  const realm = Cypress.env('IS_FRAAS') ? '/realms/alpha' : '';
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/am/json/realms/root${realm}/realm-config/agents/OAuth2Client/${clientId}`,
+    headers: {
+      'content-type': 'application/json',
+      'Accept-API-Version': 'protocol=2.1,resource=1.0',
+    },
+    failOnStatusCode: false,
   });
 }
 
