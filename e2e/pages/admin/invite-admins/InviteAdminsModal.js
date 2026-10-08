@@ -32,6 +32,21 @@ export default class InviteAdminsModal {
     return InviteAdminsModal.modal.findByRole('alert');
   }
 
+  // Tags rendered in the multiselect for each entered email address
+  static get emailTags() {
+    return InviteAdminsModal.modal.find('.multiselect__tag');
+  }
+
+  // The remove ("x") icon inside each email tag
+  static get emailTagRemoveIcons() {
+    return InviteAdminsModal.modal.find('.multiselect__tag-icon');
+  }
+
+  // The email tag matching the given address
+  static emailTagWithEmail(email) {
+    return InviteAdminsModal.emailTags.filter((_, el) => el.textContent.trim() === email);
+  }
+
   // ── Role Cards ────────────────────────────────────────────────────────────────
 
   static roleCard(roleName) {
