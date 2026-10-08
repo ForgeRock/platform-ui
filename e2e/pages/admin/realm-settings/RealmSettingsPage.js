@@ -15,6 +15,10 @@ export default class RealmSettingsPage {
     RealmSettingsPage.heading.should('be.visible');
   }
 
+  static visitServicePage(realmName, servicePath) {
+    cy.visit(`/platform/?realm=${realmName}#${servicePath}`);
+  }
+
   // ── Page header ───────────────────────────────────────────────────────────────
 
   static get heading() {
@@ -27,6 +31,68 @@ export default class RealmSettingsPage {
 
   static get customDomainTab() {
     return cy.findByRole('tab', { name: 'Custom Domain' });
+  }
+
+  // Only rendered when VUE_APP_ENABLE_SERVICES_MIGRATION is enabled
+  static get settingsTab() {
+    return cy.findByRole('tab', { name: 'Settings' });
+  }
+
+  // ── Settings tab (services migration) ────────────────────────────────────────
+
+  static get settingsRows() {
+    return cy.get('.card .list-group-item h5');
+  }
+
+  static settingsRow(name) {
+    // The row button's accessible name includes its status suffix ("Session Off"),
+    // so match the row by its exact h5 title instead.
+    return cy.get('.card .list-group-item')
+      .filter((i, el) => Cypress.$(el).find('h5').text().trim() === name)
+      .find('button');
+  }
+
+  static servicePageHeading(name) {
+    return cy.get('h1').contains(name);
+  }
+
+  // Row status (On/Off): the FrIcon root span holds icon name + label text.
+  static settingsRowStatus(name) {
+    return RealmSettingsPage.settingsRow(name).find('.col-md-6 > span');
+  }
+
+  // ── Service page (enable / settings form / delete) ───────────────────────────
+
+  static get serviceEmptyState() {
+    return cy.get('.fr-no-data');
+  }
+
+  static serviceEnableButton(name) {
+    return cy.findByRole('button', { name: `Enable ${name}` });
+  }
+
+  static get serviceDeleteCard() {
+    return cy.get('[data-testid="delete-panel"]');
+  }
+
+  static serviceDeleteButton(name) {
+    return RealmSettingsPage.serviceDeleteCard.findByRole('button', { name: `Delete ${name}` });
+  }
+
+  static serviceDeleteModal(name) {
+    return cy.findByRole('dialog', { name: `Delete ${name}?` });
+  }
+
+  static serviceDeleteConfirmButton(name) {
+    return RealmSettingsPage.serviceDeleteModal(name).findByRole('button', { name: 'Delete' });
+  }
+
+  static get serviceSaveButton() {
+    return cy.findByRole('button', { name: 'Save' });
+  }
+
+  static get servicePageSpinner() {
+    return cy.get('[role="status"]');
   }
 
   // ── Status ────────────────────────────────────────────────────────────────────

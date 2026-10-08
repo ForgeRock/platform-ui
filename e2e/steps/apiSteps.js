@@ -30,6 +30,7 @@ import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
 import OAuth2ProviderApiSteps from './api/OAuth2ProviderApiSteps';
 import OrganizationApiSteps from './api/OrganizationApiSteps';
 import RealmApiSteps from './api/RealmApiSteps';
+import RealmServicesApiSteps from './api/RealmServicesApiSteps';
 import RelationshipApiSteps from './api/RelationshipApiSteps';
 import RoleApiSteps from './api/RoleApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
@@ -65,6 +66,7 @@ export default {
   oauth2Provider: OAuth2ProviderApiSteps,
   organizations: OrganizationApiSteps,
   realm: RealmApiSteps,
+  realmServices: RealmServicesApiSteps,
   relationships: RelationshipApiSteps,
   roles: RoleApiSteps,
   samlApplications: SamlApplicationApiSteps,
