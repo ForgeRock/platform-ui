@@ -162,3 +162,13 @@ export const HTML_ELEMENT_SELECTORS = {
   Paragraph: 'p',
   'Line Break': 'br',
 };
+
+/**
+ * Timeout for elements whose mount waits on a slow data load.
+ */
+export const SLOW_MOUNT_TIMEOUT = 15000;
+
+/**
+ * Timeout for elements driven by debounced UI state.
+ */
+export const DEBOUNCED_STATE_TIMEOUT = 10000;

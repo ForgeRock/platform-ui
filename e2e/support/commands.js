@@ -574,3 +574,29 @@ Cypress.Commands.add('clickMoreActionsOption', (item, option, { afterClick } = {
     afterClick();
   }
 });
+
+/**
+ * Enables the UI Localization feature flag in the running app and navigates to
+ * an in-app route via the router — WITHOUT a page reload.
+ *
+ * The /languages routes are gated on store.state.SharedStore.uiLocalizationEnabled
+ * (see routes.platform.js beforeEnter). That flag comes from the
+ * VUE_APP_ENABLE_UI_LOCALIZATION build-time env var, which is false on default
+ * PR-pipeline tenants, so it has to be flipped at runtime.
+ *
+ * @param {string} routePath - In-app hash route, e.g. '/languages' or '/languages/fr'
+ */
+Cypress.Commands.add('enableUiLocalizationAndNavigate', (routePath) => {
+  // cy.window().should() retries until window.app exists — required right
+  // after cy.reload()/cy.visit(), where the fresh app has not mounted yet and
+  // window.app (set at the end of main.js) is briefly missing.
+  cy.window({ log: false }).should((win) => {
+    expect(win.app, 'window.app is mounted').to.not.equal(undefined);
+  }).then((win) => {
+    win.app.config.globalProperties.$store.state.SharedStore.uiLocalizationEnabled = true;
+    const pushResult = win.app.config.globalProperties.$router.push(routePath);
+    // A guard redirect (e.g. NotFound) surfaces as a rejected/duplicated nav —
+    // ignore it here; page-object assertions catch the wrong destination.
+    Promise.resolve(pushResult).catch(() => { /* duplicated nav is fine */ });
+  });
+});

@@ -78,10 +78,27 @@ export default class LocalizationApiSteps {
   }
 
   /**
-   * Restore every snapshotted pre-existing record and delete every record the
-   * suite created. A failure fails visibly and leaves state tracked for
-   * diagnosis rather than silently clearing the trackers.
+   * Fetch the current record for a locale (200 or 404).
+   * @param {string} locale
    */
+  static getOverride(locale) {
+    return getOverrides(locale);
+  }
+
+  /**
+   * Track a locale created through the UI (e.g. the Add Language flow) so
+   * cleanup deletes it. Complements snapshotOverride, which handles locales
+   * seeded by the suite itself.
+   * @param {string} locale
+   */
+  static trackCreatedLocale(locale) {
+    if (!(locale in LocalizationApiSteps.existingOverrides)) {
+      if (!LocalizationApiSteps.createdLocales.includes(locale)) {
+        LocalizationApiSteps.createdLocales.push(locale);
+      }
+    }
+  }
+
   static cleanupOverrides() {
     return cy.wrap({ restores: LocalizationApiSteps.existingOverrides, deletes: [...LocalizationApiSteps.createdLocales] }, { log: false })
       .then(({ restores, deletes }) => {
@@ -89,7 +106,7 @@ export default class LocalizationApiSteps {
         const restoreEntries = Object.entries(restores).filter(([, snapshot]) => snapshot !== null);
 
         return cy.wrap(restoreEntries, { log: false }).each(([locale, snapshot]) => addOverrides(locale, snapshot.body).then((response) => {
-          expect(response.status).to.eq(200);
+          expect(response.status).to.be.oneOf([200, 201]);
         })).then(() => cy.wrap(deletes, { log: false }).each((locale) => deleteOverrides(locale, false).then((response) => {
           expect(response.status).to.be.oneOf([200, 404]);
         })));

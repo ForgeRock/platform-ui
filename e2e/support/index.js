@@ -30,9 +30,10 @@ import { configure } from '@testing-library/cypress';
 configure({
   // eslint-disable-next-line no-unused-vars
   getElementError: (message, _container) => {
-    const accessibleRolesStart = 'Here are the accessible roles';
-    const messageIncludeSuggestions = message.includes(accessibleRolesStart);
-    const firstLineOfMessage = message.split('\n')[0];
+    // message can be null on some retry-wrapped query failures — guard so the
+    // handler itself does not crash and mask the original error
+    const messageIncludeSuggestions = message?.includes('Here are the accessible roles');
+    const firstLineOfMessage = message?.split('\n')[0];
 
     const outputMessage = messageIncludeSuggestions ? firstLineOfMessage : message;
 
