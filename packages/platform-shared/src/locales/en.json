@@ -435,7 +435,7 @@
     "telephone": "Telephone",
     "telephoneInput": {
       "selectCountry": "Select country code",
-      "selectedCountryAriaLabel": "Change country, selected {countryName} ({dialCode})",
+      "selectedCountryAriaLabel": "Change country, selected ${'{'}countryName{'}'} (${'{'}dialCode{'}'})",
       "noCountrySelected": "Select country",
       "countryListAriaLabel": "List of countries",
       "searchPlaceholder": "Search",

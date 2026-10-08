@@ -75,6 +75,40 @@ describe('TelephoneInput Component', () => {
       expect(searchInput.getAttribute('placeholder')).toBe('Search');
       expect(searchInput.getAttribute('aria-label')).toBe('Search country');
     }, 15000);
+    it('should have a localized aria-label on the selected country button for the initial country', async () => {
+      wrapper = await setupMount({ label: 'Phone Number' });
+      await flushPromises();
+
+      // Wait for intl-tel-input library to fully initialize
+      if (wrapper.vm.telephoneInputInstance?.promise) {
+        await wrapper.vm.telephoneInputInstance.promise;
+      }
+
+      // initialCountry is 'us'. The localized string keeps ${countryName}/${dialCode} as
+      // literal placeholders (escaped in en.json) — the library interpolates them itself —
+      // so a wrong escaping here would drop the country name from the label.
+      const selectedCountry = wrapper.element.querySelector('.iti__selected-country');
+      expect(selectedCountry.getAttribute('aria-label')).toBe('Change country, selected United States (+1)');
+    }, 15000);
+    it('should update the selected country aria-label when a different country is chosen', async () => {
+      wrapper = await setupMount({ label: 'Phone Number' });
+      await flushPromises();
+
+      // Wait for intl-tel-input library to fully initialize
+      if (wrapper.vm.telephoneInputInstance?.promise) {
+        await wrapper.vm.telephoneInputInstance.promise;
+      }
+
+      const input = wrapper.find(INPUT_SELECTOR);
+      const selectedCountry = input.element.parentElement.querySelector('.iti__selected-country');
+      selectedCountry.click();
+      // Library default order (alphabetical by country name): [0] is Afghanistan (+93)
+      document.querySelectorAll('.iti__country')[0].click();
+      await flushPromises();
+
+      expect(selectedCountry.getAttribute('aria-label')).toBe('Change country, selected Afghanistan (+93)');
+      expect(input.element.parentElement.querySelector('.iti__selected-dial-code').textContent).toBe('+93');
+    }, 15000);
   });
 
   it('renders InputLayout component with a label for a fallback id', async () => {
