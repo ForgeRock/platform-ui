@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BNav>
       <div
         v-if="activeSelection"
-        class="flex-grow-1 overflow-hidden position-inherit">
+        class="flex-grow-1 overflow-hidden position-inherit object-explorer-content">
         <component
           :is="activeSelection.tab.component"
           v-bind="activeSelection.tab.getComponentProps(props.applicationId, props.applicationName, activeSelection.tab.key, activeSelection.subKey)" />
@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { BCard, BNav } from 'bootstrap-vue';
 import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import FrAccounts from '@forgerock/platform-shared/src/views/Governance/Accounts/Accounts';
@@ -66,7 +66,7 @@ const props = defineProps({
   },
 });
 
-const router = useRouter();
+const route = useRoute();
 const selectedFlatIndex = ref(0);
 
 /**
@@ -214,24 +214,34 @@ function findFlatIndex(objectTab, objectSubTab) {
 }
 
 /**
- * Selects the entry at the given flat index and pushes it through the router so
- * it survives refresh, deep links, and browser Back/Forward. Horizontal tabs
- * remain component state; only the vertical sub-tab selection syncs here.
+ * Selects the entry at the given flat index and reflects it in the URL so it
+ * survives refresh, deep links, and browser Back/Forward. The route params are
+ * mutated in place and the history entry rewritten with pushState (the pattern
+ * the managed app editor uses for its tabs): a router navigation here would
+ * change $route.fullPath and remount the whole edit page — including the
+ * object explorer — instead of just swapping the table in the active view.
+ * Horizontal tabs remain component state; only the vertical sub-tab selection
+ * syncs here.
  * @param {number} index The flat index of the selected entry
  */
 function selectSelection(index) {
   const selection = selections.value[index];
   if (!selection) return;
   selectedFlatIndex.value = index;
-  router.push({
-    name: 'EditUnmanagedApplication',
-    params: {
-      applicationId: props.applicationId,
-      tab: 'objects',
-      objectTab: selection.tab.key,
-      ...(selection.subKey ? { objectSubTab: selection.subKey } : {}),
-    },
-  });
+  route.params.objectTab = selection.tab.key;
+  if (selection.subKey) {
+    route.params.objectSubTab = selection.subKey;
+  } else {
+    delete route.params.objectSubTab;
+  }
+  const {
+    applicationId, tab, objectTab, objectSubTab,
+  } = route.params;
+  window.history.pushState(
+    window.history.state,
+    '',
+    `#/applications/unmanaged/edit/${applicationId}/${tab}/${objectTab}${objectSubTab ? `/${objectSubTab}` : ''}`,
+  );
 }
 
 // Seed the selection from the URL slugs on first mount (after flag filtering)
@@ -251,6 +261,19 @@ watch(() => [props.objectTab, props.objectSubTab], ([objectTab, objectSubTab]) =
 // divider, indented submenu options under the expandable Accounts group
 .object-explorer-nav {
   min-width: 180px;
+}
+
+// The content pane must size itself from the row, never from its content:
+// without an explicit flex-basis of 0 the flex base size comes from the
+// embedded table, whose fixed pixel column widths (applied by
+// v-resizable-table with !important, often restored from localStorage widths
+// persisted by the wider standalone pages) force the pane wider than the
+// row and the table overflows to the left over the side nav. flex-grow alone
+// is not enough (Bootstrap's flex-grow-1 keeps flex-basis: auto); ObjectTypes
+// avoids this via bootstrap's .col (flex-basis: 0) on its BTabs content.
+.object-explorer-content {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 :deep(.object-explorer-nav) {

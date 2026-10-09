@@ -11,9 +11,16 @@ import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import store from '@/store';
 import ApplicationObjectExplorer from './ApplicationObjectExplorer';
 
-const mockRouterPush = jest.fn();
+const mockPushState = jest.fn();
+const mockRoute = {
+  params: {
+    applicationId: 'app-1',
+    tab: 'objects',
+  },
+};
+
 jest.mock('vue-router', () => ({
-  useRouter: () => ({ push: mockRouterPush }),
+  useRoute: () => mockRoute,
 }));
 
 jest.mock('@/store', () => ({
@@ -65,8 +72,13 @@ function setup(props = {}, storeState = {}) {
 describe('ApplicationObjectExplorer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockRoute.params = {
+      applicationId: 'app-1',
+      tab: 'objects',
+    };
+    // jsdom lacks history.pushState
+    window.history.pushState = mockPushState;
   });
-
   describe('@renders', () => {
     it('renders a side-nav entry per object type with nested account-type options', async () => {
       const wrapper = setup();
@@ -176,41 +188,36 @@ describe('ApplicationObjectExplorer', () => {
   });
 
   describe('@actions', () => {
-    beforeEach(() => {
-      mockRouterPush.mockClear();
-    });
-
-    it('pushes a router navigation when a nested account-type option is clicked', async () => {
+    it('reflects a nested account-type option in the URL without a router navigation', async () => {
       const wrapper = setup();
       await flushPromises();
 
       // Flat index 3 = Accounts > machine
       await wrapper.findAll('.fr-menu-item-submenuitems .nav-link')[3].trigger('click');
-      expect(mockRouterPush).toHaveBeenCalledWith({
-        name: 'EditUnmanagedApplication',
-        params: {
-          applicationId: 'app-1',
-          tab: 'objects',
-          objectTab: 'accounts',
-          objectSubTab: 'machine',
-        },
-      });
+      // In-place params keep $route.fullPath unchanged so the edit page doesn't remount
+      expect(mockRoute.params.objectTab).toBe('accounts');
+      expect(mockRoute.params.objectSubTab).toBe('machine');
+      expect(mockPushState).toHaveBeenCalledWith(
+        window.history.state,
+        '',
+        '#/applications/unmanaged/edit/app-1/objects/accounts/machine',
+      );
     });
 
-    it('pushes a router navigation when a top-level side tab is clicked', async () => {
+    it('reflects a top-level side tab in the URL, clearing any stale sub tab', async () => {
+      mockRoute.params.objectSubTab = 'machine';
       const wrapper = setup();
       await flushPromises();
 
       // Flat index 4 = Entitlements (after the four account-type entries)
       await wrapper.findAll('.object-explorer-nav .nav-link')[4].trigger('click');
-      expect(mockRouterPush).toHaveBeenCalledWith({
-        name: 'EditUnmanagedApplication',
-        params: {
-          applicationId: 'app-1',
-          tab: 'objects',
-          objectTab: 'entitlements',
-        },
-      });
+      expect(mockRoute.params.objectTab).toBe('entitlements');
+      expect(mockRoute.params).not.toHaveProperty('objectSubTab');
+      expect(mockPushState).toHaveBeenCalledWith(
+        window.history.state,
+        '',
+        '#/applications/unmanaged/edit/app-1/objects/entitlements',
+      );
     });
 
     it('re-syncs the selection when objectTab/objectSubTab change externally (browser Back/Forward)', async () => {
