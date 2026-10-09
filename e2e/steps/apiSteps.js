@@ -7,6 +7,7 @@
  */
 
 import AdminsApiSteps from './api/AdminsApiSteps';
+import AIAgentApiSteps from './api/AIAgentApiSteps';
 import ApplicationApiSteps from './api/ApplicationApiSteps';
 import AssignmentApiSteps from './api/AssignmentApiSteps';
 import EmailProviderApiSteps from './api/EmailProviderApiSteps';
@@ -35,6 +36,7 @@ import UserApiSteps from './api/UserApiSteps';
 
 export default {
   admins: AdminsApiSteps,
+  aiAgents: AIAgentApiSteps,
   application: ApplicationApiSteps,
   applications: ApplicationApiSteps,
   assignments: AssignmentApiSteps,
