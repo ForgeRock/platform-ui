@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -107,6 +107,37 @@ describe('RequestActionsCell', () => {
       clickButtonAndAssertEvent(wrapper, domWrapper, 'REASSIGN', 'Forward');
       clickButtonAndAssertEvent(wrapper, domWrapper, 'COMMENT', 'Add Comment');
       clickButtonAndAssertEvent(wrapper, domWrapper, 'DETAILS', 'View Details');
+    });
+
+    it('focuses the menu toggle when a menu item is activated, so modals opened from the menu return focus to it', async () => {
+      const { domWrapper, wrapper } = setup({
+        item,
+        type: detailTypes.APPROVAL,
+      });
+      await toggleActionsMenu(domWrapper);
+
+      const focusCalls = [];
+      const toggle = findByRole(domWrapper, 'menuitem', 'Add Comment').element.closest('[role="menu"]')
+        ? document.querySelector('[role="menu"]').getAttribute('aria-labelledby')
+        : null;
+      const toggleButton = document.getElementById(toggle);
+      const originalFocus = toggleButton.focus.bind(toggleButton);
+      toggleButton.focus = (options) => {
+        focusCalls.push(options);
+        originalFocus(options);
+      };
+
+      // The modal opened by the consumer captures document.activeElement at show()
+      // time; focusing the toggle here is what gives the modal a valid return target.
+      findByRole(domWrapper, 'menuitem', 'Add Comment').trigger('click');
+      await wrapper.vm.$nextTick();
+
+      // Our handler focuses first with the transient-ring suppression; the menu's
+      // own close handler then re-focuses the already-focused toggle (a no-op).
+      expect(focusCalls).toHaveLength(2);
+      expect(focusCalls[0]).toEqual({ preventScroll: true, focusVisible: false });
+      expect(focusCalls[1]).toEqual({ preventScroll: true });
+      expect(document.activeElement).toBe(toggleButton);
     });
   });
 

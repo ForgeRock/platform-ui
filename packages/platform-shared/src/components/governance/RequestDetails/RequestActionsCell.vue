@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BDropdownItem
           v-else
           :data-testid="key === 'details' ? 'view-details-button' : `dropdown-action-${key}`"
-          @click="$emit('action', action.event)">
+          @click="handleActionClick($event, action.event)">
           <FrIcon
             :icon-class="`${action.iconClass} mr-2`"
             :name="action.icon" />
@@ -72,7 +72,35 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['action']);
+
 const userId = computed(() => useUserStore().userId);
+
+/**
+ * Focus the menu's toggle button before emitting the action. When a modal opens
+ * from a menu item, the menu closes and unmounts its items, so BootstrapVue's
+ * modal would capture <body> as its return-focus target and drop focus there on
+ * close. Focusing the toggle first gives the modal the toggle as its return
+ * target: on close, focus lands on the control that opened the dialog (WAI-ARIA
+ * APG dialog pattern).
+ *
+ * `focusVisible: false` hides the focus ring for this intermediate focus, since
+ * the modal opens asynchronously and would otherwise briefly paint the ring on
+ * the toggle. Focus is set synchronously so the menu's own close handler — which
+ * re-focuses the already-focused toggle, a no-op — cannot re-arm the ring, and
+ * the modal's own focus return uses default options, showing the ring normally
+ * on close.
+ * @param {Event} event the menu item's click event
+ * @param {String} actionEvent the action event name to emit
+ */
+function handleActionClick(event, actionEvent) {
+  const menu = event.target.closest('[role="menu"], .dropdown-menu');
+  const labelledBy = menu?.getAttribute('aria-labelledby');
+  const toggle = (labelledBy && document.getElementById(labelledBy))
+    || menu?.closest('.dropdown')?.querySelector('.dropdown-toggle');
+  if (toggle) toggle.focus({ preventScroll: true, focusVisible: false });
+  emit('action', actionEvent);
+}
 
 const sharedActions = {
   cancel: {
