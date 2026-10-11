@@ -39,6 +39,14 @@ describe('FloatingActionBar Component', () => {
     expect(wrapper.find('.font-weight-bold').text()).toBe('1');
   });
 
+  it('more dropdown toggle exposes an accessible name', () => {
+    const wrapper = mountComponent({ count: 1, menuItems: [{ label: 'Test Action', icon: 'redo', event: 'test-action' }] });
+
+    const menuToggle = wrapper.find('button.dropdown-toggle');
+    expect(menuToggle.exists()).toBe(true);
+    expect(menuToggle.attributes('aria-label')).toBe('More Actions');
+  });
+
   it('Shows buttons passed in', () => {
     const wrapper = mountComponent({ count: 1, buttons: [{ label: 'Test Button', icon: 'plus', event: 'clicked-button' }] });
     const buttons = wrapper.findAll('button');

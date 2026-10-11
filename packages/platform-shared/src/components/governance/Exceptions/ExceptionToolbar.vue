@@ -8,6 +8,9 @@ of the MIT license. See the LICENSE file for details. -->
       <BButton
         @click="showFilters = !showFilters"
         class="toolbar-link-text text-dark"
+        :aria-label="$t('common.filters')"
+        :aria-expanded="showFilters.toString()"
+        aria-controls="exceptions-filter-collapse"
         variant="link-dark">
         <FrIcon
           icon-class="md-24"
@@ -16,13 +19,16 @@ of the MIT license. See the LICENSE file for details. -->
       <BButton
         variant="link-dark"
         class="mr-2 text-dark"
+        :aria-label="$t('common.customizeColumns')"
         @click="emit('open-columns-modal')">
         <FrIcon
           icon-class="md-24"
           name="view_column" />
       </BButton>
     </BButtonToolbar>
-    <BCollapse v-model="showFilters">
+    <BCollapse
+      v-model="showFilters"
+      id="exceptions-filter-collapse">
       <BRow class="p-4 border-bottom">
         <template v-if="isAdmin">
           <BCol lg="6">

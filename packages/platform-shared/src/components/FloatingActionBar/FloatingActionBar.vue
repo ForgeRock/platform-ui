@@ -56,7 +56,8 @@ of the MIT license. See the LICENSE file for details. -->
                   no-caret
                   right
                   boundary="window"
-                  variant="dark">
+                  variant="dark"
+                  :toggle-attrs="{ 'aria-label': $t('common.moreActions') }">
                   <template #button-content>
                     <FrIcon
                       icon-class="md-24"

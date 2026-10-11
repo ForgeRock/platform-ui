@@ -54,6 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
           right
           variant="link"
           no-caret
+          :toggle-attrs="{ 'aria-label': $t('common.moreActions') }"
           :disabled="isSaving">
           <template #button-content>
             <FrIcon

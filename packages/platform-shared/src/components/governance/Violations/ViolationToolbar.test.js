@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -136,5 +136,28 @@ describe('Violation Toolbar', () => {
     await flushPromises();
 
     expect(searchInput.classes()).toContain('fr-search-focus');
+  });
+
+  it('icon-only toolbar buttons expose accessible names', () => {
+    const wrapper = mountComponent();
+
+    const filterButton = wrapper.find('button[aria-label="Filters"]');
+    expect(filterButton.exists()).toBe(true);
+
+    const columnsButton = wrapper.find('button[aria-label="Customize Columns"]');
+    expect(columnsButton.exists()).toBe(true);
+  });
+
+  it('filter button reflects the expanded state of the filters panel', async () => {
+    const wrapper = mountComponent();
+    const filterButton = wrapper.find('button[aria-label="Filters"]');
+
+    expect(filterButton.attributes('aria-expanded')).toBe('false');
+    expect(filterButton.attributes('aria-controls')).toBe('violations-filter-collapse');
+
+    await filterButton.trigger('click');
+
+    expect(filterButton.attributes('aria-expanded')).toBe('true');
+    expect(wrapper.find('#violations-filter-collapse').exists()).toBe(true);
   });
 });

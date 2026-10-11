@@ -9,6 +9,7 @@ import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mount, flushPromises } from '@vue/test-utils';
 import { forwardCertification } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import i18n from '@/i18n';
 import CertificationToolbar from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
@@ -17,9 +18,9 @@ function mountComponent(options = {}, propsData = {}) {
   setupTestPinia();
   const wrapper = mount(CertificationToolbar, {
     global: {
+      plugins: [i18n],
       stubs: ['RouterLink'],
       mocks: {
-        $t: (t) => t,
         $bvModal: {
           show: jest.fn(),
         },
@@ -72,6 +73,24 @@ describe('CertificationToolbar', () => {
       expect(triggerEl).not.toBeNull();
       expect(triggerEl.classList.contains('dropdown-toggle')).toBe(true);
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledTimes(1);
+    });
+
+    it('forward actions menu toggle exposes an accessible name', async () => {
+      const wrapper = mountComponent();
+
+      await wrapper.setProps({
+        isComplete: true,
+        hideSignOff: false,
+        campaignDetails: {
+          id: 'test-id',
+          enableForward: true,
+          allowBulkCertify: true,
+        },
+      });
+
+      const menuToggle = wrapper.find('button.dropdown-toggle');
+      expect(menuToggle.exists()).toBe(true);
+      expect(menuToggle.attributes('aria-label')).toBe('More Actions');
     });
 
     it('should call to forward access review', async () => {
