@@ -20,7 +20,6 @@ import {
   createTooltipContainer,
   runA11yTest,
   toggleActionsMenu,
-  runA11yTest,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
