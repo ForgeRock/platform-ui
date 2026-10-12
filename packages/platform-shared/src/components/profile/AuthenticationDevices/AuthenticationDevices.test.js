@@ -9,6 +9,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as DevicesApi from '@forgerock/platform-shared/src/api/DevicesApi';
 import { AUTH_TYPES } from '@forgerock/platform-shared/src/utils/authenticationDeviceUtils';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { createStore } from 'vuex';
 import i18n from '@/i18n';
 import AuthenticationDevices from './index';
@@ -227,6 +228,35 @@ describe('AuthenticationDevices', () => {
       await flushPromises();
 
       expect(wrapper.vm.authenticationDevicesArray[0].dropdown).toHaveLength(2);
+    });
+
+    it('exposes an accessible name on each device action menu toggle', async () => {
+      DevicesApi.getAuthenticationDevices = jest.fn()
+        .mockResolvedValueOnce({ data: { result: [oathDevices[0]] } })
+        .mockResolvedValueOnce({ data: { result: [pushDevices[0]] } })
+        .mockResolvedValueOnce({ data: { result: [] } })
+        .mockResolvedValueOnce({ data: { result: [] } });
+
+      mountComponent();
+      await flushPromises();
+
+      const menuToggles = wrapper.findAll('button.dropdown-toggle');
+      expect(menuToggles).toHaveLength(2);
+      expect(menuToggles[0].attributes('aria-label')).toBe('More actions for OATH Device 1');
+      expect(menuToggles[1].attributes('aria-label')).toBe('More actions for Push Device 1');
+    });
+  });
+
+  describe('@a11y', () => {
+    it('should have no a11y violations', async () => {
+      DevicesApi.getAuthenticationDevices = jest.fn()
+        .mockResolvedValueOnce({ data: { result: oathDevices } })
+        .mockResolvedValueOnce({ data: { result: pushDevices } })
+        .mockResolvedValueOnce({ data: { result: webauthnDevices } })
+        .mockResolvedValueOnce({ data: { result: recognizeDevices } });
+      mountComponent();
+      await flushPromises();
+      await runA11yTest(wrapper);
     });
   });
 

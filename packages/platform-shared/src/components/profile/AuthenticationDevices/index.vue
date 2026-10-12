@@ -69,7 +69,8 @@ of the MIT license. See the LICENSE file for details. -->
                         variant="link"
                         no-caret
                         right
-                        toggle-class="pr-0 text-decoration-none">
+                        toggle-class="pr-0 text-decoration-none"
+                        :toggle-attrs="{ 'aria-label': $t('common.deviceActions', { device: getTranslation(device.deviceName) }) }">
                         <template #button-content>
                           <FrIcon
                             icon-class="md-24 text-muted"

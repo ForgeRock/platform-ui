@@ -149,6 +149,7 @@
     "description": "Description",
     "deselect": "Deselect",
     "details": "Details",
+    "deviceActions": "More actions for {device}",
     "direct": "Direct",
     "directReport": "Direct report",
     "directive": "Directive",
