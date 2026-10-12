@@ -39,6 +39,28 @@ export function getAccountAttribute(item) {
 }
 
 /**
+ * Determines the object type for a modifyEntitlement request, used to fetch the correct entitlement schema.
+ *
+ * Connected applications carry the attribute name on the assignment; it is matched against the
+ * application's object types to find the one that owns that attribute.
+ *
+ * Disconnected applications synthesize assignments without attributes, so the object type is parsed
+ * from the entitlement id instead, which is formatted {applicationId}/{objectType}/{sourceId}.
+ *
+ * @param {Object} request - The hydrated request object.
+ * @returns {string} The object type name, or an empty string if it cannot be determined.
+ */
+export function getModifyEntitlementObjectType(request) {
+  if (request?.application?.isDisconnected) {
+    const parts = request?.request?.entitlement?.entitlementId?.split('/');
+    return parts?.length === 3 ? parts[1] : '';
+  }
+  const attributeName = request?.assignment?.attributes?.[0]?.name;
+  if (attributeName === undefined) return '';
+  return request?.application?.objectTypes?.find((type) => type.accountAttribute === attributeName)?.name || '';
+}
+
+/**
  * Normalizes an entitlementOwner/roleOwner field into an array of owners, for display or editing.
  *
  * Handles the legacy single-owner object shape, the current multi-owner array shape, and the

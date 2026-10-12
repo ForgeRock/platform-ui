@@ -294,6 +294,44 @@ describe('RequestFormManager', () => {
       expect(wrapper.find('[label="test object property"]').exists()).toBe(true);
       expect(wrapper.find('[id="test object property"]').attributes('value')).toBe('test2');
     });
+
+    it('fetches the schema for the object type parsed from the entitlement id for a disconnected application', async () => {
+      const disconnectedModifyEntitlementRequestItem = {
+        request: {
+          id: 'testId',
+          phases: [{ name: 'testPhase' }],
+          workflow: { id: 'testWorkflowId' },
+          requestType: 'modifyEntitlement',
+          application: {
+            id: 'testApp',
+            isDisconnected: true,
+            objectTypes: [
+              { name: 'User', type: 'account' },
+              { name: 'Roles', type: 'resource', accountAttribute: 'entitlement_grants' },
+            ],
+          },
+          request: {
+            entitlement: {
+              entitlementId: 'testApp/Roles/ProblemSolving',
+              glossary: {
+                testGlossaryProperty: 'test1',
+              },
+              object: {
+                testObjectProperty: 'test2',
+              },
+            },
+          },
+        },
+      };
+      EntitlementApi.getEntitlementSchema.mockClear();
+
+      const wrapper = setup(disconnectedModifyEntitlementRequestItem);
+      await flushPromises();
+
+      expect(EntitlementApi.getEntitlementSchema).toHaveBeenCalledWith('testApp', 'Roles');
+      expect(wrapper.find('[label="test object property"]').exists()).toBe(true);
+      expect(wrapper.find('[id="test object property"]').attributes('value')).toBe('test2');
+    });
   });
 
   const userFormSchema = {

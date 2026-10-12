@@ -60,6 +60,7 @@ import {
 } from 'vue';
 import { cloneDeep, pickBy } from 'lodash';
 import { isSupportedRequestType, requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getModifyEntitlementObjectType } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import { convertRelationshipPropertiesToFormBuilder, convertRelationshipPropertiesToRef } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
 import { findChanges } from '@forgerock/platform-shared/src/utils/object';
 import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
@@ -207,7 +208,7 @@ async function setFormValues(request) {
         applicationId: request.application.id,
         objectType: requestType.value === requestTypes.CREATE_ENTITLEMENT.value
           ? request.request?.entitlement?.objectType
-          : request.application?.objectTypes?.find((type) => type.accountAttribute === request.assignment?.attributes?.[0]?.name)?.name || '',
+          : getModifyEntitlementObjectType(request),
       };
       showDefaultForm.value = true;
       break;
