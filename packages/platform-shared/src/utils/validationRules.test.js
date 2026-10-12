@@ -60,6 +60,35 @@ describe('number validators', () => {
   });
 });
 
+describe('max_selected validators', () => {
+  it('should pass when selection is within the maximum', () => {
+    expect(rules.max_selected([], { max: 20 })).toBe(true);
+    expect(rules.max_selected(['a'], { max: 20 })).toBe(true);
+    expect(rules.max_selected(['a', 'b', 'c'], { max: 3 })).toBe(true);
+    expect(rules.max_selected(new Array(20).fill('user'), { max: 20 })).toBe(true);
+  });
+
+  it('should pass for non-array and empty values (required owns those cases)', () => {
+    expect(rules.max_selected(undefined, { max: 20 })).toBe(true);
+    expect(rules.max_selected(null, { max: 20 })).toBe(true);
+    expect(rules.max_selected('', { max: 20 })).toBe(true);
+    expect(rules.max_selected('single-string', { max: 20 })).toBe(true);
+  });
+
+  it('should fail when selection exceeds the maximum', () => {
+    expect(rules.max_selected(new Array(21).fill('user'), { max: 20 })).toBe('Must not have more than 20 value(s)');
+  });
+
+  it('should honor a custom message', () => {
+    expect(rules.max_selected(new Array(3).fill('user'), { max: 2, message: 'Too many' })).toBe('Too many');
+  });
+
+  it('should coerce a string max param to a number before comparing', () => {
+    expect(rules.max_selected(new Array(20).fill('user'), { max: '20' })).toBe(true);
+    expect(rules.max_selected(new Array(21).fill('user'), { max: '20' })).toBe('Must not have more than 20 value(s)');
+  });
+});
+
 describe('allowedRules validators', () => {
   it('should return true when correct value is passed', async () => {
     const result = await rules.allowedRules('abcd', ['alpha', 'numeric', 'under', 'period', 'hyphen', 'comma']);

@@ -241,6 +241,9 @@ export default {
         FrNotifications: {
           expirationDays: 1,
           expirationEmail: '',
+          expirationIncludeCc: false,
+          expirationIncludeOwner: false,
+          expirationCcUserIds: [],
           expirationNotification: false,
           initialNotification: true,
           initialEmail: 'emailTemplate/certificationAssigned',
@@ -249,6 +252,9 @@ export default {
           reminders: false,
           remindersDuration: 1,
           remindersEmail: '',
+          remindersIncludeCc: false,
+          remindersIncludeOwner: false,
+          remindersCcUserIds: [],
           remindersTimespan: this.$t('governance.timespans.days'),
         },
         FrAdditionalOptions: {

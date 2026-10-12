@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       :name="name"
       :options="selectOptions"
       :validation="validation"
+      :validation-immediate="validationImmediate"
       :value="selectValue">
       <template #noResult>
         <slot name="noResult">
@@ -70,6 +71,10 @@ const props = defineProps({
   validation: {
     type: [Object, String],
     default: '',
+  },
+  validationImmediate: {
+    type: Boolean,
+    default: false,
   },
   value: {
     type: Array,

@@ -111,6 +111,38 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('governance.editTemplate.daysBeforeCampaign') }}
             </div>
           </template>
+          <div
+            v-if="formFields.expirationNotification && governanceDevEnabled"
+            class="w-100 mt-3">
+            <FrField
+              v-model="formFields.expirationIncludeOwner"
+              class="mb-1"
+              name="expirationIncludeOwner"
+              testid="expiration-include-owner"
+              type="checkbox"
+              :label="$t('governance.editTemplate.expirationNotificationSendToOwner')" />
+            <FrField
+              v-model="formFields.expirationIncludeCc"
+              class="mb-1"
+              name="expirationIncludeCc"
+              testid="expiration-include-cc"
+              type="checkbox"
+              :label="$t('governance.editTemplate.expirationNotificationIncludeCc')" />
+            <div
+              v-if="formFields.expirationIncludeCc"
+              data-testid="expiration-cc-users">
+              <FrGovResourceMultiselect
+                :value="expirationCcUserIds"
+                class="mb-2"
+                name="expiration-cc-users"
+                resource="user"
+                :label="$t('governance.editTemplate.expirationNotificationCcUsers')"
+                :option-function="getDefaultGovOption"
+                :validation="{ required: true, max_selected: { max: 20 } }"
+                validation-immediate
+                @input="handleExpirationCcUsersInput" />
+            </div>
+          </div>
         </div>
       </BCollapse>
       <FrField
@@ -162,6 +194,38 @@ of the MIT license. See the LICENSE file for details. -->
             validation="required"
             :options="timespanOptions"
             :searchable="false" />
+          <div
+            v-if="governanceDevEnabled"
+            class="w-100 mt-3">
+            <FrField
+              v-model="formFields.remindersIncludeOwner"
+              class="mb-1"
+              name="remindersIncludeOwner"
+              testid="reminders-include-owner"
+              type="checkbox"
+              :label="$t('governance.editTemplate.remindersNotificationSendToOwner')" />
+            <FrField
+              v-model="formFields.remindersIncludeCc"
+              class="mb-1"
+              name="remindersIncludeCc"
+              testid="reminders-include-cc"
+              type="checkbox"
+              :label="$t('governance.editTemplate.remindersNotificationIncludeCc')" />
+            <div
+              v-if="formFields.remindersIncludeCc"
+              data-testid="reminders-cc-users">
+              <FrGovResourceMultiselect
+                :value="remindersCcUserIds"
+                class="mb-2"
+                name="reminders-cc-users"
+                resource="user"
+                :label="$t('governance.editTemplate.remindersNotificationCcUsers')"
+                :option-function="getDefaultGovOption"
+                :validation="{ required: true, max_selected: { max: 20 } }"
+                validation-immediate
+                @input="handleRemindersCcUsersInput" />
+            </div>
+          </div>
         </div>
       </BCollapse>
     </BContainer>
@@ -177,6 +241,8 @@ import {
   cloneDeep,
 } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrGovResourceMultiselect from '@forgerock/platform-shared/src/components/governance/GovResourceMultiselect';
+import { getDefaultGovOption } from '@forgerock/platform-shared/src/utils/governance/select';
 import { EXPIRATION_TIMING } from '@forgerock/platform-shared/src/views/Governance/utils/certificationConstants';
 
 export default {
@@ -185,6 +251,7 @@ export default {
     BCollapse,
     BContainer,
     FrField,
+    FrGovResourceMultiselect,
   },
   props: {
     emailTemplateOptions: {
@@ -212,6 +279,9 @@ export default {
       formFields: {
         expirationDays: 1,
         expirationEmail: '',
+        expirationIncludeCc: false,
+        expirationIncludeOwner: false,
+        expirationCcUserIds: [],
         expirationNotification: false,
         expirationTiming: EXPIRATION_TIMING.WHEN,
         initialEmail: 'emailTemplate/certificationAssigned',
@@ -221,6 +291,9 @@ export default {
         reminders: false,
         remindersDuration: 0,
         remindersEmail: '',
+        remindersIncludeCc: false,
+        remindersIncludeOwner: false,
+        remindersCcUserIds: [],
         remindersTimespan: '',
       },
     };
@@ -230,7 +303,25 @@ export default {
       this.formFields[field] = cloneDeep(this.value[field]);
     });
   },
+  computed: {
+    governanceDevEnabled() {
+      return this.$store.state.SharedStore.governanceDevEnabled;
+    },
+    expirationCcUserIds() {
+      return this.formFields.expirationCcUserIds.map((path) => path.split('/').pop());
+    },
+    remindersCcUserIds() {
+      return this.formFields.remindersCcUserIds.map((path) => path.split('/').pop());
+    },
+  },
   methods: {
+    getDefaultGovOption,
+    handleExpirationCcUsersInput(userIds) {
+      this.formFields.expirationCcUserIds = userIds.map((id) => `managed/user/${id.split('/').pop()}`);
+    },
+    handleRemindersCcUsersInput(userIds) {
+      this.formFields.remindersCcUserIds = userIds.map((id) => `managed/user/${id.split('/').pop()}`);
+    },
     /**
      * Adds userInfo to formFields
      * @param {Object} userInfo Data corresponding to the selected user

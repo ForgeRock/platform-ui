@@ -317,10 +317,16 @@ export function buildSavePayload(type, forms, eventBased) {
     saveObj.events.reassign.notification = notif.reassignEmail;
   }
   if (notif.reminders) {
-    saveObj.events.reminder = saveObj.events.reminder || {};
-    saveObj.events.reminder.notification = notif.remindersEmail;
-    saveObj.events.reminder.frequency = getDayDuration(notif.remindersDuration, notif.remindersTimespan);
-    saveObj.events.reminder.includeActor = true;
+    saveObj.events.reminder = {
+      ...saveObj.events.reminder,
+      notification: notif.remindersEmail,
+      frequency: getDayDuration(notif.remindersDuration, notif.remindersTimespan),
+      includeActor: true,
+      ...(notif.remindersIncludeOwner && { includeOwner: true }),
+      ...(notif.remindersIncludeCc && notif.remindersCcUserIds?.length > 0
+        ? { actors: notif.remindersCcUserIds.map((id) => ({ type: 'user', id })) }
+        : {}),
+    };
   }
 
   // Additional Options
@@ -371,6 +377,10 @@ export function buildSavePayload(type, forms, eventBased) {
       notification: notif.expirationEmail,
       ...(beforeExpires && { day: notif.expirationDays }),
       includeActor: true,
+      ...(notif.expirationIncludeOwner && { includeOwner: true }),
+      ...(notif.expirationIncludeCc && notif.expirationCcUserIds?.length > 0
+        ? { actors: notif.expirationCcUserIds.map((id) => ({ type: 'user', id })) }
+        : {}),
     };
   }
 
@@ -658,7 +668,16 @@ export function getFormValuesFromTemplate(template, eventBased) {
   };
 
   // Notifications
-  const expirationNotifDay = template.events?.expirationNotification?.day;
+  const expirationNotification = template.events?.expirationNotification;
+  const expirationNotifDay = expirationNotification?.day;
+  const expirationActors = expirationNotification?.actors || [];
+  const expirationCcUserIds = expirationActors
+    .filter((actor) => typeof actor === 'string' || (actor && actor.id))
+    .map((actor) => (typeof actor === 'string' ? actor : actor.id));
+  const reminderActors = template.events?.reminder?.actors || [];
+  const remindersCcUserIds = reminderActors
+    .filter((actor) => typeof actor === 'string' || (actor && actor.id))
+    .map((actor) => (typeof actor === 'string' ? actor : actor.id));
   forms.FrNotifications = {
     initialNotification: !isNil(template.events?.assignment?.notification),
     initialEmail: template.events?.assignment?.notification,
@@ -667,9 +686,15 @@ export function getFormValuesFromTemplate(template, eventBased) {
     reminders: template.events?.reminder?.frequency > 0,
     remindersDuration: template.events?.reminder?.frequency,
     remindersEmail: template.events?.reminder?.notification,
+    remindersIncludeCc: reminderActors.length > 0,
+    remindersIncludeOwner: template.events?.reminder?.includeOwner === true,
+    remindersCcUserIds,
     remindersTimespan: i18n.global.t('governance.timespans.days'),
-    expirationNotification: !isNil(template.events?.expirationNotification?.notification),
-    expirationEmail: template.events?.expirationNotification?.notification,
+    expirationNotification: !isNil(expirationNotification?.notification),
+    expirationEmail: expirationNotification?.notification,
+    expirationIncludeCc: expirationActors.length > 0,
+    expirationIncludeOwner: expirationNotification?.includeOwner === true,
+    expirationCcUserIds,
     expirationDays: expirationNotifDay > 0 ? expirationNotifDay : 1,
     expirationTiming: !isNil(expirationNotifDay)
       ? EXPIRATION_TIMING.BEFORE

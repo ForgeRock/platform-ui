@@ -634,8 +634,110 @@ describe('certification', () => {
       const form = getFormValuesFromTemplate(template);
       expect(form.FrNotifications.expirationNotification).toBe(true);
       expect(form.FrNotifications.expirationEmail).toBe('emailTemplate/certificationExpired');
+      expect(form.FrNotifications.expirationIncludeOwner).toBe(false);
+      expect(form.FrNotifications.expirationIncludeCc).toBe(false);
+      expect(form.FrNotifications.expirationCcUserIds).toEqual([]);
       expect(form.FrNotifications.expirationTiming).toBe(EXPIRATION_TIMING.WHEN);
       expect(form.FrNotifications.expirationDays).toBe(1);
+    });
+
+    it('hydrates expiration notification recipients from the template', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.events = {
+        expirationNotification: {
+          notification: 'emailTemplate/certificationExpired',
+          includeActor: true,
+          includeOwner: true,
+          actors: [
+            { type: 'user', id: 'managed/user/user-1' },
+            { type: 'user', id: 'managed/user/user-2' },
+          ],
+        },
+      };
+
+      const form = getFormValuesFromTemplate(template);
+
+      expect(form.FrNotifications.expirationIncludeOwner).toBe(true);
+      expect(form.FrNotifications.expirationIncludeCc).toBe(true);
+      expect(form.FrNotifications.expirationCcUserIds).toEqual([
+        'managed/user/user-1',
+        'managed/user/user-2',
+      ]);
+    });
+
+    it('hydrates reminder recipients from the template', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.events = {
+        reminder: {
+          notification: 'emailTemplate/certificationReminder',
+          frequency: 2,
+          includeActor: true,
+          includeOwner: true,
+          actors: [
+            { type: 'user', id: 'managed/user/user-1' },
+            { type: 'user', id: 'managed/user/user-2' },
+          ],
+        },
+      };
+
+      const form = getFormValuesFromTemplate(template);
+
+      expect(form.FrNotifications.reminders).toBe(true);
+      expect(form.FrNotifications.remindersIncludeOwner).toBe(true);
+      expect(form.FrNotifications.remindersIncludeCc).toBe(true);
+      expect(form.FrNotifications.remindersCcUserIds).toEqual([
+        'managed/user/user-1',
+        'managed/user/user-2',
+      ]);
+    });
+
+    it('skips type-only actor objects when hydrating CC users', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.events = {
+        expirationNotification: {
+          notification: 'emailTemplate/certificationExpired',
+          includeActor: true,
+          actors: [
+            { type: 'user', id: 'managed/user/user-1' },
+            { type: 'manager' },
+            'managed/user/legacy-user',
+          ],
+        },
+        reminder: {
+          notification: 'emailTemplate/certificationReminder',
+          frequency: 2,
+          includeActor: true,
+          actors: [{ type: 'manager' }],
+        },
+      };
+
+      const form = getFormValuesFromTemplate(template);
+
+      expect(form.FrNotifications.expirationIncludeCc).toBe(true);
+      expect(form.FrNotifications.expirationCcUserIds).toEqual([
+        'managed/user/user-1',
+        'managed/user/legacy-user',
+      ]);
+      expect(form.FrNotifications.remindersIncludeCc).toBe(true);
+      expect(form.FrNotifications.remindersCcUserIds).toEqual([]);
+    });
+
+    it('defaults reminder recipients when template reminder has no recipients', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.events = {
+        reminder: {
+          notification: 'emailTemplate/certificationReminder',
+          frequency: 2,
+          includeActor: true,
+        },
+      };
+
+      const form = getFormValuesFromTemplate(template);
+
+      expect(form.FrNotifications.reminders).toBe(true);
+      expect(form.FrNotifications.remindersIncludeOwner).toBe(false);
+      expect(form.FrNotifications.remindersIncludeCc).toBe(false);
+      expect(form.FrNotifications.remindersCcUserIds).toEqual([]);
     });
 
     it('sets expirationTiming to "Before campaign expires" and expirationDays from template when day is present', () => {
@@ -1032,6 +1134,61 @@ describe('certification', () => {
       expect(savePayload.events.expirationNotification.notification).toBe('emailTemplate/certificationExpired');
       expect(savePayload.events.expirationNotification.includeActor).toBe(true);
       expect(Object.prototype.hasOwnProperty.call(savePayload.events.expirationNotification, 'day')).toBe(false);
+      expect(Object.prototype.hasOwnProperty.call(savePayload.events.expirationNotification, 'includeOwner')).toBe(false);
+      expect(Object.prototype.hasOwnProperty.call(savePayload.events.expirationNotification, 'actors')).toBe(false);
+    });
+
+    it('maps enabled expiration notification recipients to the API payload', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        expirationNotification: true,
+        expirationEmail: 'emailTemplate/certificationExpired',
+        expirationIncludeCc: true,
+        expirationIncludeOwner: true,
+        expirationCcUserIds: ['managed/user/user-1', 'managed/user/user-2'],
+        expirationTiming: EXPIRATION_TIMING.WHEN,
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+
+      expect(savePayload.events.expirationNotification.includeOwner).toBe(true);
+      expect(savePayload.events.expirationNotification.actors).toEqual([
+        { type: 'user', id: 'managed/user/user-1' },
+        { type: 'user', id: 'managed/user/user-2' },
+      ]);
+    });
+
+    it('omits disabled or empty expiration notification recipients', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        expirationNotification: true,
+        expirationEmail: 'emailTemplate/certificationExpired',
+        expirationIncludeCc: true,
+        expirationIncludeOwner: false,
+        expirationCcUserIds: [],
+        expirationTiming: EXPIRATION_TIMING.WHEN,
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+      const { expirationNotification } = savePayload.events;
+
+      expect(Object.prototype.hasOwnProperty.call(expirationNotification, 'includeOwner')).toBe(false);
+      expect(Object.prototype.hasOwnProperty.call(expirationNotification, 'actors')).toBe(false);
+    });
+
+    it('omits stale expiration CC selections when CC is disabled', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        expirationNotification: true,
+        expirationEmail: 'emailTemplate/certificationExpired',
+        expirationIncludeCc: false,
+        expirationCcUserIds: ['managed/user/stale-user'],
+        expirationTiming: EXPIRATION_TIMING.WHEN,
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+
+      expect(Object.prototype.hasOwnProperty.call(savePayload.events.expirationNotification, 'actors')).toBe(false);
     });
 
     it('includes day in expirationNotification when timing is "before campaign expires"', () => {
@@ -1048,6 +1205,66 @@ describe('certification', () => {
       expect(savePayload.events.expirationNotification.notification).toBe('emailTemplate/certificationExpired');
       expect(savePayload.events.expirationNotification.day).toBe(5);
       expect(savePayload.events.expirationNotification.includeActor).toBe(true);
+    });
+
+    it('maps enabled reminder recipients to the API payload', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        reminders: true,
+        remindersEmail: 'emailTemplate/certificationReminder',
+        remindersDuration: 2,
+        remindersTimespan: 'day(s)',
+        remindersIncludeCc: true,
+        remindersIncludeOwner: true,
+        remindersCcUserIds: ['managed/user/user-1', 'managed/user/user-2'],
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+
+      expect(savePayload.events.reminder.notification).toBe('emailTemplate/certificationReminder');
+      expect(savePayload.events.reminder.frequency).toBe(2);
+      expect(savePayload.events.reminder.includeActor).toBe(true);
+      expect(savePayload.events.reminder.includeOwner).toBe(true);
+      expect(savePayload.events.reminder.actors).toEqual([
+        { type: 'user', id: 'managed/user/user-1' },
+        { type: 'user', id: 'managed/user/user-2' },
+      ]);
+    });
+
+    it('omits disabled or empty reminder recipients', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        reminders: true,
+        remindersEmail: 'emailTemplate/certificationReminder',
+        remindersDuration: 2,
+        remindersTimespan: 'day(s)',
+        remindersIncludeCc: true,
+        remindersIncludeOwner: false,
+        remindersCcUserIds: [],
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+      const { reminder } = savePayload.events;
+
+      expect(reminder.includeActor).toBe(true);
+      expect(Object.prototype.hasOwnProperty.call(reminder, 'includeOwner')).toBe(false);
+      expect(Object.prototype.hasOwnProperty.call(reminder, 'actors')).toBe(false);
+    });
+
+    it('omits stale reminder CC selections when CC is disabled', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        reminders: true,
+        remindersEmail: 'emailTemplate/certificationReminder',
+        remindersDuration: 2,
+        remindersTimespan: 'day(s)',
+        remindersIncludeCc: false,
+        remindersCcUserIds: ['managed/user/stale-user'],
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+
+      expect(Object.prototype.hasOwnProperty.call(savePayload.events.reminder, 'actors')).toBe(false);
     });
   });
 
