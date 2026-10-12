@@ -207,6 +207,29 @@ export function updateCampaign(campaignId, payload) {
 }
 
 /**
+ * Sends a notification to the current reviewers of a certification campaign
+ * @param campaignId - The ID of the campaign whose reviewers will be notified.
+ * @param template - The email template id to send (e.g. 'emailTemplate/certificationReminder').
+ * @param [ccUserIds] - Managed user paths to cc on the notification (e.g. 'managed/user/abc');
+ *   each cc user receives their own individual notification.
+ * @param [date] - Optional 'YYYY-MM-DD' send date; the notification is parked in the
+ *   queue until that date instead of being sent immediately.
+ * @returns The response data, including the number of reviewers notified.
+ */
+export async function notifyCampaignReviewers(campaignId, template, ccUserIds = [], date = null) {
+  const resourceUrl = `${governanceBaseUrl}/certification/${campaignId}/notify-reviewers`;
+  const payload = { template };
+  if (ccUserIds.length) {
+    payload.ccUserIds = ccUserIds;
+  }
+  if (date !== null) {
+    payload.date = date;
+  }
+  const response = await generateIgaApi().post(resourceUrl, payload);
+  return response.data;
+}
+
+/**
    * It gets the tasks for a given campaign
    * @param campaignId - The id of the campaign you want to get the tasks for.
    * @param [aditionalParams] - This is an object that contains the parameters that you want to pass to the API.

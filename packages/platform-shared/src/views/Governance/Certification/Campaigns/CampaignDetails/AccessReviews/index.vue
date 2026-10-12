@@ -32,6 +32,24 @@ of the MIT license. See the LICENSE file for details. -->
           </BDropdown>
           <div class="d-flex align-items-center">
             <BButton
+              v-if="governanceDevEnabled"
+              class="mr-2 text-body"
+              variant="link"
+              data-testid="notify-reviewers-button"
+              :aria-label="$t('governance.certificationDetails.notifyReviewersButtonText')"
+              @click="openNotifyReviewersModal()">
+              <FrIcon
+                id="notify-reviewers-icon"
+                icon-class="mr-1"
+                name="mail" />
+            </BButton>
+            <BTooltip
+              target="notify-reviewers-icon"
+              triggers="hover"
+              placement="top">
+              {{ $t('governance.certificationDetails.notifyReviewersButtonText') }}
+            </BTooltip>
+            <BButton
               class="mr-2 text-body"
               variant="link"
               :aria-label="$t('governance.certificationTask.export')"
@@ -157,6 +175,10 @@ of the MIT license. See the LICENSE file for details. -->
       :is-loading="isExporting"
       :totals="{ currentPage: accessReviewList.length, all: totalRows }"
       :ok-function="exportItemsToFile" />
+    <FrNotifyReviewersModal
+      :loading="isNotifyReviewersInProgress"
+      :initial-campaign-id="campaignId"
+      @save="notifyReviewers" />
   </div>
 </template>
 
@@ -185,10 +207,14 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
-import { getCampaignTasks } from '@forgerock/platform-shared/src/api/governance/CampaignApi';
+import {
+  getCampaignTasks,
+  notifyCampaignReviewers,
+} from '@forgerock/platform-shared/src/api/governance/CampaignApi';
 import { DATE_FORMAT_MMM_D_COMMA_YYYY } from '@forgerock/platform-shared/src/utils/constants';
 import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
 import FrDownloadItemsModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/TaskList/modals/DownloadItemsModal/DownloadItemsModal';
+import FrNotifyReviewersModal from '@forgerock/platform-shared/src/views/Governance/Certification/Campaigns/CampaignDetails/CampaignOverview/NotifyReviewersModal';
 import styles from '@/scss/main.scss';
 
 export default {
@@ -210,6 +236,7 @@ export default {
     FrCircleProgressBar,
     FrDownloadItemsModal,
     FrNoData,
+    FrNotifyReviewersModal,
     FrPagination,
     FrSearchInput,
     FrSpinner,
@@ -244,6 +271,7 @@ export default {
       totalRows: 0,
       tableLoading: true,
       isExporting: false,
+      isNotifyReviewersInProgress: false,
       fields: [
         {
           key: 'actorGivenName',
@@ -360,6 +388,41 @@ export default {
     openDownloadModal() {
       this.$bvModal.show('access-reviews-download-items-modal');
     },
+    openNotifyReviewersModal() {
+      this.$bvModal.show('NotifyReviewersModal');
+    },
+    async notifyReviewers({
+      template,
+      ccUserIds,
+      date,
+    }) {
+      this.isNotifyReviewersInProgress = true;
+      try {
+        const response = await notifyCampaignReviewers(this.campaignId, template, ccUserIds, date);
+        // The backend reports per-origin counts ({ notified, reviewers, cc }).
+        // Without the split (older backend) only the total and the requested
+        // cc count are claimed — no reviewer figure is inferred.
+        const hasSplit = response.cc !== undefined;
+        let messageKey;
+        let params;
+        if (!ccUserIds.length) {
+          messageKey = 'governance.certificationDetails.reviewersNotified';
+          params = [response.notified];
+        } else if (hasSplit) {
+          messageKey = 'governance.certificationDetails.reviewersAndCcUsersNotified';
+          params = [response.notified, response.reviewers, response.cc];
+        } else {
+          messageKey = 'governance.certificationDetails.ccUsersIncludedNotified';
+          params = [response.notified, ccUserIds.length];
+        }
+        this.displayNotification('success', this.$t(messageKey, params));
+        this.$bvModal.hide('NotifyReviewersModal');
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationDetails.errors.errorNotifyingReviewersDefault'));
+      } finally {
+        this.isNotifyReviewersInProgress = false;
+      }
+    },
     async exportItemsToFile(downloadOptions) {
       const { format, rows } = downloadOptions;
       let items = this.accessReviewList;
@@ -397,6 +460,9 @@ export default {
     },
   },
   computed: {
+    governanceDevEnabled() {
+      return this.$store.state.SharedStore.governanceDevEnabled;
+    },
     states() {
       return this.isStaging
         ? {

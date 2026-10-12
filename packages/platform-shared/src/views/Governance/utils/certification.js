@@ -22,7 +22,14 @@ import i18n from '@/i18n';
 
 export { EXPIRATION_TIMING };
 
-function getDayDuration(duration, interval) {
+/**
+ * Converts a duration and its interval (localized 'days', 'weeks', ...) into
+ * the number of days it spans.
+ * @param {Number} duration - The duration in the given interval.
+ * @param {String} interval - The localized interval name.
+ * @returns {Number} The duration in days.
+ */
+export function getDayDuration(duration, interval) {
   if (interval === i18n.global.t('governance.timespans.days')) return duration;
   if (interval === i18n.global.t('governance.timespans.weeks')) return duration * 7;
   if (interval === i18n.global.t('governance.timespans.months')) return duration * 30;

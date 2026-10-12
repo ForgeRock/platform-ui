@@ -120,7 +120,13 @@ const optionsLoad = ref(false);
 const selectValue = ref([...props.value]);
 
 // computed
-const selectOptions = computed(() => [...initialValues.value, ...options.value]);
+// Selected users are filtered from the fetched list inside getResourceList;
+// dedupe here so an option that is both an initial value and a fetched
+// result does not render twice.
+const selectOptions = computed(() => {
+  const merged = [...initialValues.value, ...options.value];
+  return merged.filter((option, index) => merged.findIndex((other) => other.value === option.value) === index);
+});
 
 /**
  * Retrieves the initial values for the application picker based on the provided resourceIds.
@@ -170,7 +176,8 @@ async function getResourceList(queryString, setValue) {
     );
     options.value = data.result
       ?.map((resource) => props.optionFunction(resource, props.resource))
-      ?.filter((option) => !selectValue.value.includes(option.value))
+      ?.filter((option) => !selectValue.value.includes(option.value)
+        && !initialValues.value.some((initial) => initial.value === option.value))
       || [];
   } catch {
     options.value = [];

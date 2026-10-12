@@ -28,6 +28,28 @@
     "addAObject": "Add a {object}",
     "admin": "Admin",
     "advancedOptions": "advanced options",
+    "timezoneOffsets": {
+      "utc": "UTC (GMT + 0:00)",
+      "hst": "HST (GMT - 10:00)",
+      "akst": "AKST (GMT - 9:00)",
+      "pst": "PST (GMT - 8:00)",
+      "mst": "MST (GMT - 7:00)",
+      "cst": "CST (GMT - 6:00)",
+      "est": "EST (GMT - 5:00)",
+      "brt": "BRT (GMT - 3:00)",
+      "gmt": "GMT (GMT + 0:00)",
+      "cet": "CET (GMT + 1:00)",
+      "eet": "EET (GMT + 2:00)",
+      "msk": "MSK (GMT + 3:00)",
+      "gst": "GST (GMT + 4:00)",
+      "pkt": "PKT (GMT + 5:00)",
+      "ist": "IST (GMT + 5:30)",
+      "ict": "ICT (GMT + 7:00)",
+      "sgt": "SGT (GMT + 8:00)",
+      "jst": "JST (GMT + 9:00)",
+      "aest": "AEST (GMT + 10:00)",
+      "nzst": "NZST (GMT + 12:00)"
+    },
     "agent": "Agent",
     "agents": "agents",
     "aggregate": "Aggregate",
@@ -2378,15 +2400,33 @@
         "errorCancelingCampaignDefault": "Error canceling the campaign",
         "errorDeletingCampaignDefault": "Error deleting the campaign",
         "errorUpdatingDeadlineDefault": "Error updating the deadline for the campaign",
-        "errorUpdatingCampaignDetailsDefault": "Error updating campaign details"
+        "errorUpdatingCampaignDetailsDefault": "Error updating campaign details",
+        "errorNotifyingReviewersDefault": "Error notifying reviewers",
+        "errorGettingNotificationTemplates": "Error retrieving notification templates"
       },
       "ownerNameLabel": "{givenName} {sn}",
       "editDetailsButtonText": "Edit Details",
+      "notifyReviewersButtonText": "Notify Reviewers",
       "updateDeadlineButtonText": "Update Deadline",
       "editDetailsModal": {
         "title": "Edit Campaign Details",
         "titleLabel": "Campaign Title"
       },
+      "notifyReviewersModal": {
+        "title": "Notify Reviewers",
+        "description": "Select the notification template that the active reviewers on the campaign will receive. Additional users can also be chosen below to also receive an email notification. Reviewers will be notified on the selected send date (at the chosen time and time zone).",
+        "campaignLabel": "Campaign",
+        "templateLabel": "Notification Template",
+        "ccUsersLabel": "Send a copy to specific users (max 20)",
+        "sendButtonText": "Notify Reviewers",
+        "sendingButtonText": "Notifying...",
+        "selectCampaignTooltip": "Select a campaign to notify its reviewers",
+        "sendDateLabel": "Send date and time",
+        "sendTimezoneLabel": "Time zone",
+        "sendDateInPast": "Send date and time must be in the future"
+      },
+      "reviewersNotified": "Notified {0} recipient(s)",
+      "reviewersAndCcUsersNotified": "Notified {0} recipient(s): {1} reviewer(s) and {2} additional user(s)",
       "campaignDetailsUpdated": "Campaign details updated",
       "updateDeadlineModal": {
         "deadlinePlaceholder": "Deadline",
@@ -2402,7 +2442,8 @@
         "closeButtonText": "Done",
         "title": "About This Campaign"
       },
-      "statusCardLabel": "Status"
+      "statusCardLabel": "Status",
+      "ccUsersIncludedNotified": "Notified {0} recipient(s) including {1} additional user(s)"
     },
     "audit": {
       "title": "Audit Log",

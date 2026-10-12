@@ -15,6 +15,7 @@ import AccessReviews from './index';
 
 jest.mock('@/api/governance/AccessReviewApi');
 jest.mock('@/api/governance/CampaignApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CampaignApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 jest.mock('@forgerock/platform-shared/src/utils/downloadFile');
 
@@ -52,6 +53,8 @@ describe('AccessReviews', () => {
         mocks: {
           $t: (id) => id,
           $router: { push: jest.fn() },
+          $store: { state: { SharedStore: { governanceDevEnabled: true } } },
+          $bvModal: { show: jest.fn(), hide: jest.fn() },
         },
       },
     });
@@ -405,6 +408,126 @@ describe('AccessReviews', () => {
       });
 
       expect(result).toEqual('pages.access.role');
+    });
+  });
+
+  describe('notify reviewers', () => {
+    beforeEach(() => {
+      CampaignApi.getCampaignTasks.mockImplementation(() => Promise.resolve({ data: { result: [], totalCount: 0 } }));
+    });
+
+    it('sends template, ccUserIds and null date when sending immediately', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      CampaignApi.notifyCampaignReviewers.mockResolvedValueOnce({ message: 'ok', notified: 3 });
+      wrapper.vm.showErrorMessage = jest.fn();
+
+      wrapper.vm.notifyReviewers({
+        template: 'emailTemplate/certificationReminder',
+        ccUserIds: ['managed/user/one'],
+        date: null,
+      });
+      await flushPromises();
+
+      expect(CampaignApi.notifyCampaignReviewers).toHaveBeenCalledWith('123', 'emailTemplate/certificationReminder', ['managed/user/one'], null);
+    });
+
+    it('sends the optional date through to the API', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      CampaignApi.notifyCampaignReviewers.mockResolvedValueOnce({ message: 'ok', notified: 3 });
+      wrapper.vm.showErrorMessage = jest.fn();
+
+      wrapper.vm.notifyReviewers({
+        template: 'emailTemplate/certificationExpired',
+        ccUserIds: [],
+        date: '2026-10-01',
+      });
+      await flushPromises();
+
+      expect(CampaignApi.notifyCampaignReviewers).toHaveBeenCalledWith('123', 'emailTemplate/certificationExpired', [], '2026-10-01');
+    });
+
+    it('shows a success toast including the cc user count when cc users are selected', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.displayNotification = jest.fn();
+      CampaignApi.notifyCampaignReviewers.mockResolvedValueOnce({
+        message: 'ok',
+        notified: 3,
+        reviewers: 1,
+        cc: 2,
+      });
+
+      wrapper.vm.notifyReviewers({
+        template: 'emailTemplate/certificationReminder',
+        ccUserIds: ['managed/user/one', 'managed/user/two'],
+        date: null,
+      });
+      await flushPromises();
+
+      expect(wrapper.vm.displayNotification).toHaveBeenCalledWith('success', 'governance.certificationDetails.reviewersAndCcUsersNotified');
+    });
+
+    it('uses the exact reviewer and cc counts from the backend response', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.displayNotification = jest.fn();
+      const tSpy = jest.spyOn(wrapper.vm, '$t');
+      CampaignApi.notifyCampaignReviewers.mockResolvedValueOnce({
+        message: 'ok',
+        notified: 4,
+        reviewers: 2,
+        cc: 2,
+      });
+
+      wrapper.vm.notifyReviewers({
+        template: 'emailTemplate/certificationReminder',
+        ccUserIds: ['managed/user/one', 'managed/user/two'],
+        date: null,
+      });
+      await flushPromises();
+
+      expect(tSpy).toHaveBeenCalledWith(
+        'governance.certificationDetails.reviewersAndCcUsersNotified',
+        [4, 2, 2],
+      );
+    });
+
+    it('claims only the total and requested cc count when the backend omits the split', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.displayNotification = jest.fn();
+      const tSpy = jest.spyOn(wrapper.vm, '$t');
+      CampaignApi.notifyCampaignReviewers.mockResolvedValueOnce({ message: 'ok', notified: 3 });
+
+      wrapper.vm.notifyReviewers({
+        template: 'emailTemplate/certificationReminder',
+        ccUserIds: ['managed/user/one'],
+        date: null,
+      });
+      await flushPromises();
+
+      expect(tSpy).toHaveBeenCalledWith(
+        'governance.certificationDetails.ccUsersIncludedNotified',
+        [3, 1],
+      );
+    });
+
+    it('shows the reviewer-only toast when no cc users are selected', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.displayNotification = jest.fn();
+      CampaignApi.notifyCampaignReviewers.mockResolvedValueOnce({ message: 'ok', notified: 3 });
+
+      wrapper.vm.notifyReviewers({
+        template: 'emailTemplate/certificationReminder',
+        ccUserIds: [],
+        date: null,
+      });
+      await flushPromises();
+
+      expect(wrapper.vm.displayNotification).toHaveBeenCalledWith('success', 'governance.certificationDetails.reviewersNotified');
     });
   });
 });

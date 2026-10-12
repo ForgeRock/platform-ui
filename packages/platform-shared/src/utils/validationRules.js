@@ -148,9 +148,14 @@ export function getRules(i18n) {
 
   const min_value = (value, { min, message }) => rules.min_value(value, { min }) || message || i18n.global.t('common.policyValidationMessages.MIN_VALUE', { min });
 
-  // Maximum selected items rule
-  // errors if input value is an array with more elements than the input maximum
-  // (vee-validate's built-in max rules validate array elements, not the selection length)
+  /**
+   * Maximum selected items rule: errors if the input value is an array with
+   * more elements than the input maximum (vee-validate's built-in max rules
+   * validate array elements, not the selection length).
+   * @param {Array} value - The selected values.
+   * @param {Object} params - The rule params: { max, message }.
+   * @returns {true|String} true when valid, otherwise the error message.
+   */
   const max_selected = (value, { max: maxSelected, message }) => {
     if (Array.isArray(value) && value.length > Number(maxSelected)) {
       return message || i18n.global.t('common.policyValidationMessages.MAX_SELECTED', { max: maxSelected });

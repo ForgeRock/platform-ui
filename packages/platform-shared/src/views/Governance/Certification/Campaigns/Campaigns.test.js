@@ -52,6 +52,9 @@ describe('Campaigns', () => {
         directives: {
           'resizable-table': jest.fn(),
         },
+        mocks: {
+          $store: { state: { SharedStore: { governanceDevEnabled: true } } },
+        },
       },
     });
   });
