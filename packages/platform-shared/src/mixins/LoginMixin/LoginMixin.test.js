@@ -218,5 +218,81 @@ describe('LoginMixin', () => {
         });
       });
     });
+
+    describe('PingOneRecognizeCallback', () => {
+      const buildStep = (fields) => ({
+        getCallbacksOfType: jest.fn().mockReturnValueOnce([{
+          payload: { output: fields.map(([name, value]) => ({ name, value })) },
+        }]),
+      });
+
+      it('passes operationId from webSDKOptions as operationID', async () => {
+        const props = await wrapper.vm.getComponentPropsAndEvents('PingOneRecognizeCallback', null, [], '', buildStep([
+          ['operationType', 'AUTHENTICATE'],
+          ['authenticationServiceUrl', 'https://example.com/recognize'],
+          ['customerName', 'acme'],
+          ['username', 'user-1'],
+          ['transactionData', 'tx-1'],
+          ['generateClientState', false],
+          ['webSDKOptions', { authorizationToken: 'tok', operationId: 'op-42' }],
+        ]), null);
+
+        expect(props.callbackSpecificProps.operationID).toBe('op-42');
+        expect(props.callbackSpecificProps.seedEntropy).toBe(false);
+      });
+
+      it('passes generateClientState as seedEntropy', async () => {
+        const props = await wrapper.vm.getComponentPropsAndEvents('PingOneRecognizeCallback', null, [], '', buildStep([
+          ['operationType', 'ENROLL'],
+          ['generateClientState', true],
+          ['webSDKOptions', {}],
+        ]), null);
+
+        expect(props.callbackSpecificProps.seedEntropy).toBe(true);
+        expect(props.callbackSpecificProps.operationID).toBeUndefined();
+      });
+
+      it('maps every callback output onto the component props', async () => {
+        const props = await wrapper.vm.getComponentPropsAndEvents('PingOneRecognizeCallback', null, [], '', buildStep([
+          ['operationType', 'ENROLL'],
+          ['authenticationServiceUrl', 'https://example.com/recognize'],
+          ['customerName', 'acme'],
+          ['username', 'user-1'],
+          ['transactionData', 'tx-1'],
+          ['generateClientState', true],
+          ['webSDKOptions', { operationId: 'op-7', lang: 'en' }],
+        ]), null);
+
+        expect(props.callbackSpecificProps.operationType).toBe('ENROLL');
+        expect(props.callbackSpecificProps.serviceURL).toBe('https://example.com/recognize');
+        expect(props.callbackSpecificProps.customerName).toBe('acme');
+        expect(props.callbackSpecificProps.username).toBe('user-1');
+        expect(props.callbackSpecificProps.transactionData).toBe('tx-1');
+        expect(props.callbackSpecificProps.webSDKOptions).toEqual({ operationId: 'op-7', lang: 'en' });
+        expect(props.listeners).toEqual(['hide-next-button', 'next-step']);
+      });
+
+      it('returns empty props when the callback is missing from the step', async () => {
+        const emptyStep = { getCallbacksOfType: jest.fn().mockReturnValueOnce([]) };
+        const props = await wrapper.vm.getComponentPropsAndEvents('PingOneRecognizeCallback', null, [], '', emptyStep, null);
+
+        expect(props).toEqual({});
+      });
+
+      it('falls back to empty strings for absent outputs and keeps raw webSDKOptions', async () => {
+        const props = await wrapper.vm.getComponentPropsAndEvents('PingOneRecognizeCallback', null, [], '', buildStep([
+          ['operationType', 'AUTHENTICATE'],
+          ['webSDKOptions', {}],
+        ]), null);
+
+        expect(props.callbackSpecificProps.serviceURL).toBe('');
+        expect(props.callbackSpecificProps.customerName).toBe('');
+        expect(props.callbackSpecificProps.username).toBe('');
+        expect(props.callbackSpecificProps.transactionData).toBe('');
+        expect(props.callbackSpecificProps.webSDKOptions).toEqual({});
+        expect(props.callbackSpecificProps.operationID).toBeUndefined();
+        expect(props.callbackSpecificProps.seedEntropy).toBe(false);
+      });
+    });
   });
 });

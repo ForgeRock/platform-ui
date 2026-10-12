@@ -69,6 +69,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aracna/core@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@aracna/core@npm:1.5.0"
+  dependencies:
+    cookie: ^1.1.1
+    nanoid: ^5.1.11
+    rfc4648: ^1.5.4
+  checksum: bd6e9edc0e754d391153d309de87acfbe4d47ff8adb490f8a9e1b520de5e1a43055a653db18152ee8a0508a7919a8118a234e37f610bd9f6a2091f2ba3976891
+  languageName: node
+  linkType: hard
+
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4":
   version: 7.10.4
   resolution: "@babel/code-frame@npm:7.10.4"
@@ -3027,6 +3038,7 @@ __metadata:
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@cypress/grep": 5.1.0
     "@forgerock/platform-shared": 1.0.0
+    "@forgerock/recognize": 2.3.0
     "@hcaptcha/vue-hcaptcha": 0.3.2
     "@kyvg/vue3-notification": 3.0.2
     "@neuralegion/cypress-har-generator": 5.16.4
@@ -3241,6 +3253,15 @@ __metadata:
   version: 2.3.0
   resolution: "@forgerock/protect@npm:2.3.0"
   checksum: e0882635d24c2a89e58f753537358e338aa80ed56bc360644b57b3f33eca5809b2668c6b3e10bfe5786f2920473dfc6a36fda8b1a8e2125ff13fc0967ba11871
+  languageName: node
+  linkType: hard
+
+"@forgerock/recognize@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@forgerock/recognize@npm:2.3.0"
+  dependencies:
+    "@aracna/core": ^1.5.0
+  checksum: c5019bcb951be6b7bcf6a51695bef1a5b283da323301a8d4b443c871fde3351e03187e4dfb93d249aeeaa18f92c34e5418e82a2e2a4c5b6e3b9afe74a2dcc590
   languageName: node
   linkType: hard
 
@@ -8873,6 +8894,13 @@ __metadata:
   version: 0.4.2
   resolution: "cookie@npm:0.4.2"
   checksum: a00833c998bedf8e787b4c342defe5fa419abd96b32f4464f718b91022586b8f1bafbddd499288e75c037642493c83083da426c6a9080d309e3bd90fd11baa9b
+  languageName: node
+  linkType: hard
+
+"cookie@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "cookie@npm:1.1.1"
+  checksum: e40c4ff817a73ec0a41413654ca9a71e6207bd6e511151bb1d307aef2903eb59771127a85474afe0e12a8982804f7b03cce0bda798b55c306aca9608b4b9acab
   languageName: node
   linkType: hard
 
@@ -20676,6 +20704,13 @@ __metadata:
   version: 1.0.4
   resolution: "reusify@npm:1.0.4"
   checksum: c3076ebcc22a6bc252cb0b9c77561795256c22b757f40c0d8110b1300723f15ec0fc8685e8d4ea6d7666f36c79ccc793b1939c748bf36f18f542744a4e379fcc
+  languageName: node
+  linkType: hard
+
+"rfc4648@npm:^1.5.4":
+  version: 1.5.4
+  resolution: "rfc4648@npm:1.5.4"
+  checksum: 4bfd555f16b8ed1bceb3cf4d79242cf3253a2600de51f45ac19549f366b4b8edc0d9b8feaae778059c137f1d10ebd87e125fc839636f6267a7b6badaa95a9f00
   languageName: node
   linkType: hard
 

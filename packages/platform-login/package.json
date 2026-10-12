@@ -23,6 +23,7 @@
     "@badeball/cypress-cucumber-preprocessor": "24.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
     "@forgerock/platform-shared": "1.0.0",
+    "@forgerock/recognize": "2.3.0",
     "@hcaptcha/vue-hcaptcha": "0.3.2",
     "@kyvg/vue3-notification": "3.0.2",
     "@vue/compat": "3.3.4",

@@ -514,6 +514,7 @@ export default {
     FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
     FrPingOneProtectCallback: () => import('@/components/callbacks/PingOneProtectCallback/PingOneProtectCallback'),
+    FrPingOneRecognizeCallback: () => import('@/components/display/PingOneRecognize'),
     FrPushChallengeNumber: () => import('@/components/display/PushChallengeNumber'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
     FrReCaptchaEnterpriseCallback: () => import('@/components/callbacks/ReCaptchaEnterpriseCallback/ReCaptchaEnterprise'),
@@ -1012,6 +1013,7 @@ export default {
         const index = i + 1;
         const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
         let type = callback.getType();
+
         const callbackRequired = this.isCallbackRequired(callback);
         const isRequired = callbackRequired
           || type === this.FrCallbackType.NameCallback
@@ -1020,10 +1022,6 @@ export default {
 
         if (type === this.FrCallbackType.PingOneProtectInitializeCallback || type === this.FrCallbackType.PingOneProtectEvaluationCallback) {
           type = 'PingOneProtectCallback';
-        }
-
-        if (type === 'PingOneRecognizeCallback' && !this.$store.state.SharedStore.pingOneRecognizeEnabled) {
-          return;
         }
 
         if (type === this.FrCallbackType.RedirectCallback) {
@@ -1117,6 +1115,7 @@ export default {
           this.FrCallbackType.DeviceProfileCallback,
           this.FrCallbackType.PollingWaitCallback,
           'PingOneProtectCallback',
+          this.FrCallbackType.PingOneRecognizeCallback,
           this.FrCallbackType.RecoveryCodesComponent,
           this.FrCallbackType.SuspendedTextOutputCallback,
           this.FrCallbackType.WebAuthnComponent,

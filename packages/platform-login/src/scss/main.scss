@@ -8,6 +8,7 @@
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~bootstrap-vue/dist/bootstrap-vue.css';
 @import '~@forgerock/platform-shared/src/scss/main.scss';
+@import './ping-one-recognize';
 
 /* Export colors to make them available in JS */
 :export {

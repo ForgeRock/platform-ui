@@ -20,6 +20,78 @@
       "confirmPassword": "Confirm Password",
       "passwordsDoNotMatch": "Passwords do not match"
     },
+    "pingOneRecognize": {
+      "bootstrap": {
+        "message": "Preparing face recognition..."
+      },
+      "cameraActive": "Camera is active. Position your face in the frame.",
+      "cameraPermission": {
+        "headline": "Camera Access Required",
+        "authBody": "To verify your identity, we need access to your camera.",
+        "authBodyPrompt": "When prompted by your browser, select <strong>Allow</strong>.",
+        "enrollBody": "To enroll your face, we need access to your camera.",
+        "enrollBodyPrompt": "When prompted by your browser, select <strong>Allow</strong>.",
+        "allow": "Allow Camera Access",
+        "dontAllow": "Don't allow"
+      },
+      "cameraPermissionDenied": {
+        "headline": "Camera Access Blocked",
+        "alertBody": "Camera access was denied. Face recognition requires camera permission to verify your identity.",
+        "body": "To enable camera access, open your browser settings and allow camera access for this site, then try again.",
+        "continue": "Try Again"
+      },
+      "cameraInstructions": {
+        "authHeadline": "How to Sign In",
+        "authSubtitle": "Follow these steps for the best result.",
+        "enrollHeadline": "How to Enroll",
+        "enrollSubtitle": "Follow these steps for the best result.",
+        "tip1Title": "Good lighting",
+        "tip1Body": "Make sure your face is well lit and avoid strong backlighting.",
+        "tip2Title": "Center your face",
+        "tip2Body": "Look directly at the camera and keep your face within the guide.",
+        "tip3Title": "Remove obstructions",
+        "tip3Body": "Remove sunglasses or anything covering your face.",
+        "tip4Title": "Hold still",
+        "tip4Body": "Keep the device steady while your identity is verified.",
+        "continue": "Continue"
+      },
+      "serverComputation": {
+        "authHeadline": "Verifying your identity...",
+        "enrollHeadline": "Enrolling...",
+        "body": "This only takes a moment."
+      },
+      "done": {
+        "authHeadline": "Welcome back!",
+        "enrollHeadline": "Enrollment Complete",
+        "authBody": "Your identity has been verified. Signing you in…",
+        "enrollBody": "You have been enrolled successfully.",
+        "continue": "Continue to Dashboard"
+      },
+      "error": {
+        "authHeadline": "Verification Failed",
+        "enrollHeadline": "Enrollment Failed",
+        "authAlertBody": "We were unable to verify your identity.",
+        "enrollAlertBody": "We were unable to complete enrollment. Please try again.",
+        "authBody": "Make sure your face is well-lit and centered. If the problem persists, contact support.",
+        "enrollBody": "Make sure your face is well-lit and centered. If the problem persists, contact support.",
+        "continue": "Continue"
+      },
+      "errors": {
+        "default": "An error occurred during biometric authentication. Please contact your administrator.",
+        "CAMERA_NOT_FOUND": "No camera was found. Please connect a camera.",
+        "CAMERA_PERMISSION_DENIED": "Camera access was denied. Please allow camera access in your browser settings.",
+        "CORE_USER_LOCKED_OUT": "Your account has been locked. Please contact your administrator.",
+        "CORE_USER_NOT_ENROLLED": "Your biometrics have not been enrolled. Please complete enrollment first.",
+        "CORE_USER_ALREADY_ENROLLED": "This user is already enrolled. Please sign in instead.",
+        "CORE_NOT_ENOUGH_CIRCUITS": "No authentication attempts remaining. Please contact your administrator.",
+        "CORE_FACE_NOT_MATCHING": "Face did not match.",
+        "SERVER_ERROR": "A server error occurred. Please try again or contact your administrator.",
+        "SERVER_RECOGNITION_FAILED": "Face recognition failed.",
+        "SDK_TIMEOUT": "The request timed out.",
+        "SDK_WEB_ASSEMBLY_IMPORT_FAILED": "Biometric authentication requires a secure connection (HTTPS). Please contact your administrator.",
+        "SDK_UNSUPPORTED_BROWSER": "This authentication method is not supported in this browser. Please use a supported browser."
+      }
+    },
     "pushChallenge": {
       "message": "Open your Authenticator app and tap the number shown to sign-in."
     },

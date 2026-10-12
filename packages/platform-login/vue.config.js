@@ -8,6 +8,7 @@
 const path = require('path');
 const dotenv = require('dotenv');
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 function generateTheme() {
   let variableLoad = `
@@ -73,6 +74,8 @@ module.exports = {
 
     config.module
       .rule('js')
+      .exclude.add(/node_modules\/@forgerock\/recognize\/dist\/src\/lib\/recognize-sdk\//)
+      .end()
       .use('babel-loader')
       .tap((options) => ({
         ...options,
@@ -124,6 +127,20 @@ module.exports = {
           // actually false, but we want to use the JIT mode to avoid issues with CSP and vue-i18n
           // @docs https://vue-i18n.intlify.dev/guide/advanced/optimization#jit-compilation
           __INTLIFY_JIT_COMPILATION__: true,
+        }),
+        /**
+         * For now we need to mirror copy the Recognize SDK out of the
+         * provided folder inside of node_modules. In the future we need to
+         * investigate on either improving this library so that these
+         * specific wasm files aren't needed to be used this way.
+         */
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: '../../node_modules/@forgerock/recognize/dist/src/lib/recognize-sdk/',
+              to: 'recognize-sdk/',
+            },
+          ],
         }),
       ],
     };

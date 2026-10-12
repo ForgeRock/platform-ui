@@ -70,7 +70,6 @@ const defaultState = {
   enableMonitoringUI: false,
   devAppTemplatesEnabled: false,
   servicesMigrationEnabled: false,
-  pingOneRecognizeEnabled: false,
 };
 
 const mutations = {
@@ -295,10 +294,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_SERVICES_MIGRATION?.toString() === 'true') {
       state.servicesMigrationEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_PING_ONE_RECOGNIZE?.toString() === 'true') {
-      state.pingOneRecognizeEnabled = true;
     }
   },
   setIdmWorkflowEnabled(state, val) {

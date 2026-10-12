@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   last, has, noop,
 } from 'lodash';
-import { callbackType } from '@forgerock/journey-client';
+import { callbackType, PingOneRecognizeCallback } from '@forgerock/journey-client';
 import { WebAuthn, WebAuthnStepType } from '@forgerock/journey-client/webauthn';
 import createRealmPath from '../../utils/createRealmPath';
 import NotificationMixin from '../NotificationMixin';
@@ -333,6 +333,26 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       return {
         callbackSpecificProps: { webAuthnType, webAuthnPromiseFunction },
         listeners: ['next-step'],
+      };
+    },
+    PingOneRecognizeCallback: () => {
+      const rawCallback = currentStep.getCallbacksOfType('PingOneRecognizeCallback')[0];
+      if (!rawCallback) return {};
+      const recognizeCallback = new PingOneRecognizeCallback(rawCallback.payload);
+      const webSDKOptions = recognizeCallback.getOptions();
+      return {
+        callbackSpecificProps: {
+          callback: recognizeCallback,
+          customerName: recognizeCallback.getCustomerName(),
+          operationType: recognizeCallback.getOperationType(),
+          transactionData: recognizeCallback.getTransactionData() || '',
+          username: recognizeCallback.getUsername() || '',
+          webSDKOptions,
+          operationID: webSDKOptions.operationId,
+          seedEntropy: recognizeCallback.getOutputByName('generateClientState', false) === true,
+          serviceURL: recognizeCallback.getServiceURL(),
+        },
+        listeners: ['hide-next-button', 'next-step'],
       };
     },
   };
