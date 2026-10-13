@@ -49,6 +49,39 @@ const put = jest.fn();
 BaseApi.generateIgaApi = jest.fn(() => ({ get, post, put }));
 
 describe('Governace API', () => {
+  beforeEach(() => {
+    get.mockClear();
+    post.mockClear();
+    put.mockClear();
+  });
+
+  it('getAdminCertificationItems uses legacy defaults and overrides', async () => {
+    get.mockReturnValue(Promise.resolve({ data: [] }));
+
+    await CertificationApi.getAdminCertificationItems({ status: 'closed', pageSize: 25 });
+
+    expect(get).toHaveBeenCalledWith('/governance/admin/certification', {
+      params: { status: 'closed', pageNumber: 0, pageSize: 25 },
+    });
+  });
+
+  it('getCertificationList forwards filters and omits an empty query filter', async () => {
+    get.mockReturnValue(Promise.resolve({ data: [] }));
+
+    await CertificationApi.getCertificationList({ pageNumber: 1, _queryFilter: '' });
+
+    expect(get).toHaveBeenCalledWith('/governance/certification', { params: { pageNumber: 1 } });
+  });
+
+  it('getCertificationList forwards a query filter', async () => {
+    get.mockReturnValue(Promise.resolve({ data: [] }));
+
+    await CertificationApi.getCertificationList({ _queryFilter: "name co 'campaign'" });
+
+    expect(get).toHaveBeenCalledWith('/governance/certification', {
+      params: { _queryFilter: "name co 'campaign'" },
+    });
+  });
   it('certifyItem called with right args', async () => {
     post.mockReturnValue(Promise.resolve(DEFAULT_POST_DATA));
 

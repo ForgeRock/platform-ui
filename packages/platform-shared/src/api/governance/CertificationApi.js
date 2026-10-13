@@ -18,7 +18,7 @@ const governanceCertificationAdminBaseUrl = `${governanceBaseUrl}/admin/certific
  */
 
 /**
- * Gets all certification campaigns
+ * Gets all certification campaigns (admin endpoint)
  * @param {Object} params query parameters
  * @returns {Promise}
  */
@@ -32,6 +32,19 @@ export function getAdminCertificationItems(params = {}) {
     delete params.queryString;
   }
   return generateIgaApi().get('/governance/admin/certification', { params: { ...defaultParams, ...params } });
+}
+
+/**
+ * Gets certification campaigns list
+ * @param {Object} params query parameters
+ * @returns {Promise}
+ */
+export function getCertificationList(params = {}) {
+  const requestParams = { ...params };
+  if (!requestParams._queryFilter) {
+    delete requestParams._queryFilter;
+  }
+  return generateIgaApi().get('/governance/certification', { params: requestParams });
 }
 
 /**

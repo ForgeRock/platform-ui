@@ -2265,6 +2265,7 @@
         "revoke": "Revoked"
       },
       "activeCampaignsLabels": {
+        "all": "All",
         "identity": "Identity",
         "entitlement": "Entitlement",
         "entitlementComposition": "Entitlement Composition",
@@ -2273,6 +2274,7 @@
         "identityProfile": "Identity Profile",
         "roleComposition": "Role Composition"
       },
+      "campaignType": "Campaign Type",
       "campaignsByStatusLabels": {
         "in-progress": "Active",
         "staging": "Staged",
