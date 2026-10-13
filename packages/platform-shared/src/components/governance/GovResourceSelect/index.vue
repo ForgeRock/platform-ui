@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
     v-if="initialValuesLoad"
-    @close="isSearching = false;"
+    @close="onClose"
     @input="handleInput"
     @search-change="debouncedSearch"
     :name="name"
@@ -192,6 +192,15 @@ export default {
     search(query) {
       this.getResourceList(false, query);
       this.isSearching = true;
+    },
+    /**
+     * SelectInput emits close before the picked option reaches handleInput.
+     * Deferring lets handleInput update the value first.
+     */
+    onClose() {
+      this.$nextTick(() => {
+        this.isSearching = false;
+      });
     },
     /**
      * Get resource list used for selecting a resource
