@@ -278,11 +278,18 @@ export async function revokeResourcesFromIGA(revokePayload, parentResourceId, ad
     };
     const results = await Promise.all(revokePayload.itemsToRevoke.map((request) => {
       const requestType = requestTypeMap[request.item?.type] || 'entitlementRemove';
+      // applicationRemove identifies the grant by application; the account id on the grant
+      // scopes the request to the specific account being removed
+      const accountId = revokePayload.accountId
+        || (requestType === 'applicationRemove' && request.keys?.accountId)
+        || null;
       const common = {
         context: { type: adminAccess ? 'admin' : 'request' },
-        entitlementId: request.assignmentId || '',
         userId: parentResourceId,
-        ...(revokePayload.accountId && { accountId: revokePayload.accountId }),
+        // Only send entitlementId when the grant carries an assignment id — account grants have none
+        ...(request.assignmentId && { entitlementId: request.assignmentId }),
+        ...(requestType === 'applicationRemove' && { applicationId: request.application?.id }),
+        ...(accountId && { accountId }),
         ...(revokePayload.justification && { justification: revokePayload.justification }),
         ...(revokePayload.priority && { priority: revokePayload.priority }),
         ...(revokePayload.expiryDate && { expiryDate: revokePayload.expiryDate }),

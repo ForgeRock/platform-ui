@@ -265,12 +265,25 @@ describe('getGovernanceGrants', () => {
       expect(requestActionSpy).toHaveBeenCalledWith('entitlementRemove', 'publish', null, expect.any(Object));
     });
 
-    it('uses applicationRemove for accountGrant items', async () => {
+    it('uses applicationRemove for accountGrant items, with applicationId and accountId', async () => {
       const requestActionSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockResolvedValue({ data: { errors: [] } });
+      // Real account grants carry no assignment id — application and account ids identify the grant
+      const payload = makePayload('accountGrant');
+      delete payload.itemsToRevoke[0].assignmentId;
+      payload.itemsToRevoke[0].application = { id: 'app-1' };
+      payload.itemsToRevoke[0].keys = { accountId: 'account-1' };
 
-      await revokeResourcesFromIGA(makePayload('accountGrant'), 'userId', false);
+      await revokeResourcesFromIGA(payload, 'userId', false);
 
-      expect(requestActionSpy).toHaveBeenCalledWith('applicationRemove', 'publish', null, expect.any(Object));
+      expect(requestActionSpy).toHaveBeenCalledWith('applicationRemove', 'publish', null, {
+        common: {
+          context: { type: 'request' },
+          userId: 'userId',
+          applicationId: 'app-1',
+          accountId: 'account-1',
+          priority: 'low',
+        },
+      });
     });
 
     it('uses roleRemove for roleMembership items', async () => {
