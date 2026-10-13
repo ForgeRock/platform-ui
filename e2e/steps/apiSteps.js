@@ -19,6 +19,7 @@ import CustomNodesApiSteps from './api/CustomNodesApiSteps';
 import EmailProviderApiSteps from './api/EmailProviderApiSteps';
 import EndUserApiSteps from './api/EndUserApiSteps';
 import EventHookApiSteps from './api/EventHookApiSteps';
+import FederationApiSteps from './api/FederationApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
 import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
@@ -52,6 +53,7 @@ export default {
   emailProvider: EmailProviderApiSteps,
   endUser: EndUserApiSteps,
   eventHooks: EventHookApiSteps,
+  federation: FederationApiSteps,
   inviteAdmins: InviteAdminsApiSteps,
   jobs: JobsApiSteps,
   journey: JourneyApiSteps,

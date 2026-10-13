@@ -70,6 +70,16 @@ export default class FederationPage {
     return cy.findByRole('heading', { level: 1, name: providerName });
   }
 
+  // "Client Credentials" card in the edit view (EditProvider/index.vue)
+  static get redirectURIField() {
+    return cy.findByLabelText('Redirect URI');
+  }
+
+  // Edit view has its own Save button outside the new-provider modal
+  static get editViewSaveButton() {
+    return cy.findByRole('button', { name: 'Save' });
+  }
+
   // SchemaStateButton dropdown showing the provider's Active/Inactive state
   static get providerStateButton() {
     return cy.findByRole('button', { name: /Active|Inactive/ });
