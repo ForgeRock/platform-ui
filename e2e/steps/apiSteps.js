@@ -29,6 +29,7 @@ import ManagedObjectApiSteps from './api/ManagedObjectApiSteps';
 import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
 import OAuth2ProviderApiSteps from './api/OAuth2ProviderApiSteps';
 import OrganizationApiSteps from './api/OrganizationApiSteps';
+import ProxyConnectApiSteps from './api/ProxyConnectApiSteps';
 import RealmApiSteps from './api/RealmApiSteps';
 import RealmServicesApiSteps from './api/RealmServicesApiSteps';
 import RelationshipApiSteps from './api/RelationshipApiSteps';
@@ -65,6 +66,7 @@ export default {
   oauth2Clients: Oauth2ClientApiSteps,
   oauth2Provider: OAuth2ProviderApiSteps,
   organizations: OrganizationApiSteps,
+  proxyConnect: ProxyConnectApiSteps,
   realm: RealmApiSteps,
   realmServices: RealmServicesApiSteps,
   relationships: RelationshipApiSteps,

@@ -43,7 +43,15 @@ export default class GlobalSettingsPage {
     return cy.findByRole('button', { name: /end user ui/i }, { timeout: 10000 });
   }
 
+  static get networkSecurityItem() {
+    return cy.findByRole('button', { name: /network security/i }, { timeout: 10000 });
+  }
+
   static get contentSecurityPolicyStatus() {
     return GlobalSettingsPage.contentSecurityPolicyItem.find('.col-md-6 > span');
+  }
+
+  static get networkSecurityStatus() {
+    return GlobalSettingsPage.networkSecurityItem.find('.col-md-6 > span');
   }
 }
