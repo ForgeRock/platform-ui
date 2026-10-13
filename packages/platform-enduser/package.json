@@ -17,6 +17,8 @@
     "e2e:remote:safari": "../../e2e/set_remote_environment_variables.sh cypress run --browser webkit",
     "e2e:remote:edge": "../../e2e/set_remote_environment_variables.sh cypress run --browser edge",
     "e2e:remote:open": "../../e2e/set_remote_environment_variables.sh cypress open --e2e",
+    "e2e:remote:last-failed": "node ../../e2e/failed-last-run.js --specs --quiet | xargs -I{} ../../e2e/set_remote_environment_variables.sh cypress run --browser chrome --spec {}",
+    "e2e:remote:last-not-run": "node ../../e2e/not-run-last-run.js --spec-only | xargs -I{} ../../e2e/set_remote_environment_variables.sh cypress run --browser chrome",
     "test:lighthouse": "../../e2e/passwords.sh cypress run --spec e2e/tests/lighthouse.suite.js --config ignoreTestFiles=''"
   },
   "dependencies": {
