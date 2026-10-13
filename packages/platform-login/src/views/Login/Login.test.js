@@ -2432,7 +2432,6 @@ describe('Component Test', () => {
   });
 
   describe('journeyShowAsteriskForRequiredFields', () => {
-    const asteriskMarkup = '<span class="text-danger" aria-hidden="true">*</span>';
     const mixedStepPayload = {
       authId: 'eyxQ',
       callbacks: [
@@ -2468,7 +2467,7 @@ describe('Component Test', () => {
 
     const getComponent = (wrapper, type) => wrapper.vm.componentList.find((component) => component.callback.getType() === type);
 
-    it('derives asterisk display props when the setting is already true during navigation', async () => {
+    it('derives showRequiredIndicator when the setting is already true during navigation', async () => {
       const wrapper = await mountLogin(
         { loading: true, step: rehydrateStep(mixedStepPayload) },
         { journeyShowAsteriskForRequiredFields: true },
@@ -2481,15 +2480,20 @@ describe('Component Test', () => {
       const passwordComponent = getComponent(wrapper, 'PasswordCallback');
       const firstNameComponent = getComponent(wrapper, 'StringAttributeInputCallback');
 
-      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).label).toBe(`User Name${asteriskMarkup}`);
-      expect(wrapper.vm.buildCallbackDisplayProps(passwordComponent).label).toBe(`Password${asteriskMarkup}`);
+      // The label stays plain text — markup in the label leaks into validation
+      // messages and aria-labels (IAM-11863)
+      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent)).toEqual({
+        ...nameComponent.callbackSpecificProps,
+        showRequiredIndicator: true,
+      });
+      expect(wrapper.vm.buildCallbackDisplayProps(passwordComponent).showRequiredIndicator).toBe(true);
       expect(nameComponent.callbackSpecificProps.label).toBe('User Name');
       expect(nameComponent.callbackSpecificProps.isHtml).toBeUndefined();
       expect(firstNameComponent.callbackSpecificProps.label).toBe('First Name');
-      expect(wrapper.vm.buildCallbackDisplayProps(firstNameComponent)).toEqual(firstNameComponent.callbackSpecificProps);
+      expect(wrapper.vm.buildCallbackDisplayProps(firstNameComponent).showRequiredIndicator).toBe(false);
     });
 
-    it('derives props without mutating the source or duplicating the indicator', async () => {
+    it('derives props without mutating the source', async () => {
       const wrapper = await mountLogin(
         { loading: true, step: rehydrateStep(mixedStepPayload) },
         { journeyShowAsteriskForRequiredFields: true },
@@ -2503,15 +2507,13 @@ describe('Component Test', () => {
       const firstDisplayProps = wrapper.vm.buildCallbackDisplayProps(nameComponent);
       const secondDisplayProps = wrapper.vm.buildCallbackDisplayProps(nameComponent);
 
-      expect(firstDisplayProps.label).toBe(`User Name${asteriskMarkup}`);
-      expect(secondDisplayProps.label).toBe(`User Name${asteriskMarkup}`);
+      expect(firstDisplayProps.showRequiredIndicator).toBe(true);
+      expect(secondDisplayProps.showRequiredIndicator).toBe(true);
       expect(nameComponent.callbackSpecificProps).toEqual(sourceProps);
-      // The returned props must be structurally different — a new spread alone would
-      // satisfy not.toBe(), so assert the augmented label contents instead.
       expect(firstDisplayProps).not.toEqual(nameComponent.callbackSpecificProps);
     });
 
-    it('reflects theme changes without resetting existing HTML state', async () => {
+    it('reflects theme changes without resetting existing label state', async () => {
       const wrapper = await mountLogin(
         { loading: true, step: rehydrateStep(mixedStepPayload) },
         { journeyShowAsteriskForRequiredFields: true },
@@ -2521,32 +2523,15 @@ describe('Component Test', () => {
       await flushPromises();
 
       const nameComponent = getComponent(wrapper, 'NameCallback');
-      nameComponent.callbackSpecificProps.isHtml = true;
       const sourceProps = { ...nameComponent.callbackSpecificProps };
 
       await wrapper.setProps({ journeyShowAsteriskForRequiredFields: false });
-      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent)).toEqual(sourceProps);
+      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).showRequiredIndicator).toBe(false);
 
       await wrapper.setProps({ journeyShowAsteriskForRequiredFields: true });
-      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).label).toBe(`User Name${asteriskMarkup}`);
+      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).showRequiredIndicator).toBe(true);
       expect(nameComponent.callbackSpecificProps).toEqual(sourceProps);
-    });
-
-    it('translates the raw label before adding the required indicator', async () => {
-      const wrapper = await mountLogin(
-        { loading: true, step: rehydrateStep(mixedStepPayload) },
-        { journeyShowAsteriskForRequiredFields: true },
-      );
-
-      wrapper.vm.buildTreeForm();
-      await flushPromises();
-
-      const nameComponent = getComponent(wrapper, 'NameCallback');
-      const translationSpy = jest.spyOn(wrapper.vm, 'getTranslation').mockReturnValue('Nom d’utilisateur');
-
-      expect(wrapper.vm.buildCallbackDisplayProps(nameComponent).label).toBe(`Nom d’utilisateur${asteriskMarkup}`);
-      expect(translationSpy).toHaveBeenCalledWith('User Name');
-      translationSpy.mockRestore();
+      expect(nameComponent.callbackSpecificProps.label).toBe('User Name');
     });
   });
 

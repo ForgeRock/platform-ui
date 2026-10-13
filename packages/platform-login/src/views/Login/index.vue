@@ -489,8 +489,6 @@ import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../
 import doNewNodesContainRecaptchaV2 from '../../utils/recaptchaUtil';
 import { authenticateWithAsScript, registerWithAsScript } from '../../components/display/WebAuthn/asScriptParser';
 
-const REQUIRED_ASTERISK = '<span class="text-danger" aria-hidden="true">*</span>';
-
 export default {
   name: 'Login',
   components: {
@@ -1171,17 +1169,15 @@ export default {
     },
     buildCallbackDisplayProps(component) {
       const callbackSpecificProps = component.callbackSpecificProps || {};
-      const { label } = callbackSpecificProps;
       const isInputField = component.type === 'FrField' || component.type === 'FrPasswordCallback';
 
-      if (!this.journeyShowAsteriskForRequiredFields || !component.isRequired || !isInputField || !label) {
-        return { ...callbackSpecificProps };
-      }
-
+      // The label stays plain text so validation messages and aria-labels built from it
+      // never contain markup (IAM-11863); InputLayout renders the asterisk element itself.
       return {
         ...callbackSpecificProps,
-        label: `${this.getTranslation(label)}${REQUIRED_ASTERISK}`,
-        isHtml: true,
+        showRequiredIndicator: isInputField
+          && this.journeyShowAsteriskForRequiredFields
+          && component.isRequired,
       };
     },
     handleIdpComponent(componentList, idpComponentIndex) {

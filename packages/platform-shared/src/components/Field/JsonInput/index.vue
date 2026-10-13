@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
+    :show-required-indicator="showRequiredIndicator"
     :data-testid="testid">
     <VuePrismEditor
       v-model="inputValue"

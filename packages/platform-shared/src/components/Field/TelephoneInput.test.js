@@ -140,6 +140,18 @@ describe('TelephoneInput Component', () => {
     expect(description.text()).toBe(props.description);
   });
 
+  it('renders the required indicator as an element and keeps the label plain text (IAM-12150)', async () => {
+    wrapper = await setupMount({ label: 'Telephone Number', showRequiredIndicator: true });
+
+    const label = wrapper.find('label');
+    expect(label.exists()).toBe(true);
+    // Label is plain text plus the indicator element — raw HTML must never reach it
+    expect(label.text()).toBe('Telephone Number*');
+    expect(label.find('span.text-danger').exists()).toBe(true);
+    expect(label.find('span.text-danger').attributes('aria-hidden')).toBe('true');
+    expect(wrapper.text()).not.toContain('<span');
+  });
+
   it('renders input element correctly and has a fallback id', () => {
     wrapper = setupMount();
     const input = wrapper.find(INPUT_SELECTOR);

@@ -84,6 +84,67 @@ describe('Field Component', () => {
     expect(input.element.value).toBe('pass');
   });
 
+  it('renders the required indicator as an element and keeps validation messages plain text (IAM-11863)', async () => {
+    wrapper = mount(FrField, {
+      global: {
+        plugins: [i18n, createTestingPinia()],
+        mocks: {
+          $t: i18n.global.t,
+        },
+      },
+      props: {
+        type: 'string',
+        name: 'username',
+        label: 'Username',
+        value: '',
+        validation: 'required',
+        showRequiredIndicator: true,
+      },
+    });
+    await flushPromises();
+
+    // Label renders plain text plus an indicator element — no markup in the label string
+    const label = wrapper.find('label');
+    expect(label.text()).toBe('Username*');
+    expect(label.find('span.text-danger').exists()).toBe(true);
+
+    const input = wrapper.find('#username input');
+    input.setValue('');
+    await input.trigger('blur');
+    await flushPromises();
+
+    const error = wrapper.find('.error-message');
+    expect(error.exists()).toBe(true);
+    // The validation message interpolates the plain label, not the HTML markup
+    expect(error.text()).toBe('Username is required');
+  });
+
+  it.each(['date', 'datetime', 'time', 'select', 'textarea', 'multiselect', 'tag'])('renders the required indicator for %s fields (George review regression: non-text types lost the asterisk)', async (fieldType) => {
+    wrapper = mount(FrField, {
+      global: {
+        plugins: [i18n, createTestingPinia()],
+      },
+      props: {
+        type: fieldType,
+        name: 'testField',
+        label: 'Test Field',
+        value: '',
+        validation: 'required',
+        showRequiredIndicator: true,
+        options: ['option1', 'option2'],
+      },
+    });
+    await flushPromises();
+
+    const label = wrapper.find('label');
+    expect(label.exists()).toBe(true);
+    // Label is plain text plus the indicator element — the asterisk must survive
+    // on non-text field types (date picker repro from the PR review)
+    expect(label.text()).toBe('Test Field*');
+    expect(label.find('span.text-danger').exists()).toBe(true);
+    expect(label.find('span.text-danger').attributes('aria-hidden')).toBe('true');
+  });
+
   it('uses select floating label input for select type', async () => {
     wrapper = mount(FrField, {
       global: {

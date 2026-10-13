@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       :floating-label="floatingLabel"
       :is-html="isHtml"
       :label="label"
+      :show-required-indicator="showRequiredIndicator"
       :class="{ 'has-prepend-btn': hasPrependBtn }">
       <template #default="{ labelHeight, helpTextId }">
         <!--

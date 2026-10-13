@@ -13,7 +13,10 @@ of the MIT license. See the LICENSE file for details. -->
       v-else-if="label"
       :for="`${internalId}-date`"
       class="pe-none overflow-hidden text-nowrap d-block">
-      {{ labelTranslation }}
+      {{ labelTranslation }}<span
+        v-if="showRequiredIndicator"
+        aria-hidden="true"
+        class="text-danger">*</span>
     </label>
     <BRow class="form-row">
       <BCol>
@@ -35,7 +38,8 @@ of the MIT license. See the LICENSE file for details. -->
           :name="`${name}-date`"
           :validation="validation"
           :min-date="minDate"
-          :validation-immediate="validationImmediate" />
+          :validation-immediate="validationImmediate"
+          :show-required-indicator="showRequiredIndicator && !isHtml" />
       </BCol>
       <BCol>
         <FrTimeInput
@@ -54,6 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
           :name="`${name}-time`"
           :show-seconds="showSeconds"
           :validation-immediate="validationImmediate"
+          :show-required-indicator="showRequiredIndicator && !isHtml"
           @utc-input="emitDateTimeValue" />
       </BCol>
     </BRow>

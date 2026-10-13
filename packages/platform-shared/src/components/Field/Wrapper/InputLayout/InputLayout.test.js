@@ -192,4 +192,63 @@ describe('InputLayout', () => {
     expect(wrapper.find('.test_default').attributes('aria-describedby')).toBe('justification_helpText');
     expect(wrapper.find('small#justification_helpText').exists()).toBe(true);
   });
+
+  it('InputLayout renders the required indicator as an element when showRequiredIndicator is true', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        label: 'Username',
+        showRequiredIndicator: true,
+      },
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
+      },
+    });
+
+    const asterisk = wrapper.find('label span.text-danger');
+    expect(asterisk.exists()).toBe(true);
+    expect(asterisk.text()).toBe('*');
+    expect(asterisk.attributes('aria-hidden')).toBe('true');
+    // The label text itself must stay plain — no markup (IAM-11863)
+    expect(wrapper.find('label').text()).toBe('Username*');
+  });
+
+  it('InputLayout does not render the required indicator by default', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        label: 'Username',
+      },
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
+      },
+    });
+
+    expect(wrapper.find('label span.text-danger').exists()).toBe(false);
+    expect(wrapper.find('label').text()).toBe('Username');
+  });
+
+  it('InputLayout renders the required indicator alongside an HTML label', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        label: 'Username',
+        isHtml: true,
+        showRequiredIndicator: true,
+      },
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
+      },
+    });
+
+    const asterisk = wrapper.find('label span.text-danger');
+    expect(asterisk.exists()).toBe(true);
+    expect(asterisk.attributes('aria-hidden')).toBe('true');
+  });
 });

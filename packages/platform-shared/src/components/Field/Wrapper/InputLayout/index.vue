@@ -13,18 +13,25 @@ of the MIT license. See the LICENSE file for details. -->
         :title="showHoverTitle ? labelTranslation : ''">
         <label
           v-if="label && isHtml"
-          v-html="labelTranslation"
           ref="inputLabel"
           :id="labelId"
           :for="id"
-          :class="['pe-none full-width', {'overflow-hidden text-nowrap': !labelHeight, 'readonly-label': readonlyLabel}]" />
+          :class="['pe-none full-width', {'overflow-hidden text-nowrap': !labelHeight, 'readonly-label': readonlyLabel}]">
+          <span v-html="labelTranslation" /><span
+            v-if="showRequiredIndicator"
+            aria-hidden="true"
+            class="text-danger">*</span>
+        </label>
         <label
           v-else-if="label"
           ref="inputLabel"
           :id="labelId"
           :for="id"
           :class="['pe-none', {'overflow-hidden text-nowrap': !labelHeight, 'readonly-label': readonlyLabel}]">
-          {{ labelTranslation }}
+          {{ labelTranslation }}<span
+            v-if="showRequiredIndicator"
+            aria-hidden="true"
+            class="text-danger">*</span>
         </label>
         <slot
           :label-height="labelHeight"
@@ -36,16 +43,23 @@ of the MIT license. See the LICENSE file for details. -->
         class="form-label-group-input">
         <label
           v-if="label && isHtml"
-          v-html="labelTranslation"
           :id="labelId"
           :for="id"
-          class="pe-none overflow-hidden text-nowrap full-width" />
+          class="pe-none overflow-hidden text-nowrap full-width">
+          <span v-html="labelTranslation" /><span
+            v-if="showRequiredIndicator"
+            aria-hidden="true"
+            class="text-danger">*</span>
+        </label>
         <label
           v-else-if="label"
           :id="labelId"
           :for="id"
           class="pe-none overflow-hidden text-nowrap">
-          {{ labelTranslation }}
+          {{ labelTranslation }}<span
+            v-if="showRequiredIndicator"
+            aria-hidden="true"
+            class="text-danger">*</span>
         </label>
         <slot
           :label-id="labelId"
@@ -149,6 +163,13 @@ export default {
      * Boolean to render label and help text as html.
      */
     isHtml: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Boolean to show a required-field indicator (asterisk) after the label.
+     */
+    showRequiredIndicator: {
       type: Boolean,
       default: false,
     },

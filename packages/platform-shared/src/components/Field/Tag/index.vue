@@ -10,7 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
     :errors="combinedErrors"
     :label="label"
     :name="name"
-    :is-html="isHtml">
+    :is-html="isHtml"
+    :show-required-indicator="showRequiredIndicator">
     <BFormTags
       v-model="inputValue"
       v-on="$listeners"

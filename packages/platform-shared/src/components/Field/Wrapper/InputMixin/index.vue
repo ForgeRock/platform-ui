@@ -72,6 +72,15 @@ export default {
       default: false,
     },
     /**
+     * Boolean to show a required-field indicator (asterisk) after the label.
+     * The label itself stays plain text, so validation messages and aria-labels
+     * never contain markup (IAM-11863).
+     */
+    showRequiredIndicator: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Label value that is show as placeholder value on floating labels or static label above control in other case.
      */
     label: {

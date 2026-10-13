@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       :floating-label="floatingLabel"
       :label="label"
       :name="name"
+      :show-required-indicator="showRequiredIndicator"
       :readonly-label="inputDisabled">
       <template #default="{ labelId }">
         <!-- `intl-tel-input` natively manages the DOM input value, hence skipping v-model binding -->
@@ -86,6 +87,13 @@ const props = defineProps({
     default: '',
   },
   isRequiredAria: {
+    type: Boolean,
+    default: false,
+  },
+  /**
+   * Boolean to show a required-field indicator (asterisk) after the label.
+   */
+  showRequiredIndicator: {
     type: Boolean,
     default: false,
   },

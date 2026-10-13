@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       :errors="combinedErrors"
       :is-html="isHtml"
       :label="label"
+      :show-required-indicator="showRequiredIndicator"
       :floating-label="floatingLabel">
       <input
         :value="inputValue"

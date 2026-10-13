@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
+    :show-required-indicator="showRequiredIndicator"
     :show-length-count="showLengthCount"
     :current-length="inputValue?.length"
     :max-length="maxLength"

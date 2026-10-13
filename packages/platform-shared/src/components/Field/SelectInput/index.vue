@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
+    :show-required-indicator="showRequiredIndicator"
     :floating-label="floatingLabel"
     :readonly-label="disabled"
     :show-hover-title="showHoverTitle">
@@ -168,6 +169,15 @@ export default {
      * Boolean to render label and help text as html.
      */
     isHtml: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Boolean to show a required-field indicator (asterisk) after the label.
+     * The label itself stays plain text, so validation messages and aria-labels
+     * never contain markup (IAM-11863).
+     */
+    showRequiredIndicator: {
       type: Boolean,
       default: false,
     },

@@ -11,7 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
       :errors="combinedErrors"
       :is-html="isHtml"
       :floating-label="floatingLabel"
-      :label="label">
+      :label="label"
+      :show-required-indicator="showRequiredIndicator">
       <template #default="{ helpTextId }">
         <input
           v-model="inputValue"

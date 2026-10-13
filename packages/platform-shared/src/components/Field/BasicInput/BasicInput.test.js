@@ -546,6 +546,25 @@ describe('BasicInput', () => {
       expect(showPasswordButton.attributes('aria-label')).toBe('Hide My Input');
     });
 
+    it('renders the required indicator as an element and keeps Show/Hide password aria-labels plain text (IAM-11864)', () => {
+      const wrapper = setup({ type: 'password', label: 'Password', showRequiredIndicator: true });
+      const input = findByTestId(wrapper, 'input-stub-testid');
+      const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
+
+      const asterisk = wrapper.find('label span.text-danger');
+      expect(asterisk.exists()).toBe(true);
+      expect(asterisk.attributes('aria-hidden')).toBe('true');
+
+      // The aria-label is built from the plain label — no markup spoken (IAM-11864)
+      expect(showPasswordButton.attributes('aria-label')).toBe('Show Password');
+      expect(input.attributes('type')).toBe('password');
+
+      return showPasswordButton.trigger('click').then(() => {
+        expect(input.attributes('type')).toBe('text');
+        expect(showPasswordButton.attributes('aria-label')).toBe('Hide Password');
+      });
+    });
+
     it('should not reveal password when input is disabled', async () => {
       const wrapper = setup({
         disabled: true,
