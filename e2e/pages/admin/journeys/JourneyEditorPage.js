@@ -48,6 +48,10 @@ export default class JourneyEditorPage {
     return cy.findByRole('heading', { name: treeName, level: 1 });
   }
 
+  static get pageHeading() {
+    return cy.findByRole('heading', { level: 1 });
+  }
+
   static get previewUrlButton() {
     return cy.findByRole('button', { name: 'Preview URL' });
   }
@@ -139,6 +143,16 @@ export default class JourneyEditorPage {
 
   static get deleteButton() {
     return cy.findByRole('button', { name: 'Delete' });
+  }
+
+  // ── Undo / redo ───────────────────────────────────────────────────────────
+
+  static get undoButton() {
+    return cy.findByRole('button', { name: 'Undo' });
+  }
+
+  static get redoButton() {
+    return cy.findByRole('button', { name: 'Redo' });
   }
 
   // ── Canvas nodes ──────────────────────────────────────────────────────────

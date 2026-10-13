@@ -2220,6 +2220,21 @@
       "zoomIn": "Zoom In",
       "zoomOut": "Zoom Out"
     },
+    "history": {
+      "addConnection": "Connect {source} to {target}",
+      "addNode": "Add {node}",
+      "andOthers": "[+ {count} others]",
+      "autoLayout": "Auto layout",
+      "deleteNode": "Delete {nodes}",
+      "moveNode": "Move {node}",
+      "moveSubnode": "Move {node} into {page}",
+      "redoTooltip": "Redo: {message}",
+      "revertVersion": "Revert version of {node}",
+      "undoTooltip": "Undo: {message}",
+      "undoneToast": "Undone: {message}",
+      "redoneToast": "Redone: {message}",
+      "updateVersion": "Upgrade version of {node}"
+    },
     "deactivateModal": {
       "body": "Are you sure you want to deactivate this journey? Applications that use this journey will no longer be able to authenticate users.",
       "title": "Deactivate Journey?"
