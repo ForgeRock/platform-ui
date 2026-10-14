@@ -125,6 +125,11 @@ describe('MultiSelectBase', () => {
       });
       const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
 
+      // First Down opens the list without a highlight; the second lands on the group row.
+      await multiselectInput.trigger('keydown.down');
+      await wrapper.vm.$nextTick();
+      expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
+
       await multiselectInput.trigger('keydown.down');
       await wrapper.vm.$nextTick();
 
@@ -187,6 +192,8 @@ describe('MultiSelectBase', () => {
       await wrapper.vm.$nextTick();
       await multiselectInput.trigger('keydown.down');
       await wrapper.vm.$nextTick();
+      await multiselectInput.trigger('keydown.down');
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.find('[aria-activedescendant="multiselectBaseId-2"]').exists()).toBe(true);
       expect(wrapper.findAll('[role="option"]')[1].attributes('aria-selected')).toBe('true');
@@ -195,7 +202,7 @@ describe('MultiSelectBase', () => {
     });
   });
   describe('keyboard functionality', () => {
-    test('should set pointer to 0 when opening combobox by pressing ENTER', async () => {
+    test('highlights no option when opening combobox by pressing ENTER, then follows arrow keys', async () => {
       const wrapper = mount(FrMultiselectBase, {
         global,
         propsData: {
@@ -213,6 +220,10 @@ describe('MultiSelectBase', () => {
       multiselectInput.trigger('keypress.enter');
       await wrapper.vm.$nextTick();
       expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
+      expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).not.toContain('multiselect__option--highlight');
+      multiselectInput.trigger('keydown.down');
+      await wrapper.vm.$nextTick();
+      expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
       expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
       multiselectInput.trigger('keydown.down');
       await wrapper.vm.$nextTick();
@@ -250,21 +261,27 @@ describe('MultiSelectBase', () => {
       expect(multiselectContainer.attributes('role')).toBeUndefined();
       expect(multiselectInput.attributes('role')).toBe('combobox');
 
-      // Open dropdown via Down arrow on the input.
+      // First Down arrow opens the list without highlighting any option.
       multiselectInput.trigger('keydown.down');
       await wrapper.vm.$nextTick();
       expect(multiselectInput.attributes('aria-expanded')).toBe('true');
+      expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
+      expect(wrapper.find('#multiselectBaseId-0 > span').classes()).not.toContain('multiselect__option--highlight');
+
+      // Second Down arrow lands on option 0.
+      multiselectInput.trigger('keydown.down');
+      await wrapper.vm.$nextTick();
       expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
       expect(wrapper.find('#multiselectBaseId-0 > span').classes()).toContain('multiselect__option--highlight');
 
-      // Move pointer forward.
+      // Move pointer forward
       multiselectInput.trigger('keydown.down');
       await wrapper.vm.$nextTick();
       expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-1');
       expect(wrapper.find('#multiselectBaseId-1 > span').classes()).toContain('multiselect__option--highlight');
       expect(wrapper.find('#multiselectBaseId-0 > span').classes()).not.toContain('multiselect__option--highlight');
 
-      // Move pointer backward.
+      // Move pointer backward
       multiselectInput.trigger('keydown.up');
       await wrapper.vm.$nextTick();
       expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
@@ -272,7 +289,7 @@ describe('MultiSelectBase', () => {
     });
   });
 
-  test('should set pointer to 0 when opening combobox by pressing DOWN arrow key', async () => {
+  test('highlights no option when opening combobox by pressing DOWN arrow key, then follows arrow keys', async () => {
     const wrapper = mount(FrMultiselectBase, {
       global,
       propsData: {
@@ -287,11 +304,16 @@ describe('MultiSelectBase', () => {
       },
     });
     const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    // First Down opens with no highlight
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).not.toContain('multiselect__option--highlight');
+    // Second Down steps onto option 0
     multiselectInput.trigger('keydown.down');
     await wrapper.vm.$nextTick();
     expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
     expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
-    await wrapper.vm.$nextTick();
     multiselectInput.trigger('keydown.down');
     await wrapper.vm.$nextTick();
     expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-1');
@@ -302,6 +324,260 @@ describe('MultiSelectBase', () => {
     expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
     expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
     expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).not.toContain('multiselect__option--highlight');
+  });
+
+  test('clears the highlighted option when the mouse leaves the open list', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    multiselectInput.trigger('keypress.enter');
+    await wrapper.vm.$nextTick();
+
+    const list = wrapper.find('.multiselect__content');
+    const firstOption = wrapper.find('#multiselectBaseId-0 > span');
+    // Hover: highlight appears instantly (mouseenter, no debounce)
+    firstOption.trigger('mouseenter');
+    await wrapper.vm.$nextTick();
+    expect(firstOption.classes()).toContain('multiselect__option--highlight');
+
+    // Move the mouse out of the list: highlight clears
+    list.trigger('mouseleave');
+    await wrapper.vm.$nextTick();
+    expect(firstOption.classes()).not.toContain('multiselect__option--highlight');
+
+    // Keyboard navigation still works after clearing
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(firstOption.classes()).toContain('multiselect__option--highlight');
+  });
+
+  test('highlights an option instantly on a quick mouse pass (before the debounce fires)', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    multiselectInput.trigger('keypress.enter');
+    await wrapper.vm.$nextTick();
+
+    const secondOption = wrapper.find('#multiselectBaseId-1 > span');
+    // Quick pass: mouseenter fires before the debounce settles
+    secondOption.trigger('mouseenter');
+    await wrapper.vm.$nextTick();
+    expect(secondOption.classes()).toContain('multiselect__option--highlight');
+    expect(wrapper.find('#multiselectBaseId-0 > span').classes()).not.toContain('multiselect__option--highlight');
+  });
+
+  // Type + Enter: with nothing pointed, Enter accepts the first filtered option
+  test('selects the first filtered option on Enter when nothing is highlighted', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    // VTU's keypress.enter sets e.key to 'enter' (lowercase); the handler checks 'Enter'
+    multiselectInput.trigger('keypress', { key: 'Enter' });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('#multiselectBaseId-0 > span').classes()).not.toContain('multiselect__option--highlight');
+
+    multiselectInput.trigger('keypress', { key: 'Enter' });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ id: '1' });
+  });
+
+  test('selects the first matching option on Enter for a searched grouped list', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'name',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        groupValues: 'values',
+        groupLabel: 'label',
+        groupSelect: false,
+        options: [
+          { label: 'Group A', values: [{ name: 'alpha one' }, { name: 'alpha two' }] },
+          { label: 'Group B', values: [{ name: 'beta one' }] },
+        ],
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+
+    // Filter by search: the first rendered entry is the group label, not an option.
+    multiselectInput.setValue('alpha');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.filteredOptions[0].$isLabel).toBe(true);
+
+    // First Enter opens the list (nothing pointed), second accepts the first option.
+    multiselectInput.trigger('keypress', { key: 'Enter' });
+    await wrapper.vm.$nextTick();
+    multiselectInput.trigger('keypress', { key: 'Enter' });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ name: 'alpha one' });
+  });
+
+  test('highlights the selected option when opening a single-select with a preselected value', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': { id: '2' },
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-1');
+    expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).toContain('multiselect__option--highlight');
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).not.toContain('multiselect__option--highlight');
+  });
+
+  test('highlights the selected primitive option, not the first, when opening', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': 2,
+        options: [1, 2, 3],
+        searchable: true,
+        multiple: false,
+        closeOnSelect: true,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-1');
+    expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).toContain('multiselect__option--highlight');
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).not.toContain('multiselect__option--highlight');
+  });
+
+  test('does not highlight any option on open in multiple mode', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [{ id: '2' }],
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: true,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
+    wrapper.findAll('.multiselect__option').forEach((option) => {
+      expect(option.classes()).not.toContain('multiselect__option--highlight');
+    });
+  });
+
+  test('keeps no option highlighted when the dropdown opens', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    multiselectInput.trigger('click');
+    await wrapper.vm.$nextTick();
+    await new Promise((resolve) => setTimeout(resolve, 30));
+
+    expect(wrapper.vm.isOpen).toBe(true);
+    wrapper.findAll('.multiselect__option').forEach((option) => {
+      expect(option.classes()).not.toContain('multiselect__option--highlight');
+    });
+  });
+
+  test('clears the highlight on close without mouseleave, so a click-reopen shows none', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    const firstOption = wrapper.find('#multiselectBaseId-0 > span');
+
+    // Open, point at option 0
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(firstOption.classes()).toContain('multiselect__option--highlight');
+
+    // Close via Esc — the mouse never entered the list, so no mouseleave fires
+    multiselectInput.trigger('keydown.esc');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.isOpen).toBe(false);
+
+    // Reopen by click: the stale highlight must not come back
+    multiselectInput.trigger('click');
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.isOpen).toBe(true);
+    wrapper.findAll('.multiselect__option').forEach((option) => {
+      expect(option.classes()).not.toContain('multiselect__option--highlight');
+    });
   });
 
   it('multiselect has a value if the model-value prop is not empty', async () => {
@@ -340,7 +616,7 @@ describe('MultiSelectBase', () => {
     multiselectInput.trigger('click');
     await wrapper.vm.$nextTick();
     expect(multiselectInput.attributes('aria-activedescendant')).toBeUndefined();
-    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).not.toContain('multiselect__option--highlight');
     const optionOne = wrapper.find('#multiselectBaseId-0 > span');
     optionOne.trigger('click', { force: true });
     const emitted = wrapper.emitted()['update:modelValue'][0][0];
@@ -1169,7 +1445,7 @@ describe('Multiselect.vue', () => {
   });
 
   describe('#pointerReset()', () => {
-    test('should reset the pointer value to 0', () => {
+    test('should reset the pointer to no-highlight (-1) when no value is selected', () => {
       const wrapper = shallowMount(FrMultiselectBase, {
         global,
         propsData: {
@@ -1183,7 +1459,7 @@ describe('Multiselect.vue', () => {
       wrapper.vm.activate();
       wrapper.vm.pointer = 2;
       wrapper.vm.pointerReset();
-      expect(wrapper.vm.pointer).toBe(0);
+      expect(wrapper.vm.pointer).toBe(-1);
     });
     test('should do nothing when closeOnSelect == FALSE', () => {
       const wrapper = shallowMount(FrMultiselectBase, {

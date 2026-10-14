@@ -133,6 +133,7 @@ of the MIT license. See the LICENSE file for details. -->
           :style="contentStyle"
           role="listbox"
           :id="`listbox-${id}`"
+          @mouseleave="clearPointer"
           :aria-multiselectable="multiple ? 'true' : null">
           <slot name="beforeList" />
           <li v-if="multiple && max === internalValue.length">
@@ -153,6 +154,7 @@ of the MIT license. See the LICENSE file for details. -->
                 v-if="!(option && option.$isLabel)"
                 :class="optionHighlight(index, option)"
                 @click.stop="select(option)"
+                @mouseenter.self="pointerSet(index)"
                 @mousemove.self="debouncePointerSet(index)"
                 :data-select="option && option.isTag ? tagPlaceholder : selectLabelText"
                 :data-selected="selectedLabelText"
@@ -171,6 +173,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :data-select="groupSelect && selectGroupLabelText"
                 :data-deselect="groupSelect && deselectGroupLabelText"
                 :class="groupHighlight(index, option)"
+                @mouseenter.self="groupSelect && pointerSet(index)"
                 @mousemove.self="groupSelect && debouncePointerSet(index)"
                 @mousedown.prevent="selectGroup(option)"
                 class="multiselect__option">
@@ -581,11 +584,25 @@ const {
   // eslint-disable-next-line no-unused-vars
   pointerAdjust,
   pointerBackward,
+  pointerClear,
   pointerForward,
   // eslint-disable-next-line no-unused-vars
   pointerReset,
   pointerSet,
-} = usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, visibleValues);
+} = usePointer(props, filteredOptions, isSelected, internalValue, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, visibleValues);
+
+const debouncePointerSet = debounce(pointerSet, 15);
+// Cancel a pending pointerSet so the mouse leaving the list cannot re-highlight.
+const clearPointer = () => {
+  debouncePointerSet.cancel();
+  pointerClear();
+};
+
+// Clear the highlight on close ( esc, blur, outside click etc)
+// to avoid a stale pointer.
+watch(isOpen, (open) => {
+  if (!open) clearPointer();
+});
 
 const singleValue = computed(() => internalValue.value[0]);
 const isSingleLabelVisible = computed(() => (
@@ -622,13 +639,12 @@ const inputIsCombobox = computed(() => props.searchable
         || props.multiple
         || props.taggable);
 const hasFilteredOptions = computed(() => !(filteredOptions.value.length === 0));
-const debouncePointerSet = debounce(pointerSet, 15);
 const hasNavigated = ref(false);
 /**
  * Returns the filtered list index currently under the keyboard pointer, but only when that index identifies a rendered element
  * that can safely be referenced by aria-activedescendant:
  * - the popup must be open, keyboard navigation must have occurred, and the component id must be set (otherwise the option id cannot be formed);
- * - the pointer must resolve to an existing entry (no stale reference after the option list shrinks or empties);
+ * - the pointer must resolve to an existing entry (pointer -1 means no option is pointed and yields null, as does a stale reference after the list shrinks);
  * - group labels are excluded unless groupSelect is true, because only in that mode are they real, keyboard-selectable options.
  * Returns null in every other case so the attribute is omitted rather than pointing at an element that does not exist.
  */

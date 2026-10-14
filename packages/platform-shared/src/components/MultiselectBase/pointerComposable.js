@@ -7,8 +7,9 @@
 
 import { ref, computed, watch } from 'vue';
 
-export default function usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, visibleValues) {
-  const pointer = ref(0);
+export default function usePointer(props, filteredOptions, isSelected, internalValue, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, visibleValues) {
+  // -1 = no option pointed; the list opens without a highlight.
+  const pointer = ref(-1);
   const currentEl = computed(() => listRef?.value?.querySelector(`#${props.id}-${pointer.value}`));
 
   function optionHighlight(index, option) {
@@ -36,17 +37,24 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     ] : 'multiselect__option--disabled';
   }
 
+  /**
+   * Points at the selected option in the rendered list (or -1 when there is no
+   * selection, in multiple mode, or the selection is not currently visible).
+   * Uses isSelected so trackBy and primitive options are matched correctly.
+   */
+  function pointerToSelection() {
+    if (props.multiple || internalValue.value.length === 0) {
+      pointer.value = -1;
+      return;
+    }
+    pointer.value = filteredOptions.value.findIndex((option) => option && !option.$isLabel && isSelected(option));
+  }
+
   function pointerReset() {
     if (!props.closeOnSelect) return;
-    // Check if is array since the default value for the modelValue prop is and empty array
-    const hasModelValue = Array.isArray(props.modelValue) ? props.modelValue.length !== 0 : !!props.modelValue;
-    if (!hasModelValue) {
-      pointer.value = 0;
-      if (listRef.value) {
-        listRef.value.scrollTop = 0;
-      }
-    } else {
-      pointer.value = props.options.findIndex((option) => option.value === props.modelValue.value);
+    pointerToSelection();
+    if (pointer.value === -1 && listRef.value) {
+      listRef.value.scrollTop = 0;
     }
   }
 
@@ -56,7 +64,13 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
       activate();
     } else if (key === 'Enter') {
       if (filteredOptions.value.length > 0) {
-        select(filteredOptions.value[pointer.value], key);
+        // Nothing pointed: Enter accepts the first filtered option (type + Enter flow).
+        // Group labels stay in filteredOptions; skip a leading one (select() ignores labels).
+        let index = Math.max(pointer.value, 0);
+        if (filteredOptions.value[index]?.$isLabel && !props.groupSelect) {
+          index = filteredOptions.value.findIndex((option) => option && !option.$isLabel);
+        }
+        select(filteredOptions.value[index], key);
       }
     }
   }
@@ -64,7 +78,10 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     if (!isOpen.value) {
       // NOTE: added to open on down arrow, else statement only happens after open
       activate();
+      pointerToSelection();
     } else if (pointer.value < filteredOptions.value.length - 1) {
+      // pointer -1 means nothing is pointed; += 1 moves onto option 0 (a leading
+      // group label lands here first and the recursion below skips past it).
       pointer.value += 1;
       if (currentEl?.value && listRef.value) {
         listRef.value.scrollTop = currentEl.value.offsetTop - (listRef.value.offsetHeight / 2);
@@ -88,21 +105,29 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
       ) {
         pointerBackward();
       }
-    } else if (filteredOptions.value[pointer.value]
+    } else if (pointer.value <= 0) {
+      if (!isOpen.value) {
+        activate();
+        pointerToSelection();
+      } else if (filteredOptions.value.length > 0
           && filteredOptions.value[0].$isLabel
           && !props.groupSelect
-    ) {
-      pointerForward();
+      ) {
+        // Unpointed (or on option 0) with a leading group label: forward steps
+        // onto option 0 and the label-skip inside pointerForward recurses past it.
+        pointerForward();
+      }
     }
   }
   function pointerAdjust() {
     if (pointer.value >= filteredOptions.value.length - 1) {
       pointer.value = filteredOptions.value.length
         ? filteredOptions.value.length - 1
-        : 0;
+        : -1;
     }
 
     if (filteredOptions.value.length > 0
+        && pointer.value >= 0
         && filteredOptions.value[pointer.value]?.$isLabel
         && !props.groupSelect
     ) {
@@ -111,6 +136,9 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
   }
   function pointerSet(index) {
     pointer.value = index;
+  }
+  function pointerClear() {
+    pointer.value = -1;
   }
 
   /**
@@ -201,6 +229,7 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     pointerBackward,
     pointerReset,
     pointerAdjust,
+    pointerClear,
     pointerSet,
     navigateTags,
   };

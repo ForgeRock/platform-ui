@@ -61,7 +61,7 @@ describe('Violation Toolbar', () => {
     const wrapper = mountComponent();
 
     const ruleSelect = wrapper.findComponent('[label="Rule"]');
-    ruleSelect.find('[class="multiselect__option--highlight multiselect__option"]').trigger('click');
+    ruleSelect.findAll('[class="multiselect__option"]')[0].trigger('click');
     await flushPromises();
 
     expect(wrapper.emitted('input')[0][0]).toEqual({

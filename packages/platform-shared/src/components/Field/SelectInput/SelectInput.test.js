@@ -269,28 +269,30 @@ describe('SelectInput', () => {
     const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
     const options = wrapper.findAll('.multiselect__option');
 
-    // When the menu is initially opened, we expect the first option to always be highlighted
+    // Focus-open: no option is highlighted yet
     await multiselect.trigger('focus');
-    expect(options[0].classes('multiselect__option--highlight')).toBe(true);
+    expect(options[0].classes('multiselect__option--highlight')).toBe(false);
 
     // The second option selected, menu closes, menu remains focused
     await options[1].trigger('click');
     expect(multiselectInput.attributes('aria-expanded')).toBe('false');
 
-    // We trigger the menu to show again by clicking on the "down arrow" and the second option should now be highlighted
+    // Reopen via Down arrow: highlight follows the selection
     await multiselect.trigger('keydown', { key: 'ArrowDown' });
+    await wrapper.vm.$nextTick();
     expect(multiselectInput.attributes('aria-expanded')).toBe('true');
-    expect(options[0].classes('multiselect__option--highlight')).toBe(true);
+    expect(options[1].classes('multiselect__option--highlight')).toBe(true);
     expect(options[1].classes('multiselect__option--selected')).toBe(true);
 
     // The third option selected, menu closes, menu remains focused
     await options[2].trigger('click');
     expect(multiselectInput.attributes('aria-expanded')).toBe('false');
 
-    // We trigger the menu once more by clicking on the "up arrow" this time and the third option should remain highlighted
+    // Reopen again: the new selection is highlighted
     await multiselect.trigger('keydown', { key: 'ArrowDown' });
+    await wrapper.vm.$nextTick();
     expect(multiselectInput.attributes('aria-expanded')).toBe('true');
-    expect(options[0].classes('multiselect__option--highlight')).toBe(true);
+    expect(options[2].classes('multiselect__option--highlight')).toBe(true);
     expect(options[1].classes('multiselect__option--highlight')).toBe(false);
     expect(options[2].classes('multiselect__option--selected')).toBe(true);
   });

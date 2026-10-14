@@ -409,19 +409,23 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
         cy.findAllByRole('row').should('have.length', 2);
         cy.findByRole('cell', { name: internalRoleName });
         cy.get('#appContent').should('have.attr', 'aria-label');
+        // A late-resolving list fetch can clobber the dropdown; settle both fetches first.
+        cy.intercept('GET', '**/openidm/internal/role?*').as('roleSearch');
         cy.findByRole('button', { name: 'Add Authorization Roles' }).click();
         cy.findByRole('dialog')
           .findAllByLabelText('Authorization Roles')
           .first()
-          .click({ force: true })
-          .type(`${internalRoleName}`);
-        cy.findByRole('dialog')
-          .get('.multiselect__option--highlight')
-          .contains(internalRoleName);
+          .click({ force: true });
+        cy.wait('@roleSearch');
         cy.findByRole('dialog')
           .findAllByLabelText('Authorization Roles')
           .first()
-          .type('{enter}');
+          .type(`${internalRoleName}`);
+        cy.wait('@roleSearch');
+        cy.findByRole('dialog')
+          .get('.multiselect__option')
+          .contains(internalRoleName)
+          .click();
         cy.contains('.multiselect__tag', internalRoleName);
         cy.findByRole('button', { name: 'Cancel' }).click();
         cy.intercept('GET', '**/openidm/managed/**').as('search');
