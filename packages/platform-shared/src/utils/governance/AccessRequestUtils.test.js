@@ -9,6 +9,7 @@ import { flushPromises } from '@vue/test-utils';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import dayjs from 'dayjs';
 import {
   getRequestFilter,
   getStatusText,
@@ -311,7 +312,7 @@ describe('getFormattedRequest', () => {
         type: 'Grant Entitlement',
         name: 'display name test',
         priority: 'priority',
-        date: 'Jan 1, 2021',
+        date: dayjs('2021-01-01').format('MMM D, YYYY h:mm A'),
         requestedFor: 'user test',
         requestedBy: 'requester test',
         resumeDate: null,
@@ -344,7 +345,7 @@ describe('getFormattedRequest', () => {
         id: 'testId',
         type: 'testType',
         priority: 'high',
-        date: 'Jan 1, 2021',
+        date: dayjs('2021-01-01').format('MMM D, YYYY h:mm A'),
         requestedBy: 'test Requester',
         requestedFor: '',
         resumeDate: null,
@@ -381,7 +382,7 @@ describe('getFormattedRequest', () => {
         name: 'app - objectType',
         description: undefined,
         priority: 'high',
-        date: 'Jan 1, 2021',
+        date: dayjs('2021-01-01').format('MMM D, YYYY h:mm A'),
         requestedBy: 'test Requester',
         requestedFor: '',
         resumeDate: null,

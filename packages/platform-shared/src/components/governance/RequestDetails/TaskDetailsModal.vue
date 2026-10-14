@@ -56,7 +56,14 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.completedBy') }}
         </BCol>
         <BCol lg="8">
-          <FrUserGroupList :users-list="taskDetails.completedBy" />
+          <template
+            v-for="(user, index) in taskDetails.completedBy"
+            :key="user.id || index">
+            <span v-if="user.id === 'SYSTEM'">{{ $t('common.system') }}</span>
+            <FrUserGroupList
+              v-else
+              :users-list="[user]" />
+          </template>
         </BCol>
       </template>
       <!-- Status -->

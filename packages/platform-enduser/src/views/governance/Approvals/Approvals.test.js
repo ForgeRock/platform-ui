@@ -16,6 +16,7 @@ import {
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { cloneDeep } from 'lodash';
+import dayjs from 'dayjs';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
@@ -155,7 +156,7 @@ const mockRequest = {
 const openModalMock = {
   itemName: 'Remove Application: My Azure App',
   details: {
-    date: 'Jun 22, 2023',
+    date: dayjs('2023-06-22T19:23:26+00:00').format('MMM D, YYYY h:mm A'),
     icon: 'https://cdn.forgerock.com/platform/app-templates/images/microsoft.svg',
     id: 3,
     name: 'My Azure App',

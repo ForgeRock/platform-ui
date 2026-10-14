@@ -29,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <template #cell(approvers)="{ item }">
       <FrAvatarGroup
+        v-if="!isSystemTask(item)"
         :id="item.name"
         :users="item.actors"
       />
@@ -37,8 +38,8 @@ of the MIT license. See the LICENSE file for details. -->
     <template #cell(status)="{ item }">
       <BBadge
         class="px-4"
-        :variant="getBadgeVariant(item.decision || item.status)">
-        {{ getStatus(item.decision || item.status) }}
+        :variant="getBadgeVariant(item)">
+        {{ getStatus(item) }}
       </BBadge>
     </template>
     <template #cell(actions)="{ item }">
@@ -168,6 +169,18 @@ function getTableColumns(type) {
 }
 
 /**
+ * Determines whether a task is a system task, i.e. completed by the system
+ * rather than by a user. Wait (scheduled) tasks always are, and tasks whose
+ * only actors are the SYSTEM user (e.g. a completed wait task) are as well
+ * @param item Task item
+ * @returns {Boolean} True if the task is a system task
+ */
+function isSystemTask(item) {
+  if (item.type === detailTypes.SCHEDULED) return true;
+  return item.actors.length > 0 && item.actors.every((actor) => actor.id === 'SYSTEM');
+}
+
+/**
  * Returns values for status badge
  * @param {String} type Item decision
  * @return {BadgeValue} Badge parameters
@@ -180,14 +193,25 @@ function setDecisionValue(type) {
         variant: 'success',
       };
     case 'fulfill':
+    case 'fulfilled':
       return {
         name: i18n.global.t('governance.decisions.fulfilled'),
         variant: 'success',
       };
+    case 'provisioned':
+      return {
+        name: i18n.global.t('governance.outcomes.provisioned'),
+        variant: 'success',
+      };
+    case 'not provisioned':
+      return {
+        name: i18n.global.t('governance.outcomes.notProvisioned'),
+        variant: 'danger',
+      };
     case 'in-progress':
       return {
         name: i18n.global.t('governance.status.in-progress'),
-        variant: 'success',
+        variant: 'warning',
       };
     case 'cancelled':
       return {
@@ -200,9 +224,15 @@ function setDecisionValue(type) {
         variant: 'danger',
       };
     case 'deny':
+    case 'denied':
       return {
         name: i18n.global.t('governance.decisions.denied'),
         variant: 'danger',
+      };
+    case 'complete':
+      return {
+        name: i18n.global.t('governance.status.complete'),
+        variant: 'success',
       };
     default:
       return {
@@ -214,25 +244,28 @@ function setDecisionValue(type) {
 
 /**
  * Returns selected item variant
- * @param {String} type Item decision
+ * @param {Object} item Task item
  * @return {String} Item variant value
  */
-function getBadgeVariant(type) {
-  const parsedType = type === 'complete' && requestOutcome.value
+function getBadgeVariant(item) {
+  const value = item.decision || item.status;
+  // A system task's completion is its own status, not the request outcome
+  const parsedType = value === 'complete' && !isSystemTask(item) && requestOutcome.value
     ? requestOutcome.value
-    : type;
+    : value;
   return setDecisionValue(parsedType).variant;
 }
 
 /**
  * Returns selected item name
- * @param {String} type Item decision
+ * @param {Object} item Task item
  * @return {String} Item name value
  */
-function getStatus(type) {
-  const parsedType = type === 'complete' && requestOutcome.value
+function getStatus(item) {
+  const value = item.decision || item.status;
+  const parsedType = value === 'complete' && !isSystemTask(item) && requestOutcome.value
     ? requestOutcome.value
-    : type;
+    : value;
   return setDecisionValue(parsedType).name;
 }
 
@@ -241,7 +274,7 @@ function getStatus(type) {
  * @param {String} date formatted date
  */
 function parseDate(date) {
-  return dayjs(date).format('MMM D, YYYY');
+  return dayjs(date).format('MMM D, YYYY h:mm A');
 }
 
 /**
@@ -266,8 +299,8 @@ function showTaskDetailsModal(currentItem) {
     startDate: parseDate(currentItem.startDate),
     completionDate: currentItem.completionDate ? parseDate(currentItem.completionDate) : null,
     resumeDate: currentItem.events?.scheduled?.date ? parseDate(currentItem.events?.scheduled?.date) : null,
-    status: getStatus(currentItem.decision || currentItem.status),
-    statusBadge: getBadgeVariant(currentItem.decision || currentItem.status),
+    status: getStatus(currentItem),
+    statusBadge: getBadgeVariant(currentItem),
     type: currentItem.type,
     workflowId: currentItem.workflowTaskId,
   };
@@ -362,10 +395,15 @@ function getTypeOfTask(item) {
 }
 
 /**
- * Get the date display to show under the task name
+ * Get the date display to show under the task name. Completed tasks show
+ * their completion date when available, active wait tasks show their
+ * resume date, and everything else shows the start date
  * @param item Task item
  */
 function getDateDisplay(item) {
+  if (item.completionDate) {
+    return parseDate(item.completionDate);
+  }
   if (item.type === 'scheduled' && item.status === 'in-progress') {
     return i18n.global.t('governance.accessRequest.untilDate', { date: parseDate(item.events?.scheduled?.date) });
   }

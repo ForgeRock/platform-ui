@@ -267,11 +267,11 @@ const fields = computed(() => {
 });
 
 function getItemResumeDate(item) {
-  return item.details.resumeDate ? dayjs(item.details.resumeDate).format('MMM D, YYYY') : null;
+  return item.details.resumeDate ? dayjs(item.details.resumeDate).format('MMM D, YYYY h:mm A') : null;
 }
 
 function getItemCreatedDate(item) {
-  return item.rawData.metadata?.createdDate ? dayjs(item.rawData.metadata.createdDate).format('MMM D, YYYY') : null;
+  return item.rawData.metadata?.createdDate ? dayjs(item.rawData.metadata.createdDate).format('MMM D, YYYY h:mm A') : null;
 }
 
 watch(() => prop.requests, (newRequests) => {

@@ -85,6 +85,29 @@ describe('TaskDetailsModal', () => {
     const labels = wrapper.findAll('.font-weight-bold');
     const labelTexts = labels.map((l) => l.text());
     expect(labelTexts).toContain('common.completedBy');
+    // 2 approvers + 1 completedBy user
+    expect(wrapper.findAll('[data-testid="user-info"]').length).toBe(3);
+  });
+
+  it('shows system text instead of a profile icon when completed by SYSTEM', () => {
+    const systemCompletedTask = cloneDeep(TASK_DETAILS);
+    systemCompletedTask.completedBy = [{ id: 'SYSTEM' }];
+    wrapper = setup({ taskDetails: systemCompletedTask });
+    const labels = wrapper.findAll('.font-weight-bold');
+    const labelTexts = labels.map((l) => l.text());
+    expect(labelTexts).toContain('common.completedBy');
+    expect(wrapper.text()).toContain('common.system');
+    // Only the 2 approvers render; the SYSTEM completedBy does not
+    expect(wrapper.findAll('[data-testid="user-info"]').length).toBe(2);
+  });
+
+  it('shows system text alongside other users when completedBy includes SYSTEM', () => {
+    const mixedCompletedTask = cloneDeep(TASK_DETAILS);
+    mixedCompletedTask.completedBy = [{ id: 'SYSTEM' }, { givenName: 'Alice', sn: 'Smith' }];
+    wrapper = setup({ taskDetails: mixedCompletedTask });
+    expect(wrapper.text()).toContain('common.system');
+    // 2 approvers + the 1 non-SYSTEM completedBy user
+    expect(wrapper.findAll('[data-testid="user-info"]').length).toBe(3);
   });
 
   it('hides the "Completed by" row when taskDetails.completedBy is not set', () => {

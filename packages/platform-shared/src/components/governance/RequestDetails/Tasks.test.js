@@ -8,6 +8,7 @@
 import { DOMWrapper, flushPromises, mount } from '@vue/test-utils';
 import { createAppContainer, toggleActionsMenu } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
+import dayjs from 'dayjs';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { detailTypes } from '../../../utils/governance/AccessRequestUtils';
 import Tasks from './Tasks';
@@ -73,6 +74,59 @@ const ITEM = {
   },
 };
 
+const COMPLETED_REQUEST_ITEM = {
+  rawData: {
+    decision: {
+      actors: {
+        active: [],
+        inactive: [
+          {
+            id: 'managed/user/4f954458-769f-49d6-b506-52ee9990c51b',
+            givenName: 'Audrey',
+            mail: 'audrey.phillips@ulifereports.onmicrosoft.com',
+            sn: 'Phillips',
+            userName: 'audrey.phillips@ulifereports.onmicrosoft.com',
+            phase: 'approvalTask-c7867dd2593a',
+          },
+        ],
+      },
+      outcome: 'provisioned',
+      phases: [
+        {
+          name: 'approvalTask-c7867dd2593a',
+          displayName: 'Approval Task',
+          type: 'request',
+          status: 'complete',
+          decision: 'approve',
+          startDate: '2025-07-16T18:35:10+00:00',
+          workflowTaskId: '17765',
+          completedBy: {
+            givenName: 'Audrey',
+            id: 'managed/user/4f954458-769f-49d6-b506-52ee9990c51b',
+            mail: 'audrey.phillips@ulifereports.onmicrosoft.com',
+            sn: 'Phillips',
+            userName: 'audrey.phillips@ulifereports.onmicrosoft.com',
+          },
+          completionDate: '2025-07-16T18:40:18+00:00',
+          justification: 'Test',
+        },
+        {
+          name: 'waitTask-4e25b1ee7a14',
+          displayName: 'Wait Until Start Date',
+          type: 'scheduled',
+          status: 'complete',
+          startDate: '2025-07-16T18:40:19+00:00',
+          completionDate: '2025-07-17T06:00:00',
+          completedBy: {
+            id: 'SYSTEM',
+          },
+          workflowTaskId: '17784',
+        },
+      ],
+    },
+  },
+};
+
 let modalShow;
 function setup(props) {
   ({ modalShow } = mockModal());
@@ -123,10 +177,31 @@ describe('Tasks', () => {
     const { wrapper } = setup();
     const smalls = wrapper.findAll('tr small');
     const date1 = smalls[0];
-    expect(date1.text()).toBe('Jul 16, 2025');
+    // Completed approval task shows its completion date
+    expect(date1.text()).toBe(dayjs('2025-07-16T18:40:18+00:00').format('MMM D, YYYY h:mm A'));
 
     const date2 = smalls[2];
-    expect(date2.text()).toBe('Until Jul 17, 2025');
+    expect(date2.text()).toBe(`Until ${dayjs('2025-07-17T06:00:00').format('MMM D, YYYY h:mm A')}`);
+  });
+
+  it('Should render the completion date for a completed wait task', async () => {
+    const { wrapper } = setup({ item: COMPLETED_REQUEST_ITEM });
+
+    await flushPromises();
+
+    const smalls = wrapper.findAll('tr small');
+    expect(smalls[2].text()).toBe(dayjs('2025-07-17T06:00:00').format('MMM D, YYYY h:mm A'));
+  });
+
+  it('Should render the start date for a task without a completion date', async () => {
+    const noCompletionDateItem = cloneDeep(ITEM);
+    delete noCompletionDateItem.rawData.decision.phases[0].completionDate;
+    const { wrapper } = setup({ item: noCompletionDateItem });
+
+    await flushPromises();
+
+    const smalls = wrapper.findAll('tr small');
+    expect(smalls[0].text()).toBe(dayjs('2025-07-16T18:35:10+00:00').format('MMM D, YYYY h:mm A'));
   });
 
   it('Should not render dropdown menu for user requests', () => {
@@ -202,5 +277,66 @@ describe('Tasks', () => {
     expect(completedDropDown[2].text()).toContain('forward');
     expect(completedDropDown[3].text()).toContain('addComment');
     expect(completedDropDown[4].text()).toContain('viewDetails');
+  });
+
+  it('Should render the request outcome for a completed wait task instead of pending', async () => {
+    const { wrapper } = setup({ item: COMPLETED_REQUEST_ITEM });
+
+    await flushPromises();
+
+    const badges = wrapper.findAll('.badge');
+    expect(badges.length).toBe(2);
+    expect(badges[0].text()).toBe('Approved');
+    expect(badges[1].text()).toBe('Completed');
+  });
+
+  it('Should render an in-progress task with the warning variant', async () => {
+    const { wrapper } = setup();
+
+    await flushPromises();
+
+    const badges = wrapper.findAll('.badge');
+    expect(badges.length).toBe(2);
+    expect(badges[0].classes()).toContain('badge-success');
+    expect(badges[1].classes()).toContain('badge-warning');
+  });
+
+  it('Should leave the approvers column blank for a system task', async () => {
+    const { wrapper } = setup({ item: COMPLETED_REQUEST_ITEM });
+
+    await flushPromises();
+
+    // Only the approval task renders an avatar; the wait task cell is blank
+    const singleUserItems = wrapper.findAll('[data-testid="single-user-item"]');
+    expect(singleUserItems.length).toBe(1);
+    const approverCells = wrapper.findAll('tbody tr').map((row) => row.findAll('td')[1].text());
+    expect(approverCells[0]).not.toBe('');
+    expect(approverCells[1]).toBe('');
+  });
+
+  it('Should not render profile icon for a completed wait task without completedBy', async () => {
+    const noCompletedByItem = cloneDeep(COMPLETED_REQUEST_ITEM);
+    delete noCompletedByItem.rawData.decision.phases[1].completedBy;
+    const { wrapper } = setup({ item: noCompletedByItem });
+
+    await flushPromises();
+
+    const avatarItems = wrapper.findAll('[data-testid="avatar-item"]');
+    const singleUserItems = wrapper.findAll('[data-testid="single-user-item"]');
+    expect(avatarItems.length).toBe(0);
+    expect(singleUserItems.length).toBe(1);
+  });
+
+  it('opens task details modal with completed status for a completed wait task', async () => {
+    const { wrapper } = setup({ item: COMPLETED_REQUEST_ITEM });
+    await flushPromises();
+
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', [wrapper.vm.tableData[1]]);
+
+    expect(modalShow).toHaveBeenCalledWith('TaskDetailsModal');
+    expect(wrapper.vm.taskDetails.completedBy).toEqual([{ id: 'SYSTEM' }]);
+    expect(wrapper.vm.taskDetails.status).toBe('Completed');
+    expect(wrapper.vm.taskDetails.statusBadge).toBe('success');
   });
 });

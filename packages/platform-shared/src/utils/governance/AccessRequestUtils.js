@@ -366,13 +366,13 @@ function getRequestedForText(requestedFor) {
 }
 
 /**
- * Formats a given date into a readable string format 'MMM D, YYYY'.
+ * Formats a given date into a readable string format 'MMM D, YYYY h:mm A'.
  * @param {String} date - The date to format.
  * @returns {String} The formatted date string. Returns an empty string if the date is not provided.
  */
 function getRequestedDateText(date) {
   if (!date) return '';
-  return dayjs(date).format('MMM D, YYYY');
+  return dayjs(date).format('MMM D, YYYY h:mm A');
 }
 
 /**
