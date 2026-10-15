@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright 2024-2026 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 const nodemailer = require('nodemailer');
@@ -39,11 +40,14 @@ const getLatestEmail = (account) => new Promise((resolve, reject) => {
     // Open its inbox in read-write mode
     connection.openBox('INBOX', false, (err, box) => {
       if (err) {
+        connection.end();
         reject(err);
+        return;
       }
 
       // If there are no new messages, return false
       if (box.messages.total === 0) {
+        connection.end();
         resolve(false);
       } else {
         // If there are messages, get the latest one. Get its headers and body (TEXT)
@@ -71,6 +75,7 @@ const getLatestEmail = (account) => new Promise((resolve, reject) => {
 
         // If there is an error connecting reject
         fetch.once('error', (error) => {
+          connection.end();
           reject(error);
         });
 

@@ -10,7 +10,8 @@ const defaultRealm = Cypress.env('IS_FRAAS') ? '/alpha/' : '';
 const defaultResource = 'authentication/authenticationtrees/trees';
 const realmUrl = Cypress.env('IS_FRAAS') ? '/realms/alpha' : '';
 
-export function getAMResource(realm = defaultRealm, resource = defaultResource, id) {
+export function getAMResource(realm = defaultRealm, resource = defaultResource, id, options = {}) {
+  const retryOnStatusCodeFailure = options.failOnStatusCode !== false;
   return cy.request({
     method: 'GET',
     url: `https://${Cypress.env('FQDN')}/am/json${realm}${resource}/${id}`,
@@ -18,7 +19,8 @@ export function getAMResource(realm = defaultRealm, resource = defaultResource, 
       'content-type': 'application/json',
       'Accept-API-Version': 'protocol=2.1,resource=1.0',
     },
-    retryOnStatusCodeFailure: true,
+    retryOnStatusCodeFailure,
+    ...options,
   });
 }
 

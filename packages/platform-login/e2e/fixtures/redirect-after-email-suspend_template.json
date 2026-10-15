@@ -1,0 +1,163 @@
+{
+  "meta": {
+    "origin": "https://openam-petr-bahr31.forgeblocks.com/platform/?realm=alpha#/journeys/QA%20-%20Redirect%20after%20Email%20suspend%20node",
+    "exportedBy": "petr.bahr@forgerock.com",
+    "exportDate": "2024-06-25T10:53:28.090Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": ["QA - Redirect after Email suspend node"],
+    "innerTreesIncluded": []
+  },
+  "trees": {
+    "QA - Redirect after Email suspend node": {
+      "tree": {
+        "_id": "QA - Redirect after Email suspend node",
+        "_rev": "-1150779730",
+        "identityResource": "identity_resource",
+        "uiConfig": { "categories": "[\"QA\"]" },
+        "entryNodeId": "4b77b701-0b78-433b-94c3-92730388229d",
+        "innerTreeOnly": false,
+        "nodes": {
+          "67984e22-8814-4e3e-97b9-d6cbcaa3a3b1": {
+            "x": 199,
+            "y": 386.76666259765625,
+            "connections": { "false": "e301438c-0bd0-429c-ab0c-66126501069a", "true": "90fba4d5-e601-42eb-830f-5f846d3a915c" },
+            "nodeType": "IdentifyExistingUserNode",
+            "displayName": "Identify Existing User"
+          },
+          "8d3a59d4-be85-4db5-88a6-24f6de7a80f0": {
+            "x": 783,
+            "y": 26.533340454101562,
+            "connections": { "false": "944aecc3-783c-4244-97d2-c6cc9b6a6807", "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0" },
+            "nodeType": "MessageNode",
+            "displayName": "Message Node"
+          },
+          "4b77b701-0b78-433b-94c3-92730388229d": {
+            "x": 136,
+            "y": 59,
+            "connections": { "outcome": "67984e22-8814-4e3e-97b9-d6cbcaa3a3b1" },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "944aecc3-783c-4244-97d2-c6cc9b6a6807": {
+            "x": 788,
+            "y": 242.76666259765625,
+            "connections": { "outcome": "e301438c-0bd0-429c-ab0c-66126501069a" },
+            "nodeType": "SetFailureUrlNode",
+            "displayName": "Failure URL"
+          },
+          "90fba4d5-e601-42eb-830f-5f846d3a915c": {
+            "x": 557,
+            "y": 90.76666259765625,
+            "connections": { "outcome": "8d3a59d4-be85-4db5-88a6-24f6de7a80f0" },
+            "nodeType": "EmailSuspendNode",
+            "displayName": "Email Suspend Node"
+          }
+        },
+        "staticNodes": {
+          "startNode": { "x": 50, "y": 25 },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": { "x": 1008, "y": 186 },
+          "e301438c-0bd0-429c-ab0c-66126501069a": { "x": 939, "y": 474 }
+        },
+        "description": "See for more info : https://stash.forgerock.org/projects/UI/repos/platform-ui/pull-requests/2803/overview",
+        "enabled": true
+      },
+      "nodes": {
+        "67984e22-8814-4e3e-97b9-d6cbcaa3a3b1": {
+          "_id": "67984e22-8814-4e3e-97b9-d6cbcaa3a3b1",
+          "_rev": "909730645",
+          "identityAttribute": "mail",
+          "identifier": "userName",
+          "_type": { "_id": "IdentifyExistingUserNode", "name": "Identify Existing User", "collection": true },
+          "_outcomes": [
+            { "id": "true", "displayName": "True" },
+            { "id": "false", "displayName": "False" }
+          ]
+        },
+        "8d3a59d4-be85-4db5-88a6-24f6de7a80f0": {
+          "_id": "8d3a59d4-be85-4db5-88a6-24f6de7a80f0",
+          "_rev": "759165032",
+          "messageYes": {},
+          "message": { "en": "You should see YES/NO buttons. Click on NO to see redirect to google.com" },
+          "messageNo": {},
+          "_type": { "_id": "MessageNode", "name": "Message Node", "collection": true },
+          "_outcomes": [
+            { "id": "true", "displayName": "True" },
+            { "id": "false", "displayName": "False" }
+          ]
+        },
+        "4b77b701-0b78-433b-94c3-92730388229d": {
+          "_id": "4b77b701-0b78-433b-94c3-92730388229d",
+          "_rev": "2073486927",
+          "nodes": [
+            { "_id": "7d1bf2c3-46ae-40a8-8ad3-0cafa71ea247", "nodeType": "AttributeCollectorNode", "displayName": "Attribute Collector" }
+          ],
+          "pageDescription": { "en": "For more info check https://bugster.forgerock.org/jira/browse/IAM-4991" },
+          "pageHeader": { "en": "Redirect after emal suspend node example." },
+          "_type": { "_id": "PageNode", "name": "Page Node", "collection": true },
+          "_outcomes": [ { "id": "outcome", "displayName": "Outcome" } ]
+        },
+        "944aecc3-783c-4244-97d2-c6cc9b6a6807": {
+          "_id": "944aecc3-783c-4244-97d2-c6cc9b6a6807",
+          "_rev": "-481182024",
+          "failureUrl": "https://google.com",
+          "_type": { "_id": "SetFailureUrlNode", "name": "Failure URL", "collection": true },
+          "_outcomes": [ { "id": "outcome", "displayName": "Outcome" } ]
+        },
+        "90fba4d5-e601-42eb-830f-5f846d3a915c": {
+          "_id": "90fba4d5-e601-42eb-830f-5f846d3a915c",
+          "_rev": "799416102",
+          "emailSuspendMessage": { "en": "An email has been sent to the address you entered. Click the link in that email to proceed." },
+          "emailTemplateName": "qaRedirectAfterEmailSuspendNode",
+          "identityAttribute": "userName",
+          "emailAttribute": "mail",
+          "objectLookup": false,
+          "_type": { "_id": "EmailSuspendNode", "name": "Email Suspend Node", "collection": true },
+          "_outcomes": [ { "id": "outcome", "displayName": "Outcome" } ]
+        }
+      },
+      "innerNodes": {
+        "7d1bf2c3-46ae-40a8-8ad3-0cafa71ea247": {
+          "_id": "7d1bf2c3-46ae-40a8-8ad3-0cafa71ea247",
+          "_rev": "-407700740",
+          "attributesToCollect": ["mail"],
+          "identityAttribute": "userName",
+          "validateInputs": false,
+          "required": false,
+          "_type": { "_id": "AttributeCollectorNode", "name": "Attribute Collector", "collection": true },
+          "_outcomes": [ { "id": "outcome", "displayName": "Outcome" } ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {
+        "qaRedirectAfterEmailSuspendNode": {
+          "_id": "emailTemplate/qaRedirectAfterEmailSuspendNode",
+          "displayName": "QA - Redirect after Email suspend node",
+          "from": "\"QA - Redirect after Email suspend node\" <test@forgerock.com>",
+          "templateId": "qaRedirectAfterEmailSuspendNode",
+          "defaultLocale": "en",
+          "enabled": true,
+          "html": {
+            "en": "<html><body>This is your link<br><p><a href=\"{{object.resumeURI}}\">Email verification link</a></p></body></html>",
+            "fr": "<html><body>Ceci est votre mail d'inscription.<br><p><a href=\"{{object.resumeURI}}\">Lien de vérification email</a></p></body></html>"
+          },
+          "message": {
+            "en": "<html><head></head><body style=\"background-color: #324054; color: #5e6d82; padding: 60px; text-align: center;\"><div class=\"content\" style=\"background-color: #fff; border-radius: 4px; margin: 0 auto; padding: 48px; width: 235px;\">This is your link<br><p><a href=\"{{object.resumeURI}}\" style=\"text-decoration: none; color: #109cf1;\">Email verification link</a></p></div></body></html>",
+            "fr": "<html><head></head><body style=\"background-color: #324054; color: #5e6d82; padding: 60px; text-align: center;\"><div class=\"content\" style=\"background-color: #fff; border-radius: 4px; margin: 0 auto; padding: 48px; width: 235px;\">Ceci est votre mail d'inscription.<br><p><a href=\"{{object.resumeURI}}\" style=\"text-decoration: none; color: #109cf1;\">Lien de vérification email</a></p></div></body></html>"
+          },
+          "mimeType": "text/html",
+          "styles": "body{background-color:#324054;color:#5e6d82;padding:60px;text-align:center}a{text-decoration:none;color:#109cf1}.content{background-color:#fff;border-radius:4px;margin:0 auto;padding:48px;width:235px}",
+          "subject": {
+            "en": "QA - Redirect after Email suspend node",
+            "fr": "Créer un nouveau compte"
+          },
+          "description": "QA - Redirect after Email suspend node"
+        }
+      },
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}

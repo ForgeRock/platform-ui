@@ -43,9 +43,10 @@ class JourneyCleanupManager {
     if (this.journeys.length > 0) {
       const journeysToDelete = this.journeys.map((journey) => journey.fileName);
       cy.log(`Deleting imported journey(s) ${journeysToDelete} via API`).then(() => {
-        cy.deleteTreesViaAPI(journeysToDelete);
-        this.generatedFiles.forEach((filePath) => cy.task('deleteFileIfExists', filePath));
-        this.clear();
+        cy.deleteTreesViaAPI(journeysToDelete).then(() => {
+          this.generatedFiles.forEach((filePath) => cy.task('deleteFileIfExists', filePath));
+          this.clear();
+        });
       });
     }
   }

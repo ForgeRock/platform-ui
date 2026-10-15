@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -57,12 +57,14 @@ export const extractLinkFromEmail = (emailContent) => {
 /**
  * Helper function to get the latest email from the test email account
  * Retries until an email object is received and stores it as 'emailObject' alias
+ * @param {Object} options - { timeout, delay } passed to recurse; defaults match the
+ * original 5s window for registration flows, longer for suspend/relay-style emails
  */
-export const getLastEmail = () => {
+export const getLastEmail = ({ timeout = 5000, delay = 1000 } = {}) => {
   // Keep retrying until the task returns an object
   recurse(() => cy.task('getLatestEmail', Cypress.env('emailAccount')), Cypress._.isObject, {
-    timeout: 5000, // Give up after 5 seconds assuming email will be in inbox by then
-    delay: 1000, // Will try a maximum of 5 times
+    timeout,
+    delay,
   }).then((email) => {
     cy.wrap(email).as('emailObject');
   });
