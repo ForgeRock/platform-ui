@@ -224,7 +224,15 @@ const startApp = () => {
           // ignore storage / parse errors — fall back to 'root'
         }
       }
-      const realmParam = searchRealm || hashRealm || idpResumeRealm || 'root';
+      let realmParam = searchRealm || hashRealm || idpResumeRealm;
+      if (!realmParam) {
+        try {
+          const res = await getAmServerInfo();
+          realmParam = res.data?.realm === '/' ? 'root' : res.data.realm;
+        } catch {
+          realmParam = 'root';
+        }
+      }
       const bootstrapRealm = normalizeRealm(realmParam);
       const journeyConfig = store.state.SharedStore.isFraas
         ? { serverConfig: { wellknown: buildWellknownUrl(bootstrapRealm) } }

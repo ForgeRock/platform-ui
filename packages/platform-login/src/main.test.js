@@ -14,8 +14,10 @@ import store from '@/store';
 import router from '@/router';
 
 jest.mock('@forgerock/platform-shared/src/api/UilocaleApi');
+jest.mock('@forgerock/platform-shared/src/api/ServerinfoApi');
 
 const uilocaleApi = require('@forgerock/platform-shared/src/api/UilocaleApi');
+const serverinfoApi = require('@forgerock/platform-shared/src/api/ServerinfoApi');
 
 // Module-scoped jest mocks. Names are `mock`-prefixed so Jest's hoisting
 // allows them to be referenced inside `jest.mock` factories.
@@ -66,10 +68,6 @@ describe('main.js', () => {
   });
 
   document.body.innerHTML = '<div id="appRoot"></div>';
-  // The main.js branching now selects between wellknown (AIC/cloud) and
-  // baseUrl + realmPath (ForgeOps) based on VUE_APP_FRAAS. Existing tests
-  // assert the wellknown path; set FRAAS=true before requiring main.js so
-  // startApp() takes that branch.
   process.env.VUE_APP_FRAAS = 'true';
   const { checkIfOpenedByIngressEnv } = require('./main');
 
@@ -128,6 +126,155 @@ describe('main.js', () => {
         writable: true,
         value: { ...window.location, search: originalSearch },
       });
+    });
+  });
+
+  describe('bootstrap realm resolution', () => {
+    let originalSearch;
+    let originalHash;
+    let originalTreeResumeData;
+
+    /**
+     * Overrides window.location (so startApp() sees the desired search/hash),
+     * then re-requires ./main in isolation so its module-scope startApp() runs
+     * against the new location. Uses the same isolateModules +
+     * location-override + flushPromises pattern as the `?realm=alpha` test
+     * above.
+     */
+    const bootstrapWithLocation = async ({ search = '', hash = '' } = {}) => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { ...window.location, search, hash },
+      });
+      jest.isolateModules(() => {
+        // eslint-disable-next-line global-require
+        const isolatedConfigApi = require('@forgerock/platform-shared/src/api/ConfigApi');
+        isolatedConfigApi.getUiConfig = jest.fn().mockReturnValue(Promise.resolve({ data: { configuration: { lang: 'en' } } }));
+        // eslint-disable-next-line global-require
+        const isolatedOverrideTranslations = require('@forgerock/platform-shared/src/utils/overrideTranslations');
+        isolatedOverrideTranslations.setLocales = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+        isolatedOverrideTranslations.overrideTranslations = jest.fn().mockReturnValue(Promise.resolve());
+        // eslint-disable-next-line global-require
+        require('./main');
+      });
+      await flushPromises();
+    };
+
+    const restoreLocation = () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { ...window.location, search: originalSearch, hash: originalHash },
+      });
+    };
+
+    beforeEach(() => {
+      mockJourney.mockClear();
+      originalSearch = window.location.search;
+      originalHash = window.location.hash;
+      originalTreeResumeData = localStorage.getItem('treeResumeData');
+      localStorage.removeItem('treeResumeData');
+      // Clear any reentry cookie left by a previous test so the OAuth-return
+      // detection in startApp() (hasReentryToken()) stays deterministic.
+      document.cookie = 'reentry="";expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+      serverinfoApi.getAmServerInfo = jest.fn().mockResolvedValue({ data: { realm: '/' } });
+    });
+
+    afterEach(() => {
+      restoreLocation();
+      if (originalTreeResumeData !== null) {
+        localStorage.setItem('treeResumeData', originalTreeResumeData);
+      } else {
+        localStorage.removeItem('treeResumeData');
+      }
+    });
+
+    it('uses the realm from AM serverinfo when the URL carries no realm (bare custom-domain first load)', async () => {
+      serverinfoApi.getAmServerInfo.mockResolvedValueOnce({ data: { realm: '/alpha' } });
+
+      await bootstrapWithLocation({ search: '', hash: '#/' });
+
+      expect(serverinfoApi.getAmServerInfo).toHaveBeenCalledTimes(1);
+      expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+        config: expect.objectContaining({
+          serverConfig: expect.objectContaining({
+            wellknown: expect.stringMatching(/\/oauth2\/realms\/alpha\/\.well-known\/openid-configuration$/),
+          }),
+        }),
+      }));
+    });
+
+    it('maps a serverinfo realm of "/" to "root" (plain tenant FQDN first load)', async () => {
+      serverinfoApi.getAmServerInfo.mockResolvedValueOnce({ data: { realm: '/' } });
+
+      await bootstrapWithLocation({ search: '', hash: '#/' });
+
+      expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+        config: expect.objectContaining({
+          serverConfig: expect.objectContaining({
+            wellknown: expect.stringMatching(/\/oauth2\/realms\/root\/\.well-known\/openid-configuration$/),
+          }),
+        }),
+      }));
+    });
+
+    it('falls back to "root" when the serverinfo call fails', async () => {
+      serverinfoApi.getAmServerInfo.mockRejectedValueOnce(new Error('Network error'));
+
+      await bootstrapWithLocation({ search: '', hash: '#/' });
+
+      expect(serverinfoApi.getAmServerInfo).toHaveBeenCalledTimes(1);
+      expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+        config: expect.objectContaining({
+          serverConfig: expect.objectContaining({
+            wellknown: expect.stringMatching(/\/oauth2\/realms\/root\/\.well-known\/openid-configuration$/),
+          }),
+        }),
+      }));
+      expect(mockStoreInstance.client).toEqual(expect.objectContaining({ terminate: expect.any(Function) }));
+    });
+
+    it('does not call serverinfo when ?realm= is in the URL search (query wins)', async () => {
+      await bootstrapWithLocation({ search: '?realm=/alpha', hash: '#/' });
+
+      expect(serverinfoApi.getAmServerInfo).not.toHaveBeenCalled();
+      expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+        config: expect.objectContaining({
+          serverConfig: expect.objectContaining({
+            wellknown: expect.stringMatching(/\/oauth2\/realms\/alpha\//),
+          }),
+        }),
+      }));
+    });
+
+    it('does not call serverinfo when ?realm= is in the hash (hash realm wins)', async () => {
+      await bootstrapWithLocation({ search: '', hash: '#/?realm=/alpha' });
+
+      expect(serverinfoApi.getAmServerInfo).not.toHaveBeenCalled();
+      expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+        config: expect.objectContaining({
+          serverConfig: expect.objectContaining({
+            wellknown: expect.stringMatching(/\/oauth2\/realms\/alpha\//),
+          }),
+        }),
+      }));
+    });
+
+    it('prefers the OAuth-resume realm (treeResumeData.realmAtRedirect) over a serverinfo lookup', async () => {
+      // OAuth return: a resumption query param triggers the idpResumeRealm
+      // path in startApp(); the resume realm must win and serverinfo must
+      // not be consulted.
+      localStorage.setItem('treeResumeData', JSON.stringify({ realmAtRedirect: '/delta', step: {} }));
+
+      await bootstrapWithLocation({ search: '?state=abc', hash: '#/' });
+
+      expect(serverinfoApi.getAmServerInfo).not.toHaveBeenCalled();
+      expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+        config: expect.objectContaining({
+          serverConfig: expect.objectContaining({
+            wellknown: expect.stringMatching(/\/oauth2\/realms\/delta\//),
+          }),
+        }),
+      }));
     });
   });
 
