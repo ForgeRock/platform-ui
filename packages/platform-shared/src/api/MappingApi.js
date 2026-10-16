@@ -14,10 +14,19 @@ export function getMappingDetails() {
 
 /**
  * Pull full sync.json (not from memory)
- * @returns results of entire sync.json
+ * @returns results of entire sync.json or an array with empty mappings if not found
  */
-export function getSyncFile() {
-  return generateIdmApi().get('config/sync');
+export async function getSyncFile() {
+  try {
+    const res = await generateIdmApi().get('config/sync');
+    return res;
+  } catch (error) {
+    // if the sync file is not found, return an empty mappings array
+    if (error.response && error.response.status === 404) {
+      return { data: { mappings: [] } };
+    }
+    throw error;
+  }
 }
 
 /**
