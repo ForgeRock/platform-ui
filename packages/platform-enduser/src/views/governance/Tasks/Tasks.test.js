@@ -237,6 +237,45 @@ describe('Tasks', () => {
     expect(storeSpy).toHaveBeenCalledWith('setFulfillmentTasksCount', 1);
   });
 
+  it('sends both actor statuses when pending and complete are selected', async () => {
+    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+
+    wrapper = mountComponent();
+    await flushPromises();
+
+    // Clear the calls made during mount
+    getTasksSpy.mockClear();
+
+    wrapper.vm.filterData.status.value = ['pending', 'complete'];
+    // flush the debounced watcher (300ms)
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    await flushPromises();
+
+    const lastCall = getTasksSpy.mock.calls[getTasksSpy.mock.calls.length - 1];
+    expect(lastCall[1]).toEqual(expect.objectContaining({
+      actorStatus: 'active,inactive',
+    }));
+  });
+
+  it('clears the list without querying when no status is selected', async () => {
+    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+
+    wrapper = mountComponent();
+    await flushPromises();
+
+    // Clear the calls made during mount
+    getTasksSpy.mockClear();
+
+    wrapper.vm.filterData.status.value = [];
+    // flush the debounced watcher (300ms)
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    await flushPromises();
+
+    expect(getTasksSpy).not.toHaveBeenCalled();
+    expect(wrapper.vm.fulfillmentTasks).toEqual([]);
+    expect(wrapper.vm.totalCount).toBe(0);
+  });
+
   it('opens request modal with type FULFILL', async () => {
     // Restore the original mock for this test that needs task data
     fulfillmentTasks.buildTaskDisplay.mockReturnValue([{

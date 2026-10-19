@@ -268,17 +268,17 @@ export function getStatusText(statusOptions, status) {
 
 /**
  * Maps an array of selected statuses to an actorStatus query param value.
- * Returns 'active' for pending-only, 'inactive' for complete-only, undefined for mixed or empty.
+ * Returns 'active' for pending-only, 'inactive' for complete-only, 'active,inactive' for mixed or empty.
  * @param {string[]} statuses
  * @param {string} [pendingValue='pending'] - the status value that maps to actorStatus 'active'
- * @returns {string|undefined}
+ * @returns {string}
  */
 export function getActorStatus(statuses, pendingValue = 'pending') {
   const hasPending = statuses.includes(pendingValue);
   const hasOther = statuses.some((s) => s !== pendingValue);
   if (hasPending && !hasOther) return 'active';
   if (!hasPending && hasOther) return 'inactive';
-  return undefined;
+  return 'active,inactive';
 }
 /**
  * Get the base object type of the access request

@@ -11,6 +11,7 @@ import * as Notification from '@forgerock/platform-shared/src/utils/notification
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import dayjs from 'dayjs';
 import {
+  getActorStatus,
   getRequestFilter,
   getStatusText,
   getFormattedRequest,
@@ -266,6 +267,17 @@ describe('RequestToolbar', () => {
 
       const statusText = getStatusText(options, 'three');
       expect(statusText).toBe(undefined);
+    });
+  });
+
+  describe('getActorStatus', () => {
+    it.each([
+      [['pending'], 'active'],
+      [['complete'], 'inactive'],
+      [['pending', 'complete'], 'active,inactive'],
+      [[], 'active,inactive'],
+    ])('maps %j to %j', (statuses, expected) => {
+      expect(getActorStatus(statuses)).toBe(expected);
     });
   });
 });

@@ -361,6 +361,50 @@ describe('Approvals', () => {
     );
   });
 
+  it('sends both actor statuses when pending and complete are selected', async () => {
+    AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
+      Promise.resolve({
+        data: {
+          result: [mockRequest],
+          totalCount: 1,
+        },
+      }),
+    );
+
+    const { wrapper } = mountComponent();
+    await flushPromises();
+
+    const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
+
+    wrapper.vm.filterData.status.value = ['pending', 'complete'];
+    // flush the debounced watcher (300ms)
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    await flushPromises();
+
+    expect(getApprovalsSpy).toHaveBeenCalledWith(
+      '1234',
+      expect.objectContaining({ actorStatus: 'active,inactive' }),
+      expect.any(Object),
+    );
+  });
+
+  it('clears the list without querying when no status is selected', async () => {
+    const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
+
+    const { wrapper } = mountComponent();
+    await flushPromises();
+    getApprovalsSpy.mockClear();
+
+    wrapper.vm.filterData.status.value = [];
+    // flush the debounced watcher (300ms)
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    await flushPromises();
+
+    expect(getApprovalsSpy).not.toHaveBeenCalled();
+    expect(wrapper.vm.accessRequests).toEqual([]);
+    expect(wrapper.vm.totalCount).toBe(0);
+  });
+
   it('sets filter and gets approvals based on filterData query change', async () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
