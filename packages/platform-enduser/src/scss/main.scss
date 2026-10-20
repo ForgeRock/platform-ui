@@ -114,7 +114,8 @@ label {
 }
 
 /* Disabled form input */
-#app .card .form-label-group .form-label-group-input .form-control:disabled {
+#app .card .form-label-group .form-label-group-input .form-control:disabled,
+#app .card .form-label-group .form-label-group-input .form-control.disabled {
   background-color: #f7f8fc !important;
 }
 

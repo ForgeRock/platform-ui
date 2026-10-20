@@ -31,6 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-on="$listeners"
             class="mb-4"
             :description="field.description"
+            :disabled="field.disabled"
             :index="index"
             :items="field.items"
             :label="field.title"

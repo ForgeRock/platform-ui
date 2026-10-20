@@ -118,5 +118,30 @@ describe('Tag', () => {
       await flushPromises();
       await runA11yTest(wrapper);
     });
+
+    it('should have no accessibility violations when disabled', async () => {
+      const wrapper = setup({ disabled: true });
+      wrapper.vm.setInputValue(['tag1', 'tag2']);
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+  });
+
+  describe('@disabled', () => {
+    it('hides the tag remove affordance when disabled', async () => {
+      const wrapper = setup({ disabled: true });
+      wrapper.vm.setInputValue(['new value']);
+      await flushPromises();
+
+      expect(findByTestId(wrapper, 'remove-new-value-tag').exists()).toBeFalsy();
+    });
+
+    it('keeps the tag remove affordance when not disabled', async () => {
+      const wrapper = setup();
+      wrapper.vm.setInputValue(['new value']);
+      await flushPromises();
+
+      expect(findByTestId(wrapper, 'remove-new-value-tag').exists()).toBeTruthy();
+    });
   });
 });

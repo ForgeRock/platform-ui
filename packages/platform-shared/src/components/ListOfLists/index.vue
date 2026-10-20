@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <button
               :aria-label="$t('common.add')"
+              :disabled="disabled"
               class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
               @click.prevent="addElementToList(-1)">
               <FrIcon
@@ -39,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
                         :value="list.value"
                         @input="list.value = $event; emitInput(listValues)"
                         type="tag"
+                        :disabled="disabled"
                         :label="label" />
                     </div>
                   </div>
@@ -50,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <button
                   :aria-label="$t('common.remove')"
                   type="button"
+                  :disabled="disabled"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="removeElementFromList(index)">
                   <FrIcon
@@ -59,6 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <button
                   :aria-label="$t('common.add')"
                   type="button"
+                  :disabled="disabled"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="addElementToList(index)">
                   <FrIcon
@@ -72,7 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrInlineJsonEditor
               language="json"
               :value="advancedValue"
-              :read-only="false"
+              :read-only="disabled"
               :line-count="lineCount"
               v-on="$listeners"
               @update-field="$emit('input', $event)" />
@@ -117,6 +121,10 @@ export default {
     description: {
       type: String,
       default: '',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     items: {
       type: Object,

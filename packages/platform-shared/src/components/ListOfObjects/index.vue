@@ -143,7 +143,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-on="$listeners"
             language="json"
             :line-count="lineCount"
-            :read-only="false"
+            :read-only="disabled"
             :value="advancedValue"
             @update-field="advancedValue = $event; emitInput($event)" />
         </div>

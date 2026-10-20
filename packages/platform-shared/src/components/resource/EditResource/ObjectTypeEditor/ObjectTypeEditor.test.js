@@ -5,9 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
 import { defineRule } from 'vee-validate';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ObjectTypeEditor from './index';
 
 defineRule('required', (value) => !!String(value ?? '').length);
@@ -388,6 +389,180 @@ describe('ObjectTypeEditor', () => {
     expect(enumValueOne.text()).toBe('red');
     const enumValueTwo = wrapper.findAll('.multiselect__element').at(1);
     expect(enumValueTwo.text()).toBe('blue');
+    wrapper.unmount();
+  });
+
+  it('disables the tag input for a read-only array of strings', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'String List',
+          type: 'array',
+          value: ['one', 'two'],
+          key: 'stringList',
+          items: {
+            type: 'string',
+          },
+          disabled: true,
+        },
+      ],
+    });
+    await flushPromises();
+
+    const tagInput = wrapper.find('input.fr-tag-input');
+    expect(tagInput.exists()).toBe(true);
+    expect(tagInput.attributes('disabled')).toBeDefined();
+
+    // vuedraggable takes `disabled` as a Sortable option through $attrs
+    const draggable = wrapper.findComponent({ name: 'draggable' });
+    expect(draggable.exists()).toBe(true);
+    expect(draggable.vm.$attrs.disabled).toBe(true);
+
+    const tagsList = wrapper.findAll('.fr-tag');
+    expect(tagsList.length).toBe(2);
+    wrapper.unmount();
+  });
+
+  it('keeps the tag input enabled for an editable array of strings', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'String List',
+          type: 'array',
+          value: ['one', 'two'],
+          key: 'stringList',
+          items: {
+            type: 'string',
+          },
+          disabled: false,
+        },
+      ],
+    });
+    await flushPromises();
+
+    const tagInput = wrapper.find('input.fr-tag-input');
+    expect(tagInput.exists()).toBe(true);
+    expect(tagInput.attributes('disabled')).toBeFalsy();
+
+    const draggable = wrapper.findComponent({ name: 'draggable' });
+    expect(draggable.vm.$attrs.disabled).toBe(false);
+    wrapper.unmount();
+  });
+
+  it('disables sub-property inputs and add/remove buttons for a read-only array of objects', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'Object List',
+          type: 'array',
+          value: [{ a: 'x', b: 'y' }],
+          key: 'objectList',
+          items: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'string',
+                title: 'A',
+              },
+              b: {
+                type: 'string',
+                title: 'B',
+              },
+            },
+          },
+          disabled: true,
+        },
+      ],
+    });
+    await flushPromises();
+
+    const inputs = wrapper.findAll('input[data-testid^="input-"]');
+    expect(inputs.length).toBeGreaterThanOrEqual(2);
+    inputs.forEach((input) => {
+      expect(input.attributes('disabled')).toBeDefined();
+    });
+
+    const removeButton = findByTestId(wrapper, 'list-objects-remove-0');
+    expect(removeButton.attributes('disabled')).toBeDefined();
+
+    const addButton = findByTestId(wrapper, 'list-objects-add-0');
+    expect(addButton.attributes('disabled')).toBeDefined();
+
+    wrapper.unmount();
+  });
+
+  it('keeps sub-property inputs and add/remove buttons enabled for an editable array of objects', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'Object List',
+          type: 'array',
+          value: [{ a: 'x', b: 'y' }],
+          key: 'objectList',
+          items: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'string',
+                title: 'A',
+              },
+              b: {
+                type: 'string',
+                title: 'B',
+              },
+            },
+          },
+          disabled: false,
+        },
+      ],
+    });
+    await flushPromises();
+
+    const inputs = wrapper.findAll('input[data-testid^="input-"]');
+    expect(inputs.length).toBeGreaterThanOrEqual(2);
+    inputs.forEach((input) => {
+      expect(input.attributes('disabled')).toBeFalsy();
+    });
+
+    const removeButton = findByTestId(wrapper, 'list-objects-remove-0');
+    expect(removeButton.attributes('disabled')).toBeFalsy();
+
+    const addButton = findByTestId(wrapper, 'list-objects-add-0');
+    expect(addButton.attributes('disabled')).toBeFalsy();
+
+    wrapper.unmount();
+  });
+
+  it('disables the none-add button for an empty read-only array of objects', async () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'Object List',
+          type: 'array',
+          value: [],
+          key: 'objectList',
+          items: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'string',
+                title: 'A',
+              },
+              b: {
+                type: 'string',
+                title: 'B',
+              },
+            },
+          },
+          disabled: true,
+        },
+      ],
+    });
+    await flushPromises();
+
+    const noneAddButton = findByTestId(wrapper, 'list-objects-none-add');
+    expect(noneAddButton.exists()).toBe(true);
+    expect(noneAddButton.attributes('disabled')).toBeDefined();
     wrapper.unmount();
   });
 });

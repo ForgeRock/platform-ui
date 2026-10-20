@@ -29,8 +29,8 @@ describe('EditResource.vue', () => {
     },
   };
 
-  function mountComponent(governanceEnabled = false) {
-    setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
+  function mountComponent(governanceEnabled = false, userState = { idmRoles: ['openidm-admin'] }) {
+    setupTestPinia({ user: userState });
     return shallowMount(EditResource, {
       global: {
         stubs: {
@@ -764,6 +764,113 @@ describe('EditResource.vue', () => {
           viewable: true,
         },
       });
+    });
+  });
+
+  describe('read-only array display properties', () => {
+    const arraySchema = () => ({
+      icon: 'fa-test',
+      order: ['stringList', 'objectList', 'editableList'],
+      required: [],
+      properties: {
+        stringList: {
+          type: 'array',
+          title: 'String List',
+          viewable: true,
+          items: {
+            type: 'string',
+          },
+        },
+        objectList: {
+          type: 'array',
+          title: 'Object List',
+          viewable: true,
+          items: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'string',
+                title: 'A',
+              },
+              b: {
+                type: 'string',
+                title: 'B',
+              },
+            },
+          },
+        },
+        editableList: {
+          type: 'array',
+          title: 'Editable List',
+          viewable: true,
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    });
+
+    // Mirrors the IDM privilege contract: readOnly accessFlags place an attribute in
+    // VIEW.properties only, excluding it from UPDATE.properties
+    const arrayPrivilege = () => ({
+      UPDATE: {
+        allowed: true,
+        properties: ['editableList'],
+      },
+      DELETE: {
+        allowed: false,
+      },
+      VIEW: {
+        allowed: true,
+        properties: ['stringList', 'objectList', 'editableList'],
+      },
+    });
+
+    const arrayResourceDetails = () => ({
+      stringList: ['one', 'two'],
+      objectList: [{ a: 'x', b: 'y' }],
+      editableList: ['three'],
+    });
+
+    function getDisplayProperty(componentWrapper, key) {
+      return componentWrapper.vm.displayProperties.find((property) => property.key === key);
+    }
+
+    it('sets disabled=true on VIEW-only array-of-strings and array-of-objects properties', () => {
+      wrapper = mountComponent();
+      wrapper.vm.resourceSchema = arraySchema();
+      wrapper.vm.resourcePrivilege = arrayPrivilege();
+      wrapper.vm.resourceDetails = arrayResourceDetails();
+
+      wrapper.vm.generateDisplay();
+
+      expect(getDisplayProperty(wrapper, 'stringList').disabled).toBe(true);
+      expect(getDisplayProperty(wrapper, 'objectList').disabled).toBe(true);
+    });
+
+    it('sets disabled=false on an array property included in UPDATE.properties', () => {
+      wrapper = mountComponent();
+      wrapper.vm.resourceSchema = arraySchema();
+      wrapper.vm.resourcePrivilege = arrayPrivilege();
+      wrapper.vm.resourceDetails = arrayResourceDetails();
+
+      wrapper.vm.generateDisplay();
+
+      expect(getDisplayProperty(wrapper, 'editableList').disabled).toBe(false);
+    });
+
+    it('keeps VIEW-only array properties editable for an openidm-admin', () => {
+      // idmUIAdminRoles intersecting idmRoles makes the user store's adminUser true
+      wrapper = mountComponent(false, { idmRoles: ['openidm-admin'], idmUIAdminRoles: ['openidm-admin'] });
+      expect(wrapper.vm.isOpenidmAdmin).toBe(true);
+      wrapper.vm.resourceSchema = arraySchema();
+      wrapper.vm.resourcePrivilege = arrayPrivilege();
+      wrapper.vm.resourceDetails = arrayResourceDetails();
+
+      wrapper.vm.generateDisplay();
+
+      expect(getDisplayProperty(wrapper, 'stringList').disabled).toBe(false);
+      expect(getDisplayProperty(wrapper, 'objectList').disabled).toBe(false);
     });
   });
 

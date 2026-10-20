@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
+import { flushPromises, mount, shallowMount } from '@vue/test-utils';
 import ListOfLists from './index';
 import { runA11yTest } from '../../utils/testHelpers';
 
@@ -139,5 +139,59 @@ describe('ListOfLists', () => {
         type: 'other',
       },
     })).toBe(true);
+  });
+
+  it('disables the add button and tag input for a read-only array of arrays', async () => {
+    const wrapper = mount(ListOfLists, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+      },
+      props: {
+        items: {},
+        name: 'test',
+        value: [['one', 'two']],
+        disabled: true,
+      },
+    });
+    await flushPromises();
+
+    // $t is mocked, so buttons are found by class rather than aria-label.
+    // One row of values renders the row's remove + add buttons.
+    const buttons = wrapper.findAll('button.btn-outline-secondary');
+    expect(buttons.length).toBe(2);
+    buttons.forEach((button) => {
+      expect(button.attributes('disabled')).toBeDefined();
+    });
+
+    const tagInput = wrapper.find('input.fr-tag-input');
+    expect(tagInput.exists()).toBeTruthy();
+    expect(tagInput.attributes('disabled')).toBeDefined();
+  });
+
+  it('keeps controls enabled for an editable array of arrays', async () => {
+    const wrapper = mount(ListOfLists, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+      },
+      props: {
+        items: {},
+        name: 'test',
+        value: [['one', 'two']],
+      },
+    });
+    await flushPromises();
+
+    const buttons = wrapper.findAll('button.btn-outline-secondary');
+    expect(buttons.length).toBe(2);
+    buttons.forEach((button) => {
+      expect(button.attributes('disabled')).toBeFalsy();
+    });
+
+    const tagInput = wrapper.find('input.fr-tag-input');
+    expect(tagInput.attributes('disabled')).toBeFalsy();
   });
 });

@@ -7,6 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { findByTestId, findByText, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
+import FrInlineJsonEditor from '@forgerock/platform-shared/src/components/InlineJsonEditor';
 import { v4 as uuid } from 'uuid';
 import ListOfObjects from './index';
 import i18n from '@/i18n';
@@ -311,5 +312,107 @@ describe('ListOfObjects', () => {
     rows = wrapper.find('.form-row');
     expect(rows.exists()).toBeFalsy();
     expect(jsonEditor.exists()).toBeTruthy();
+  });
+
+  it('json editor is read-only when the field is disabled', async () => {
+    const wrapper = mount(ListOfObjects, {
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $store: {
+            state: {
+              SharedStore: {
+                isFraas: false,
+              },
+            },
+          },
+        },
+      },
+      props: {
+        properties: {
+          test: {
+            label: 'test',
+            type: 'string',
+          },
+        },
+        label: 'test',
+        value: [{ name: 'test', value: 'test' }],
+        disabled: true,
+        forceShowEditor: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.findComponent(FrInlineJsonEditor).props('readOnly')).toBe(true);
+  });
+
+  it('json editor remains editable when the field is not disabled', async () => {
+    const wrapper = mount(ListOfObjects, {
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $store: {
+            state: {
+              SharedStore: {
+                isFraas: false,
+              },
+            },
+          },
+        },
+      },
+      props: {
+        properties: {
+          test: {
+            label: 'test',
+            type: 'string',
+          },
+        },
+        label: 'test',
+        value: [{ name: 'test', value: 'test' }],
+        disabled: false,
+        forceShowEditor: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.findComponent(FrInlineJsonEditor).props('readOnly')).toBe(false);
+  });
+
+  it('json editor reached via complex properties (isValidField false) is read-only when the field is disabled', async () => {
+    const wrapper = mount(ListOfObjects, {
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $store: {
+            state: {
+              SharedStore: {
+                isFraas: false,
+              },
+            },
+          },
+        },
+      },
+      props: {
+        properties: {
+          // nested object property fails isValidField(), routing to the JSON editor
+          // without forceShowEditor
+          nested: {
+            label: 'nested',
+            type: 'object',
+          },
+        },
+        label: 'test',
+        value: [{ name: 'test', nested: { deep: 'value' } }],
+        disabled: true,
+      },
+    });
+
+    await flushPromises();
+
+    const jsonEditor = wrapper.findComponent(FrInlineJsonEditor);
+    expect(jsonEditor.exists()).toBe(true);
+    expect(jsonEditor.props('readOnly')).toBe(true);
   });
 });
