@@ -26,9 +26,13 @@ function fillAndSendLoginForm() {
 
   // Skip 2FA on Cloud Tenants
   if (Cypress.env('IS_FRAAS')) {
-    cy.findByRole('status', { timeout: 3000 }).should('not.exist');
+    // Generous timeout: on cloud tenants the MFA "Skip for now" button is backend-rendered and can
+    // take several seconds to appear; the default 4s command timeout fails the login mid-journey,
+    // which (with retries) counts towards AM account lockout for the tenant admin.
+    cy.findByRole('button', { name: /Skip for now/i, timeout: 40000 }).should('be.visible');
+    cy.findByRole('status').should('not.exist');
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.findByRole('button', { name: /Skip for now/i }).should('be.visible').wait(100).click();
+    cy.findByRole('button', { name: /Skip for now/i }).wait(100).click();
   }
 }
 

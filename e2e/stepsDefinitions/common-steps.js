@@ -392,7 +392,9 @@ When('user forcefully clicks on {string} button', (button) => {
 });
 
 When('user clicks on {string} button after waiting for {double} seconds', (button, seconds) => {
-  cy.findByRole('button', { name: button }).wait(seconds * 1000).click();
+  // Generous timeout: on cloud tenants the MFA "Skip for now" button is backend-rendered and
+  // timeout fails the login mid-journey, which (with retries) counts towards AM account lockout for the tenant admin.
+  cy.findByRole('button', { name: button }, { timeout: 40000 }).wait(seconds * 1000).click();
 });
 
 When('user focuses {string} {role}', (name, role) => {

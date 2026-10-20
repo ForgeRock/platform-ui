@@ -14,6 +14,8 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   experimentalWebKitSupport: true,
   experimentalMemoryManagement: true,
+  // Keep only the current test's snapshots/DOM state in the browser.
+  numTestsKeptInMemory: 0,
   video: true,
   retries: {
     // Retry tests twice when running in CI (cypress run)
