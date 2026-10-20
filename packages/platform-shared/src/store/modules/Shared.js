@@ -16,7 +16,6 @@ const defaultState = {
   aiAgentsEnabled: false,
   analyticsReportsAiAssistantEnabled: false,
   gatewayConfigServiceEnabled: false,
-  devIdmEnabled: false,
   idmWorkflowEnabled: false,
   idmWorkflowConfigEnabled: false,
   autoCustomReportsEnabled: false,
@@ -292,10 +291,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_ACCOUNTS?.toString() === 'true') {
       state.accountsEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_DEV_IDM?.toString() === 'true') {
-      state.devIdmEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_SECRET_MAPPINGS?.toString() === 'true') {
