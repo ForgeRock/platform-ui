@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -12,9 +12,11 @@ import {
   getSessionService,
 } from '@e2e/api/amConsoleServicesApi.e2e';
 import { Given } from '@badeball/cypress-cucumber-preprocessor';
+import { amSessionServiceState } from '@e2e/api/amSessionServiceState.e2e';
 
 Given('session service in AM console is added via API with following params', (dataTable) => {
   getSessionService().then((getResponse) => {
+    amSessionServiceState.givenInvoked = true;
     if (getResponse.status === 200) {
       delete getResponse.body._rev;
       deleteSessionService(getResponse.body).then((deleteResponse) => {

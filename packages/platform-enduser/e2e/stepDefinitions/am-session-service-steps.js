@@ -9,20 +9,37 @@ import { Then } from '@badeball/cypress-cucumber-preprocessor';
 import { deleteIDMUser } from '@e2e/api/managedApi.e2e';
 import fetchSessionInfo from '@e2e/api/sessionApi.e2e';
 import getTimeDifferenceInMinutes from '@e2e/utils/timeUtils';
+import { amSessionServiceState } from '@e2e/api/amSessionServiceState.e2e';
 
-after(() => {
-  if (Cypress.spec.relative.includes('logout-warning-before-expirtaion-on-id-hosted-pages.feature')) {
+before(() => {
+  if (Cypress.spec.relative.includes('logout-warning-before-exp')) {
     if (!Cypress.env('ACCESS_TOKEN')) {
       cy.loginAsAdminCachedForCucumber();
     }
-    cy.log(`Deleting created IDM end user ${Cypress.env('endUserName')} via API`).then(() => {
-      deleteIDMUser(Cypress.env('endUserId'));
-      Cypress.env('endUserName', '');
-      Cypress.env('endUserFirstName', '');
-      Cypress.env('endUserLastName', '');
-      Cypress.env('endUserPassword', '');
-      Cypress.env('endUserId', '');
-    });
+    cy.log('Snapshotting original AM session service (Maximum Idle Time etc.) via API')
+      .then(() => amSessionServiceState.snapshotOriginalSessionService());
+  }
+});
+
+after(() => {
+  if (Cypress.spec.relative.includes('logout-warning-before-exp')) {
+    if (!Cypress.env('ACCESS_TOKEN')) {
+      cy.loginAsAdminCachedForCucumber();
+    }
+    // Chain the IDM user deletion off the restore so an aborted restore cannot leave the user behind
+    cy.log('Restoring original AM session service (Maximum Idle Time etc.) via API')
+      .then(() => amSessionServiceState.restoreOriginalSessionService())
+      .then(() => {
+        cy.log(`Deleting created IDM end user ${Cypress.env('endUserName')} via API`);
+        return deleteIDMUser(Cypress.env('endUserId'));
+      })
+      .then(() => {
+        Cypress.env('endUserName', '');
+        Cypress.env('endUserFirstName', '');
+        Cypress.env('endUserLastName', '');
+        Cypress.env('endUserPassword', '');
+        Cypress.env('endUserId', '');
+      });
   }
 });
 

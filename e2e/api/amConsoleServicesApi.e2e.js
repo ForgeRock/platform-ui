@@ -42,8 +42,9 @@ export function createSessionService(sessionParams) {
       'Content-Type': 'application/json',
       'Accept-API-Version': 'protocol=2.1,resource=1.0',
     },
+    failOnStatusCode: false,
     body: {
-      dynamic: {
+      dynamic: sessionParams.dynamic || {
         maxIdleTime: sessionParams.MaximumIdleTime || 30,
         maxSessionTime: sessionParams.MaximumSessionTime || 120,
         quotaLimit: sessionParams.ActiveUserSessions || 5,
@@ -81,6 +82,7 @@ export function deleteSessionService(sessionBody) {
       'Content-Type': 'application/json',
       'Accept-API-Version': 'protocol=2.1,resource=1.0',
     },
+    failOnStatusCode: false,
     body: sessionBody,
   });
 }
