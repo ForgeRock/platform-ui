@@ -70,6 +70,55 @@ describe('resumingTreeFollowingRedirect', () => {
   });
 });
 
+describe('resumingTreeFollowingRedirect realm check (IAM-10763)', () => {
+  let mockedLocalStorageGetItem;
+  let mockedLocalStorageRemoveItem;
+  let mockedWindowDocumentCookie;
+
+  beforeEach(() => {
+    mockedLocalStorageGetItem = jest.spyOn(Storage.prototype, 'getItem');
+    mockedLocalStorageRemoveItem = jest.spyOn(Storage.prototype, 'removeItem');
+    mockedWindowDocumentCookie = jest.spyOn(window.document, 'cookie', 'get');
+  });
+
+  afterEach(() => {
+    mockedLocalStorageGetItem.mockRestore();
+    mockedLocalStorageRemoveItem.mockRestore();
+    mockedWindowDocumentCookie.mockRestore();
+  });
+
+  const storedFromAlpha = JSON.stringify({ realmAtRedirect: '/alpha', step: {} });
+  const storedWithoutRealm = JSON.stringify({ step: {} });
+  const noReentryCookie = 'name=oeschger;';
+  const reentryCookie = 'name=oeschger; reentry=authId';
+
+  const testCases = [
+    ['Is resuming when the url realm matches the stored realm', 'state=123', noReentryCookie, '/alpha', storedFromAlpha, true],
+    ['Is resuming when the url realm matches the stored realm apart from a leading slash', 'state=123', noReentryCookie, 'alpha', storedFromAlpha, true],
+    ['Is resuming when the url has no realm (IAM-4533)', 'state=123', noReentryCookie, null, storedFromAlpha, true],
+    ['Is not resuming when the url realm differs from the stored realm', 'state=123', noReentryCookie, 'bravo', storedFromAlpha, false],
+    ['Is not resuming when only a reentry cookie is present and the url realm differs from the stored realm', 'bill=123', reentryCookie, 'bravo', storedFromAlpha, false],
+    ['Is not resuming when the url realm is the root realm and the stored realm is not', 'state=123', noReentryCookie, '/', storedFromAlpha, false],
+    ['Is resuming when the stored data has no realm', 'state=123', noReentryCookie, 'bravo', storedWithoutRealm, true],
+    ['Is resuming when the stored data cannot be parsed', 'state=123', noReentryCookie, 'bravo', 'not json', true],
+  ];
+  it.each(testCases)('%s', (name, paramString, cookieString, urlRealm, storageValue, expectedValue) => {
+    mockedWindowDocumentCookie.mockReturnValue(cookieString);
+    mockedLocalStorageGetItem.mockReturnValue(storageValue);
+
+    expect(resumingTreeFollowingRedirect(new URLSearchParams(paramString), urlRealm)).toBe(expectedValue);
+  });
+
+  it('Leaves the stored resumption data in place when the url realm differs from the stored realm', () => {
+    mockedWindowDocumentCookie.mockReturnValue(reentryCookie);
+    mockedLocalStorageGetItem.mockReturnValue(storedFromAlpha);
+
+    resumingTreeFollowingRedirect(new URLSearchParams('state=123'), 'bravo');
+
+    expect(mockedLocalStorageRemoveItem).not.toHaveBeenCalled();
+  });
+});
+
 describe('resumingSuspendedTree', () => {
   const testCases = [
     ['Is resuming when the route is login, the suspend param is present and a tree param is present', 'login', 'suspendedId=1&authIndexValue=bob', true],

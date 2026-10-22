@@ -2049,6 +2049,24 @@ describe('Component Test', () => {
       authResumptionUtil.resumingTreeFollowingRedirect.mockRestore();
     });
 
+    it('Does not resume a journey stored by another realm when the URL realm differs', async () => {
+      setUrl('https://forgerock.io/login/?realm=/bravo&code=aCode');
+
+      // Realms on a tenant share localStorage, so the bravo login UI can see data stored by the alpha
+      // login UI and must leave it alone so alpha can resume it later (IAM-10763).
+      localStorage.setItem('treeResumeData', JSON.stringify({ realmAtRedirect: '/alpha', step: { payload: {} } }));
+      const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear');
+
+      const wrapper = await mountLogin();
+
+      expect(getStepSpy).not.toHaveBeenCalled();
+      expect(localStorage.getItem('treeResumeData')).not.toBeNull();
+      expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
+
+      getStepSpy.mockRestore();
+      localStorage.removeItem('treeResumeData');
+    });
+
     it('Leaves tree resumption query parameters in place when not returning from a redirect', async () => {
       setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
 

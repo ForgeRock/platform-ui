@@ -47,13 +47,51 @@ function isResumeDataPresentInStorage() {
 }
 
 /**
+ * Reduces a realm to a comparable form, so that '/alpha' and 'alpha' match and '/', '' and 'root' all mean the root realm
+ * @param {String} realm a realm as found in a url or in stored resumption data
+ * @returns {String} the realm without surrounding slashes, or 'root'
+ */
+function normalizeRealmForComparison(realm) {
+  return (realm || '').replace(/^\/+|\/+$/g, '') || 'root';
+}
+
+/**
+ * Reads the realm that was stored alongside the resumption data
+ * @returns {String|null} the realm the resumption data was stored from, or null if it is unavailable
+ */
+function getRealmOfStoredResumeData() {
+  try {
+    return JSON.parse(localStorage.getItem(resumeDataKey))?.realmAtRedirect || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Determines whether the stored resumption data was saved from a different realm to the one in the url.
+ * All realms on a tenant share one domain and so one localStorage, meaning data stored by one realm can be seen by another (IAM-10763).
+ * When the url has no realm (IAM-4533) or the stored data has no realm, ownership cannot be determined so the data is treated as belonging to this realm
+ * @param {String} urlRealm the value of the realm query parameter, if there was one
+ * @returns {Boolean} whether the stored resumption data belongs to a different realm
+ */
+function isResumeDataFromAnotherRealm(urlRealm) {
+  if (!urlRealm) return false;
+  const storedRealm = getRealmOfStoredResumeData();
+  if (!storedRealm) return false;
+  return normalizeRealmForComparison(storedRealm) !== normalizeRealmForComparison(urlRealm);
+}
+
+/**
  * Determines whether the passed url parameters and browser storage indicate that a tree is being resumed following a redirect
  * @param {URLSearchParams} urlParams the query parameters for the current login session
+ * @param {String} [urlRealm] the value of the realm query parameter, if there was one. Resumption data stored by a different realm is ignored
  * @returns {Boolean} whether a tree should be resumed
  */
-function resumingTreeFollowingRedirect(urlParams) {
+function resumingTreeFollowingRedirect(urlParams, urlRealm) {
   // The AM XUI just checks for a reentry token and data in browser storage here. The check against query parameters should not be needed but are left for extra security
-  return (doURLParamsContainAnyResumptionParameter(urlParams) || hasReentryToken()) && isResumeDataPresentInStorage();
+  return (doURLParamsContainAnyResumptionParameter(urlParams) || hasReentryToken())
+    && isResumeDataPresentInStorage()
+    && !isResumeDataFromAnotherRealm(urlRealm);
 }
 
 /**

@@ -1246,7 +1246,8 @@ export default {
     evaluateUrlParams() {
       const paramString = getCurrentQueryString();
       const params = new URLSearchParams(paramString);
-      const realm = params.get('realm') || '/';
+      const urlRealm = params.get('realm');
+      const realm = urlRealm || '/';
 
       this.setPageTitle(window.location.hash, params);
 
@@ -1271,7 +1272,7 @@ export default {
         params.delete('authIndexType');
         this.suspendedId = params.get('suspendedId');
         params.delete('suspendedId');
-      } else if (resumingTreeFollowingRedirect(params)) {
+      } else if (resumingTreeFollowingRedirect(params, urlRealm)) {
         // LEGACY path: step was stored in localStorage by addTreeResumeDataToStorage()
         // only set treeId if the authIndexType is 'service'
         this.treeId = params.get('authIndexType') === 'service' ? params.get('authIndexValue') : undefined;
