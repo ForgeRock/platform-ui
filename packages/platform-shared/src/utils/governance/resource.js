@@ -289,6 +289,7 @@ export async function revokeResourcesFromIGA(revokePayload, parentResourceId, ad
         // Only send entitlementId when the grant carries an assignment id — account grants have none
         ...(request.assignmentId && { entitlementId: request.assignmentId }),
         ...(requestType === 'applicationRemove' && { applicationId: request.application?.id }),
+        ...(requestType === 'roleRemove' && { roleId: request.role?.id }),
         ...(accountId && { accountId }),
         ...(revokePayload.justification && { justification: revokePayload.justification }),
         ...(revokePayload.priority && { priority: revokePayload.priority }),

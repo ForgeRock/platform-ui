@@ -286,12 +286,23 @@ describe('getGovernanceGrants', () => {
       });
     });
 
-    it('uses roleRemove for roleMembership items', async () => {
+    it('uses roleRemove for roleMembership items, with roleId', async () => {
       const requestActionSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockResolvedValue({ data: { errors: [] } });
+      // Real role grants carry no assignment id — the role id identifies the grant
+      const payload = makePayload('roleMembership');
+      delete payload.itemsToRevoke[0].assignmentId;
+      payload.itemsToRevoke[0].role = { id: 'role-1' };
 
-      await revokeResourcesFromIGA(makePayload('roleMembership'), 'userId', false);
+      await revokeResourcesFromIGA(payload, 'userId', false);
 
-      expect(requestActionSpy).toHaveBeenCalledWith('roleRemove', 'publish', null, expect.any(Object));
+      expect(requestActionSpy).toHaveBeenCalledWith('roleRemove', 'publish', null, {
+        common: {
+          context: { type: 'request' },
+          userId: 'userId',
+          roleId: 'role-1',
+          priority: 'low',
+        },
+      });
     });
 
     it('returns error if any requests have errors', async () => {
