@@ -37,8 +37,8 @@ jest.mock('@forgerock/platform-shared/src/utils/amUrlUtils', () => ({
   // Mocked deterministically so test assertions match a stable URL shape
   // independent of the test's `process.env.VUE_APP_AM_URL` value. The real
   // helper's URL-canonicalisation behaviour is tested directly in
-  // `journeyClient.test.js`.
-  buildWellknownUrl: jest.fn((realm) => `https://example.com/am/oauth2/realms/${realm}/.well-known/openid-configuration`),
+  // `journeyClient.test.js`. `buildWellknownUrl` is deliberately absent —
+  // main.js must not use it (guard against wellknown re-introduction).
   buildAmBaseUrl: jest.fn(() => 'https://example.com/am'),
   normalizeRealm: jest.fn((realm) => (realm || 'root').replace(/^\/+/, '') || 'root'),
 }));
@@ -72,17 +72,18 @@ describe('main.js', () => {
   const { checkIfOpenedByIngressEnv } = require('./main');
 
   describe('bootstrap', () => {
-    it('calls journey() with a wellknown URL and writes the client to the store', async () => {
+    it('calls journey() with a baseUrl/realmPath config and writes the client to the store', async () => {
       // The module-scope `require('./main')` above triggers startApp() which
       // awaits journey(). Flush microtasks so the bootstrap settles.
       await flushPromises();
 
+      // Bootstrap no longer branches on isFraas: even with VUE_APP_FRAAS='true'
+      // (set above), the config is always baseUrl + realmPath — no wellknown URL.
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/root\/\.well-known\/openid-configuration$/),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'root',
+        },
         // journey-client ignores `serverConfig.timeout`; the 60s timeout is
         // enforced by sdkTimeoutMiddleware in the middleware array.
         requestMiddleware: expect.arrayContaining([sdkTimeoutMiddleware]),
@@ -115,11 +116,10 @@ describe('main.js', () => {
       await flushPromises();
 
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/alpha\//),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'alpha',
+        },
       }));
 
       Object.defineProperty(window, 'location', {
@@ -195,11 +195,10 @@ describe('main.js', () => {
 
       expect(serverinfoApi.getAmServerInfo).toHaveBeenCalledTimes(1);
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/alpha\/\.well-known\/openid-configuration$/),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'alpha',
+        },
       }));
     });
 
@@ -209,11 +208,10 @@ describe('main.js', () => {
       await bootstrapWithLocation({ search: '', hash: '#/' });
 
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/root\/\.well-known\/openid-configuration$/),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'root',
+        },
       }));
     });
 
@@ -224,11 +222,10 @@ describe('main.js', () => {
 
       expect(serverinfoApi.getAmServerInfo).toHaveBeenCalledTimes(1);
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/root\/\.well-known\/openid-configuration$/),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'root',
+        },
       }));
       expect(mockStoreInstance.client).toEqual(expect.objectContaining({ terminate: expect.any(Function) }));
     });
@@ -238,11 +235,10 @@ describe('main.js', () => {
 
       expect(serverinfoApi.getAmServerInfo).not.toHaveBeenCalled();
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/alpha\//),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'alpha',
+        },
       }));
     });
 
@@ -251,11 +247,10 @@ describe('main.js', () => {
 
       expect(serverinfoApi.getAmServerInfo).not.toHaveBeenCalled();
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/alpha\//),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'alpha',
+        },
       }));
     });
 
@@ -269,11 +264,10 @@ describe('main.js', () => {
 
       expect(serverinfoApi.getAmServerInfo).not.toHaveBeenCalled();
       expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-        config: expect.objectContaining({
-          serverConfig: expect.objectContaining({
-            wellknown: expect.stringMatching(/\/oauth2\/realms\/delta\//),
-          }),
-        }),
+        config: {
+          serverConfig: { baseUrl: 'https://example.com/am' },
+          realmPath: 'delta',
+        },
       }));
     });
   });
@@ -282,6 +276,9 @@ describe('main.js', () => {
     beforeEach(() => {
       mockJourney.mockClear();
       mockTerminate.mockClear();
+      // Clear any realm remembered by a previous test — the fallback's realm
+      // resolution depends on it, so tests must not inherit each other's state.
+      localStorage.removeItem('originalLoginRealm');
       // Restore the default: the store's client is the pre-bootstrapped client
       // so happy-path tests exercise the reuse path (FR-3 / AC-5).
       mockStoreInstance.client = mockPreBootstrappedClient;
@@ -332,23 +329,76 @@ describe('main.js', () => {
     describe('when the store client is null (fallback)', () => {
       beforeEach(() => {
         // Override the default: simulate bootstrap failure so the logout guard
-        // falls back to await journey({ wellknown }) (FR-4 / AC-6).
+        // builds a one-shot client with the baseUrl/realmPath config (FR-4 / AC-6).
         mockStoreInstance.client = null;
       });
 
-      it('logs out of root when root was logged into', async () => {
+      it('resolves the realm from AM serverinfo when none is in the url or storage', async () => {
+        serverinfoApi.getAmServerInfo.mockResolvedValueOnce({ data: { realm: '/' } });
+
+        router.push('/logout');
+
+        await flushPromises();
+
+        expect(router.currentRoute.value.path).toBe('/');
+        // The one-shot client's realm comes from the serverinfo lookup ('/' maps
+        // to 'root'), mirroring the bootstrap's bare-custom-domain first load.
+        expect(serverinfoApi.getAmServerInfo).toHaveBeenCalledTimes(1);
+        expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+          config: {
+            serverConfig: { baseUrl: 'https://example.com/am' },
+            realmPath: 'root',
+          },
+          requestMiddleware: expect.arrayContaining([expect.any(Function)]),
+        }));
+        expect(mockTerminate).toHaveBeenCalled();
+      });
+
+      it('falls back to the root realm when the serverinfo lookup fails', async () => {
+        serverinfoApi.getAmServerInfo.mockRejectedValueOnce(new Error('Network error'));
+
         router.push('/logout');
 
         await flushPromises();
 
         expect(router.currentRoute.value.path).toBe('/');
         expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-          config: expect.objectContaining({
-            serverConfig: expect.objectContaining({
-              wellknown: expect.stringMatching(/\/oauth2\/realms\/root\/\.well-known\/openid-configuration$/),
-            }),
-          }),
-          requestMiddleware: expect.arrayContaining([expect.any(Function)]),
+          config: {
+            serverConfig: { baseUrl: 'https://example.com/am' },
+            realmPath: 'root',
+          },
+        }));
+        expect(mockTerminate).toHaveBeenCalled();
+      });
+
+      it('uses a non-root realm resolved from serverinfo', async () => {
+        serverinfoApi.getAmServerInfo.mockResolvedValueOnce({ data: { realm: '/alpha' } });
+
+        router.push('/logout');
+
+        await flushPromises();
+
+        expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+          config: {
+            serverConfig: { baseUrl: 'https://example.com/am' },
+            realmPath: 'alpha',
+          },
+        }));
+      });
+
+      it('normalizes a leading-slash realm from the query params', async () => {
+        // realmPath stays raw until the fallback builds its client; the
+        // normalization moved there — a '/alpha' query realm must still
+        // produce 'alpha' in the journey config.
+        router.push('/logout?realm=/alpha');
+
+        await flushPromises();
+
+        expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
+          config: {
+            serverConfig: { baseUrl: 'https://example.com/am' },
+            realmPath: 'alpha',
+          },
         }));
         expect(mockTerminate).toHaveBeenCalled();
       });
@@ -359,11 +409,10 @@ describe('main.js', () => {
         await flushPromises();
 
         expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-          config: expect.objectContaining({
-            serverConfig: expect.objectContaining({
-              wellknown: expect.stringMatching(/\/oauth2\/realms\/bravo\/\.well-known\/openid-configuration$/),
-            }),
-          }),
+          config: {
+            serverConfig: { baseUrl: 'https://example.com/am' },
+            realmPath: 'bravo',
+          },
         }));
         expect(mockTerminate).toHaveBeenCalled();
       });
@@ -376,11 +425,10 @@ describe('main.js', () => {
         await flushPromises();
 
         expect(mockJourney).toHaveBeenCalledWith(expect.objectContaining({
-          config: expect.objectContaining({
-            serverConfig: expect.objectContaining({
-              wellknown: expect.stringMatching(/\/oauth2\/realms\/delta\/\.well-known\/openid-configuration$/),
-            }),
-          }),
+          config: {
+            serverConfig: { baseUrl: 'https://example.com/am' },
+            realmPath: 'delta',
+          },
         }));
         expect(mockTerminate).toHaveBeenCalled();
       });

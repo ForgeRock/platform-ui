@@ -29,7 +29,6 @@ import { getDefaultLocale } from '@forgerock/platform-shared/src/api/UilocaleApi
 import { filterActiveLocales } from '@forgerock/platform-shared/src/utils/uilocaleUtil';
 import {
   buildAmBaseUrl,
-  buildWellknownUrl,
   normalizeRealm,
 } from '@forgerock/platform-shared/src/utils/amUrlUtils';
 import { sdkTimeoutMiddleware } from '@forgerock/platform-shared/src/utils/sdkTimeoutMiddleware';
@@ -81,7 +80,7 @@ router.beforeEach(async (to, _from, next) => {
     const urlParams = new URLSearchParams(window.location.search);
     const goto = urlParams.get('goto') || '';
     const logout = async (realm, validatedGoto) => {
-      const realmPath = normalizeRealm(realm || localStorage.getItem('originalLoginRealm'));
+      const realmPath = realm || localStorage.getItem('originalLoginRealm');
       const redirect = () => {
         if (validatedGoto) {
           window.location.href = validatedGoto;
@@ -91,16 +90,23 @@ router.beforeEach(async (to, _from, next) => {
       };
       try {
         let logoutClient = useJourneyClientStore(pinia).client;
-        // If bootstrap failed (wellknown unreachable at startup) the store
+        // If bootstrap failed (AM unreachable at startup) the store
         // has no client. Create a one-shot client here so terminate() can
         // still invalidate the AM session before redirecting.
         if (!logoutClient) {
+          let realmParam;
+          if (!realmPath) {
+            try {
+              const res = await getAmServerInfo();
+              realmParam = res.data?.realm === '/' ? 'root' : res.data.realm;
+            } catch {
+              realmParam = 'root';
+            }
+          }
+
+          const bootstrapRealm = normalizeRealm(realmPath || realmParam);
           logoutClient = await journey({
-            config: {
-              ...(store.state.SharedStore.isFraas
-                ? { serverConfig: { wellknown: buildWellknownUrl(realmPath) } }
-                : { serverConfig: { baseUrl: buildAmBaseUrl() }, realmPath }),
-            },
+            config: { serverConfig: { baseUrl: buildAmBaseUrl() }, realmPath: bootstrapRealm },
             requestMiddleware: [sdkTimeoutMiddleware, transactionIdMiddleware],
           });
         }
@@ -234,9 +240,7 @@ const startApp = () => {
         }
       }
       const bootstrapRealm = normalizeRealm(realmParam);
-      const journeyConfig = store.state.SharedStore.isFraas
-        ? { serverConfig: { wellknown: buildWellknownUrl(bootstrapRealm) } }
-        : { serverConfig: { baseUrl: buildAmBaseUrl() }, realmPath: bootstrapRealm };
+      const journeyConfig = { serverConfig: { baseUrl: buildAmBaseUrl() }, realmPath: bootstrapRealm };
       // journey-client ignores `serverConfig.timeout` — the 60s request
       // timeout is applied per-request by sdkTimeoutMiddleware instead.
       const requestMiddleware = [
