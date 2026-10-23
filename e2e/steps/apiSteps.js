@@ -33,6 +33,7 @@ import OrganizationApiSteps from './api/OrganizationApiSteps';
 import ProxyConnectApiSteps from './api/ProxyConnectApiSteps';
 import RealmApiSteps from './api/RealmApiSteps';
 import RealmServicesApiSteps from './api/RealmServicesApiSteps';
+import RemoteConsentServiceApiSteps from './api/RemoteConsentServiceApiSteps';
 import RelationshipApiSteps from './api/RelationshipApiSteps';
 import RoleApiSteps from './api/RoleApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
@@ -72,6 +73,7 @@ export default {
   realm: RealmApiSteps,
   realmServices: RealmServicesApiSteps,
   relationships: RelationshipApiSteps,
+  remoteConsentService: RemoteConsentServiceApiSteps,
   roles: RoleApiSteps,
   samlApplications: SamlApplicationApiSteps,
   secretMappings: SecretMappingsApiSteps,

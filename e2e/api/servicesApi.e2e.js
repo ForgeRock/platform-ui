@@ -11,7 +11,6 @@
  * Sub-resources are expressed as a URL suffix, e.g.
  *   getService('oauth-oidc', { subresource: '/scriptedJwtIssuers/my-issuer' })
  */
-
 function servicesUrl(serviceId, { subresource = '', realmPath } = {}) {
   const realm = realmPath ?? (Cypress.env('IS_FRAAS') ? 'realms/alpha/' : '');
   return `https://${Cypress.env('FQDN')}/am/json/realms/root/${realm}realm-config/services/${serviceId}${subresource}`;
@@ -30,6 +29,47 @@ export function getService(serviceId, { subresource, realmPath, ...options } = {
     method: 'GET',
     url: servicesUrl(serviceId, { subresource, realmPath }),
     headers: headers(),
+    ...options,
+  });
+}
+
+export function getServiceSchema(serviceId, { subresource, realmPath, ...options } = {}) {
+  return cy.request({
+    method: 'POST',
+    url: `${servicesUrl(serviceId, { subresource, realmPath })}?_action=schema`,
+    headers: headers(),
+    ...options,
+  });
+}
+
+export function getServiceTemplate(serviceId, { subresource, realmPath, ...options } = {}) {
+  return cy.request({
+    method: 'POST',
+    url: `${servicesUrl(serviceId, { subresource, realmPath })}?_action=template`,
+    headers: headers(),
+    ...options,
+  });
+}
+
+export function putService(serviceId, body, { subresource, realmPath, ...options } = {}) {
+  const config = { ...body };
+  delete config._rev;
+  delete config._id;
+  return cy.request({
+    method: 'PUT',
+    url: servicesUrl(serviceId, { subresource, realmPath }),
+    headers: headers(),
+    body: config,
+    ...options,
+  });
+}
+
+export function createService(serviceId, body = {}, { subresource, realmPath, ...options } = {}) {
+  return cy.request({
+    method: 'POST',
+    url: `${servicesUrl(serviceId, { subresource, realmPath })}?_action=create`,
+    headers: headers(),
+    body,
     ...options,
   });
 }
