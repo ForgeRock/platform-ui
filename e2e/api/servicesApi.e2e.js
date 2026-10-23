@@ -54,7 +54,6 @@ export function getServiceTemplate(serviceId, { subresource, realmPath, ...optio
 export function putService(serviceId, body, { subresource, realmPath, ...options } = {}) {
   const config = { ...body };
   delete config._rev;
-  delete config._id;
   return cy.request({
     method: 'PUT',
     url: servicesUrl(serviceId, { subresource, realmPath }),
