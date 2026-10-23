@@ -96,6 +96,7 @@
     "LogApiKeys": "Log API Keys",
     "Login": "Login",
     "Monitoring": "Monitoring",
+    "NhiInventory": "NHI Inventory",
     "ManagedObjectEditProperty": "Edit Managed Object Property",
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
@@ -184,6 +185,7 @@
     "forms": "Forms",
     "gatewayCommunication": "Gateway Communication",
     "glossary": "Glossary",
+    "nhiInventory": "NHI Inventory",
     "governance": "Governance",
     "governanceAuditLog": "Audit",
     "governanceEvents": "Events",
@@ -5649,6 +5651,42 @@
       "updateAttrError": "Failed to update {resourceType} attribute",
       "updateAttrSuccess": "Successfully updated {resourceType} attribute",
       "user": "User"
+    },
+    "nhiInventory": {
+      "columns": {
+        "credentialAge": "Credential Age",
+        "identity": "Identity",
+        "lastUsed": "Last Used",
+        "owner": "Owners",
+        "permissions": "Permissions",
+        "risk": "Risk",
+        "sourceSystem": "Source System"
+      },
+      "details": {
+        "attributes": "Attributes",
+        "discovery": "Discovery",
+        "firstDiscovered": "First discovered",
+        "ownershipActivity": "Ownership & Activity",
+        "sourceSystem": "Source system"
+      },
+      "failedToLoad": "Failed to load NHI Inventory. Please try again.",
+      "identityCount": "{shown} of {total} identities",
+      "noResultsSubtitle": "No identities match your search.",
+      "revoke": {
+        "confirmation": "Submitting this request will start the deletion process for this non-human identity. This action cannot be undone once approved.",
+        "justification": "Justification (optional)",
+        "requested": "Revoke requested",
+        "revokeAccess": "Revoke access",
+        "submit": "Submit request"
+      },
+      "stats": {
+        "highCriticalRisk": "High + Critical Risk",
+        "staleOrphaned": "Stale",
+        "total": "Total NHIs",
+        "unowned": "Unowned"
+      },
+      "viewDetails": "View details for {identity}",      "subtitle": "View and manage all non-human identities across your applications.",
+      "title": "NHI Inventory"
     },
     "requests": {
       "requestSettings": {
