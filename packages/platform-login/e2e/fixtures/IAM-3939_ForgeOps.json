@@ -1,0 +1,190 @@
+{
+  "meta": {
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "IAM-3939"
+    ],
+    "innerTreesIncluded": []
+  },
+  "trees": {
+    "IAM-3939": {
+      "tree": {
+        "_id": "IAM-3939",
+        "_rev": "-2140605244",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[\"QA_autotests\"]"
+        },
+        "entryNodeId": "c16b653b-67ee-470f-8cc0-393ccbaf6bb8",
+        "nodes": {
+          "2f9e6f1f-749b-4746-aa00-02b251558131": {
+            "x": 471,
+            "y": 169.015625,
+            "connections": {
+              "NO_ACCOUNT": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "ACCOUNT_EXISTS": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "SocialProviderHandlerNode",
+            "displayName": "Social Provider Handler Node"
+          },
+          "c16b653b-67ee-470f-8cc0-393ccbaf6bb8": {
+            "x": 218,
+            "y": 175.015625,
+            "connections": {
+              "socialAuthentication": "2f9e6f1f-749b-4746-aa00-02b251558131"
+            },
+            "nodeType": "SelectIdPNode",
+            "displayName": "Select Identity Provider"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 50,
+            "y": 250
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 909,
+            "y": 59
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 723,
+            "y": 320
+          }
+        },
+        "enabled": true
+      },
+      "nodes": {
+        "2f9e6f1f-749b-4746-aa00-02b251558131": {
+          "_id": "2f9e6f1f-749b-4746-aa00-02b251558131",
+          "_rev": "-784957153",
+          "clientType": "BROWSER",
+          "script": "cc78eea3-2021-4a4c-808b-5d689f8e4090",
+          "usernameAttribute": "userName",
+          "_type": {
+            "_id": "SocialProviderHandlerNode",
+            "name": "Social Provider Handler Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "ACCOUNT_EXISTS",
+              "displayName": "Account exists"
+            },
+            {
+              "id": "NO_ACCOUNT",
+              "displayName": "No account exists"
+            }
+          ]
+        },
+        "c16b653b-67ee-470f-8cc0-393ccbaf6bb8": {
+          "_id": "c16b653b-67ee-470f-8cc0-393ccbaf6bb8",
+          "_rev": "-770137183",
+          "includeLocalAuthentication": false,
+          "filteredProviders": [
+            "misconfiguredFB - IAM-3939"
+          ],
+          "identityAttribute": "mail",
+          "passwordAttribute": "password",
+          "offerOnlyExisting": false,
+          "_type": {
+            "_id": "SelectIdPNode",
+            "name": "Select Identity Provider",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "socialAuthentication",
+              "displayName": "Social Authentication"
+            }
+          ]
+        }
+      },
+      "innerNodes": {},
+      "scripts": {
+        "cc78eea3-2021-4a4c-808b-5d689f8e4090": {
+          "_id": "cc78eea3-2021-4a4c-808b-5d689f8e4090",
+          "name": "Normalized Profile to Managed User - IAM-3939",
+          "description": "Converts a normalized social profile into a managed user",
+          "script": "\"/*\\n * Copyright 2020-2022 ForgeRock AS. All Rights Reserved\\n *\\n * Use of this code requires a commercial software license with ForgeRock AS.\\n * or with one of its affiliates. All use shall be exclusively subject\\n * to such license between the licensee and ForgeRock AS.\\n */\\n\\nimport static org.forgerock.json.JsonValue.field\\nimport static org.forgerock.json.JsonValue.json\\nimport static org.forgerock.json.JsonValue.object\\n\\nimport org.forgerock.json.JsonValue\\n\\nJsonValue managedUser = json(object(\\n        field(\\\"givenName\\\", normalizedProfile.givenName),\\n        field(\\\"sn\\\", normalizedProfile.familyName),\\n        field(\\\"mail\\\", normalizedProfile.email),\\n        field(\\\"userName\\\", normalizedProfile.username)))\\n\\nif (normalizedProfile.postalAddress.isNotNull()) managedUser.put(\\\"postalAddress\\\", normalizedProfile.postalAddress)\\nif (normalizedProfile.addressLocality.isNotNull()) managedUser.put(\\\"city\\\", normalizedProfile.addressLocality)\\nif (normalizedProfile.addressRegion.isNotNull()) managedUser.put(\\\"stateProvince\\\", normalizedProfile.addressRegion)\\nif (normalizedProfile.postalCode.isNotNull()) managedUser.put(\\\"postalCode\\\", normalizedProfile.postalCode)\\nif (normalizedProfile.country.isNotNull()) managedUser.put(\\\"country\\\", normalizedProfile.country)\\nif (normalizedProfile.phone.isNotNull()) managedUser.put(\\\"telephoneNumber\\\", normalizedProfile.phone)\\n\\n// if the givenName and familyName is null or empty\\n// then add a boolean flag to the shared state to indicate names are not present\\n// this could be used elsewhere\\n// for eg. this could be used in a scripted decision node to by-pass patching\\n// the user object with blank values when givenName  and familyName is not present\\nboolean noGivenName = normalizedProfile.givenName.isNull() || (!normalizedProfile.givenName.asString()?.trim())\\nboolean noFamilyName = normalizedProfile.familyName.isNull() || (!normalizedProfile.familyName.asString()?.trim())\\nsharedState.put(\\\"nameEmptyOrNull\\\", noGivenName && noFamilyName)\\n\\n\\nreturn managedUser\"",
+          "default": true,
+          "language": "GROOVY",
+          "context": "SOCIAL_IDP_PROFILE_TRANSFORMATION",
+          "createdBy": "null",
+          "creationDate": 0,
+          "lastModifiedBy": "null",
+          "lastModifiedDate": 0
+        },
+        "9afccdf1-dd7a-4491-afe9-e42be2a5d6c7": {
+          "_id": "9afccdf1-dd7a-4491-afe9-e42be2a5d6c7",
+          "name": "Facebook Profile Normalization - IAM-3939",
+          "description": "Normalizes raw profile data from Facebook",
+          "script": "\"/*\\n * Copyright 2020 ForgeRock AS. All Rights Reserved\\n *\\n * Use of this code requires a commercial software license with ForgeRock AS.\\n * or with one of its affiliates. All use shall be exclusively subject\\n * to such license between the licensee and ForgeRock AS.\\n */\\n\\nimport static org.forgerock.json.JsonValue.field\\nimport static org.forgerock.json.JsonValue.json\\nimport static org.forgerock.json.JsonValue.object\\n\\nreturn json(object(\\n        field(\\\"id\\\", rawProfile.id),\\n        field(\\\"displayName\\\", rawProfile.name),\\n        field(\\\"givenName\\\", rawProfile.first_name),\\n        field(\\\"familyName\\\", rawProfile.last_name),\\n        field(\\\"photoUrl\\\", rawProfile.picture.data.url),\\n        field(\\\"email\\\", rawProfile.email),\\n        field(\\\"username\\\", rawProfile.email)))\"",
+          "default": true,
+          "language": "GROOVY",
+          "context": "SOCIAL_IDP_PROFILE_TRANSFORMATION",
+          "createdBy": "null",
+          "creationDate": 0,
+          "lastModifiedBy": "null",
+          "lastModifiedDate": 0
+        }
+      },
+      "emailTemplates": {},
+      "socialIdentityProviders": {
+        "misconfiguredFB - IAM-3939": {
+          "clientId": "CHANGE ME",
+          "pkceMethod": "S256",
+          "wellKnownEndpoint": "https://facebook.com/dialog/oauth/",
+          "jwtEncryptionMethod": "NONE",
+          "jwtEncryptionAlgorithm": "NONE",
+          "authorizationEndpoint": "https://www.facebook.com/dialog/oauth",
+          "issuerComparisonCheckType": "EXACT",
+          "clientSecret": "CHANGE ME",
+          "encryptJwtRequestParameter": false,
+          "scopeDelimiter": " ",
+          "scopes": [
+            "email",
+            "user_birthday"
+          ],
+          "issuer": "https://www.facebook.com",
+          "introspectEndpoint": "https://graph.facebook.com/debug_token",
+          "userInfoResponseType": "JSON",
+          "acrValues": [],
+          "enabled": true,
+          "jwtRequestParameterOption": "NONE",
+          "authenticationIdKey": "id",
+          "uiConfig": {
+            "buttonCustomStyle": "background-color: #3b5998;border-color: #3b5998; color: white;",
+            "buttonCustomStyleHover": "background-color: #334b7d;border-color: #334b7d; color: white;",
+            "iconClass": "fa-facebook",
+            "iconBackground": "#3b5998",
+            "iconFontColor": "white",
+            "buttonDisplayName": "Facebook",
+            "buttonImage": "",
+            "buttonClass": "fa-facebook-official"
+          },
+          "privateKeyJwtExpTime": 600,
+          "revocationCheckOptions": [],
+          "enableNativeNonce": true,
+          "transform": "9afccdf1-dd7a-4491-afe9-e42be2a5d6c7",
+          "userInfoEndpoint": "https://graph.facebook.com/me?fields=id,name,picture,email,first_name,last_name,locale",
+          "jwtSigningAlgorithm": "NONE",
+          "redirectURI": "https://google.com",
+          "responseMode": "DEFAULT",
+          "useCustomTrustStore": false,
+          "clientAuthenticationMethod": "CLIENT_SECRET_POST",
+          "tokenEndpoint": "https://graph.facebook.com/v2.7/oauth/access_token",
+          "_id": "misconfiguredFB - IAM-3939",
+          "_type": {
+            "_id": "oidcConfig",
+            "name": "Client configuration for providers that implement the OpenID Connect specification.",
+            "collection": true
+          }
+        }
+      },
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}

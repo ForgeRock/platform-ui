@@ -95,6 +95,9 @@ export const JOURNEYS = {
   JOURNEY_EDITOR_RESPONSIVENESS: { name: 'QA-Journey_Editor_Responsiveness', path: 'QA-Journey_Editor_Responsiveness', fileName: 'QA-Journey_Editor_Responsiveness_template' },
   EMAIL_SUSPEND_REDIRECT: { name: 'QA - Redirect after Email suspend node', path: 'QA%20-%20Redirect%20after%20Email%20suspend%20node', fileName: 'redirect-after-email-suspend_template' },
   STYLING_ON_MESSAGE_NODE: { name: 'QA - Styling on Message Node', path: 'QA%20-%20Styling%20on%20Message%20Node', fileName: 'QA-Styling_on_Message_Node_template' },
+  SOCIAL_IDP_TWO_PROVIDERS: { name: 'IAM-3089', path: 'IAM-3089', fileName: 'IAM-3089' },
+  SOCIAL_IDP_ONE_PROVIDER: { name: 'IAM-3939', path: 'IAM-3939', fileName: 'IAM-3939' },
+  SOCIAL_IDP_SELECT_IDP_CALLBACK: { name: 'IAM-12291', path: 'IAM-12291', fileName: 'IAM-12291' },
 };
 
 /**

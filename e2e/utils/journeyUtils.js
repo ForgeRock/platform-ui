@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -32,6 +32,28 @@ export function generateJourneyURL(journeyName) {
   const journeyPath = findJourney(journeyName).path;
   const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
   return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=${journeyPath}`;
+}
+
+/**
+ * Generates the login app URL for a raw journey (tree) name that is not in
+ * the JOURNEYS constants (e.g. fixture trees imported at runtime).
+ * @param {String} journeyName journey (tree) name as deployed
+ * @returns {String} login app URL for the journey
+ */
+export function generateRawJourneyURL(journeyName) {
+  const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
+  return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=${encodeURIComponent(journeyName)}`;
+}
+
+/**
+ * Resolves the visit URL for the given journey name — constants-based
+ * journeys use the constants URL, fixture trees the raw tree URL.
+ * @param {String} journeyName journey name
+ * @returns {String} the URL to visit for that journey
+ */
+export function resolveJourneyURL(journeyName) {
+  const isConstantsJourney = Object.values(JOURNEYS).some((journey) => journey.name === journeyName);
+  return isConstantsJourney ? generateJourneyURL(journeyName) : generateRawJourneyURL(journeyName);
 }
 
 /**
