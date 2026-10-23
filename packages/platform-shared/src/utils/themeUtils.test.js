@@ -6,8 +6,10 @@
  */
 
 import store from '@/store';
+import i18n from '@/i18n';
 import {
   applyThemeAssetRewrites,
+  getLocalizedThemeAsset,
   rewriteThemeCdnUrl,
   rewriteThemeCdnUrlsInHtml,
   setUniqueThemeName,
@@ -222,5 +224,67 @@ describe('themeUtil', () => {
     };
     setUniqueThemeName(themeData, themeRealm, 'testRealm');
     expect(themeData.name).toBe('TestTheme(2)');
+  });
+
+  describe('getLocalizedThemeAsset', () => {
+    const originalLocale = i18n.global.locale;
+    const originalFallbackLocale = i18n.global.fallbackLocale;
+    const originalAirGapped = store.state.SharedStore.isAirGapped;
+    const originalBaseUrl = process.env.BASE_URL;
+
+    afterEach(() => {
+      i18n.global.locale = originalLocale;
+      i18n.global.fallbackLocale = originalFallbackLocale;
+      store.state.SharedStore.isAirGapped = originalAirGapped;
+      if (originalBaseUrl === undefined) {
+        delete process.env.BASE_URL;
+      } else {
+        process.env.BASE_URL = originalBaseUrl;
+      }
+    });
+
+    it('returns a direct string unchanged when not air-gapped', () => {
+      i18n.global.locale = 'en';
+      i18n.global.fallbackLocale = 'en';
+      expect(getLocalizedThemeAsset('logo.svg')).toBe('logo.svg');
+    });
+
+    it('selects the active locale from a locale-keyed value', () => {
+      i18n.global.locale = 'es';
+      i18n.global.fallbackLocale = 'en';
+      expect(getLocalizedThemeAsset({ en: 'english.svg', es: 'spanish.svg' })).toBe('spanish.svg');
+    });
+
+    it('selects the configured English fallback when the active locale is unavailable', () => {
+      i18n.global.locale = 'fr';
+      i18n.global.fallbackLocale = 'en';
+      expect(getLocalizedThemeAsset({ es: 'spanish.svg', en: 'english.svg' })).toBe('english.svg');
+    });
+
+    it('selects the first available locale when the active and fallback locales are unavailable', () => {
+      i18n.global.locale = 'fr';
+      i18n.global.fallbackLocale = [];
+      expect(getLocalizedThemeAsset({ es: 'spanish.svg', de: 'german.svg' })).toBe('spanish.svg');
+    });
+
+    it.each([
+      ['absent', undefined],
+      ['empty', ''],
+      ['empty map', {}],
+      ['object value', { en: { url: 'not-a-logo-string' } }],
+    ])('uses an empty string for an unusable %s asset', (label, value) => {
+      i18n.global.locale = 'en';
+      i18n.global.fallbackLocale = 'en';
+      expect(getLocalizedThemeAsset(value)).toBe('');
+    });
+
+    it('rewrites a CDN-hosted asset to the local static asset when air-gapped', () => {
+      store.state.SharedStore.isAirGapped = true;
+      process.env.BASE_URL = '/platform/';
+      i18n.global.locale = 'en';
+      i18n.global.fallbackLocale = 'en';
+      expect(getLocalizedThemeAsset({ en: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg' }))
+        .toBe('/platform/themes/starter/logo-starter.svg');
+    });
   });
 });

@@ -8,8 +8,10 @@
 import { cloneDeep, each } from 'lodash';
 import { convertBase64ToString, convertStringToBase64 } from '@forgerock/platform-shared/src/utils/encodeUtils';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
+import { getLocalizedString } from '@forgerock/platform-shared/src/utils/translations';
 import { v4 as uuid } from 'uuid';
 import store from '@/store';
+import i18n from '@/i18n';
 
 const THEME_CDN_PREFIX = 'https://cdn.forgerock.com/platform/themes/';
 const THEME_ASSET_FIELDS = ['backgroundImage', 'favicon', 'logo', 'logoProfile', 'logoProfileCollapsed'];
@@ -32,6 +34,20 @@ export function rewriteThemeCdnUrl(value) {
     return value;
   }
   return `${process.env.BASE_URL}themes/${value.slice(THEME_CDN_PREFIX.length)}`;
+}
+
+/**
+ * Resolves a theme asset value (e.g. logoProfileCollapsed) that may be a direct string
+ * or an object keyed by locale, to a single string URL using the active and fallback
+ * application locales, then rewrites CDN-hosted URLs for air-gapped deployments.
+ * Non-string results (e.g. an object stored under a locale key) resolve to an empty
+ * string so unusable values are never passed through to image bindings.
+ * @param {String|Object} value the theme field value to resolve
+ * @returns {String} the resolved, CDN-rewritten asset URL, or an empty string
+ */
+export function getLocalizedThemeAsset(value) {
+  const localized = getLocalizedString(value, i18n.global.locale, i18n.global.fallbackLocale);
+  return rewriteThemeCdnUrl(typeof localized === 'string' ? localized : '');
 }
 
 /**
