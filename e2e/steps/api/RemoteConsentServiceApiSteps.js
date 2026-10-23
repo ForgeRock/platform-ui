@@ -13,15 +13,9 @@ import {
   getServiceSchema,
   putService,
 } from '@e2e/api/servicesApi.e2e';
+import { stripMetadata } from '@e2e/utils/serviceUtils';
 
 const SERVICE_ID = 'RemoteConsentService';
-const METADATA_KEYS = ['_id', '_meta', '_rev', '_type'];
-
-function stripMetadata(service) {
-  const config = { ...service };
-  METADATA_KEYS.forEach((key) => delete config[key]);
-  return config;
-}
 
 export default class RemoteConsentServiceApiSteps {
   static originalService = null;

@@ -24,6 +24,7 @@ import FederationApiSteps from './api/FederationApiSteps';
 import HelixApiSteps from './api/HelixApiSteps';
 import IdentityProviderApiSteps from './api/IdentityProviderApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
+import IdentityVerificationApiSteps from './api/IdentityVerificationApiSteps';
 import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
 import JourneyNodeApiSteps from './api/JourneyNodeApiSteps';
@@ -64,6 +65,7 @@ export default {
   federation: FederationApiSteps,
   helix: HelixApiSteps,
   identityProviders: IdentityProviderApiSteps,
+  identityVerification: IdentityVerificationApiSteps,
   inviteAdmins: InviteAdminsApiSteps,
   jobs: JobsApiSteps,
   journey: JourneyApiSteps,
