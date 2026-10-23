@@ -15,6 +15,7 @@ const defaultState = {
   analyticsURL: '',
   aiAgentsEnabled: false,
   analyticsReportsAiAssistantEnabled: false,
+  gatewayConfigServiceEnabled: false,
   devIdmEnabled: false,
   idmWorkflowEnabled: false,
   idmWorkflowConfigEnabled: false,
@@ -270,6 +271,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true' || (env.VUE_APP_FRAAS?.toString() === 'true' && !env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL)) {
       state.aiAgentsEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_GATEWAY_CONFIG_SERVICE?.toString() === 'true') {
+      state.gatewayConfigServiceEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_UI_LOCALIZATION?.toString() === 'true') {

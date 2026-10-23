@@ -66,6 +66,31 @@ describe('setFeatureFlags', () => {
     expect(state.mcpFeatureEnabled).toBe(false);
     expect(state.login2Enabled).toBe(false);
   });
+
+  it('sets gatewayConfigServiceEnabled when VUE_APP_ENABLE_GATEWAY_CONFIG_SERVICE is true', () => {
+    const state = { gatewayConfigServiceEnabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_ENABLE_GATEWAY_CONFIG_SERVICE: 'true',
+    });
+    expect(state.gatewayConfigServiceEnabled).toBe(true);
+  });
+
+  it('does not set gatewayConfigServiceEnabled from VUE_APP_FRAAS alone — the flag is the single source of truth', () => {
+    const state = { gatewayConfigServiceEnabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_FRAAS: 'true',
+    });
+    expect(state.gatewayConfigServiceEnabled).toBe(false);
+  });
+
+  it('does not set gatewayConfigServiceEnabled when the flag is false', () => {
+    const state = { gatewayConfigServiceEnabled: false };
+    shared.mutations.setFeatureFlags(state, {
+      VUE_APP_FRAAS: 'true',
+      VUE_APP_ENABLE_GATEWAY_CONFIG_SERVICE: 'false',
+    });
+    expect(state.gatewayConfigServiceEnabled).toBe(false);
+  });
 });
 
 describe('should handle relative paths for FRaaS urls', () => {
