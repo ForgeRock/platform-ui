@@ -5,8 +5,7 @@ Feature: Enduser Registration
   Background:
     Given user navigates to "Registration" journey
 
-  @C19748
-  Scenario: User can navigate to a Sign In from login journey
+  Scenario: [C19748] User can navigate to a Sign In from login journey
     When user clicks on 'Sign In' Journey redirect link
     Then page title is 'Sign In'
     And page url contains '/Login'
@@ -14,8 +13,7 @@ Feature: Enduser Registration
     Then page title is 'Sign Up'
     And page url contains 'Registration'
 
-  @C19751
-  Scenario: Subsequent login
+  Scenario: [C19751] Subsequent login
     When user fills registration form with following data
       | Field         | Value         |
       | Username      | testUsername  |

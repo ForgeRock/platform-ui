@@ -9,17 +9,15 @@
   #   Given journey "Registration without email" is imported via API
   #   And journey "Password reset by KBA" is imported via API
 
-  # @C3336
   # @forgeops
-  # Scenario: Default color question
+  # Scenario: [C3336] Default color question
   #   Given user navigates to "Registration" journey
   #   When user clicks on the 1 "Select a security question" dropdown
   #   Then the option "What's your favorite color?" is visible
   #   And the option "Provide your own:" is visible
 
-  # @C23867
   # @forgeops
-  # Scenario: SQ created by Admin are visible
+  # Scenario: [C23867] SQ created by Admin are visible
   #   Given admin creates the following questions via API
   #   | Question            | Locales |
   #   | Pet name?           | en      |
@@ -29,8 +27,7 @@
   #   Then the option "Pet name?" is visible
   #   And the option "Favorite character?" is visible
 
-  # @C24637
-  # Scenario: User should create his own questions
+  # Scenario: [C24637] User should create his own questions
   #   Given the admin deletes all the security questions via API
   #   When user navigates to "Registration" journey
   #   And user clicks on the 1 "Select a security question" dropdown
@@ -49,9 +46,8 @@
   #   Then the option "Pet name?" is visible
   #   And the option "Provide your own:" is visible
 
-  # @C24635
   # @forgeops
-  # Scenario: Security questions are not repeated in dropdowns
+  # Scenario: [C24635] Security questions are not repeated in dropdowns
   #   Given security questions "must define" settings is set to 2 via API
   #   And admin creates the following questions via API
   #   | Question            | Locales |
@@ -70,9 +66,8 @@
   #   And the option "Favorite character?" is visible
   #   And the option "What's your favorite color?" does not exist
 
-  # @C27025
   # @forgeops
-  # Scenario: Special characters on Security Question
+  # Scenario: [C27025] Special characters on Security Question
   #   Given security questions "must define" settings is set to 2 via API
   #   And security questions "must answer" settings is set to 2 via API
   #   And admin creates the following questions via API
@@ -101,9 +96,8 @@
   #   | 日本語の質問            |
   #   | ؤال باللغة العربية    |
 
-  # @C24641
   # @forgeops
-  # Scenario: Error messages
+  # Scenario: [C24641] Error messages
   #   When user navigates to "Registration" journey
   #   And user selects "Provide your own:" option for the Security Question no. 1
   #   Then "Question" field has "Please provide a value" validation error
@@ -120,9 +114,8 @@
   #   When user selects "What's your favorite color?" option for the Security Question no. 1
   #   Then "Must be unique" validation error doesn't exist
 
-  # @C27024
   # @forgeops
-  # Scenario: Must define and Must Answer combinations
+  # Scenario: [C27024] Must define and Must Answer combinations
   #   Given security questions "must define" settings is set to 100 via API
   #   When user navigates to "Registration without email" journey
   #   Then security question dropdown and answer fields are visible 100 times
@@ -149,9 +142,8 @@
   #   And user clicks on "Next" button
   #   Then fields for answering to the created security questions are visible 4 times
 
-  # @C26984
   # @forgeops
-  # Scenario: Long security question 
+  # Scenario: [C26984] Long security question
   #   Given admin creates the following questions via API
   #   | Question                                                                                                        | Locales |
   #   | Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong | en      |
@@ -161,8 +153,7 @@
   #   When user selects "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong" option for the Security Question no. 1
   #   Then the security question no. 1 has "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong" option selected
 
-  # @C27005
-  # Scenario: Security questions locale
+  # Scenario: [C27005] Security questions locale
   #   Given admin creates a question with different text on different locales via API
   #   | locale | text                   |
   #   | en     | Pet name?              |
@@ -176,8 +167,7 @@
   #   Then the option "¿Nombre de tu mascota?" is visible
   #   And the option "Pet name?" does not exist
   
-  # @C27004
-  # Scenario: Enduser can reset password by entering correct Security Questions answers
+  # Scenario: [C27004] Enduser can reset password by entering correct Security Questions answers
   #   When user navigates to "Registration without email" journey
   #   And user fills registration form with following data
   #   | Field         | Value                             |
@@ -206,8 +196,7 @@
   #   When user clicks on "Next" button
   #   Then enduser dashboard is loaded with enduser data
 
-  # @C27003
-  # Scenario: Enduser can reset security questions from profile view
+  # Scenario: [C27003] Enduser can reset security questions from profile view
   #   When user navigates to "Registration without email" journey
   #   And user fills registration form with following data
   #   | Field         | Value                             |
@@ -234,8 +223,7 @@
   #   | Question                    |
   #   | Answer                      |
 
-  # @C27001
-  # Scenario: Enduser created without defined Security Questions
+  # Scenario: [C27001] Enduser created without defined Security Questions
   #   Given enduser account is created via API
   #   When user navigates to "Password reset by KBA" journey
   #   And user types the stored value of "endUserName" in "User Name" field

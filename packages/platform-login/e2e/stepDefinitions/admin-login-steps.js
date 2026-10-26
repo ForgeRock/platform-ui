@@ -9,7 +9,7 @@ import { Before } from '@badeball/cypress-cucumber-preprocessor';
 import { deleteIDMUser } from '@e2e/api/managedApi.e2e';
 
 // Scope fresh-session enforcement only for the ForgeOps success login scenario
-Before({ tags: '@C29566' }, () => {
+Before({ tags: '@AdminLoginFreshSession' }, () => {
   cy.then(() => {
     if (Cypress.session && typeof Cypress.session.clearAllSavedSessions === 'function') {
       Cypress.session.clearAllSavedSessions();

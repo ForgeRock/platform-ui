@@ -5,8 +5,7 @@ Feature: Logout warning before expiration on ID hosted pages
     Given admin logs into the tenant with fresh session
     And enduser account is created via API
 
-  @C14021
-  Scenario: maxIdleExpirationTime is set correctly
+  Scenario: [C14021] maxIdleExpirationTime is set correctly
     When session service in AM console is added via API with following params
       | Param             | Value     |
       | Maximum Idle Time | 999999999 |
@@ -15,9 +14,8 @@ Feature: Logout warning before expiration on ID hosted pages
     And maxIdleExpirationTime value is set correctly to 999999999 minutes
 
   # Skipping due to flakiness in CI to stabilize it later
-  @C27574
   @skip
-  Scenario: Enduser session is ended after Maximum Idle Time is over
+  Scenario: [C27574] Enduser session is ended after Maximum Idle Time is over
     When session service in AM console is added via API with following params
       | Param             | Value |
       | Maximum Idle Time | 1     |
@@ -26,9 +24,8 @@ Feature: Logout warning before expiration on ID hosted pages
     And page title is "Sign In" after user is idle for 62 seconds
 
   # Skipping due to flakiness in CI to stabilize it later
-  @C29485
   @skip
-  Scenario: Enduser session is ended when clicking Sign Out button in session timeout modal
+  Scenario: [C29485] Enduser session is ended when clicking Sign Out button in session timeout modal
     When session service in AM console is added via API with following params
       | Param             | Value |
       | Maximum Idle Time | 1     |
@@ -38,9 +35,8 @@ Feature: Logout warning before expiration on ID hosted pages
     Then page title is "Sign In"
 
   # Skipping due to flakiness in CI to stabilize it later
-  @C27575
   @skip
-  Scenario: Enduser session is not ended when clicking Stay Signed In button in session timeout modal
+  Scenario: [C27575] Enduser session is not ended when clicking Stay Signed In button in session timeout modal
     When session service in AM console is added via API with following params
       | Param             | Value |
       | Maximum Idle Time | 1     |

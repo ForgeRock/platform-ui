@@ -6,27 +6,24 @@ Feature: Go To URL validator service
     And enduser account is created via API
     And admin is logged out
 
-  @C25518
   @cloud
-  Scenario: Go To URL validator - redirect to website which is not added in validator (Cloud only)
+  Scenario: [C25518] Go To URL validator - redirect to website which is not added in validator (Cloud only)
     When user navigates to journey "gotoOnFail URL validation" url with param "gotoOnFail" and value "https://www.bbc.com"
     And user types the stored value of "endUserName" in "User Name" field
     And user clicks on "Next" button
     Then page title is "Sign In"
 
-  @C27518
   @forgeops
-  Scenario: Go To URL validator - redirect to website which is not added in validator (Forgeops only)
+  Scenario: [C27518] Go To URL validator - redirect to website which is not added in validator (Forgeops only)
     When user navigates to journey "gotoOnFail URL validation" url with param "gotoOnFail" and value "https://www.bbc.com"
     And user types the stored value of "endUserName" in "User Name" field
     And user clicks on "Next" button
     Then "Login failure" error message is displayed
 
   # Skipping due to flakiness in CI to stabilize it later
-  @C25519
   @skip
   @cloud @forgeops
-  Scenario: Go To URL validator - redirect correctly works
+  Scenario: [C25519] Go To URL validator - redirect correctly works
     When user navigates to journey "gotoOnFail URL validation" url with param "gotoOnFail" and value "https://www.google.com"
     And user types the stored value of "endUserName" in "User Name" field
     And user clicks on "Next" button

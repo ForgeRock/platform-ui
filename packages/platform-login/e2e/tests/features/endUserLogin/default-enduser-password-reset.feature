@@ -5,9 +5,8 @@ Feature: Default enduser password reset
     And admin is logged out
     And user navigates to "Password Reset" journey
 
-  @C26628
   @cloud @forgeops
-  Scenario: Link from forgotten password works correctly
+  Scenario: [C26628] Link from forgotten password works correctly
     When user clicks on "Sign in" link
     Then page url contains "/service/Login"
     And page title is "Sign In"
@@ -16,18 +15,16 @@ Feature: Default enduser password reset
     Then page url contains "/service/ResetPassword"
     And page title is "Reset Password"
 
-  @C26629
   @cloud @forgeops
-  Scenario: Forgotten password email is sent successfully
+  Scenario: [C26629] Forgotten password email is sent successfully
     When user types the stored value of "endUserEmail" in "Email Address" field
     And user clicks on "Next" button
     Then the message "An email has been sent to the address you entered. Click the link in that email to proceed." should be present
     When user retrieves the password reset email
     Then the password reset email contains the link
 
-  @C26630
   @cloud @forgeops
-  Scenario: Password reset works correctly
+  Scenario: [C26630] Password reset works correctly
     When user types the stored value of "endUserEmail" in "Email Address" field
     And user clicks on "Next" button
     And user retrieves the password reset email
@@ -40,9 +37,8 @@ Feature: Default enduser password reset
     When user clicks on "Next" button
     Then enduser dashboard is loaded with enduser data
 
-  @C26631
   @cloud @forgeops
-  Scenario: Link from forgotten password email can be used only once
+  Scenario: [C26631] Link from forgotten password email can be used only once
     When user types the stored value of "endUserEmail" in "Email Address" field
     And user clicks on "Next" button
     And user retrieves the password reset email
@@ -54,9 +50,8 @@ Feature: Default enduser password reset
     Then page title is "Error"
     And the message "Unable to resume session. It may have expired." should be present
 
-  @C26632
   @cloud @forgeops
-  Scenario: Enduser cannot login with old password
+  Scenario: [C26632] Enduser cannot login with old password
     When user types the stored value of "endUserEmail" in "Email Address" field
     And user clicks on "Next" button
     And user retrieves the password reset email
@@ -73,9 +68,8 @@ Feature: Default enduser password reset
     And "Next" button is visible
 
 
-  @TC-11104
   @cloud
-  Scenario: Password requirements update correctly
+  Scenario: [TC-11104] Password requirements update correctly
     When user types the stored value of "endUserEmail" in "Email Address" field
     And user clicks on "Next" button
     And user retrieves the password reset email

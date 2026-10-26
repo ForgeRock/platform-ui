@@ -2,9 +2,8 @@
 Feature: Enduser UI Translations
 
   # Skipping due to flakiness in CI to stabilize it later
-  @C26987
   @skip
-  Scenario: Full translation: French translation
+  Scenario: [C26987] Full translation: French translation
     Given "fr" language is set via API
     And browser locale is set to 'fr'
     And enduser logs into "All sections active" journey
@@ -15,9 +14,8 @@ Feature: Enduser UI Translations
     When user clicks on 'Mes applications en français' link
     Then Applications page translations are in 'french'
 
-  @C26990
   @forgeops
-  Scenario: Locale fallback: Locales without an override added and non existing locale codes should fallback to english
+  Scenario: [C26990] Locale fallback: Locales without an override added and non existing locale codes should fallback to english
     Given browser locale is set to 'en'
     When enduser logs into "Login" journey
     Then dashboard translations are in 'english'
@@ -35,9 +33,8 @@ Feature: Enduser UI Translations
     And user reloads the page
     Then dashboard translations are in 'english'
 
-  @C26991
   @forgeops
-  Scenario: Default locale override: Override English locale
+  Scenario: [C26991] Default locale override: Override English locale
     When enduser logs into "Login" journey
     Then dashboard translations are in 'english'
     When "en" language is set via API
@@ -47,9 +44,8 @@ Feature: Enduser UI Translations
     And user reloads the page
     Then dashboard translations are in 'english'
 
-  @C26988
   @forgeops
-  Scenario: Special characters: Japanese translation
+  Scenario: [C26988] Special characters: Japanese translation
     Given "ja" language is set via API
     And browser locale is set to 'ja'
     When enduser logs into "Login" journey
