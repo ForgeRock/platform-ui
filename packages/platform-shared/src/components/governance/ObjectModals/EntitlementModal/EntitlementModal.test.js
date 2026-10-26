@@ -48,6 +48,13 @@ describe('EntitlementModal', () => {
     expect(getApplicationLogo).toHaveBeenCalledWith(entitlement.application);
   });
 
+  it('renders decorative header logo with empty alt text', () => {
+    const img = wrapper.find('.fr-app-logo-bg img');
+
+    expect(img.exists()).toBeTruthy();
+    expect(img.attributes('alt')).toBe('');
+  });
+
   it('should load entitlement name correctly', () => {
     expect(wrapper.vm.displayNameHeader).toBe('governance.certificationTask.entitlementModal.name');
     expect(getApplicationDisplayName).toHaveBeenCalledWith(entitlement.application);

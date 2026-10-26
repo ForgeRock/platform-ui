@@ -229,7 +229,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div class="d-flex justify-content-between align-items-center">
               <BButton
                 @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary, item.id)"
-                class="text-dark"
+                class="text-dark pl-0"
                 variant="link">
                 <BMedia
                   class="align-items-center"

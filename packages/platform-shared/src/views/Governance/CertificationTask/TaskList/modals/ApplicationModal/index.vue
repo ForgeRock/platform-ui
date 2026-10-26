@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
           <img
             height="36"
             width="36"
-            :alt="application.name"
+            alt=""
             :onerror="onImageError"
             :src="logo">
         </div>
@@ -77,7 +77,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="mr-3 rounded-circle"
                   height="36"
                   width="36"
-                  :alt="getFullName(owner.givenName, owner.sn)"
+                  alt=""
                   :src="owner.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                   fluid />
                 <div class="media-body">

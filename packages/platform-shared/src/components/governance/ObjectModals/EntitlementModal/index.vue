@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
           <img
             height="36"
             width="36"
-            :alt="displayNameHeader"
+            alt=""
             :onerror="onImageError"
             :src="logo">
         </div>
