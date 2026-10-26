@@ -18,30 +18,32 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       v-for="user in usersToShow"
       :key="`user-${prop.id}-${user.id}`"
-      class="cursor-pointer">
+      :id="`user-${prop.id}-${user.id}`"
+      class="cursor-pointer"
+      role="button"
+      tabindex="0">
       <div class="avatar-item rounded-circle bg-lightblue color-blue font-weight-bold">
         <BImg
           v-if="!isItemRole(user.id)"
           class="size-28"
           data-testid="avatar-item"
           :alt="$t('common.profilePicture')"
-          :id="`user-${prop.id}-${user.id}`"
           :aria-hidden="true"
           :src="user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
         <FrIcon
           v-else
-          :id="`user-${prop.id}-${user.id}`"
           class="d-flex align-items-center justify-content-center size-28"
           name="assignment_ind" />
       </div>
       <BTooltip
         :target="`user-${prop.id}-${user.id}`"
         boundary="window"
-        triggers="hover">
-        <h2 class="h5 mb-0 text-white">
+        triggers="hover focus"
+        custom-class="owner-tooltip">
+        <div class="owner-tooltip-name mb-0">
           {{ tooltipTitle(isItemRole(user.id), user) }}
-        </h2>
-        <small>{{ user.userName || $t('common.role') }}</small>
+        </div>
+        <small class="owner-tooltip-detail">{{ user.userName || $t('common.role') }}</small>
       </BTooltip>
     </div>
     <template v-if="users.length > avatarLimit">
@@ -138,5 +140,29 @@ function tooltipTitle(isRole, item) {
 
 .overflow-badge {
   font-size: 13px;
+}
+</style>
+
+<style lang="scss">
+/* Owner tooltip — unscoped because BTooltip teleports to body.
+   The name must stay white: heading/theme styles otherwise win and render it grey. */
+.owner-tooltip.show {
+  opacity: 1;
+}
+
+.owner-tooltip .tooltip-inner {
+  background: black;
+  color: white;
+}
+
+.owner-tooltip .owner-tooltip-name {
+  color: white !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.owner-tooltip .owner-tooltip-detail {
+  color: $gray-300 !important;
+  font-size: 12px;
 }
 </style>

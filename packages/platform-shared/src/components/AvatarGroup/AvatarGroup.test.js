@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -94,5 +94,30 @@ describe('AvatarGroup', () => {
     // check that the proper info is on the component
     expect(wrapper.find('p').text()).toBe(`${USERS[0].givenName} ${USERS[0].sn}`);
     expect(wrapper.find('small').text()).toBe(USERS[0].userName);
+  });
+
+  it('renders owner tooltips with the owner-tooltip class, hover and focus triggers, and focusable avatars', async () => {
+    setup({ avatarLimit: 2 });
+
+    const tooltips = wrapper.findAllComponents({ name: 'BTooltip' });
+    // one tooltip per shown user plus the overflow badge tooltip
+    expect(tooltips).toHaveLength(3);
+
+    const ownerTooltips = tooltips.filter(
+      (tooltip) => tooltip.vm.$attrs['custom-class'] === 'owner-tooltip'
+        || tooltip.props('customClass') === 'owner-tooltip',
+    );
+    expect(ownerTooltips).toHaveLength(2);
+    ownerTooltips.forEach((tooltip) => {
+      expect(tooltip.props('triggers')).toContain('hover');
+      expect(tooltip.props('triggers')).toContain('focus');
+    });
+
+    // avatars are focusable tooltip targets
+    const avatarWrappers = wrapper.findAll('[role="button"][tabindex="0"]');
+    expect(avatarWrappers).toHaveLength(2);
+    avatarWrappers.forEach((avatar) => {
+      expect(avatar.attributes('id')).toMatch(/^user-test-id-/);
+    });
   });
 });
