@@ -2978,6 +2978,8 @@
         "certifyConfirmTitle": "Confirm decision",
         "certifyConfirmDescription": "Set decision to certify for all selected items?",
         "certifyPlaceHolder": "Reason for Certification",
+        "acknowledgeTitle": "Acknowledge",
+        "acknowledgeConfirmDescription": "Set decision to acknowledge for all selected items?",
         "completeDecisionsModalConfirmDescription": "Are you sure you wish to submit now?",
         "completeDecisionsModalConfirmWarning": "Submitting the access review is final and cannot be undone.",
         "completeDecisionsModalContinue": "Continue Reviewing",

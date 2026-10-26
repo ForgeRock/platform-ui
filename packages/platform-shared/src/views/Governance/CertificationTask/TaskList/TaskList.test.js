@@ -28,6 +28,7 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import store from '@/store';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import TaskList from './index';
+import { getInitialFilterData } from './utils/taskFilterUtils';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
@@ -586,6 +587,32 @@ describe('TaskList', () => {
       wrapper.vm.selectedItems = [{ id: 'test-id' }];
       const result = wrapper.vm.isItemSelected('test-id');
       expect(result).toEqual(true);
+    });
+  });
+
+  describe('selectedCount with acknowledge items (IGA-3579)', () => {
+    const rbItem = { id: 'rb', relationship: { properties: { grantTypes: [{ grantType: 'role' }] } } };
+    const plainItem = { id: 'plain' };
+
+    it('counts all rows when all selected, regardless of acknowledge items', () => {
+      const wrapper = shallowMountComponent();
+      // 2 of 3 items in the loaded page are acknowledge-type — "All tasks"
+      // still covers every row (certify = acknowledge on RB items).
+      wrapper.vm.loadItemsList({
+        data: { result: [cloneDeep(rbItem), cloneDeep(rbItem), cloneDeep(plainItem)], totalCount: 90 },
+      }, 1);
+      wrapper.vm.allSelected = true;
+      expect(wrapper.vm.selectedCount).toBe(90);
+    });
+
+    it('counts only selectedItems when not all selected', () => {
+      const wrapper = shallowMountComponent();
+      wrapper.vm.loadItemsList({
+        data: { result: [cloneDeep(rbItem), cloneDeep(plainItem)], totalCount: 10 },
+      }, 1);
+      wrapper.vm.allSelected = false;
+      wrapper.vm.selectedItems = [{ id: 'plain' }];
+      expect(wrapper.vm.selectedCount).toBe(1);
     });
   });
   describe('loadItemsList', () => {
@@ -1299,6 +1326,37 @@ describe('TaskList', () => {
       expect(revoke.exists()).toBe(false);
     });
 
+    it('shows multiselect checkbox for role based item when role-based filter is active', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
+      const { wrapper } = mountComponent({ campaignDetails: { allowBulkCertify: true } });
+      await flushPromises();
+      expect(findByTestId(wrapper, 'multiselect-testId').exists()).toBe(false);
+
+      // Toggle the filter the way AccessFilter does (through the reactive
+      // $data proxy — vm.filterData can be a detached object in vue2-compat),
+      // then reload the list so the table cells re-render with the filter.
+      wrapper.vm.$data.filterData.roleBased.value = true;
+      await wrapper.vm.getItems(1);
+      await flushPromises();
+      expect(findByTestId(wrapper, 'multiselect-testId').exists()).toBe(true);
+    });
+
+    it('keeps multiselect checkbox for role based item when another filter is also active', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
+      const { wrapper } = mountComponent({ campaignDetails: { allowBulkCertify: true } });
+      await flushPromises();
+      wrapper.vm.$data.filterData.roleBased.value = true;
+      await wrapper.vm.getItems(1);
+      await flushPromises();
+      expect(findByTestId(wrapper, 'multiselect-testId').exists()).toBe(true);
+
+      // The RB filter ANDs with every other filter, so the list is still
+      // acknowledge-only — selection remains enabled with combined filters.
+      wrapper.vm.$data.filterData.neverCertified.value = true;
+      await wrapper.vm.$nextTick();
+      expect(findByTestId(wrapper, 'multiselect-testId').exists()).toBe(true);
+    });
+
     it('changes tooltip text from certify to acknowledge', async () => {
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
       const { wrapper } = mountComponent();
@@ -1334,6 +1392,189 @@ describe('TaskList', () => {
         expect(findByTestId(wrapper, 'own-access-banner').exists()).toBe(false);
         expect(findByTestId(wrapper, 'btnCertify-testId').exists()).toBe(true);
       });
+    });
+  });
+
+  describe('bulk actions with role-based filter (IGA-3579)', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
+    });
+    const roleBasedFilterData = () => ({
+      ...getInitialFilterData(),
+      roleBased: { value: true, grantTypes: [] },
+    });
+    const acknowledgeTask = { id: 'a', isAcknowledge: true };
+    const acknowledgeTaskB = { id: 'b', isAcknowledge: true };
+    const acknowledgeTaskC = { id: 'c', isAcknowledge: true };
+
+    it('selectTasks includes acknowledge items when role-based filter is active', () => {
+      const wrapper = shallowMountComponent({
+        filterData: roleBasedFilterData(),
+        items: [cloneDeep(acknowledgeTask), cloneDeep(acknowledgeTaskB)],
+        selectedItems: [],
+      });
+      wrapper.vm.selectTasks(true);
+      expect(wrapper.vm.selectedItems.map((t) => t.id)).toEqual(['a', 'b']);
+    });
+
+    it('selectTasks excludes acknowledge items when role-based filter is inactive', () => {
+      const wrapper = shallowMountComponent({
+        items: [cloneDeep(acknowledgeTask)],
+        selectedItems: [],
+      });
+      wrapper.vm.selectTasks(true);
+      expect(wrapper.vm.selectedItems).toEqual([]);
+    });
+
+    it('selectTasks excludes acknowledge items when the role-based filter is inactive', () => {
+      const wrapper = shallowMountComponent({
+        filterData: {
+          ...roleBasedFilterData(),
+          roleBased: { value: false, grantTypes: [] },
+        },
+        items: [cloneDeep(acknowledgeTask)],
+        selectedItems: [],
+      });
+      wrapper.vm.selectTasks(true);
+      expect(wrapper.vm.selectedItems).toEqual([]);
+    });
+
+    it('selectTasks includes acknowledge items when role-based filter is combined with another filter', () => {
+      const wrapper = shallowMountComponent({
+        filterData: {
+          ...roleBasedFilterData(),
+          neverCertified: { value: true, grantTypes: [] },
+        },
+        items: [cloneDeep(acknowledgeTask)],
+        selectedItems: [],
+      });
+      wrapper.vm.selectTasks(true);
+      // The RB filter ANDs with every other filter, so the list is still
+      // acknowledge-only — selection stays enabled.
+      expect(wrapper.vm.selectedItems.map((t) => t.id)).toEqual(['a']);
+    });
+
+    it('selection clears when the role-based filter is turned off while acknowledge items are selected', async () => {
+      const wrapper = shallowMountComponent();
+      // Set state after mount so async mount-time initialization cannot overwrite it.
+      await flushPromises();
+      wrapper.vm.$data.filterData = {
+        ...roleBasedFilterData(),
+      };
+      wrapper.vm.items = [cloneDeep(acknowledgeTask)];
+      wrapper.vm.selectedItems = [cloneDeep(acknowledgeTask)];
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.isRoleBasedFilterActive).toBe(true);
+
+      wrapper.vm.$data.filterData.roleBased.value = false;
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.selectedItems).toEqual([]);
+    });
+
+    it('selection clears when the role-based filter is turned on while non-RB items are selected', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({
+        data: { result: [cloneDeep(acknowledgeTask)], totalCount: 1 },
+      }));
+      const wrapper = shallowMountComponent();
+      await flushPromises();
+      // Stale selection of non-RB items made before the filter was enabled.
+      wrapper.vm.selectedItems = [{ id: 'ent-1', isAcknowledge: false }];
+      wrapper.vm.allSelected = false;
+      wrapper.vm.$data.filterData = { ...roleBasedFilterData() };
+      await wrapper.vm.$nextTick();
+      // Otherwise the relabelled Acknowledge action would certify the hidden
+      // entitlement ids under acknowledge copy.
+      expect(wrapper.vm.selectedItems).toEqual([]);
+    });
+
+    it('bulk certify with all selected and the role-based filter active acts only on the filtered RB list', async () => {
+      CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: {} }));
+      // Two filtered (RB-only) pages: page 0 has a and b, page 1 has c.
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation((urlParams) => {
+        if (urlParams.pageNumber === 0) {
+          return Promise.resolve({ data: { result: [cloneDeep(acknowledgeTask), cloneDeep(acknowledgeTaskB)], totalCount: 3 } });
+        }
+        return Promise.resolve({ data: { result: [cloneDeep(acknowledgeTaskC)], totalCount: 3 } });
+      });
+      const wrapper = shallowMountComponent({ allSelected: true });
+      await flushPromises();
+      wrapper.vm.$data.filterData = { ...roleBasedFilterData() };
+      wrapper.vm.currentFilters = {
+        urlParams: { pageNumber: 0, pageSize: 10 },
+        payload: { targetFilter: { operator: 'AND', operand: [] } },
+      };
+      CertificationApi.getCertificationTasksListByCampaign.mockClear();
+      await wrapper.vm.bulkCertify();
+      // The collector re-queries the current (RB-only) filters instead of the
+      // unscoped select-all, so exactly the visible RB ids are certified.
+      expect(CertificationApi.certifyItems).toHaveBeenCalledWith('test-id', { ids: ['a', 'b', 'c'] });
+      expect(CertificationApi.certifyAllItems).not.toHaveBeenCalled();
+    });
+
+    it('bulk certify certifies selected ids instead of all items when role-based filter is active', async () => {
+      CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: {} }));
+      const wrapper = shallowMountComponent();
+      // Inject state after mount — mounted() replaces filterData asynchronously,
+      // which would otherwise trigger the RB-filter watcher and clear selection.
+      await flushPromises();
+      wrapper.vm.$data.filterData = { ...roleBasedFilterData() };
+      wrapper.vm.allSelected = false;
+      wrapper.vm.selectedItems = [cloneDeep(acknowledgeTask), cloneDeep(acknowledgeTaskB)];
+      await wrapper.vm.bulkCertify();
+      expect(CertificationApi.certifyItems).toHaveBeenCalledWith('test-id', { ids: ['a', 'b'] });
+    });
+
+    it('collectFilteredItemIds stops paging when a page adds no new ids', async () => {
+      // Page 1 repeats the ids from page 0 while totalCount claims more rows —
+      // the loop must terminate instead of requesting pages forever.
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({
+        data: { result: [{ id: 'a' }, { id: 'b' }], totalCount: 6 },
+      }));
+      const wrapper = shallowMountComponent();
+      await flushPromises();
+      wrapper.vm.currentFilters = {
+        urlParams: { pageNumber: 0, pageSize: 10 },
+        payload: { targetFilter: { operator: 'AND', operand: [] } },
+      };
+      CertificationApi.getCertificationTasksListByCampaign.mockClear();
+      const ids = await wrapper.vm.collectFilteredItemIds();
+      expect(ids).toEqual(['a', 'b']);
+      // One page + the one repeat that returned nothing new — no infinite loop.
+      expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalledTimes(2);
+    });
+
+    it('action bar hides revoke/exception/reassign/forward/reset and relabels certify to acknowledge with filter active', () => {
+      const wrapper = shallowMountComponent({ filterData: roleBasedFilterData() });
+      expect(wrapper.vm.actionBarButtons.map((b) => b.event)).toEqual(['certify']);
+      expect(wrapper.vm.actionBarButtons[0].label).toBe('governance.certificationTask.actions.acknowledge');
+      // Under the RB filter only Acknowledge is offered: every other bulk
+      // action either is invalid for RB items or uses an unscoped select-all
+      // endpoint that would cross tabs (exception/reassign/forward/reset).
+      expect(wrapper.vm.actionBarMenuItems).toEqual([]);
+    });
+
+    it('action bar shows revoke/exception/forward/reset and certify label with filter inactive', () => {
+      const wrapper = shallowMountComponent();
+      expect(wrapper.vm.actionBarButtons.map((b) => b.event)).toEqual(['certify', 'revoke']);
+      expect(wrapper.vm.actionBarButtons[0].label).toBe('governance.certificationTask.actions.certify');
+      const menuEvents = wrapper.vm.actionBarMenuItems.map((m) => m.event);
+      expect(menuEvents).toContain('exception');
+      expect(menuEvents).toContain('reassign');
+      expect(menuEvents).toContain('forward');
+      expect(menuEvents).toContain('clearDecisions');
+    });
+
+    it('certify modal props use acknowledge copy with filter active', () => {
+      const wrapper = shallowMountComponent({ filterData: roleBasedFilterData() });
+      expect(wrapper.vm.bulkCertifyActionProps.okLabel).toBe('acknowledgeTitle');
+      expect(wrapper.vm.bulkCertifyActionProps.confirmDescription).toBe('acknowledgeConfirmDescription');
+    });
+
+    it('certify modal props keep certify copy with filter inactive', () => {
+      const wrapper = shallowMountComponent();
+      expect(wrapper.vm.bulkCertifyActionProps.okLabel).toBe('certifyTitle');
+      expect(wrapper.vm.bulkCertifyActionProps.confirmDescription).toBe('certifyConfirmDescription');
     });
   });
 

@@ -158,7 +158,7 @@ of the MIT license. See the LICENSE file for details. -->
           :tbody-tr-attr="rowAttrs">
           <template #cell(selector)="{ item }">
             <FrField
-              v-if="!disableDecisions && item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
+              v-if="!disableDecisions && item.decision.certification.status !== 'signed-off' && (!item.isAcknowledge || isRoleBasedFilterActive) && !isStaged"
               @change="selectTask($event, item)"
               name="columnSelected"
               type="checkbox"
@@ -466,7 +466,7 @@ of the MIT license. See the LICENSE file for details. -->
           :count="selectedCount"
           :menu-items="actionBarMenuItems"
           @deselect="selectTasks(false)"
-          @certify="openActionConfirmModal(bulkCertifyModalProps)"
+          @certify="openActionConfirmModal(bulkCertifyActionProps)"
           @revoke="openActionConfirmModal(bulkRevokeModalProps)"
           @exception="openActionConfirmModal(bulkExceptionModalProps)"
           @reassign="(triggerEl) => $bvModal.show(getModalId('reassign'), triggerEl)"
@@ -872,41 +872,6 @@ export default {
     };
 
     return {
-      actionBarButtons: [{
-        event: 'certify',
-        icon: 'check',
-        iconClass: 'text-success',
-        label: this.$t('governance.certificationTask.actions.certify'),
-      },
-      {
-        event: 'revoke',
-        icon: 'close',
-        iconClass: 'text-danger',
-        label: this.$t('common.revoke'),
-      }],
-      actionBarMenuItems: [{
-        event: 'exception',
-        icon: 'schedule',
-        label: this.$t('governance.certificationTask.actions.allowException'),
-      },
-      {
-        event: 'reassign',
-        icon: 'people',
-        label: this.$t('governance.certificationTask.actions.reassign'),
-      },
-      {
-        event: 'forward',
-        icon: 'redo',
-        label: this.$t('governance.certificationTask.actions.forward'),
-      },
-      {
-        divider: true,
-      },
-      {
-        event: 'clearDecisions',
-        icon: 'close',
-        label: this.$t('governance.certificationTask.actions.reset'),
-      }],
       defaultUserValue,
       allSelected: false,
       blankValueIndicator,
@@ -1057,6 +1022,66 @@ export default {
     },
     selectedCount() {
       return this.allSelected ? this.totalRows : this.selectedItems.length;
+    },
+
+    isRoleBasedFilterActive() {
+      return !!this.filterData.roleBased?.value;
+    },
+    actionBarButtons() {
+      const buttons = [{
+        event: 'certify',
+        icon: 'check',
+        iconClass: 'text-success',
+        label: this.isRoleBasedFilterActive
+          ? this.$t('governance.certificationTask.actions.acknowledge')
+          : this.$t('governance.certificationTask.actions.certify'),
+      }];
+      if (!this.isRoleBasedFilterActive) {
+        buttons.push({
+          event: 'revoke',
+          icon: 'close',
+          iconClass: 'text-danger',
+          label: this.$t('common.revoke'),
+        });
+      }
+      return buttons;
+    },
+    actionBarMenuItems() {
+      const menuItems = [];
+      if (!this.isRoleBasedFilterActive) {
+        menuItems.push({
+          event: 'exception',
+          icon: 'schedule',
+          label: this.$t('governance.certificationTask.actions.allowException'),
+        }, {
+          event: 'reassign',
+          icon: 'people',
+          label: this.$t('governance.certificationTask.actions.reassign'),
+        }, {
+          event: 'forward',
+          icon: 'redo',
+          label: this.$t('governance.certificationTask.actions.forward'),
+        }, {
+          event: 'clearDecisions',
+          icon: 'close',
+          label: this.$t('governance.certificationTask.actions.reset'),
+        });
+      }
+      return menuItems;
+    },
+    /**
+     * Certify modal props, relabeled to acknowledge copy while the
+     * Role-based Access filter is active. openActionConfirmModal copies these
+     * into confirmActionModalProps before $bvModal.show, so the dynamic keys
+     * land in the modal.
+     */
+    bulkCertifyActionProps() {
+      if (!this.isRoleBasedFilterActive) return this.bulkCertifyModalProps;
+      return {
+        ...this.bulkCertifyModalProps,
+        confirmDescription: 'acknowledgeConfirmDescription',
+        okLabel: 'acknowledgeTitle',
+      };
     },
     filterButtonLabel() {
       return this.leftPanelExpanded
@@ -1535,7 +1560,7 @@ export default {
       this.selectedItems = [];
       const tasksListClone = cloneDeep(this.items);
       this.items = tasksListClone.map((task) => {
-        if (selectValue && !task.isAcknowledge) this.selectedItems.push(task);
+        if (selectValue && (!task.isAcknowledge || this.isRoleBasedFilterActive)) this.selectedItems.push(task);
         return {
           ...task,
           selected: selectValue,
@@ -1797,9 +1822,19 @@ export default {
       if (signOffReviewers.length > 1) return false;
       return signOffReviewers[0].id === this.currentReviewerSelectedModal.id;
     },
-    bulkCertify() {
+    async bulkCertify() {
       this.toggleSaving();
-      if (this.allSelected) {
+      if (this.allSelected && this.isRoleBasedFilterActive) {
+        try {
+          const ids = await this.collectFilteredItemIds();
+          await certifyItems(this.campaignId, { ids });
+          this.toggleSaving();
+          this.updateItemList('certifySuccess');
+        } catch (error) {
+          this.toggleSaving();
+          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.certifyError'));
+        }
+      } else if (this.allSelected) {
         certifyAllItems(this.campaignId, this.actorId).then(() => {
           this.toggleSaving();
           setTimeout(() => {
@@ -2187,6 +2222,33 @@ export default {
         this.isDownloadModalLoading = false;
       }
     },
+    /**
+     * Collects the ids of every item matching the current filters by paging
+     * through the list API
+     * @returns {Promise<Array>} ids of every item in the filtered set
+     */
+    async collectFilteredItemIds() {
+      const { urlParams, payload } = this.currentFilters;
+      const ids = new Set();
+      const pageSize = 10000;
+      let pageNumber = 0;
+      let keepPaging = true;
+      while (keepPaging) {
+        // Pages must be fetched sequentially: each request's pageNumber offset
+        // depends on the previous page having been consumed.
+        // eslint-disable-next-line no-await-in-loop
+        const { data } = await getCertificationTasksListByCampaign(
+          { ...urlParams, pageSize, pageNumber },
+          this.campaignId,
+          payload,
+        );
+        const previousSize = ids.size;
+        data.result.forEach((item) => ids.add(item.id));
+        pageNumber += 1;
+        keepPaging = ids.size < data.totalCount && ids.size !== previousSize && data.result.length > 0;
+      }
+      return [...ids];
+    },
   },
   watch: {
     refreshTasks(newVal, oldVal) {
@@ -2197,6 +2259,12 @@ export default {
     },
     entitlementUserId() {
       this.getItems(1);
+    },
+    // Role-based items are selectable while the RB filter is active
+    isRoleBasedFilterActive(newVal, oldVal) {
+      if (newVal !== oldVal && (this.selectedItems.length || this.allSelected)) {
+        this.selectTasks(false);
+      }
     },
     // Re-measure on page load / reload so popovers track the rendered rows. Skipped while
     // isLoading — the table is unmounted then; the isLoading watcher owns that re-measure.
