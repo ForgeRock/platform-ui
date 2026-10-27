@@ -154,4 +154,33 @@ describe('TimeInput', () => {
       });
     });
   });
+
+  describe('time picker button accessible name', () => {
+    beforeEach(() => {
+      wrapper = mount(TimeInput, {
+        props: {
+          ...defaultMixinProps,
+          label: 'Access Start Date',
+        },
+        global: {
+          mocks: {
+            $t: (text) => (text),
+          },
+        },
+      });
+    });
+
+    it('includes the field label and open-time-picker action in the sr-only announcement', () => {
+      const srOnly = wrapper.find('.time-button .sr-only');
+      expect(srOnly.exists()).toBe(true);
+      expect(srOnly.text()).toBe('Access Start Date common.dateTimePicker.openTimePicker');
+    });
+
+    it('uses the fieldLabel prop in the sr-only announcement when provided', async () => {
+      await wrapper.setProps({ fieldLabel: 'Access Start Date time' });
+
+      const srOnly = wrapper.find('.time-button .sr-only');
+      expect(srOnly.text()).toBe('Access Start Date time common.dateTimePicker.openTimePicker');
+    });
+  });
 });

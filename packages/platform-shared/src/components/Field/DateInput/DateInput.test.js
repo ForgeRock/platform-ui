@@ -94,6 +94,41 @@ describe('DateInput', () => {
     });
   });
 
+  describe('date picker button accessible name', () => {
+    function mountDateInput(extraProps = {}) {
+      return mount(DateInput, {
+        props: {
+          ...defaultMixinProps,
+          ...defaultProps,
+          label: 'Access Start Date',
+          ...extraProps,
+        },
+        global: {
+          mocks: {
+            $t: (text) => (text),
+          },
+        },
+      });
+    }
+
+    it('includes the field label and open-calendar action in the sr-only announcement', () => {
+      const wrapper = mountDateInput();
+
+      const srOnly = wrapper.find('.date-button .sr-only');
+      expect(srOnly.exists()).toBe(true);
+      expect(srOnly.text()).toBe('Access Start Date common.dateTimePicker.openCalendar');
+      wrapper.unmount();
+    });
+
+    it('uses the fieldLabel prop in the sr-only announcement when provided', () => {
+      const wrapper = mountDateInput({ fieldLabel: 'Access Start Date date' });
+
+      const srOnly = wrapper.find('.date-button .sr-only');
+      expect(srOnly.text()).toBe('Access Start Date date common.dateTimePicker.openCalendar');
+      wrapper.unmount();
+    });
+  });
+
   describe('@a11y', () => {
     it('has no accessibility violations', async () => {
       const wrapper = mount(DateInput, {

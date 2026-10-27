@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           @input="dateValue = $event; emitDateTimeValue()"
           ref="dateInput"
           :aria-label="labelTranslation"
+          :field-label="dateFieldLabel"
           :dialog-label="datePickerDialogLabel"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :disabled="disabled"
@@ -165,6 +166,9 @@ export default {
   computed: {
     labelTranslation() {
       return this.getTranslation(this.label);
+    },
+    dateFieldLabel() {
+      return this.$t('common.dateTimePicker.dateFieldLabel', { label: this.labelTranslation });
     },
     timeFieldLabel() {
       return this.$t('common.dateTimePicker.timeFieldLabel', { label: this.labelTranslation });

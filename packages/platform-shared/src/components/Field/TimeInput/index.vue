@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-on="validationListeners"
         ref="input"
         type="time"
-        :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control']"
+        :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
         :data-vv-as="label"
         :disabled="disabled"
         :id="internalId"
@@ -44,7 +44,16 @@ of the MIT license. See the LICENSE file for details. -->
       :label-minutes="timePickerMinutesLabel"
       :label-ampm="timePickerAmpmLabel"
       @input="debounceEmitValidTime"
-      @shown="fixTimePickerDialogLabel" />
+      @shown="fixTimePickerDialogLabel">
+      <template #button-content>
+        <span class="sr-only">
+          {{ `${fieldLabel || labelTranslation} ${$t('common.dateTimePicker.openTimePicker')}` }}
+        </span>
+        <FrIcon
+          name="schedule"
+        />
+      </template>
+    </BFormTimepicker>
   </div>
 </template>
 
@@ -61,6 +70,7 @@ import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
 import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
+import FrIcon from '../../Icon';
 import InputMixin from '../Wrapper/InputMixin';
 
 const utc = require('dayjs/plugin/utc');
@@ -78,6 +88,7 @@ export default {
   ],
   components: {
     BFormTimepicker,
+    FrIcon,
     FrInputLayout,
   },
   props: {
@@ -256,9 +267,23 @@ export default {
       background-color: initial;
       color: $gray-500;
     }
+
+    :deep(button .material-icons-outlined) {
+      font-size: 1em;
+      line-height: 1;
+    }
   }
 
   .form-control.is-invalid {
     background-image: none;
+  }
+
+  // Hide the native clock icon: BFormTimepicker's overlaid button already
+  // occupies that corner, so the native indicator would duplicate it.
+  // .fr-hide-native-picker (on the input) keeps the rule off the timepicker overlay.
+  .fr-hide-native-picker {
+    &::-webkit-calendar-picker-indicator {
+      visibility: hidden;
+    }
   }
 </style>

@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-on="validationListeners"
         ref="input"
         type="date"
-        :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control']"
+        :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
         :data-vv-as="label"
         :disabled="disabled"
         :id="internalId"
@@ -38,7 +38,16 @@ of the MIT license. See the LICENSE file for details. -->
         :min="minDate"
         :aria-label="labelTranslation"
         @shown="onShown"
-        @hidden="deactivateFocusTrap" />
+        @hidden="deactivateFocusTrap">
+        <template #button-content>
+          <span class="sr-only">
+            {{ `${fieldLabel || labelTranslation} ${$t('common.dateTimePicker.openCalendar')}` }}
+          </span>
+          <FrIcon
+            name="calendar_today"
+          />
+        </template>
+      </BFormDatepicker>
     </FrInputLayout>
   </div>
 </template>
@@ -55,6 +64,7 @@ import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
 import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
+import FrIcon from '../../Icon';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
@@ -72,12 +82,17 @@ export default {
   ],
   components: {
     BFormDatepicker,
+    FrIcon,
     FrInputLayout,
   },
   props: {
     dropleft: {
       default: true,
       type: Boolean,
+    },
+    fieldLabel: {
+      default: '',
+      type: String,
     },
     minDate: {
       default: '',
@@ -222,14 +237,21 @@ export default {
     color: $gray-500;
   }
 
+  :deep(button .material-icons-outlined) {
+    font-size: 1em;
+    line-height: 1;
+  }
+
   .form-control.is-invalid {
     background-image: none;
   }
 
-  // Hide the browser's built-in calendar icon/picker on the native date input: the
-  // BFormDatepicker button-only calendar beside it is the field's single picker.
-  input[type='date']::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
+  // Hide the native calendar icon: BFormDatepicker's overlaid button already
+  // occupies that corner, so the native indicator would duplicate it.
+  // .fr-hide-native-picker (on the input) keeps the rule off the datepicker overlay.
+  .fr-hide-native-picker {
+    &::-webkit-calendar-picker-indicator {
+      visibility: hidden;
+    }
   }
 </style>
