@@ -1,9 +1,8 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
@@ -103,6 +102,51 @@ describe('CertColumnConfiguration', () => {
 
     const reviewFields = find(wrapper.vm.selectFields, { key: 'review' });
     expect(reviewFields.options.length).toBe(3);
+  });
+
+  it('has agent category for agentProfile grantType and review extras', () => {
+    wrapper = mountComponent(modelValue, 'agentProfile');
+    const keys = wrapper.vm.selectFields.map((s) => s.key);
+    expect(keys).toEqual(['agent', 'review']);
+    expect(keys).not.toContain('application');
+    expect(keys).not.toContain('user');
+    expect(keys).not.toContain('account');
+
+    const agentFields = find(wrapper.vm.selectFields, { key: 'agent' });
+    const agentValues = agentFields.options.map((o) => o.value);
+    expect(agentValues).toEqual(['agent.agent', 'agent.platform', 'agent.model']);
+    // user-schema attributes are not offered as agent columns
+    expect(agentValues).not.toContain('agent.name');
+    expect(agentValues).not.toContain('agent.email');
+    // the sortable toggle is hidden for columns the table can't server-sort
+    const platformOption = agentFields.options.find((o) => o.value === 'agent.platform');
+    expect(platformOption.hideSortable).toBe(true);
+    const modelOption = find(agentFields.options, { value: 'agent.model' });
+    expect(modelOption.hideSortable).toBe(true);
+    // unflagged columns keep the toggle
+    expect(agentFields.options.find((o) => o.value === 'agent.agent').hideSortable).toBeUndefined();
+  });
+
+  it('offers only the agent name column for agentAccess grantType', () => {
+    // agentAccess items only carry the agent's user identity — the
+    // account-derived platform/model/owner columns would render blank
+    wrapper = mountComponent(modelValue, 'agentAccess');
+    const keys = wrapper.vm.selectFields.map((s) => s.key);
+    expect(keys).toEqual(['agent', 'review']);
+
+    const agentFields = find(wrapper.vm.selectFields, { key: 'agent' });
+    const agentValues = agentFields.options.map((o) => o.value);
+    expect(agentValues).toEqual(['agent.agent']);
+  });
+
+  it('re-applies hideSortable from the column declarations when a saved selection loads', () => {
+    // saved configs are plain strings — the flag must come back from the
+    // declaration, or a flagged column's Sortable toggle reappears on load
+    wrapper = mountComponent(['agent.platform', 'agent.model'], 'agentProfile');
+
+    const listItems = wrapper.vm.selectedColumnsList;
+    expect(listItems.find((c) => c.value === 'agent.platform').hideSortable).toBe(true);
+    expect(listItems.find((c) => c.value === 'agent.model').hideSortable).toBe(true);
   });
 
   it('selectFields only includes categories for the current grantType', () => {

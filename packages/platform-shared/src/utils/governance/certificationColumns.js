@@ -152,6 +152,54 @@ const OOTBColumns = {
     exportFields: ['descriptor.idx./account.displayName'],
     value: 'account.account',
   },
+  agentName: {
+    key: 'agent',
+    label: i18n.global.t('common.agent'),
+    sortable: true,
+    category: 'agent',
+    class: 'text-truncate fr-access-cell',
+    show: true,
+    showFor: ['agentProfile', 'agentAccess'],
+    // 1:1 item paths — buildAgentView enriches each item with the agent view
+    // object, so exports can read the same fields the table cells render
+    exportFields: ['agent.agent'],
+    value: 'agent.agent',
+  },
+  agentPlatform: {
+    key: 'platform',
+    label: i18n.global.t('governance.editTemplate.platform.label'),
+    sortable: false,
+    category: 'agent',
+    class: 'text-truncate fr-access-cell',
+    show: true,
+    showFor: ['agentProfile', 'agentAccess'],
+    exportFields: ['agent.platform'],
+    value: 'agent.platform',
+  },
+  agentModel: {
+    key: 'model',
+    label: i18n.global.t('governance.agents.mappingKeys.model'),
+    // values resolve per-item through the agent config mapping (no fixed item
+    // path) — the backend can't server-sort them, so the column never sorts
+    sortable: false,
+    category: 'agent',
+    class: 'text-truncate fr-access-cell',
+    show: true,
+    showFor: ['agentProfile', 'agentAccess'],
+    exportFields: ['agent.model'],
+    value: 'agent.model',
+  },
+  agentOwner: {
+    key: 'owner',
+    label: i18n.global.t('governance.editTemplate.custodian'),
+    sortable: false,
+    category: 'agent',
+    class: 'text-truncate fr-access-cell',
+    show: true,
+    showFor: ['agentProfile', 'agentAccess'],
+    exportFields: ['agent.owner'],
+    value: 'agent.owner',
+  },
   prediction: {
     key: 'prediction',
     label: i18n.global.t('governance.certificationTask.recommended'),
@@ -322,11 +370,22 @@ const categories = [
   {
     name: 'review',
     header: i18n.global.t('governance.certificationTask.columns.review'),
-    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition', 'agentProfile', 'agentAccess'],
     items: [
       { ...OOTBColumns.prediction },
       { ...OOTBColumns.flags },
       { ...OOTBColumns.comments },
+    ],
+  },
+  {
+    name: 'agent',
+    header: i18n.global.t('governance.certificationTask.columns.agent'),
+    showFor: ['agentProfile', 'agentAccess'],
+    items: [
+      { ...OOTBColumns.agentName },
+      { ...OOTBColumns.agentPlatform },
+      { ...OOTBColumns.agentModel },
+      { ...OOTBColumns.agentOwner },
     ],
   },
   {
@@ -370,6 +429,75 @@ const categories = [
     ],
   },
 ];
+
+/**
+ * Swaps the user category for the agent category in the picker — the agentAccess
+ * cert page's counterpart of its user-shaped grant tabs (aic-ui/agent-certification.md).
+ * The swapped category carries only the agent name column: agentAccess items'
+ * agent identity is the linked user, and the richer agent columns (platform,
+ * model, owner) resolve from the agent *account* records agentAccess lines don't
+ * consistently carry — those stay agentProfile-only in the picker too.
+ * @param {Array<Object>} columnCategories categories from getAllColumnCategories
+ * @returns {Array<Object>} categories with the user category replaced by the agent category
+ */
+export function swapUserCategoriesForAgent(columnCategories) {
+  const userIndex = columnCategories.findIndex((category) => category.name === 'user');
+  // cloneDeep matches getAllColumnCategories' cloning; items keep their showFor
+  // arrays exactly as the agentProfile picker renders them (pickers ignore the flag)
+  const sourceCategory = categories.find((category) => category.name === 'agent');
+  const agentItems = cloneDeep(sourceCategory.items)
+    .filter((item) => item.value === 'agent.agent');
+  const swapped = columnCategories.filter((category) => category.name !== 'user');
+  const insertIndex = userIndex === -1 ? swapped.length : Math.min(userIndex, swapped.length);
+  // "Agent" reads better than the source category's "Agent Attributes" header —
+  // this swapped category holds only the single agent name column
+  swapped.splice(insertIndex, 0, {
+    name: 'agent',
+    header: i18n.global.t('common.agent'),
+    items: agentItems,
+  });
+  return swapped;
+}
+
+/**
+ * Swaps user column definitions for the agent block in a table field list — the
+ * agentAccess cert page's counterpart of its user-shaped grant tabs
+ * (aic-ui/agent-certification.md). The agent block lands at the first user
+ * entry's position; all other entries keep their order. A list with no user
+ * entries (e.g. the account-drilldown view) is returned unchanged, and any
+ * user entry in the agent block itself is dropped — agent certs never surface
+ * user columns.
+ * @param {Array<Object>} columns column definitions from getInitialColumns
+ * @param {Array<Object>} agentColumns agent column definitions to insert in the user entries' place
+ * @returns {Array<Object>} field list with every user entry replaced by the agent block
+ */
+export function swapUserColumnsForAgent(columns, agentColumns) {
+  if (!Array.isArray(columns) || !columns.length) {
+    return columns;
+  }
+  const existing = new Set(columns.map((col) => col?.value));
+  const agentBlock = agentColumns
+    .filter((col) => !String(col?.value || '').startsWith('user.'))
+    .filter((col) => !existing.has(col.value))
+    .map((col) => ({ ...col }));
+  const hasUserColumn = columns.some((col) => String(col?.value || '').startsWith('user.'));
+  if (!agentBlock.length || !hasUserColumn) {
+    return columns;
+  }
+  const swapped = [];
+  let inserted = false;
+  columns.forEach((col) => {
+    if (String(col?.value || '').startsWith('user.')) {
+      if (!inserted) {
+        swapped.push(...agentBlock);
+        inserted = true;
+      }
+      return;
+    }
+    swapped.push(col);
+  });
+  return swapped;
+}
 
 /**
  * Retrieves and customizes field categories based on the specified grant type and filter properties.

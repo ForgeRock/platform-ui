@@ -278,6 +278,40 @@ of the MIT license. See the LICENSE file for details. -->
               </BButton>
             </div>
           </template>
+          <template #cell(agent)="{ item }">
+            <div
+              v-if="isAgentAccessCampaign"
+              class="d-flex justify-content-between align-items-center"
+              data-testid="agent-access-cell">
+              {{ item.user?.userName || blankValueIndicator }}
+            </div>
+            <div
+              v-else
+              class="d-flex justify-content-between align-items-center">
+              <BButton
+                @click.stop="openAgentModal(item)"
+                class="text-dark pl-0"
+                data-testid="agent-cell"
+                variant="link">
+                {{ item.agent?.agent || blankValueIndicator }}
+              </BButton>
+            </div>
+          </template>
+          <template #cell(platform)="{ item }">
+            <div class="d-flex align-items-center">
+              <img
+                v-if="item.agent?.platformIcon"
+                class="size-24 mr-2"
+                :alt="item.agent?.platformLabel"
+                :src="item.agent.platformIcon"
+                :onerror="onImageError">
+              <FrIcon
+                v-else-if="item.agent?.platform"
+                icon-class="md-24 mr-2 text-secondary"
+                name="smart_toy" />
+              {{ item.agent?.platformLabel || blankValueIndicator }}
+            </div>
+          </template>
           <template #cell(role)="{ item }">
             <div class="d-flex justify-content-between align-items-center">
               <BButton
@@ -489,6 +523,9 @@ of the MIT license. See the LICENSE file for details. -->
     <FrAccountModal
       v-if="currentAccountSelectedModal"
       :grant="currentAccountSelectedModal" />
+    <FrAgentModal
+      v-if="currentAgentSelectedModal"
+      :grant="currentAgentSelectedModal" />
     <FrEntitlementModal
       :display-data="currentEntitlementDisplayData"
       :entitlement="currentEntitlementSelected"
@@ -577,10 +614,14 @@ import {
   getInitialColumns,
   processItemsForExport,
   setSelectedCategories,
+  swapUserCategoriesForAgent,
+  swapUserColumnsForAgent,
 } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
+import { isAgentType, uiTypeMap } from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/templateTypes';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
+import { buildAgentView, loadAgentViewConfig } from '@forgerock/platform-shared/src/utils/governance/agentView';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
@@ -597,6 +638,7 @@ import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPick
 import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
 import FrAccountModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal';
+import FrAgentModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/AgentModal';
 import FrEntitlementModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/EntitlementModal';
 import FrRoleModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/RoleModal/RoleModal';
 import FrAccessFilter from '@forgerock/platform-shared/src/components/governance/AccessFilter/AccessFilter';
@@ -669,6 +711,7 @@ export default {
     FrActivityModal,
     FrForwardModal,
     FrAccountModal,
+    FrAgentModal,
     FrColumnPicker,
     FrConfirmActionModal,
     FrAddCommentModal,
@@ -849,10 +892,13 @@ export default {
       blankValueIndicator,
       bulkCertifyModalProps,
       autoIdSettings: {},
+      // agent config for the model column's per-item mapped resolution (agentView.js)
+      agentViewConfig: null,
       bulkExceptionModalProps,
       bulkRevokeModalProps,
       confirmActionModalProps: {},
       currentAccountSelectedModal: null,
+      currentAgentSelectedModal: null,
       currentApplicationDisplayData: {},
       currentApplicationSelectedModal: null,
       currentCommentsSelectedModal: [],
@@ -936,6 +982,12 @@ export default {
   computed: {
     isStaged() {
       return this.campaignDetails?.status === 'staging';
+    },
+    // agentAccess items only consistently carry the agent's user identity (full
+    // agent details exist only for grants on the base agent account), so their
+    // agent column is a plain user.userName reference — not clickable
+    isAgentAccessCampaign() {
+      return this.campaignDetails?.certificationType === uiTypeMap.AGENTACCESS;
     },
     certificationListColumnsToShow() {
       const columns = cloneDeep(this.activeColumns);
@@ -1032,9 +1084,44 @@ export default {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
     }
 
-    const allColumnCategories = getAllColumnCategories(this.certificationGrantType || 'accounts', filterProperties, this.autoIdSettings);
+    // the agent view (platform label/icon, model) resolves through the agent config;
+    // await it so the first item load enriches with the full config — a load failure
+    // leaves the config null and the cells fall back (generic icon, raw ids, blank model)
+    await this.loadAgentViewConfig()
+      .then((config) => { this.agentViewConfig = config; })
+      .catch(() => {});
+
+    let allColumnCategories = getAllColumnCategories(this.certificationGrantType || 'accounts', filterProperties, this.autoIdSettings);
+    // agentAccess campaigns render the standard grant tabs, so the column set here is
+    // grant-shaped — swap the user category/columns for the agent ones (see
+    // aic-ui/agent-certification.md). The roles tab is exempt: roleMembership items'
+    // subject IS the agent's user identity, so the User column already shows it and a
+    // separate agent reference would duplicate it.
+    const isAgentAccess = this.campaignDetails?.certificationType === uiTypeMap.AGENTACCESS;
+    const swapAgentColumns = isAgentAccess && this.certificationGrantType !== 'roles';
+    if (swapAgentColumns) {
+      allColumnCategories = swapUserCategoriesForAgent(allColumnCategories);
+    }
     this.columnCategories = allColumnCategories;
-    this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings, this.campaignDetails?.uiConfig?.columnSortConfig);
+    const customColumnConfig = this.campaignDetails?.uiConfig?.columnConfig;
+    const columnSortConfig = this.campaignDetails?.uiConfig?.columnSortConfig;
+    const initialColumns = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, customColumnConfig, allColumnCategories, this.autoIdSettings, columnSortConfig);
+    if (swapAgentColumns) {
+      // agentAccess items only consistently carry the agent's user identity, so the
+      // reference column is the agent name regardless of saved config —
+      // platform/model/owner resolve from agent account records these items don't
+      // have, and stay agentProfile-only
+      const agentSwapColumns = getInitialColumns('agentAccess', null, false, customColumnConfig, allColumnCategories, this.autoIdSettings, columnSortConfig)
+        .filter((col) => col.value === 'agent.agent');
+      const fallbackAgentColumns = (allColumnCategories.find((category) => category.name === 'agent')?.items || [])
+        .filter((item) => item.value === 'agent.agent');
+      this.tasksFields = swapUserColumnsForAgent(
+        initialColumns,
+        agentSwapColumns.length ? agentSwapColumns : fallbackAgentColumns,
+      );
+    } else {
+      this.tasksFields = initialColumns;
+    }
 
     resetFilterTypes();
     this.filterData = getInitialFilterData();
@@ -1063,6 +1150,7 @@ export default {
     getInitialColumns,
     startCase,
     setSelectedCategories,
+    loadAgentViewConfig,
     toggleSaving() {
       this.$emit('change-saving');
     },
@@ -1178,6 +1266,7 @@ export default {
         isAcknowledge: isAcknowledgeType(item) || false,
         flags: getGrantFlags(item),
         prediction: getPredictionDisplayInfo(item, this.autoIdSettings, this.filterSchema.user),
+        agent: buildAgentView(item, this.agentViewConfig),
       }));
       this.$emit('check-progress');
       if (this.totalRows === 0) {
@@ -1214,6 +1303,10 @@ export default {
       this.isLoading = true;
       if (this.certificationGrantType === 'entitlementComposition' && this.sortBy === 'user') {
         this.sortBy = 'entitlement';
+      }
+      // agent items have no user object; sort by the agent's display name instead
+      if (isAgentType(this.certificationGrantType) && this.sortBy === 'user') {
+        this.sortBy = 'agent';
       }
       const urlParams = this.buildUrlParams(currentPage, this.sortBy, this.sortDir);
       const payload = this.buildBodyParams();
@@ -1261,6 +1354,7 @@ export default {
       if (certificationGrantType === 'entitlementComposition') grantType = 'entitlement';
       if (certificationGrantType === 'roles') grantType = 'roleMembership';
       if (certificationGrantType === 'identityProfile') grantType = 'user';
+      if (certificationGrantType === 'agentProfile') grantType = 'accountGrant';
       if (certificationGrantType === 'roleComposition') grantType = 'role';
 
       return getBasicFilter('EQUALS', 'item.type', grantType);
@@ -1367,6 +1461,8 @@ export default {
           return 'prediction.confidence';
         case 'entitlement':
           return 'descriptor.idx./entitlement.displayName';
+        case 'agent':
+          return 'descriptor.idx./account.displayName';
         default:
           return sortBy;
       }
@@ -1921,6 +2017,18 @@ export default {
 
       this.$nextTick(() => {
         this.$bvModal.show('CertificationTaskAccountModal');
+      });
+    },
+    // agent items are agent accounts — the agent details modal renders their
+    // glossary, custodians, and template-mapped properties (same cards as the
+    // Agents directory detail page, in the certification read-only context)
+    openAgentModal(item) {
+      this.currentAgentSelectedModal = { ...item };
+      delete this.currentAgentSelectedModal.account?.metadata;
+      delete this.currentAgentSelectedModal.account?.proxyAddresses;
+
+      this.$nextTick(() => {
+        this.$bvModal.show('CertificationTaskAgentModal');
       });
     },
     async openApplicationModal(application, applicationOwners, glossary, itemId) {

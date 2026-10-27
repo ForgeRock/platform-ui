@@ -7,6 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import { getResource, getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as TemplateApi from '@/api/governance/TemplateApi';
@@ -17,6 +18,9 @@ mockValidation();
 
 jest.mock('@/api/governance/TemplateApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/AgentApi', () => ({
+  getAgentConfig: jest.fn().mockResolvedValue({ data: { templates: [] } }),
+}));
 
 describe('What View', () => {
   let wrapper;
@@ -238,6 +242,122 @@ describe('What View', () => {
       expect(findByTestId(wrapper, 'user-count').exists()).toBeFalsy();
       expect(findByTestId(wrapper, 'account-count').exists()).toBeFalsy();
       expect(findByTestId(wrapper, 'role-count').exists()).toBeFalsy();
+    });
+  });
+
+  describe('Agent platform options', () => {
+    it('populates platform options from the agent config templates', async () => {
+      // getAgentConfig returns the raw axios response
+      AgentApi.getAgentConfig.mockResolvedValue({
+        data: { templates: [{ id: 'aws.bedrock' }, { id: 'default' }, { id: 'google.vertexai' }] },
+      });
+      mountComponent({ type: templateTypes.types.AGENTPROFILE });
+      await flushPromises();
+
+      const texts = wrapper.vm.agentPlatformOptions.map((o) => o.text);
+      const values = wrapper.vm.agentPlatformOptions.map((o) => o.value);
+      expect(values).toEqual(['all', 'aws.bedrock', 'google.vertexai']);
+      // platformLabelKeys resolves known ids to their display names
+      expect(texts).toEqual(['All Platforms', 'AWS Bedrock', 'Google Vertex AI']);
+      // 'default' is the backend fallback, not a platform — filtered out
+      expect(values).not.toContain('default');
+    });
+
+    it('leaves only the all option when the agent config fetch fails', async () => {
+      AgentApi.getAgentConfig.mockRejectedValue(new Error('fail'));
+      mountComponent({ type: templateTypes.types.AGENTPROFILE });
+      await flushPromises();
+
+      expect(wrapper.vm.agentPlatformOptions.map((o) => o.value)).toEqual(['all']);
+    });
+  });
+
+  describe('Agent profile target-count payload', () => {
+    it('stamps platform and agent type scope into the application/account subtrees', async () => {
+      mountComponent({ type: templateTypes.types.AGENTPROFILE });
+      await flushPromises();
+
+      // select a specific platform and agent type, then drive the update the
+      // select inputs would trigger (their @input calls updateFilter)
+      wrapper.vm.formFields.platform = 'aws.bedrock';
+      wrapper.vm.formFields.agentType = 'workload';
+      wrapper.vm.updateFilter();
+      // updateFilter debounces the count call by 200ms
+      await new Promise((resolve) => { setTimeout(resolve, 250); });
+      await flushPromises();
+
+      const payload = TemplateApi.getDecisionCount.mock.calls.pop()[0];
+      expect(payload.application).toEqual({
+        operator: 'OR',
+        operand: [
+          { operator: 'EQUALS', operand: { targetName: 'templateName', targetValue: 'aws.bedrock' } },
+          { operator: 'EQUALS', operand: { targetName: 'aiAgentSource', targetValue: 'aws.bedrock' } },
+        ],
+      });
+      expect(payload.account).toEqual({
+        operator: 'AND',
+        operand: [
+          { operator: 'EQUALS', operand: { targetName: 'glossary.accountSubtype', targetValue: 'workload' } },
+        ],
+      });
+    });
+
+    it('sends the all-baseline subtrees when both selects stay on "all"', async () => {
+      mountComponent({ type: templateTypes.types.AGENTPROFILE });
+      await flushPromises();
+
+      const payload = TemplateApi.getDecisionCount.mock.calls.pop()[0];
+      expect(payload.application).toEqual({ operator: 'EQUALS', operand: { targetName: 'authoritative', targetValue: false } });
+      expect(payload.account).toEqual({ operator: 'ALL', operand: [] });
+    });
+  });
+
+  describe('Agent access target-count payload', () => {
+    it('composes platform and agent type scope into the access filter subtrees', async () => {
+      mountComponent({ type: templateTypes.types.AGENTACCESS });
+      await flushPromises();
+
+      // the access filters arrive from their builders via update-filter; all four
+      // must be present before the count call fires (allFiltersPresent gate)
+      wrapper.vm.filters.application = {
+        operator: 'EQUALS',
+        operand: { targetName: 'name', targetValue: 'Billing' },
+      };
+      wrapper.vm.filters.account = {
+        operator: 'EQUALS',
+        operand: { targetName: 'name', targetValue: 'svc-*' },
+      };
+      wrapper.vm.filters.entitlement = { operator: 'ALL', operand: [] };
+      wrapper.vm.filters.role = { operator: 'ALL', operand: [] };
+      wrapper.vm.formFields.platform = 'aws.bedrock';
+      wrapper.vm.formFields.agentType = 'workload';
+      wrapper.vm.updateFilter();
+      // updateFilter debounces the count call by 200ms
+      await new Promise((resolve) => { setTimeout(resolve, 250); });
+      await flushPromises();
+
+      const payload = TemplateApi.getDecisionCount.mock.calls.pop()[0];
+      // scope AND access, flattened into the composed tree
+      expect(payload.application).toEqual({
+        operator: 'AND',
+        operand: [
+          {
+            operator: 'OR',
+            operand: [
+              { operator: 'EQUALS', operand: { targetName: 'templateName', targetValue: 'aws.bedrock' } },
+              { operator: 'EQUALS', operand: { targetName: 'aiAgentSource', targetValue: 'aws.bedrock' } },
+            ],
+          },
+          { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'Billing' } },
+        ],
+      });
+      expect(payload.account).toEqual({
+        operator: 'AND',
+        operand: [
+          { operator: 'EQUALS', operand: { targetName: 'glossary.accountSubtype', targetValue: 'workload' } },
+          { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'svc-*' } },
+        ],
+      });
     });
   });
 });

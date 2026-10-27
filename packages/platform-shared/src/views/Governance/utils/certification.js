@@ -15,7 +15,7 @@ import {
 } from 'lodash';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import BaseTemplate from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate/templateBase.json';
-import { uiTypeMap } from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/templateTypes';
+import { types, uiTypeMap, isAgentType } from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/templateTypes';
 import { getNameFromDisplayName, getDisplayNamefromName } from '@forgerock/platform-shared/src/views/Governance/utils/events';
 import { EXPIRATION_TIMING } from '@forgerock/platform-shared/src/views/Governance/utils/certificationConstants';
 import i18n from '@/i18n';
@@ -95,6 +95,170 @@ export function checkForSingleFilter(filter, field) {
   return false;
 }
 
+// The agent platform select writes an OR of two EQUALS clauses on the application
+// record — "templateName" (template-matched agents) and "aiAgentSource" (discovered
+// agents) — carrying the same value, so either identifier matches the agent's app.
+// 'all' writes nothing. See aic-ui/agent-certification.md for the full composition model.
+export function getAgentPlatformFilter(platformId) {
+  return {
+    operator: 'OR',
+    operand: [
+      { operator: 'EQUALS', operand: { targetName: 'templateName', targetValue: platformId } },
+      { operator: 'EQUALS', operand: { targetName: 'aiAgentSource', targetValue: platformId } },
+    ],
+  };
+}
+
+/**
+ * Recognizes the canonical agent platform filter shape and returns the platform id
+ * it encodes, or null when the filter is anything else (a hand-authored or
+ * backend-authored tree the select can't represent).
+ */
+export function checkForAgentPlatformFilter(filter) {
+  if (filter?.operator !== 'OR' || !Array.isArray(filter.operand) || filter.operand.length !== 2) return null;
+  const [templateClause, sourceClause] = filter.operand;
+  if (templateClause?.operator !== 'EQUALS' || templateClause.operand?.targetName !== 'templateName') return null;
+  if (sourceClause?.operator !== 'EQUALS' || sourceClause.operand?.targetName !== 'aiAgentSource') return null;
+  // the select represents one platform — both clauses must agree
+  return templateClause.operand.targetValue === sourceClause.operand.targetValue
+    ? templateClause.operand.targetValue
+    : null;
+}
+
+// The agent type select writes an EQUALS clause on the account glossary subtype
+// (the same property the get-filter-schema "accountSubtype" key exposes). 'all'
+// writes nothing.
+export const AGENT_TYPE_FILTER_FIELD = 'glossary.accountSubtype';
+
+export function getAgentTypeFilter(agentType) {
+  return getSingleFilter(AGENT_TYPE_FILTER_FIELD, agentType);
+}
+
+/**
+ * Recognizes the canonical agent type filter shape and returns the type it encodes,
+ * or null when the filter is anything else.
+ */
+export function checkForAgentTypeFilter(filter) {
+  if (filter?.operator !== 'AND' || filter.operand?.length !== 1) return null;
+  const clause = filter.operand[0];
+  if (clause?.operator !== 'EQUALS' || clause.operand?.targetName !== AGENT_TYPE_FILTER_FIELD) return null;
+  return clause.operand.targetValue || null;
+}
+
+// agentAccess scope composition: its application/account subtrees carry
+// granted-access filters from its filter builders, so the platform/agentType
+// scope clauses AND into them instead of owning them; extraction peels the
+// scope clause back out on load. See aic-ui/agent-certification.md.
+
+/**
+ * ANDs the agent platform scope (templateName/aiAgentSource OR) into an agentAccess
+ * application filter tree. A null/absent base or an all-baseline returns the scope
+ * tree alone; an AND base absorbs the scope into its operand array (no nested
+ * wrappers); any other base is wrapped in a fresh AND.
+ * @param {Object|null} baseFilter the access-filter application subtree (or null)
+ * @param {String} platformId selected platform id
+ * @returns {Object} composed application filter
+ */
+export function composeAgentPlatformFilter(baseFilter, platformId) {
+  const scope = getAgentPlatformFilter(platformId);
+  if (!baseFilter || baseFilter.operator === 'ALL'
+    || isEqual(baseFilter, getAllNonAuthoritativeApplications())) {
+    return scope;
+  }
+  if (baseFilter.operator === 'AND' && Array.isArray(baseFilter.operand)) {
+    return { operator: 'AND', operand: [scope, ...baseFilter.operand] };
+  }
+  return { operator: 'AND', operand: [scope, baseFilter] };
+}
+
+/**
+ * ANDs the agent type scope into an agentAccess account filter tree. A null/absent
+ * base or an all-baseline returns the canonical scope tree (AND of one EQUALS on
+ * glossary.accountSubtype — the shape checkForAgentTypeFilter recognizes); a real
+ * base composes flat: the bare EQUALS clause is embedded directly in the AND, so
+ * no nested wrappers pile up.
+ * @param {Object|null} baseFilter the access-filter account subtree (or null)
+ * @param {String} agentType selected agent type
+ * @returns {Object} composed account filter
+ */
+export function composeAgentTypeFilter(baseFilter, agentType) {
+  if (!baseFilter || baseFilter.operator === 'ALL'
+    || isEqual(baseFilter, getAllFilter())) {
+    return getAgentTypeFilter(agentType);
+  }
+  const scopeClause = {
+    operator: 'EQUALS',
+    operand: { targetName: AGENT_TYPE_FILTER_FIELD, targetValue: agentType },
+  };
+  if (baseFilter.operator === 'AND' && Array.isArray(baseFilter.operand)) {
+    return { operator: 'AND', operand: [scopeClause, ...baseFilter.operand] };
+  }
+  return { operator: 'AND', operand: [scopeClause, baseFilter] };
+}
+
+/**
+ * Peels a scope clause back out of a composed agentAccess application filter,
+ * returning { platform, base } — platform is the encoded id or null, base is the
+ * remaining access filter ('' when nothing remains). A bare scope tree returns
+ * the platform with an empty base; an AND wrapping a leading scope clause splits
+ * it off; anything else decodes as { platform: null, base: filter }.
+ * @param {Object} filter application subtree from a saved template
+ * @returns {{ platform: String|null, base: Object|'' }}
+ */
+export function extractAgentPlatformFilter(filter) {
+  if (!filter || filter.operator === 'ALL' || isEqual(filter, getAllNonAuthoritativeApplications())) {
+    return { platform: null, base: '' };
+  }
+  if (checkForAgentPlatformFilter(filter)) {
+    return { platform: checkForAgentPlatformFilter(filter), base: '' };
+  }
+  if (filter.operator === 'AND' && Array.isArray(filter.operand) && filter.operand.length > 1) {
+    const [first, ...rest] = filter.operand;
+    const platform = first?.operator === 'OR'
+      ? checkForAgentPlatformFilter(first)
+      : null;
+    if (platform) {
+      return {
+        platform,
+        base: rest.length === 1 ? rest[0] : { operator: 'AND', operand: rest },
+      };
+    }
+  }
+  return { platform: null, base: filter };
+}
+
+/**
+ * Peels a scope clause back out of a composed agentAccess account filter,
+ * returning { agentType, base } — agentType is the encoded type or null, base is
+ * the remaining access filter ('' when nothing remains). Shape logic mirrors
+ * extractAgentPlatformFilter.
+ * @param {Object} filter account subtree from a saved template
+ * @returns {{ agentType: String|null, base: Object|'' }}
+ */
+export function extractAgentTypeFilter(filter) {
+  if (!filter || filter.operator === 'ALL' || isEqual(filter, getAllFilter())) {
+    return { agentType: null, base: '' };
+  }
+  if (checkForAgentTypeFilter(filter)) {
+    return { agentType: checkForAgentTypeFilter(filter), base: '' };
+  }
+  if (filter.operator === 'AND' && Array.isArray(filter.operand) && filter.operand.length > 1) {
+    const [first, ...rest] = filter.operand;
+    // composed trees carry the bare EQUALS clause (composeAgentTypeFilter embeds
+    // it flat); the canonical AND-of-one also passes via checkForAgentTypeFilter
+    const agentType = first?.operator === 'EQUALS' && first?.operand?.targetName === AGENT_TYPE_FILTER_FIELD
+      ? first.operand.targetValue
+      : null;
+    if (agentType) {
+      return {
+        agentType,
+        base: rest.length === 1 ? rest[0] : { operator: 'AND', operand: rest },
+      };
+    }
+  }
+  return { agentType: null, base: filter };
+}
+
 function checkForEqualityFilter(filter, field) {
   if (filter.operator === 'OR' && filter.operand.length) {
     let isEqualityFilter = true;
@@ -123,6 +287,7 @@ export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant,
 export function buildSavePayload(type, forms, eventBased) {
   const saveObj = cloneDeep(BaseTemplate);
   saveObj.certificationType = uiTypeMap[type];
+  const isAgent = isAgentType(type);
 
   // Details
   const details = forms.FrDetailsForm;
@@ -263,7 +428,7 @@ export function buildSavePayload(type, forms, eventBased) {
   saveObj.excludeConditionalAccess = what.excludeConditionalAccess;
   saveObj.excludeRoleBasedAccess = what.excludeRoleBasedAccess;
 
-  if (type === 'ENTITLEMENTCOMPOSITION' || type === 'IDENTITYPROFILE' || type === 'ROLECOMPOSITION') {
+  if (type === 'ENTITLEMENTCOMPOSITION' || type === 'IDENTITYPROFILE' || type === 'ROLECOMPOSITION' || isAgent) {
     delete saveObj.excludeConditionalAccess;
     delete saveObj.excludeRoleBasedAccess;
   }
@@ -299,6 +464,14 @@ export function buildSavePayload(type, forms, eventBased) {
   if (certifierType === 'roleOwner') certifierType = 'roleOwner';
   if (certifierType === 'organizationAdmin') certifierType = 'organization';
   if (certifierType === 'custom') certifierPath = `user.${who.certifierPath}`;
+  // custodian saves through the custom machinery: the glossary actors field is a
+  // bare managed/user/<id> ref array, which buildCustomCertifierStringFromKey
+  // projects exactly as the dedicated custodian builder does — without the
+  // custodian path's authorization constraints
+  if (certifierType === 'custodian') {
+    certifierType = 'custom';
+    certifierPath = 'glossary.idx./account.actors';
+  }
 
   saveObj.stages = [
     {
@@ -423,34 +596,68 @@ export function buildSavePayload(type, forms, eventBased) {
   const columnConfig = {};
   const columnSortConfig = {};
   if (what.enableAccountGrant) {
-    columnConfig.accounts = customization.columnConfig.accounts;
+    columnConfig.accounts = customization.columnConfig?.accounts;
     columnSortConfig.accounts = customization.sortableColumnConfig?.accounts || [];
   }
   if (what.enableEntitlementGrant) {
-    columnConfig.entitlements = customization.columnConfig.entitlements;
+    columnConfig.entitlements = customization.columnConfig?.entitlements;
     columnSortConfig.entitlements = customization.sortableColumnConfig?.entitlements || [];
   }
   if (what.enableRoleGrant) {
-    columnConfig.roles = customization.columnConfig.roles;
+    columnConfig.roles = customization.columnConfig?.roles;
     columnSortConfig.roles = customization.sortableColumnConfig?.roles || [];
   }
   if (what.enableEntitlementCompositionGrant) {
-    columnConfig.entitlementComposition = customization.columnConfig.entitlementComposition;
+    columnConfig.entitlementComposition = customization.columnConfig?.entitlementComposition;
     columnSortConfig.entitlementComposition = (customization.sortableColumnConfig?.entitlementComposition || [])
       .filter((val) => !val.startsWith('user.') && !val.startsWith('account.'));
   }
   if (what.enableIdentityProfileGrant) {
-    columnConfig.identityProfile = customization.columnConfig.identityProfile;
+    columnConfig.identityProfile = customization.columnConfig?.identityProfile;
     columnSortConfig.identityProfile = customization.sortableColumnConfig?.identityProfile || [];
   }
   if (what.enableRoleCompositionGrant) {
-    columnConfig.roleComposition = customization.columnConfig.roleComposition;
+    columnConfig.roleComposition = customization.columnConfig?.roleComposition;
     columnSortConfig.roleComposition = customization.sortableColumnConfig?.roleComposition || [];
+  }
+  if (isAgent) {
+    columnConfig.agentProfile = customization.columnConfig?.agentProfile;
+    columnConfig.agentAccess = customization.columnConfig?.agentAccess;
+    columnSortConfig.agentProfile = customization.sortableColumnConfig?.agentProfile || [];
+    columnSortConfig.agentAccess = customization.sortableColumnConfig?.agentAccess || [];
   }
   saveObj.uiConfig = {
     columnConfig,
     columnSortConfig,
   };
+
+  // agentProfile scope selects own the generic targetFilter subtrees (platform =
+  // templateName/aiAgentSource OR, agent type = glossary-subtype EQUALS; 'all'
+  // writes the all-baseline). A loaded subtree the selects can't represent is
+  // replaced on re-save, never merged. agentAccess AND-composes instead — the
+  // generic block above has already populated the subtrees from its filter builders.
+  if (type === types.AGENTPROFILE) {
+    saveObj.targetFilter.application = what.platform && what.platform !== 'all'
+      ? getAgentPlatformFilter(what.platform)
+      : getAllNonAuthoritativeApplications();
+    saveObj.targetFilter.account = what.agentType && what.agentType !== 'all'
+      ? getAgentTypeFilter(what.agentType)
+      : getAllFilter();
+  } else if (isAgent) {
+    // agentAccess scope clauses AND into the subtrees (see composeAgentPlatformFilter)
+    if (what.platform && what.platform !== 'all') {
+      saveObj.targetFilter.application = composeAgentPlatformFilter(
+        saveObj.targetFilter.application,
+        what.platform,
+      );
+    }
+    if (what.agentType && what.agentType !== 'all') {
+      saveObj.targetFilter.account = composeAgentTypeFilter(
+        saveObj.targetFilter.account,
+        what.agentType,
+      );
+    }
+  }
 
   return saveObj;
 }
@@ -520,13 +727,31 @@ export function getFormValuesFromTemplate(template, eventBased) {
   let appFilter = {};
   let singleApp = [];
   let appSelection = i18n.global.t('governance.editTemplate.allApplications');
-  if (template.targetFilter.application !== undefined && !isEqual(template.targetFilter.application, getAllNonAuthoritativeApplications())) {
-    if (checkForEqualityFilter(template.targetFilter.application, 'id')) {
+
+  // agent scope selects read back out of the targetFilter subtrees they were
+  // folded into: agentProfile owns them (exact-match recognition, anything else
+  // falls to 'all'); agentAccess's scope is peeled off first and the remainder
+  // decodes below as the user's access filter (decoded trees round-trip).
+  let agentPlatformScope = null;
+  let agentTypeScope = null;
+  let decodedApplication = template.targetFilter.application;
+  let decodedAccount = template.targetFilter.account;
+  if (template.certificationType === uiTypeMap.AGENTACCESS) {
+    const appScope = extractAgentPlatformFilter(template.targetFilter.application);
+    const accountScope = extractAgentTypeFilter(template.targetFilter.account);
+    agentPlatformScope = appScope.platform;
+    agentTypeScope = accountScope.agentType;
+    decodedApplication = appScope.base || undefined;
+    decodedAccount = accountScope.base || undefined;
+  }
+
+  if (decodedApplication !== undefined && !isEqual(decodedApplication, getAllNonAuthoritativeApplications())) {
+    if (checkForEqualityFilter(decodedApplication, 'id')) {
       appSelection = i18n.global.t('governance.editTemplate.specificApplications');
-      singleApp = template.targetFilter.application.operand.map((x) => (x.operand.targetValue));
+      singleApp = decodedApplication.operand.map((x) => (x.operand.targetValue));
     } else {
       appSelection = i18n.global.t('governance.editTemplate.filterApplications');
-      appFilter = template.targetFilter.application;
+      appFilter = decodedApplication;
     }
   }
 
@@ -534,9 +759,21 @@ export function getFormValuesFromTemplate(template, eventBased) {
   let accountFilter = {};
   let accountSelection = i18n.global.t('governance.editTemplate.allAccounts');
 
-  if (!isEqual(template.targetFilter.account, getAllFilter())) {
+  if (decodedAccount !== undefined && !isEqual(decodedAccount, getAllFilter())) {
     accountSelection = i18n.global.t('governance.editTemplate.filterAccounts');
-    accountFilter = template.targetFilter.account;
+    accountFilter = decodedAccount;
+  }
+
+  // agentProfile scope selects own the subtrees (exact-match recognition, anything
+  // else falls to 'all'); agentAccess values were extracted above
+  let platform = 'all';
+  let agentType = 'all';
+  if (template.certificationType === uiTypeMap.AGENTPROFILE) {
+    platform = checkForAgentPlatformFilter(template.targetFilter.application) || 'all';
+    agentType = checkForAgentTypeFilter(template.targetFilter.account) || 'all';
+  } else {
+    platform = agentPlatformScope || 'all';
+    agentType = agentTypeScope || 'all';
   }
 
   // decision filter
@@ -600,6 +837,8 @@ export function getFormValuesFromTemplate(template, eventBased) {
     singleUserInfo,
     userFilter,
     userSelection,
+    platform,
+    agentType,
   };
 
   // When
@@ -653,10 +892,19 @@ export function getFormValuesFromTemplate(template, eventBased) {
     case 'organization':
       certType = 'organizationAdmin';
       break;
+    case 'custodian':
+      certType = 'custodian';
+      break;
     case 'custom':
       certType = 'custom';
       split = certifierData.certifierPath.split('.');
       certifierPath = split.length > 0 ? split[split.length - 1] : certifierData.certifierPath;
+      // a custodian saved through the custom machinery (glossary actors path)
+      // restores as the Custodian option the UI offered
+      if (certifierData.certifierPath === 'glossary.idx./account.actors') {
+        certType = 'custodian';
+        certifierPath = '';
+      }
       break;
     default:
       throw new Error(i18n.global.t('governance.editTemplate.errorReadingCertifierType'));
@@ -774,6 +1022,8 @@ export function getFormValuesFromTemplate(template, eventBased) {
       entitlementComposition: template.uiConfig?.columnConfig?.entitlementComposition || [],
       identityProfile: template.uiConfig?.columnConfig?.identityProfile || [],
       roleComposition: template.uiConfig?.columnConfig?.roleComposition || [],
+      agentProfile: template.uiConfig?.columnConfig?.agentProfile || [],
+      agentAccess: template.uiConfig?.columnConfig?.agentAccess || [],
     },
     sortableColumnConfig: {
       accounts: template.uiConfig?.columnSortConfig?.accounts || [],
@@ -782,6 +1032,8 @@ export function getFormValuesFromTemplate(template, eventBased) {
       entitlementComposition: template.uiConfig?.columnSortConfig?.entitlementComposition || [],
       identityProfile: template.uiConfig?.columnSortConfig?.identityProfile || [],
       roleComposition: template.uiConfig?.columnSortConfig?.roleComposition || [],
+      agentProfile: template.uiConfig?.columnSortConfig?.agentProfile || [],
+      agentAccess: template.uiConfig?.columnSortConfig?.agentAccess || [],
     },
   };
   return forms;

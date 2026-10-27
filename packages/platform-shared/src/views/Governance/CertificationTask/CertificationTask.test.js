@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import Notifications from '@kyvg/vue3-notification';
@@ -21,6 +22,9 @@ const { modalHide, modalShow } = mockModal();
 describe('CertificationTask', () => {
   let wrapper;
 
+  // TaskList loads the agent config for platform labels/icons; reject so the
+  // static fallbacks load (Agents suites' convention) without an un-mocked axios call
+  AgentApi.getAgentConfig = jest.fn().mockRejectedValue(new Error('config unavailable'));
   CommonsApi.getGlossarySchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
   CommonsApi.getFilterSchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
   CommonsApi.getIgaAutoIdConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));

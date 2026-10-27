@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       </h4>
       <FrField
         v-model="formFields.allowSelfCert"
-        v-if="!isEntitlementComposition && !isRoleComposition"
+        v-if="!isEntitlementComposition && !isRoleComposition && !isAgentType"
         class="mb-4"
         name="allowSelfCert"
         testid="allow-self-cert"
@@ -362,7 +362,7 @@ import {
 import { cloneDeep } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
-import { types } from '../../templateTypes';
+import { types, isAgentType } from '../../templateTypes';
 
 export default {
   name: 'AdditionalOptions',
@@ -518,6 +518,9 @@ export default {
     },
     isRoleComposition() {
       return this.type === types.ROLECOMPOSITION;
+    },
+    isAgentType() {
+      return isAgentType(this.type);
     },
   },
   watch: {

@@ -58,7 +58,19 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="summary.enableAccountGrant">
+            <template v-if="isAgentType">
+              <dt
+                class="mb-1"
+                data-testid="summary-agents">
+                <small class="text-capitalize">{{ $t('common.agents') }}</small>
+              </dt>
+              <dd
+                class="mb-4"
+                data-testid="summary-agent-count">
+                {{ summary.numAgents }}
+              </dd>
+            </template>
+            <template v-if="summary.enableAccountGrant && !isAgentProfile">
               <dt
                 class="mb-1"
                 data-testid="summary-account">
@@ -70,7 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ summary.numAccounts }}
               </dd>
             </template>
-            <template v-if="summary.enableAccountGrant || summary.enableEntitlementGrant || summary.enableEntitlementCompositionGrant">
+            <template v-if="(summary.enableAccountGrant || summary.enableEntitlementGrant || summary.enableEntitlementCompositionGrant) && !isAgentProfile">
               <dt class="mb-1">
                 <small>{{ $t('common.applications') }}</small>
               </dt>
@@ -118,7 +130,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="!isEntitlementComposition && !isIdentityProfile && !isRoleComposition">
+            <template v-if="!isEntitlementComposition && !isIdentityProfile && !isRoleComposition && !isAgentType">
               <dt class="mb-1">
                 <small>{{ $t('common.users') }}</small>
               </dt>
@@ -302,7 +314,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="!isEntitlementComposition && !isRoleComposition">
+            <template v-if="!isEntitlementComposition && !isRoleComposition && !isAgentType">
               <dt class="mb-1">
                 <small>{{ startCaseTranslationKey('governance.editTemplate.allowSelfCert') }}</small>
               </dt>
@@ -438,7 +450,7 @@ import {
   startCase,
 } from 'lodash';
 import FrEventDetailsSummary from '@forgerock/platform-shared/src/views/Governance/Events/EventEdit/EventDetailsSummary';
-import { types, uiTypeMap } from '../../templateTypes';
+import { types, uiTypeMap, isAgentType } from '../../templateTypes';
 
 export default {
   name: 'SummaryStep',
@@ -543,6 +555,7 @@ export default {
         organizationAdmin: 'governance.editTemplate.organizationAdmin',
         entitlementOwner: 'governance.editTemplate.entitlementOwner',
         roleOwner: 'governance.editTemplate.roleOwner',
+        custodian: 'governance.editTemplate.custodian',
         custom: 'governance.editTemplate.custom',
       };
       const key = certTypeKeyMap[this.summary.who.certType];
@@ -563,6 +576,12 @@ export default {
       const info = this.summary.who?.defaultCertifierInfo;
       if (!info?.givenName) return blankValueIndicator;
       return this.$t('common.userFullName', { givenName: info.givenName, sn: info.sn });
+    },
+    isAgentType() {
+      return isAgentType(this.summary.type);
+    },
+    isAgentProfile() {
+      return this.summary.type === types.AGENTPROFILE;
     },
     isEntitlementComposition() {
       return this.summary.type === types.ENTITLEMENTCOMPOSITION;

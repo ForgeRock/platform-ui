@@ -34,10 +34,10 @@ describe('ColumnConfiguration', () => {
     { selectLabel: 'Account ID', listLabel: 'Account ID', value: 'account.id' },
   ];
 
-  function mountComponent(customModelValue = modelValue) {
+  function mountComponent(customModelValue = modelValue, customSelectInputs = selectInputs) {
     return mount(ColumnConfiguration, {
       props: {
-        selectInputs,
+        selectInputs: customSelectInputs,
         'model-value': customModelValue,
       },
       global: {
@@ -127,5 +127,36 @@ describe('ColumnConfiguration', () => {
       { selectLabel: 'Account ID', listLabel: 'Account ID', value: 'account.id' },
       { selectLabel: 'User Name', listLabel: 'User Name', value: 'user.name' },
     ]);
+  });
+
+  it('shows the Sortable toggle by default and hides it for options declaring hideSortable', () => {
+    const selectInputsWithFlag = [
+      {
+        key: 'agent',
+        label: 'Agent Columns',
+        options: [
+          // option carries the optional hideSortable declaration from its
+          // hardcoded column entry (e.g. a column with no server-side sort)
+          {
+            selectLabel: 'Platform', listLabel: 'Platform', value: 'agent.platform', hideSortable: true,
+          },
+          { selectLabel: 'Agent', listLabel: 'Agent', value: 'agent.agent' },
+        ],
+      },
+    ];
+    wrapper = mountComponent([
+      {
+        selectLabel: 'Platform', listLabel: 'Platform', value: 'agent.platform', hideSortable: true,
+      },
+      { selectLabel: 'Agent', listLabel: 'Agent', value: 'agent.agent' },
+    ], selectInputsWithFlag);
+
+    const items = wrapper.findAll('.list-group-item');
+    expect(items).toHaveLength(2);
+    // the flagged column's row has no Sortable toggle; the other row keeps its default
+    const rowsWithToggle = items.filter((item) => item.text().includes('Sortable'));
+    expect(rowsWithToggle).toHaveLength(1);
+    expect(rowsWithToggle[0].text()).toContain('Agent');
+    expect(wrapper.text()).toContain('Platform');
   });
 });

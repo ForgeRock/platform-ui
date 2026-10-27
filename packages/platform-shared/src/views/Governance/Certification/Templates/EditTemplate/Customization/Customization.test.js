@@ -131,6 +131,8 @@ describe('Customization', () => {
         entitlementComposition: ['application.application', 'entitlement.entitlement', 'review.flags', 'review.comments'],
         identityProfile: ['user.user', 'review.flags', 'review.comments'],
         roleComposition: ['role.role', 'review.flags', 'review.comments'],
+        agentProfile: ['agent.agent', 'agent.platform', 'review.flags', 'review.comments'],
+        agentAccess: ['agent.agent', 'review.flags', 'review.comments'],
       },
       sortableColumnConfig: {
         accounts: [],
@@ -139,7 +141,53 @@ describe('Customization', () => {
         roleComposition: [],
         roles: [],
         identityProfile: [],
+        agentProfile: [],
+        agentAccess: [],
       },
     });
+  });
+
+  it('shows a single Agent Profile tab for AGENTPROFILE type', async () => {
+    wrapper = mount(Customization, {
+      props: {
+        value,
+        grantFilterProperties,
+        summary,
+        type: 'AGENTPROFILE',
+      },
+      global: {
+        plugins: [i18n],
+      },
+    });
+    await flushPromises();
+
+    const tabTitles = wrapper.findAll('btab').map((tab) => tab.attributes('title'));
+    expect(tabTitles).toEqual(['Agent Profile']);
+
+    const certColConfigs = wrapper.findAllComponents({ name: 'CertColumnConfiguration' });
+    expect(certColConfigs.length).toBe(1);
+    expect(certColConfigs[0].props('grantType')).toBe('agentProfile');
+  });
+
+  it('shows a single Agent Access tab for AGENTACCESS', async () => {
+    wrapper = mount(Customization, {
+      props: {
+        value,
+        grantFilterProperties,
+        summary,
+        type: 'AGENTACCESS',
+      },
+      global: {
+        plugins: [i18n],
+      },
+    });
+    await flushPromises();
+
+    const tabTitles = wrapper.findAll('btab').map((tab) => tab.attributes('title'));
+    expect(tabTitles).toEqual(['Agent Access']);
+
+    const certColConfigs = wrapper.findAllComponents({ name: 'CertColumnConfiguration' });
+    expect(certColConfigs.length).toBe(1);
+    expect(certColConfigs[0].props('grantType')).toBe('agentAccess');
   });
 });

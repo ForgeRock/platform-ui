@@ -148,6 +148,50 @@ of the MIT license. See the LICENSE file for details. -->
                 </BMediaBody>
               </BMedia>
             </FrCardRadioInput>
+            <FrCardRadioInput
+              v-if="governanceAgentsEnabled"
+              class="mb-3"
+              :radio-value="types.AGENTPROFILE"
+              name="selectedCampaignTemplateType"
+              v-model="selectedCampaignTemplateType">
+              <BMedia no-body>
+                <FrIcon
+                  name="smart_toy"
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border mr-4 border-purple color-purple" />
+                <BMediaBody>
+                  <h3
+                    class="h5"
+                    :aria-label="$t('governance.campaignTemplateTypeModal.agentProfileCertification')">
+                    {{ $t('governance.campaignTemplateTypeModal.agentProfileCertification') }}
+                  </h3>
+                  <div class="d-block">
+                    {{ $t('governance.campaignTemplateTypeModal.agentProfileCertificationMessage') }}
+                  </div>
+                </BMediaBody>
+              </BMedia>
+            </FrCardRadioInput>
+            <FrCardRadioInput
+              v-if="governanceAgentsEnabled"
+              class="mb-3"
+              :radio-value="types.AGENTACCESS"
+              name="selectedCampaignTemplateType"
+              v-model="selectedCampaignTemplateType">
+              <BMedia no-body>
+                <FrIcon
+                  name="smart_toy"
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border mr-4 border-teal color-teal" />
+                <BMediaBody>
+                  <h3
+                    class="h5"
+                    :aria-label="$t('governance.campaignTemplateTypeModal.agentAccessCertification')">
+                    {{ $t('governance.campaignTemplateTypeModal.agentAccessCertification') }}
+                  </h3>
+                  <div class="d-block">
+                    {{ $t('governance.campaignTemplateTypeModal.agentAccessCertificationMessage') }}
+                  </div>
+                </BMediaBody>
+              </BMedia>
+            </FrCardRadioInput>
           </div>
         </BCol>
       </BRow>
@@ -188,6 +232,11 @@ export default {
       selectedCampaignTemplateType: null,
       types,
     };
+  },
+  computed: {
+    governanceAgentsEnabled() {
+      return this.$store.state.SharedStore.governanceAgentsEnabled;
+    },
   },
   methods: {
     nextStep() {

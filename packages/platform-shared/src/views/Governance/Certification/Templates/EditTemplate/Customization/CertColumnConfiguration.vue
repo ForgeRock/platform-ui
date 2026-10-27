@@ -47,6 +47,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // grant flags from the template summary — gates which access columns agentAccess offers
+  summary: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 /**
@@ -61,6 +66,9 @@ function getOOTBColumns(category) {
     selectLabel: OOTBColumns[column].label,
     listLabel: OOTBColumns[column].label,
     value: column,
+    // optional per-column declaration: present means this column's Sortable
+    // toggle is hidden in the picker (no server-side sort exists for it)
+    hideSortable: OOTBColumns[column].hideSortable,
   }));
 }
 
@@ -115,10 +123,25 @@ const categorySelects = computed(() => [
     showFor: ['roles', 'roleComposition'],
   },
   {
+    key: 'agent',
+    label: 'Agent',
+    options: getOOTBColumns('agent'),
+    showFor: ['agentProfile'],
+  },
+  {
+    // agentAccess items only consistently carry the agent's user identity — the
+    // account-derived platform/model/owner columns resolve from agent account
+    // records these items don't have, so only the name column is offered
+    key: 'agent',
+    label: 'Agent',
+    options: getOOTBColumns('agent').filter((col) => col.value === 'agent.agent'),
+    showFor: ['agentAccess'],
+  },
+  {
     key: 'review',
     label: 'Review',
     options: getSelectOptionsForCategory('review'),
-    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile', 'roleComposition', 'agentProfile', 'agentAccess'],
   },
 ]);
 
@@ -150,6 +173,21 @@ function handleUpdate(event) {
 }
 
 /**
+ * Returns the hideSortable declaration for a column value, looking it up from
+ * the category select options. Saved configurations are plain strings, so the
+ * flag must be re-applied from its declaration on every load — otherwise a
+ * flagged column's Sortable toggle reappears once its selection round-trips.
+ *
+ * @param {string} value - Column value (e.g. "agent.platform").
+ * @returns {Boolean|undefined} The declared hideSortable flag, if any.
+ */
+function getHideSortable(value) {
+  return categorySelects.value
+    .flatMap((select) => select.options)
+    .find((option) => option.value === value)?.hideSortable;
+}
+
+/**
  * Initializes the component based on the provided model value.
  */
 const selectedColumnsList = computed(() => {
@@ -161,6 +199,7 @@ const selectedColumnsList = computed(() => {
     listLabel: getColumnLabel(field),
     value: field,
     sortable: props.sortableColumns.includes(field),
+    hideSortable: getHideSortable(field),
   }));
 });
 

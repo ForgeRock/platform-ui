@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
             :grant-filter-properties="grantFilterProperties"
             :grant-type="grantType.value"
             :auto-id-enabled="autoIdEnabled"
+            :summary="summary"
             @update:model-value="updatedColumnConfig[grantType.value] = $event"
             @update:sortable-columns="sortableColumnConfig[grantType.value] = $event.map((col) => col.value)" />
         </BTab>
@@ -62,6 +63,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  type: {
+    type: String,
+    default: '',
+  },
 });
 
 const updatedColumnConfig = ref({});
@@ -77,7 +82,18 @@ const availableGrantTypes = [
   { value: 'roleComposition', text: i18n.global.t('common.roleComposition') },
 ];
 
+// ponytail: agent certs key off the template type, not grant flags — AGENTPROFILE keeps
+// accountGrant enabled for the backend filter but must not surface the accounts tab
+const isAgentProfile = computed(() => props.type === 'AGENTPROFILE');
+const isAgentAccess = computed(() => props.type === 'AGENTACCESS');
+
 const grantTypes = computed(() => {
+  if (isAgentProfile.value) {
+    return [{ value: 'agentProfile', text: i18n.global.t('common.agentProfile') }];
+  }
+  if (isAgentAccess.value) {
+    return [{ value: 'agentAccess', text: i18n.global.t('common.agentAccess') }];
+  }
   const types = [];
   if (props.summary?.enableAccountGrant) {
     types.push(availableGrantTypes.find((type) => type.value === 'accounts'));
@@ -118,6 +134,8 @@ function init() {
     if (templateConfig.entitlementComposition?.length) columnConfig.entitlementComposition = [...templateConfig.entitlementComposition];
     if (templateConfig.identityProfile?.length) columnConfig.identityProfile = [...templateConfig.identityProfile];
     if (templateConfig.roleComposition?.length) columnConfig.roleComposition = [...templateConfig.roleComposition];
+    if (templateConfig.agentProfile?.length) columnConfig.agentProfile = [...templateConfig.agentProfile];
+    if (templateConfig.agentAccess?.length) columnConfig.agentAccess = [...templateConfig.agentAccess];
   }
   updatedColumnConfig.value = columnConfig;
 
@@ -129,6 +147,8 @@ function init() {
     roles: savedSortable.roles || [],
     identityProfile: savedSortable.identityProfile || [],
     roleComposition: savedSortable.roleComposition || [],
+    agentProfile: savedSortable.agentProfile || [],
+    agentAccess: savedSortable.agentAccess || [],
   };
 }
 

@@ -226,8 +226,9 @@ export default {
      Useful for displaying the name of the certifier in the certification task details when is a user or role
      */
     certifierName() {
-      const givenName = this.$route.params.certifier.givenName || this.$route.params.certifier.name;
-      const sn = this.$route.params.certifier.sn || '';
+      const source = this.$route.params.certifier || {};
+      const givenName = source.givenName || source.name;
+      const sn = source.sn || '';
 
       return {
         givenName,

@@ -240,7 +240,9 @@ export default {
     },
     grantTypeTabs() {
       const tabs = [];
-      if (this.isAccountTargetFilter) {
+      // agentProfile items are the agent account records themselves (no linked user);
+      // the agentProfile tab is the single review view, so no accounts tab
+      if (this.isAccountTargetFilter && this.campaignDetails.certificationType !== uiTypeMap.AGENTPROFILE) {
         tabs.push({
           key: 'accounts',
           label: this.$t('governance.certificationTask.certificationTabs.accounts'),
@@ -270,6 +272,15 @@ export default {
           label: this.$t('governance.certificationTask.certificationTabs.identityProfile'),
         });
       }
+      if (this.campaignDetails.certificationType === uiTypeMap.AGENTPROFILE) {
+        tabs.push({
+          key: 'agentProfile',
+          label: this.$t('governance.certificationTask.certificationTabs.agentProfile'),
+        });
+      }
+      // agentAccess campaigns generate only the standard grant item types
+      // (accountGrant/entitlementGrant/roleMembership) — the grant tabs above
+      // already cover every item, so no agentAccess tab
       if (this.isRoleCompositionTargetFilter) {
         tabs.push({
           key: 'roleComposition',

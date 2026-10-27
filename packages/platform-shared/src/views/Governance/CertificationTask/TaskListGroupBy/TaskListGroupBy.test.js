@@ -14,6 +14,7 @@ import {
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import Notifications from '@kyvg/vue3-notification';
@@ -163,6 +164,10 @@ describe('Glossary', () => {
     return { wrapper, domWrapper: new DOMWrapper(document.body) };
   }
   beforeEach(() => {
+    // TaskList loads the agent config for platform labels/icons; reject so the
+    // static fallbacks load (Agents suites' convention) without an un-mocked axios call
+    AgentApi.getAgentConfig = jest.fn().mockRejectedValue(new Error('config unavailable'));
+
     setupTestPinia({ user: { userId: '1234' } });
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     jest.spyOn(CommonsApi, 'getFilterSchema').mockReturnValue(Promise.resolve({ data: { user: [] } }));

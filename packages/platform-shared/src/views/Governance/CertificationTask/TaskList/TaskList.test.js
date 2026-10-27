@@ -23,6 +23,7 @@ import {
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import store from '@/store';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
@@ -116,6 +117,10 @@ describe('TaskList', () => {
     createdWrappers = [];
   });
   beforeEach(() => {
+    // TaskList loads the agent config for platform labels/icons; reject so the
+    // static fallbacks load (Agents suites' convention) without an un-mocked axios call
+    AgentApi.getAgentConfig = jest.fn().mockRejectedValue(new Error('config unavailable'));
+
     store.replaceState({
       SharedStore: {
         webStorageAvailable: true,

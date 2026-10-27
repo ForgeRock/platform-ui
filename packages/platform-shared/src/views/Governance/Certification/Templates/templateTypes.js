@@ -14,6 +14,8 @@ export const types = {
   ENTITLEMENTCOMPOSITION: 'ENTITLEMENTCOMPOSITION',
   IDENTITYPROFILE: 'IDENTITYPROFILE',
   ROLECOMPOSITION: 'ROLECOMPOSITION',
+  AGENTPROFILE: 'AGENTPROFILE',
+  AGENTACCESS: 'AGENTACCESS',
 };
 
 // maps from ui type to iga type
@@ -24,8 +26,11 @@ export const uiTypeMap = {
   ENTITLEMENTCOMPOSITION: 'entitlementComposition',
   IDENTITYPROFILE: 'identityProfile',
   ROLECOMPOSITION: 'roleComposition',
+  AGENTPROFILE: 'agentProfile',
+  AGENTACCESS: 'agentAccess',
 };
 
+// enum values sent to the backend for the optional `platform` campaign filter
 // types of filters
 export const filterTypes = {
   ORGANIZATION: 'ORGANIZATION',
@@ -88,6 +93,19 @@ export const ROLECOMPOSITION = {
   certifierOptions: ['user', 'role', 'roleOwner'],
 };
 
+// AI Agent Profile certification — custodian saves as custom with the glossary
+// actors path (see buildSavePayload), keeping the CUSTODIAN certifier machinery unused
+export const AGENTPROFILE = {
+  filters: [],
+  certifierOptions: ['user', 'role', 'custodian', 'custom'],
+};
+
+// AI Agent Access certification — same grant/filter machinery as IDENTITY (backend confirmed), minus USERS/ORGANIZATION since agents are the subjects.
+export const AGENTACCESS = {
+  filters: [filterTypes.APPLICATIONS, filterTypes.ACCOUNTS, filterTypes.ENTITLEMENTS, filterTypes.ROLES],
+  certifierOptions: ['user', 'role', 'custodian', 'custom'],
+};
+
 // All certification types
 export const typeSpecificFields = {
   IDENTITY,
@@ -97,4 +115,11 @@ export const typeSpecificFields = {
   ENTITLEMENTCOMPOSITION,
   IDENTITYPROFILE,
   ROLECOMPOSITION,
+  AGENTPROFILE,
+  AGENTACCESS,
 };
+
+// ponytail: agent cert types share behavior; centralize the check so callers don't drift.
+// Accepts either the UI type (AGENTPROFILE) or the iga certificationType (agentProfile).
+export const isAgentType = (type) => type === types.AGENTPROFILE || type === types.AGENTACCESS
+  || type === uiTypeMap.AGENTPROFILE || type === uiTypeMap.AGENTACCESS;

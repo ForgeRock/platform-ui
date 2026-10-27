@@ -24,6 +24,8 @@ of the MIT license. See the LICENSE file for details. -->
         :is="tab.component"
         :auto-id-enabled="autoIdEnabled"
         :email-template-options="emailTemplateOptions"
+        :entity-type="entityType"
+        :mutation-type="mutationType"
         :event-based="eventBased"
         :event-trigger-name="eventTriggerName"
         :filter-properties="eventFilterProperties"
@@ -91,6 +93,19 @@ export default {
       default: () => ({}),
     },
     eventTriggerName: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Entity context for event-based certifications, forwarded to the
+     * FrEventDetails tab. Defaults preserve the pre-genericization user
+     * rendering when only the display name is known.
+     */
+    entityType: {
+      type: String,
+      default: 'user',
+    },
+    mutationType: {
       type: String,
       default: '',
     },
@@ -173,6 +188,7 @@ export default {
       numRoles: 0,
       numUsers: 0,
       numDecisions: 0,
+      numAgents: 0,
       types,
       tabComponents,
       forms: {
@@ -219,6 +235,7 @@ export default {
           singleUserInfo: {},
           userFilter: {},
           userSelection: this.$t('governance.editTemplate.allUsers'),
+          platform: 'all',
         },
         FrWhen: {
           duration: 2,
@@ -390,6 +407,7 @@ export default {
         numRoles: this.numRoles,
         numUsers: this.numUsers,
         numDecisions: this.numDecisions,
+        numAgents: this.numAgents,
         enableAccountGrant: this.forms.FrWhat.enableAccountGrant,
         enableEntitlementGrant: this.forms.FrWhat.enableEntitlementGrant,
         enableEntitlementCompositionGrant: this.forms.FrWhat.enableEntitlementCompositionGrant,
@@ -506,6 +524,9 @@ export default {
     setCounts(event) {
       const { objects } = event;
       this.numUsers = objects.user || 0;
+      // agent cert types: distinctAgents = distinct agent accounts under the filter;
+      // also serves as the Total Decision Items figure for agentProfile (one item per agent)
+      this.numAgents = event.distinctAgents || 0;
       this.numDecisions = this.type === types.IDENTITYPROFILE ? this.numUsers : (event.count || 0);
       this.numApplications = objects.application || 0;
       this.numAccounts = objects.account || 0;

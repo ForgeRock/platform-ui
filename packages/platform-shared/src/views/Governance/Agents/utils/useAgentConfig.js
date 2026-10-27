@@ -20,7 +20,7 @@ let fetchPromise = null;
  * @param {string} icon Icon value from /agent/config templates[].icon
  * @returns {String|null} The resolved image URL, or null when no icon is set
  */
-function resolveTemplateIcon(icon) {
+export function resolveTemplateIcon(icon) {
   if (!icon) return null;
   // Anything path- or URL-shaped (including data URIs) is used as-is
   if (icon.includes('/')) return icon;

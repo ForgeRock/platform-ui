@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
               <div class="d-flex align-items-center">
                 <FrField
+                  v-if="!element.hideSortable"
                   class="mr-2"
                   type="boolean"
                   size="sm"
@@ -62,10 +63,11 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 /**
- * This component is used to configure a list of items that are related to select inputs.
- * You can add items to the list by selecting them from the select inputs.
- * You can also remove items from the list by clicking the delete icon.
- * The items in the list can be reordered and removed.
+ * Configures a list of items related to select inputs: items are added by
+ * selecting from the inputs, removed via the delete icon, and can be
+ * reordered. An option may carry `hideSortable: true`, which hides that
+ * column's Sortable toggle (the column then always renders unsortable) —
+ * for fields with no server-side sort mapping.
  */
 import {
   BListGroupItem,
@@ -103,6 +105,7 @@ function getSelectOptions(options) {
     selectLabel: option.selectLabel,
     listLabel: option.listLabel,
     value: option.value,
+    hideSortable: option.hideSortable,
   }));
 }
 

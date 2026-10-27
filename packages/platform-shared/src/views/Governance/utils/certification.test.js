@@ -8,8 +8,16 @@
 import { cloneDeep } from 'lodash';
 import {
   buildSavePayload,
+  composeAgentPlatformFilter,
+  composeAgentTypeFilter,
+  extractAgentPlatformFilter,
+  extractAgentTypeFilter,
+  getAgentPlatformFilter,
+  getAgentTypeFilter,
   getCampaignDuration,
   getFormValuesFromTemplate,
+  getAllFilter,
+  getAllNonAuthoritativeApplications,
 } from './certification';
 import { EXPIRATION_TIMING } from './certificationConstants';
 
@@ -98,6 +106,8 @@ describe('certification', () => {
       singleUserInfo: {},
       userFilter: {},
       userSelection: 'All users',
+      platform: 'all',
+      agentType: 'all',
     });
   });
 
@@ -235,6 +245,8 @@ describe('certification', () => {
         operator: 'ALL',
       },
       userSelection: 'Users matching a filter',
+      platform: 'all',
+      agentType: 'all',
     });
   });
 
@@ -381,6 +393,8 @@ describe('certification', () => {
         operator: 'OR',
       },
       appSelection: 'Applications matching a filter',
+      platform: 'all',
+      agentType: 'all',
     });
   });
 
@@ -461,6 +475,8 @@ describe('certification', () => {
       userSelection: 'All users',
       appFilter: {},
       appSelection: 'All applications',
+      platform: 'all',
+      agentType: 'all',
     });
   });
 
@@ -499,6 +515,8 @@ describe('certification', () => {
       singleUserInfo: {},
       userFilter: {},
       userSelection: 'All users',
+      platform: 'all',
+      agentType: 'all',
     });
   });
 
@@ -607,6 +625,8 @@ describe('certification', () => {
         entitlementComposition: [],
         identityProfile: [],
         roleComposition: [],
+        agentProfile: [],
+        agentAccess: [],
       });
     });
 
@@ -620,6 +640,8 @@ describe('certification', () => {
         entitlementComposition: [],
         identityProfile: [],
         roleComposition: [],
+        agentProfile: [],
+        agentAccess: [],
       });
     });
 
@@ -1099,6 +1121,385 @@ describe('certification', () => {
 
       expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeConditionalAccess')).toBe(false);
       expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeRoleBasedAccess')).toBe(false);
+    });
+
+    describe('agent certification platform field', () => {
+      it('agentProfile writes platform as an OR of templateName/aiAgentSource clauses in targetFilter.application', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.platform = 'aws.bedrock';
+
+        const savePayload = buildSavePayload('AGENTPROFILE', forms);
+
+        expect(savePayload.targetFilter.application).toEqual({
+          operator: 'OR',
+          operand: [
+            { operator: 'EQUALS', operand: { targetName: 'templateName', targetValue: 'aws.bedrock' } },
+            { operator: 'EQUALS', operand: { targetName: 'aiAgentSource', targetValue: 'aws.bedrock' } },
+          ],
+        });
+        expect(savePayload.targetFilter.platform).toBeUndefined();
+      });
+
+      it('agentAccess composes platform as scope AND access in targetFilter.application', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.platform = 'aws.bedrock';
+        forms.FrWhat.appSelection = 'Applications matching a filter';
+        forms.FrWhat.appFilter = {
+          operator: 'AND',
+          subfilters: [{ operator: 'EQUALS', field: 'name', value: 'Billing' }],
+        };
+
+        const savePayload = buildSavePayload('AGENTACCESS', forms);
+
+        expect(savePayload.targetFilter.application).toEqual({
+          operator: 'AND',
+          operand: [
+            getAgentPlatformFilter('aws.bedrock'),
+            { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'Billing' } },
+          ],
+        });
+        expect(savePayload.targetFilter.platform).toBeUndefined();
+      });
+
+      it('agentAccess composes platform alone (no access filter) as the bare scope tree', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.platform = 'aws.bedrock';
+        forms.FrWhat.appSelection = 'All applications';
+
+        const savePayload = buildSavePayload('AGENTACCESS', forms);
+
+        expect(savePayload.targetFilter.application).toEqual(getAgentPlatformFilter('aws.bedrock'));
+      });
+
+      it('omits platform from targetFilter when "all" is selected', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.platform = 'all';
+        forms.FrWhat.appSelection = 'All applications';
+
+        const savePayload = buildSavePayload('AGENTPROFILE', forms);
+
+        expect(savePayload.targetFilter.platform).toBeUndefined();
+        // 'all' writes the standard all-baseline subtree — no scope condition
+        expect(savePayload.targetFilter.application).toEqual(getAllNonAuthoritativeApplications());
+      });
+
+      it('writes "all" baseline for the account subtree when agentType is "all"', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.agentType = 'all';
+
+        const savePayload = buildSavePayload('AGENTPROFILE', forms);
+
+        expect(savePayload.targetFilter.account).toEqual(getAllFilter());
+      });
+
+      it('saves agentProfile with accountGrant item type (agents have no linked user)', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.enableAccountGrant = true;
+
+        const savePayload = buildSavePayload('AGENTPROFILE', forms);
+
+        expect(savePayload.targetFilter.type).toEqual(['accountGrant']);
+      });
+
+      it('saves agentAccess with grant item types', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.enableAccountGrant = true;
+        forms.FrWhat.enableEntitlementGrant = true;
+        forms.FrWhat.enableRoleGrant = true;
+
+        const savePayload = buildSavePayload('AGENTACCESS', forms);
+
+        expect(savePayload.targetFilter.type).toEqual(['accountGrant', 'entitlementGrant', 'roleMembership']);
+      });
+
+      it('agentProfile reads platform back from the targetFilter.application clause pair', () => {
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentProfile',
+          targetFilter: {
+            ...defaultTemplate.targetFilter,
+            application: getAgentPlatformFilter('google.vertexai'),
+          },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        expect(forms.FrWhat.platform).toBe('google.vertexai');
+      });
+
+      it('agentProfile treats a foreign application filter as "all" and replaces it on re-save', () => {
+        const foreignFilter = {
+          operator: 'EQUALS',
+          operand: { targetName: 'name', targetValue: 'some app' },
+        };
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentProfile',
+          targetFilter: { ...defaultTemplate.targetFilter, application: foreignFilter },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        // not the canonical shape: the select shows "all"
+        expect(forms.FrWhat.platform).toBe('all');
+        // re-save: the selects own the subtree — the foreign tree is replaced by
+        // the standard all-baseline, not preserved
+        const savePayload = buildSavePayload('AGENTPROFILE', forms);
+        expect(savePayload.targetFilter.application).toEqual(getAllNonAuthoritativeApplications());
+      });
+
+      it('reads platform from a composed agentAccess application subtree and preserves the access filter', () => {
+        const accessFilter = { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'Billing' } };
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentAccess',
+          targetFilter: {
+            ...defaultTemplate.targetFilter,
+            application: composeAgentPlatformFilter(accessFilter, 'google.vertexai'),
+          },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        expect(forms.FrWhat.platform).toBe('google.vertexai');
+        // the peeled remainder still decodes as the user's access filter
+        expect(forms.FrWhat.appSelection).toBe('Applications matching a filter');
+        expect(forms.FrWhat.appFilter).toEqual(accessFilter);
+      });
+
+      it('reads platform from a bare agentAccess scope tree with no access filter', () => {
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentAccess',
+          targetFilter: {
+            ...defaultTemplate.targetFilter,
+            application: getAgentPlatformFilter('aws.bedrock'),
+          },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        expect(forms.FrWhat.platform).toBe('aws.bedrock');
+        expect(forms.FrWhat.appSelection).toBe('All applications');
+      });
+
+      it('defaults platform to "all" when not set on targetFilter', () => {
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentAccess',
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        expect(forms.FrWhat.platform).toBe('all');
+      });
+    });
+
+    describe('agent type field', () => {
+      it('agentProfile writes agentType as an EQUALS on glossary.accountSubtype in targetFilter.account', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.agentType = 'workload';
+
+        const savePayload = buildSavePayload('AGENTPROFILE', forms);
+
+        expect(savePayload.targetFilter.account).toEqual(getAgentTypeFilter('workload'));
+      });
+
+      it('agentAccess composes agentType as scope AND access in targetFilter.account', () => {
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.agentType = 'workload';
+        forms.FrWhat.accountSelection = 'Accounts matching a filter';
+        forms.FrWhat.accountFilter = {
+          operator: 'AND',
+          subfilters: [{ operator: 'EQUALS', field: 'name', value: 'svc-*' }],
+        };
+
+        const savePayload = buildSavePayload('AGENTACCESS', forms);
+
+        expect(savePayload.targetFilter.account).toEqual({
+          operator: 'AND',
+          operand: [
+            { operator: 'EQUALS', operand: { targetName: 'glossary.accountSubtype', targetValue: 'workload' } },
+            { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'svc-*' } },
+          ],
+        });
+        expect(savePayload.targetFilter.agentType).toBeUndefined();
+      });
+
+      it('agentProfile reads agentType back from the targetFilter.account clause', () => {
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentProfile',
+          targetFilter: {
+            ...defaultTemplate.targetFilter,
+            account: getAgentTypeFilter('nhi'),
+          },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        expect(forms.FrWhat.agentType).toBe('nhi');
+      });
+
+      it('agentProfile treats a foreign account filter as "all" and replaces it on re-save', () => {
+        const foreignFilter = {
+          operator: 'EQUALS',
+          operand: { targetName: 'accountType', targetValue: 'agent' },
+        };
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentProfile',
+          targetFilter: { ...defaultTemplate.targetFilter, account: foreignFilter },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        // not the canonical shape: the select shows "all"
+        expect(forms.FrWhat.agentType).toBe('all');
+        // re-save: the selects own the subtree — replaced by the all-baseline
+        const savePayload = buildSavePayload('AGENTPROFILE', forms);
+        expect(savePayload.targetFilter.account).toEqual(getAllFilter());
+      });
+
+      it('reads agentType from a composed agentAccess account subtree and preserves the access filter', () => {
+        const accessFilter = { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'svc-*' } };
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentAccess',
+          targetFilter: {
+            ...defaultTemplate.targetFilter,
+            account: composeAgentTypeFilter(accessFilter, 'nhi'),
+          },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        expect(forms.FrWhat.agentType).toBe('nhi');
+        expect(forms.FrWhat.accountSelection).toBe('Accounts matching a filter');
+        expect(forms.FrWhat.accountFilter).toEqual(accessFilter);
+      });
+
+      it('defaults agentType when not set on targetFilter', () => {
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentAccess',
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        expect(forms.FrWhat.agentType).toBe('all');
+      });
+
+      it('round-trips a fully composed agentAccess template', () => {
+        const accessFilter = { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'Billing' } };
+        const accountAccessFilter = { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'svc-*' } };
+        const forms = cloneDeep(baseForms);
+        forms.FrWhat.platform = 'aws.bedrock';
+        forms.FrWhat.agentType = 'workload';
+        forms.FrWhat.appSelection = 'Applications matching a filter';
+        forms.FrWhat.appFilter = {
+          operator: 'AND',
+          subfilters: [{ operator: 'EQUALS', field: 'name', value: 'Billing' }],
+        };
+        forms.FrWhat.accountSelection = 'Accounts matching a filter';
+        forms.FrWhat.accountFilter = {
+          operator: 'AND',
+          subfilters: [{ operator: 'EQUALS', field: 'name', value: 'svc-*' }],
+        };
+
+        const savePayload = buildSavePayload('AGENTACCESS', forms);
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentAccess',
+          targetFilter: { ...defaultTemplate.targetFilter, ...savePayload.targetFilter },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const loaded = getFormValuesFromTemplate(template);
+
+        expect(loaded.FrWhat.platform).toBe('aws.bedrock');
+        expect(loaded.FrWhat.agentType).toBe('workload');
+        expect(loaded.FrWhat.appSelection).toBe('Applications matching a filter');
+        expect(loaded.FrWhat.accountSelection).toBe('Accounts matching a filter');
+        // the peeled remainders decode to IGA-format trees (the filter builders
+        // parse them into rules on mount and re-emit builder format on change)
+        expect(loaded.FrWhat.appFilter).toEqual(accessFilter);
+        expect(loaded.FrWhat.accountFilter).toEqual(accountAccessFilter);
+      });
+
+      it('defaults platform and agentType to "all" on a legacy bespoke-property template', () => {
+        const template = {
+          ...defaultTemplate,
+          certificationType: 'agentAccess',
+          targetFilter: { ...defaultTemplate.targetFilter, platform: 'aws.bedrock', agentType: 'nhi' },
+          uiConfig: { columnConfig: {}, columnSortConfig: {} },
+        };
+
+        const forms = getFormValuesFromTemplate(template);
+
+        // the old bespoke properties are not recognized by the subtree extractors —
+        // the selects fall to "all" (a re-save drops them; no legacy readers remain)
+        expect(forms.FrWhat.platform).toBe('all');
+        expect(forms.FrWhat.agentType).toBe('all');
+      });
+    });
+
+    describe('compose/extract helpers', () => {
+      it('composeAgentPlatformFilter returns the bare scope when the base is null or a baseline', () => {
+        expect(composeAgentPlatformFilter(null, 'p')).toEqual(getAgentPlatformFilter('p'));
+        expect(composeAgentPlatformFilter(getAllNonAuthoritativeApplications(), 'p')).toEqual(getAgentPlatformFilter('p'));
+      });
+
+      it('composeAgentTypeFilter embeds the bare EQUALS clause flat into the AND', () => {
+        const base = { operator: 'EQUALS', operand: { targetName: 'a', targetValue: 'b' } };
+        expect(composeAgentTypeFilter(base, 't')).toEqual({
+          operator: 'AND',
+          operand: [
+            { operator: 'EQUALS', operand: { targetName: 'glossary.accountSubtype', targetValue: 't' } },
+            base,
+          ],
+        });
+        // null or all-baseline base keeps the canonical AND-of-one scope shape
+        expect(composeAgentTypeFilter(null, 't')).toEqual(getAgentTypeFilter('t'));
+        expect(composeAgentTypeFilter(getAllFilter(), 't')).toEqual(getAgentTypeFilter('t'));
+      });
+
+      it('extractAgentPlatformFilter peels the leading scope clause from a composed AND', () => {
+        const base = { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'x' } };
+        const composed = composeAgentPlatformFilter(base, 'p');
+
+        expect(extractAgentPlatformFilter(composed)).toEqual({ platform: 'p', base });
+      });
+
+      it('extractAgentTypeFilter keeps multi-clause remainders as one AND', () => {
+        const base = {
+          operator: 'AND',
+          operand: [
+            { operator: 'EQUALS', operand: { targetName: 'a', targetValue: '1' } },
+            { operator: 'EQUALS', operand: { targetName: 'b', targetValue: '2' } },
+          ],
+        };
+        const composed = composeAgentTypeFilter(base, 't');
+
+        const { agentType, base: rest } = extractAgentTypeFilter(composed);
+        expect(agentType).toBe('t');
+        expect(rest).toEqual(base);
+      });
+
+      it('extract helpers pass through non-scope trees unchanged', () => {
+        const foreign = { operator: 'EQUALS', operand: { targetName: 'name', targetValue: 'x' } };
+        expect(extractAgentPlatformFilter(foreign)).toEqual({ platform: null, base: foreign });
+        expect(extractAgentTypeFilter(foreign)).toEqual({ agentType: null, base: foreign });
+      });
     });
 
     it('should keep excludeConditionalAccess and excludeRoleBasedAccess for identity type', () => {

@@ -143,6 +143,7 @@ export default {
         organizationAdmin: this.$t('governance.editTemplate.organizationAdmin'),
         entitlementOwner: this.$t('governance.editTemplate.entitlementOwner'),
         roleOwner: this.$t('governance.editTemplate.roleOwner'),
+        custodian: this.$t('governance.editTemplate.custodian'),
         custom: this.$t('governance.editTemplate.custom'),
       };
 
