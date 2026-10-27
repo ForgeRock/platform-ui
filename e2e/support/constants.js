@@ -94,6 +94,7 @@ export const JOURNEYS = {
   QA_FOCUS_FIRST: { name: 'QA - Focus First', path: 'QA%20-%20Focus%20First', fileName: 'QA-Focus_First' },
   JOURNEY_EDITOR_RESPONSIVENESS: { name: 'QA-Journey_Editor_Responsiveness', path: 'QA-Journey_Editor_Responsiveness', fileName: 'QA-Journey_Editor_Responsiveness_template' },
   EMAIL_SUSPEND_REDIRECT: { name: 'QA - Redirect after Email suspend node', path: 'QA%20-%20Redirect%20after%20Email%20suspend%20node', fileName: 'redirect-after-email-suspend_template' },
+  STYLING_ON_MESSAGE_NODE: { name: 'QA - Styling on Message Node', path: 'QA%20-%20Styling%20on%20Message%20Node', fileName: 'QA-Styling_on_Message_Node_template' },
 };
 
 /**
