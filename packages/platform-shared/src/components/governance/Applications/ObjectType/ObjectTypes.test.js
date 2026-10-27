@@ -140,6 +140,9 @@ describe('ObjectTypes', () => {
         id: 'Resource',
         type: 'resource',
       }));
+      const [, payload] = ApplicationsApi.createObjectType.mock.calls[0];
+      expect(payload.properties.id.isPrimaryKey).toBe(true);
+      expect(payload.properties.displayName.isDisplay).toBe(true);
       expect(wrapper.emitted('object-type-added')).toBeTruthy();
     });
 
@@ -177,7 +180,7 @@ describe('ObjectTypes', () => {
   });
 
   describe('@details', () => {
-    it('omits the Details tab when governanceDevEnabled is off, leaving Properties first', async () => {
+    it('omits the Details tab when governanceDevEnabled is off, leaving Properties first, but keeps Agent Classification', async () => {
       const wrapper = setupFlagged(false);
       await flushPromises();
 
@@ -185,6 +188,7 @@ describe('ObjectTypes', () => {
         'governance.applications.edit.objectTypesTab.propertiesTab',
         'governance.applications.edit.objectTypesTab.dataTab',
         'governance.unmanagedApplications.correlationTab.navLabel',
+        'governance.applications.edit.objectTypesTab.agentClassification.title',
       ]);
       expect(wrapper.vm.selectedInnerTab).toBe(0);
     });

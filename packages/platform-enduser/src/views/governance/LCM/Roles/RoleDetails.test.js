@@ -368,4 +368,46 @@ describe('RoleDetails', () => {
     expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleGrant', expect.anything(), expect.anything(), expect.anything());
     expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleRemove', expect.anything(), expect.anything(), expect.anything());
   });
+
+  it('passes the "Draft Role Saved" heading to the success modal when saving an existing draft role', async () => {
+    mockRouter({ params: { roleId: 'testId', roleStatus: 'draft' } });
+    wrapper = mountComponent();
+    await flushPromises();
+    AccessRequestApi.requestAction.mockClear();
+    // For a draft role the button order is Publish, then Save
+    const saveBtn = wrapper.findAll('div.d-flex.justify-content-end > button')
+      .filter((button) => button.text() === 'Save')[0];
+    expect(saveBtn.exists()).toBe(true);
+    saveBtn.trigger('click');
+    await flushPromises();
+
+    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('modifyRole', 'publish', null, expect.objectContaining({
+      role: expect.objectContaining({ status: 'draft', roleId: 'testId' }),
+    }));
+    const successModal = wrapper.findComponent({ name: 'RequestSubmitSuccessModal' });
+    expect(successModal.props('headingText')).toBe('Role Draft Saved');
+  });
+
+  it('shows the draft-saved heading and message when saving a new role as a draft', async () => {
+    mockRouter({ params: { roleId: 'new', roleStatus: 'active' } });
+    wrapper = mountComponent();
+    await flushPromises();
+    AccessRequestApi.requestAction.mockClear();
+    wrapper.vm.updateTabData('details', null, {
+      role: {
+        name: 'Test',
+      },
+    });
+    await flushPromises();
+    // For a new role the button order is Save as Draft, then Save
+    const saveDraftBtn = wrapper.find('div.d-flex.justify-content-end > button');
+    expect(saveDraftBtn.text()).toBe('Save as Draft');
+    saveDraftBtn.trigger('click');
+    await flushPromises();
+
+    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'save', null, expect.anything());
+    const successModal = wrapper.findComponent({ name: 'RequestSubmitSuccessModal' });
+    expect(successModal.props('headingText')).toBe('Role Draft Saved');
+    expect(successModal.props('successText')).toBe('Draft role has been successfully saved');
+  });
 });

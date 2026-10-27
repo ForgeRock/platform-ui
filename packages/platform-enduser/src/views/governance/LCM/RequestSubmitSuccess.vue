@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       alt="success icon"
     />
     <h2 class="h4">
-      {{ $t('common.requestSubmitted') }}
+      {{ headingText || $t('common.requestSubmitted') }}
     </h2>
     <p v-if="successText">
       {{ successText }}
@@ -33,6 +33,12 @@ defineProps({
     default: '',
   },
   successText: {
+    type: String,
+    default: '',
+  },
+  // Overrides the default "Request Submitted" modal heading, e.g. for draft
+  // role saves, which are not requests
+  headingText: {
     type: String,
     default: '',
   },

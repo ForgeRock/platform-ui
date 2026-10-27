@@ -94,7 +94,8 @@ of the MIT license. See the LICENSE file for details. -->
     <FrRequestSubmitSuccessModal
       :request-id="requestId"
       router-path="AdministerRoles"
-      :success-text="successMessage" />
+      :success-text="successMessage"
+      :heading-text="successHeading" />
   </BContainer>
 </template>
 
@@ -158,6 +159,7 @@ const formData = ref({});
 const isFormChanged = ref(false);
 const requestId = ref('');
 const successMessage = ref('');
+const successHeading = ref('');
 const createRolePermission = ref(false);
 const modifyRolePermission = ref(false);
 
@@ -284,6 +286,7 @@ async function saveRoleData(action = 'publish', isPublishDraftRequest) {
       },
     };
     let requestType = 'createRole';
+    successHeading.value = '';
     successMessage.value = i18n.global.t('governance.administer.roles.successCreate');
     if (isPublishDraftRequest && roleStatus.value === 'draft') {
       requestType = 'publishRole';
@@ -292,7 +295,15 @@ async function saveRoleData(action = 'publish', isPublishDraftRequest) {
     } else if (roleId.value !== 'new') {
       requestType = 'modifyRole';
       payload.role.roleId = roleId.value;
+      // Saving an existing draft keeps it a draft — it is a save, not a request
+      if (roleStatus.value === 'draft') {
+        successHeading.value = i18n.global.t('governance.administer.roles.successDraftSaved');
+      }
       successMessage.value = i18n.global.t('governance.administer.roles.successUpdate');
+    } else if (action === 'save') {
+      // "Save as Draft" on a new role is a save, not a request
+      successHeading.value = i18n.global.t('governance.administer.roles.successDraftSaved');
+      successMessage.value = i18n.global.t('governance.administer.roles.successDraftCreate');
     }
     const { data } = await requestAction(requestType, action, null, payload);
     requestId.value = data.id;
@@ -389,6 +400,7 @@ async function updateTabData(tabUpdated, operation, data) {
       } else {
         requestId.value = results[0]?.value?.data?.id;
         successMessage.value = i18n.global.t('governance.administer.roles.successMemberAdded');
+        successHeading.value = '';
         showSuccessModal();
       }
     } else if (operation === 'remove') {
@@ -404,6 +416,7 @@ async function updateTabData(tabUpdated, operation, data) {
       } else {
         requestId.value = results[0]?.value?.data?.id;
         successMessage.value = i18n.global.t('governance.administer.roles.successMemberRemoved');
+        successHeading.value = '';
         showSuccessModal();
       }
     }

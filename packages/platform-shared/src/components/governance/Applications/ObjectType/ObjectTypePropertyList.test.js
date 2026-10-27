@@ -15,6 +15,10 @@ jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
   showErrorMessage: jest.fn(),
   displayNotification: jest.fn(),
 }));
+jest.mock('@forgerock/platform-shared/src/composables/bvModal', () => ({
+  __esModule: true,
+  default: () => ({ bvModal: { value: { show: jest.fn(), hide: jest.fn() } } }),
+}));
 
 const baseObjectType = {
   id: 'User',
@@ -37,7 +41,12 @@ function setup(props = {}) {
         FrIcon: { template: '<span><slot /></span>' },
         NoData: { name: 'FrNoData', template: '<div />' },
         FrSpinner: true,
+        // MODE 3 matches Draggable.compatConfig in the component; without it
+        // @vue/compat renders the stub as a Vue 2 component and v-model
+        // binds through `value` instead of `modelValue`, leaving rows empty.
         Draggable: {
+          name: 'Draggable',
+          compatConfig: { MODE: 3 },
           template: '<tbody><template v-for="(element, index) in modelValue" :key="element.name"><slot name="item" :element="element" :index="index" /></template></tbody>',
           props: ['modelValue', 'itemKey'],
           emits: ['update:modelValue', 'end'],
@@ -85,12 +94,17 @@ describe('ObjectTypePropertyList', () => {
       expect(wrapper.findComponent({ name: 'FrNoData' }).exists()).toBe(true);
     });
 
-    it('does not render actions cell for system properties (id, displayName)', async () => {
+    it('renders the actions cell for every property, including id and displayName', async () => {
       const wrapper = setup();
       await flushPromises();
-      expect(wrapper.vm.isSystemProperty('id')).toBe(true);
-      expect(wrapper.vm.isSystemProperty('displayName')).toBe(true);
-      expect(wrapper.vm.isSystemProperty('email')).toBe(false);
+      expect(wrapper.findAll('[data-testid^="actions-"]')).toHaveLength(3);
+    });
+
+    it('opens the edit modal as editable when a row is clicked', async () => {
+      const wrapper = setup();
+      await flushPromises();
+      wrapper.vm.showEditModal(wrapper.vm.rows[0]);
+      expect(wrapper.vm.isReadOnly).toBe(false);
     });
   });
 
@@ -105,6 +119,8 @@ describe('ObjectTypePropertyList', () => {
         type: 'string',
         multiValued: false,
         required: false,
+        isDisplay: false,
+        isPrimaryKey: false,
         creatable: true,
         updatable: true,
         enumeratedValues: [],
@@ -117,6 +133,70 @@ describe('ObjectTypePropertyList', () => {
         properties: expect.objectContaining({ phone: expect.any(Object) }),
       }));
       expect(wrapper.emitted('update:objectType')).toBeTruthy();
+    });
+
+    it('persists isDisplay and isPrimaryKey booleans when adding a property', async () => {
+      const wrapper = setup();
+      await flushPromises();
+
+      await wrapper.vm.onAddProperty({
+        name: 'username',
+        displayName: 'Username',
+        type: 'string',
+        multiValued: false,
+        required: false,
+        isDisplay: true,
+        isPrimaryKey: true,
+        creatable: true,
+        updatable: true,
+        enumeratedValues: [],
+        applicationObjectType: '',
+        isEntitlement: false,
+      });
+      await flushPromises();
+
+      const savedProperty = wrapper.emitted('update:objectType')[0][0].properties.username;
+      expect(savedProperty.isDisplay).toBe(true);
+      expect(savedProperty.isPrimaryKey).toBe(true);
+    });
+
+    it('round-trips isDisplay and isPrimaryKey through toRows when editing a property', async () => {
+      const wrapper = setup({
+        objectType: {
+          ...baseObjectType,
+          properties: {
+            ...baseObjectType.properties,
+            email: {
+              type: 'string', displayName: 'Email', order: 2, isDisplay: true, isPrimaryKey: true,
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      const row = wrapper.vm.rows.find(({ name }) => name === 'email');
+      expect(row.isDisplay).toBe(true);
+      expect(row.isPrimaryKey).toBe(true);
+
+      await wrapper.vm.onEditProperty({
+        name: 'email',
+        displayName: 'Email',
+        type: 'string',
+        multiValued: false,
+        required: false,
+        isDisplay: false,
+        isPrimaryKey: true,
+        creatable: true,
+        updatable: true,
+        enumeratedValues: [],
+        applicationObjectType: '',
+        isEntitlement: false,
+      });
+      await flushPromises();
+
+      const savedProperty = wrapper.emitted('update:objectType')[0][0].properties.email;
+      expect(savedProperty.isDisplay).toBe(false);
+      expect(savedProperty.isPrimaryKey).toBe(true);
     });
 
     it('deletes a property and emits update:objectType', async () => {

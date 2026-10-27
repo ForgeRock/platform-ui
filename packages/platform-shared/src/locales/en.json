@@ -2093,6 +2093,8 @@
           "editPropertySuccess": "Property updated successfully",
           "editPropertyError": "There was an error updating the property",
           "multiValued": "Multi-Valued",
+          "isDisplay": "Is Display Name",
+          "isPrimaryKey": "Is Primary Key",
           "creatable": "Creatable",
           "updatable": "Updatable",
           "constrainValues": "Constrain Values",

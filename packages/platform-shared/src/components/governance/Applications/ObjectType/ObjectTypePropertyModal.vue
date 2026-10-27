@@ -52,6 +52,20 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="readOnly"
         :label="$t('common.required')" />
       <FrField
+        v-model="form.isDisplay"
+        class="mb-4"
+        name="isDisplay"
+        type="checkbox"
+        :disabled="readOnly"
+        :label="$t('governance.applications.edit.objectTypesTab.isDisplay')" />
+      <FrField
+        v-model="form.isPrimaryKey"
+        class="mb-4"
+        name="isPrimaryKey"
+        type="checkbox"
+        :disabled="readOnly"
+        :label="$t('governance.applications.edit.objectTypesTab.isPrimaryKey')" />
+      <FrField
         v-model="constrainValues"
         class="mb-4"
         name="constrainValues"
@@ -214,6 +228,8 @@ const emptyForm = () => ({
   type: '',
   multiValued: false,
   required: false,
+  isDisplay: false,
+  isPrimaryKey: false,
   creatable: true,
   updatable: true,
   enumeratedValues: [],
@@ -299,6 +315,8 @@ function populateForm() {
       type: props.initialValues.type || '',
       multiValued: props.initialValues.multiValued || false,
       required: props.initialValues.required || false,
+      isDisplay: props.initialValues.isDisplay || false,
+      isPrimaryKey: props.initialValues.isPrimaryKey || false,
       creatable: props.initialValues.creatable !== false,
       updatable: props.initialValues.updatable !== false,
       enumeratedValues,

@@ -92,6 +92,8 @@ describe('ObjectTypePropertyModal', () => {
           type: 'string',
           multiValued: false,
           required: true,
+          isDisplay: true,
+          isPrimaryKey: false,
           creatable: true,
           updatable: false,
           enumeratedValues: [],
@@ -102,6 +104,8 @@ describe('ObjectTypePropertyModal', () => {
       wrapper.vm.populateForm();
       expect(wrapper.vm.form.name).toBe('phone');
       expect(wrapper.vm.form.required).toBe(true);
+      expect(wrapper.vm.form.isDisplay).toBe(true);
+      expect(wrapper.vm.form.isPrimaryKey).toBe(false);
       expect(wrapper.vm.form.updatable).toBe(false);
     });
 
@@ -164,6 +168,28 @@ describe('ObjectTypePropertyModal', () => {
       wrapper.vm.sourceOfValues = 'objectType';
       await flushPromises();
       expect(wrapper.vm.form.enumeratedValues).toEqual([]);
+    });
+
+    it('includes isDisplay and isPrimaryKey in the save payload', () => {
+      const wrapper = setup();
+      wrapper.vm.form.name = 'email';
+      wrapper.vm.form.type = 'string';
+      wrapper.vm.form.isDisplay = true;
+      wrapper.vm.form.isPrimaryKey = true;
+      wrapper.vm.save();
+      const payload = wrapper.emitted('save')[0][0];
+      expect(payload.isDisplay).toBe(true);
+      expect(payload.isPrimaryKey).toBe(true);
+    });
+
+    it('defaults isDisplay and isPrimaryKey to false in the save payload', () => {
+      const wrapper = setup();
+      wrapper.vm.form.name = 'email';
+      wrapper.vm.form.type = 'string';
+      wrapper.vm.save();
+      const payload = wrapper.emitted('save')[0][0];
+      expect(payload.isDisplay).toBe(false);
+      expect(payload.isPrimaryKey).toBe(false);
     });
   });
 });

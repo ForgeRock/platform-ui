@@ -119,7 +119,6 @@ of the MIT license. See the LICENSE file for details. -->
             </BTd>
             <BTd class="w-120px fr-no-resize sticky-right">
               <FrActionsCell
-                v-if="!isSystemProperty(element.name)"
                 class="py-2"
                 @edit-clicked="showEditModal(element)"
                 @delete-clicked="onDeleteProperty($event, element)" />
@@ -213,6 +212,8 @@ function toRows(props_) {
       type: prop.type === 'array' ? (prop.items?.type || 'string') : (prop.type || ''),
       multiValued: prop.type === 'array',
       required: prop.required || false,
+      isDisplay: prop.isDisplay || false,
+      isPrimaryKey: prop.isPrimaryKey || false,
       creatable: !prop.flags?.includes('NOT_CREATABLE'),
       updatable: !prop.flags?.includes('NOT_UPDATEABLE'),
       order: prop.order ?? Number.MAX_SAFE_INTEGER,
@@ -227,10 +228,6 @@ watch(properties, (val) => {
   rows.value = toRows(val);
 }, { immediate: true, deep: true });
 
-function isSystemProperty(name) {
-  return name === 'id' || name === 'displayName';
-}
-
 function showModal() {
   selectedProperty.value = null;
   isReadOnly.value = false;
@@ -239,16 +236,18 @@ function showModal() {
 
 function showEditModal(property) {
   selectedProperty.value = property;
-  isReadOnly.value = isSystemProperty(property.name);
+  isReadOnly.value = false;
   bvModal.value.show(modalId.value);
 }
 
 function buildPropertyPayload({
-  type, multiValued, required, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
+  type, multiValued, required, isDisplay, isPrimaryKey, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
 }) {
   const payload = {
     type: multiValued ? 'array' : type,
     required: required || false,
+    isDisplay: isDisplay || false,
+    isPrimaryKey: isPrimaryKey || false,
   };
   if (multiValued) {
     payload.items = { type };
@@ -270,13 +269,13 @@ function buildPropertyPayload({
 }
 
 async function onAddProperty({
-  name, displayName, type, multiValued, required, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
+  name, displayName, type, multiValued, required, isDisplay, isPrimaryKey, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
 }) {
   const updatedProperties = {
     ...properties.value,
     [name]: {
       ...buildPropertyPayload({
-        type, multiValued, required, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
+        type, multiValued, required, isDisplay, isPrimaryKey, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
       }),
       displayName,
       order: Object.keys(properties.value).length,
@@ -298,14 +297,14 @@ async function onAddProperty({
 }
 
 async function onEditProperty({
-  name, displayName, type, multiValued, required, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
+  name, displayName, type, multiValued, required, isDisplay, isPrimaryKey, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
 }) {
   const updatedProperties = {
     ...properties.value,
     [name]: {
       ...properties.value[name],
       ...buildPropertyPayload({
-        type, multiValued, required, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
+        type, multiValued, required, isDisplay, isPrimaryKey, creatable, updatable, enumeratedValues, applicationObjectType, isEntitlement,
       }),
       displayName,
     },

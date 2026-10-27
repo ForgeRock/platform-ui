@@ -290,6 +290,8 @@
         "successCreate": "Role create request has been submitted successfully",
         "successUpdate": "Role update request has been submitted successfully",
         "successPublish": "Role draft has been published successfully",
+        "successDraftSaved": "Role Draft Saved",
+        "successDraftCreate": "Draft role has been successfully saved",
         "errorCreate": "There was an error creating the role create request",
         "errorUpdate": "There was an error updating the role update request",
         "errorPublish": "There was an error publishing the role draft",

@@ -18,7 +18,8 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- body -->
     <FrRequestSubmitSuccess
       :request-id="requestId"
-      :success-text="successText" />
+      :success-text="successText"
+      :heading-text="headingText" />
 
     <template #modal-footer="{ hide }">
       <BButton
@@ -42,6 +43,10 @@ defineProps({
     default: '',
   },
   successText: {
+    type: String,
+    default: '',
+  },
+  headingText: {
     type: String,
     default: '',
   },

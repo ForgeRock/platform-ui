@@ -168,7 +168,7 @@ of the MIT license. See the LICENSE file for details. -->
             :application-id="applicationId"
             :object-type="loadedObjectType" />
         </BTab>
-        <BTab v-if="loadedObjectType.type === 'account' && governanceDevEnabled">
+        <BTab v-if="loadedObjectType.type === 'account'">
           <FrAgentClassification
             :application-id="applicationId"
             :object-type="loadedObjectType" />
@@ -283,9 +283,7 @@ const navItems = computed(() => {
   );
   if (loadedObjectType.value?.type === 'account') {
     items.push({ displayName: i18n.global.t('governance.unmanagedApplications.correlationTab.navLabel') });
-    if (governanceDevEnabled.value) {
-      items.push({ displayName: i18n.global.t('governance.applications.edit.objectTypesTab.agentClassification.title') });
-    }
+    items.push({ displayName: i18n.global.t('governance.applications.edit.objectTypesTab.agentClassification.title') });
   }
   return items;
 });
@@ -314,6 +312,7 @@ async function addObjectType() {
           displayName: 'ID',
           required: true,
           flags: ['NOT_UPDATEABLE'],
+          isPrimaryKey: true,
           order: 0,
         },
         displayName: {
@@ -321,6 +320,7 @@ async function addObjectType() {
           order: 1,
           displayName: 'Display Name',
           required: true,
+          isDisplay: true,
         },
       },
     });
