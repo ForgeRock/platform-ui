@@ -21,6 +21,8 @@ export default class ApplicationApiSteps {
 
   static createdApplicationIds = [];
 
+  static trackedSamlManagedAppIds = [];
+
   static get applicationResourceName() {
     return Cypress.env('IS_FRAAS') ? 'alpha_application' : 'application';
   }
@@ -99,11 +101,77 @@ export default class ApplicationApiSteps {
   }
 
   /**
+   * Create a SAML custom application via API the same way the UI wizard does:
+   * a managed application with templateName 'saml' and empty ssoEntities (the
+   * AM entity providers are only created later via the Sign On tab's Set Up SSO flow).
+   * Tracked by deleteSamlApplicationCleanup so the AM entity providers (if the test
+   * configured SSO) are deleted before the managed application.
+   * @param {Object} options
+   * @param {string} options.appName - Name of the managed application
+   * @param {string} options.ownerId - Managed user id set as the application owner
+   * @returns {Cypress.Chainable} The response from the create application request
+   */
+  static createSamlApplication({ appName, ownerId }) {
+    const userResource = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
+    return createApplication({
+      name: appName,
+      owners: [{ _ref: `managed/${userResource}/${ownerId}`, _refProperties: {} }],
+      templateName: 'saml',
+      // keep in sync with the latest saml template version on the app-templates CDN
+      templateVersion: '1.3',
+      ssoEntities: {},
+    }).then((response) => {
+      expect(response.status).to.equal(201);
+      ApplicationApiSteps.trackedSamlManagedAppIds.push(response.body._id);
+      return response;
+    });
+  }
+
+  /**
+   * Delete tracked SAML applications the way the UI does: AM entity providers
+   * first (hosted IdP, then remote SP), then the managed application. Applications
+   * already deleted (e.g. by a UI delete in the test) and entity providers already
+   * gone are treated as success, so the cleanup never fails a passing test.
+   */
+  static deleteSamlApplicationCleanup() {
+    return cy.wrap([...ApplicationApiSteps.trackedSamlManagedAppIds]).then((ids) => {
+      if (!ids.length) return cy.wrap(null);
+      ApplicationApiSteps.trackedSamlManagedAppIds = [];
+
+      return cy.wrap(ids).each((id) => getApplication(id).then((getResponse) => {
+        // App already gone (e.g. deleted through the UI) — nothing to clean up
+        if (!getResponse.isOkStatusCode) return null;
+
+        const ssoEntities = getResponse.body.ssoEntities || {};
+        return cy.wrap(null)
+          .then(() => {
+            if (ssoEntities.idpPrivateId) {
+              return deleteSaml2Entity(ssoEntities.idpPrivateId, 'hosted');
+            }
+            return null;
+          })
+          .then(() => {
+            if (ssoEntities.spPrivateId) {
+              return deleteSaml2Entity(ssoEntities.spPrivateId, 'remote');
+            }
+            return null;
+          })
+          .then(() => deleteApplication(id).then((deleteResponse) => {
+            // 404 means the app was already deleted (e.g. through the UI)
+            if (!deleteResponse.isOkStatusCode && deleteResponse.status !== 404) {
+              throw new Error(`Failed to delete managed application ${id} — tenant may be in a dirty state. Status: ${deleteResponse.status}`);
+            }
+          }));
+      }));
+    });
+  }
+
+  /**
    * Delete every tracked application and OAuth2 client. Managed applications
    * are deleted first, tolerating already-deleted apps and removing any AM
    * SAML entity providers their ssoEntities reference (hosted IdP, then remote
    * SP), then the OAuth2 clients. A failure to delete leaves the tenant dirty
-   * and fails the test.
+   * during the afterEach — it fails the test.
    */
   static deleteCreatedApplications() {
     const managedIds = [
