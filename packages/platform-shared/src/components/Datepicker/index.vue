@@ -16,7 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
     :class="{'input-has-value': value, 'fr-field-error': errors.length > 0}"
     :label-selected="placeholder"
     :placeholder="placeholder"
-    @shown="fixDatePickerDialogLabel">
+    @shown="onShown"
+    @hidden="deactivateFocusTrap">
     <template #button-content>
       <span class="sr-only">
         {{ $t('common.dateTimePicker.openCalendar') }}
@@ -65,6 +66,7 @@ import {
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import calendarGrid from '@forgerock/platform-shared/src/directives/calendarGrid';
+import DatepickerFocusTrapMixin from '@forgerock/platform-shared/src/mixins/DatepickerFocusTrapMixin';
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
 import { v4 as uuid } from 'uuid';
@@ -82,6 +84,7 @@ export default {
     FrIcon,
     FrValidationError,
   },
+  mixins: [DatepickerFocusTrapMixin],
   props: {
     /**
      * @model String representation of date. Format YYYY-MM-DD
@@ -140,6 +143,10 @@ export default {
     },
   },
   methods: {
+    onShown() {
+      this.fixDatePickerDialogLabel();
+      this.activateFocusTrap();
+    },
     fixDatePickerDialogLabel() {
       this.$nextTick(() => {
         this.$nextTick(() => {

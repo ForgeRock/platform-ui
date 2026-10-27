@@ -17,6 +17,8 @@ function setupMount(props) {
     props: {
       ...props,
     },
+    // attached so .focus() works
+    attachTo: document.body,
     global: {
       mocks: {
         $t: (msg) => msg,
@@ -26,6 +28,9 @@ function setupMount(props) {
 }
 
 let wrapper;
+// VTU's trigger() can't set bubbles/cancelable; dispatch real keydowns
+const tabKeydown = () => new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+
 describe('Datepicker Component', () => {
   afterEach(() => {
     if (wrapper) {
@@ -94,6 +99,54 @@ describe('Datepicker Component', () => {
       expect(dialog.attributes('aria-label')).toBe('Select date for Apply Expiration Date (optional)');
       expect(dialog.attributes('aria-labelledby')).toBeUndefined();
     });
+  });
+
+  it('contains focus within the open dialog when Tab is pressed at the boundary (IAM-11385)', async () => {
+    wrapper = setupMount({ name: 'datepicker', placeholder: 'test' });
+    const datepicker = findByTestId(wrapper, 'datepicker');
+
+    // BV flips `visible` inside a requestAnimationFrame
+    await datepicker.find('button').trigger('click');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await flushPromises();
+
+    const dialog = datepicker.find('[role="dialog"]');
+    expect(dialog.exists()).toBe(true);
+
+    // Tab from the grid (last tab stop) wraps to the first tabable element
+    const tabables = dialog.findAll('button, [tabindex]:not([tabindex^="-"])');
+    expect(tabables.length).toBeGreaterThan(1);
+    const grid = tabables[tabables.length - 1];
+    expect(grid.attributes('tabindex')).toBe('0');
+    grid.element.focus();
+    grid.element.dispatchEvent(tabKeydown());
+    expect(document.activeElement).toBe(tabables[0].element);
+  });
+
+  it('releases the focus trap when the dialog is hidden', async () => {
+    wrapper = setupMount({ name: 'datepicker', placeholder: 'test' });
+    const datepicker = findByTestId(wrapper, 'datepicker');
+    const toggle = datepicker.find('button');
+
+    await toggle.trigger('click');
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await flushPromises();
+    expect(toggle.attributes('aria-expanded')).toBe('true');
+
+    // While open, Tab from the grid wraps to the first tabable element
+    const dialog = datepicker.find('[role="dialog"]');
+    const tabables = dialog.findAll('button, [tabindex]:not([tabindex^="-"])');
+    const grid = tabables[tabables.length - 1];
+    grid.element.focus();
+    grid.element.dispatchEvent(tabKeydown());
+    expect(document.activeElement).toBe(tabables[0].element);
+
+    // Closing removes the trap's keydown listener from the dialog
+    const removeSpy = jest.spyOn(dialog.element, 'removeEventListener');
+    await toggle.trigger('click');
+    await flushPromises();
+    expect(toggle.attributes('aria-expanded')).toBe('false');
+    expect(removeSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
   });
 
   describe('@a11y', () => {

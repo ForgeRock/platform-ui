@@ -37,7 +37,8 @@ of the MIT license. See the LICENSE file for details. -->
         :name="name"
         :min="minDate"
         :aria-label="labelTranslation"
-        @shown="fixDatePickerDialogLabel" />
+        @shown="onShown"
+        @hidden="deactivateFocusTrap" />
     </FrInputLayout>
   </div>
 </template>
@@ -48,6 +49,7 @@ import {
   BFormDatepicker,
 } from 'bootstrap-vue';
 import calendarGrid from '@forgerock/platform-shared/src/directives/calendarGrid';
+import DatepickerFocusTrapMixin from '@forgerock/platform-shared/src/mixins/DatepickerFocusTrapMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
@@ -66,6 +68,7 @@ export default {
   mixins: [
     InputMixin,
     TranslationMixin,
+    DatepickerFocusTrapMixin,
   ],
   components: {
     BFormDatepicker,
@@ -105,6 +108,10 @@ export default {
     return { inputValue, fieldErrors, validationListeners };
   },
   methods: {
+    onShown() {
+      this.fixDatePickerDialogLabel();
+      this.activateFocusTrap();
+    },
     fixDatePickerDialogLabel() {
       this.$nextTick(() => {
         const dialog = this.$el.querySelector('.date-button ~ .dropdown-menu, .date-button .dropdown-menu');
@@ -217,5 +224,12 @@ export default {
 
   .form-control.is-invalid {
     background-image: none;
+  }
+
+  // Hide the browser's built-in calendar icon/picker on the native date input: the
+  // BFormDatepicker button-only calendar beside it is the field's single picker.
+  input[type='date']::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
   }
 </style>
