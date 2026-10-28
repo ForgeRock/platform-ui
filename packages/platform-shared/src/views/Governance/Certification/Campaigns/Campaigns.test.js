@@ -102,17 +102,19 @@ describe('Campaigns', () => {
     expect(wrapper.vm.statuses.get('staging')).toEqual(expect.objectContaining({ param: 'staging', type: 'staging' }));
   });
 
-  it('only filterable (non-sortHide) statuses are selected by default', async () => {
-    expect(wrapper.vm.selectedStatuses).toEqual(wrapper.vm.filterableStatusKeys);
-    expect(wrapper.vm.selectedStatuses).not.toContain('in-progress');
-    expect(wrapper.vm.selectedStatuses).not.toContain('expiring');
-    expect(wrapper.vm.selectedStatuses).toContain('active');
-    expect(wrapper.vm.selectedStatuses).toContain('staging');
+  it('defaults to only the active status selected on mount', async () => {
+    expect(wrapper.vm.selectedStatuses).toEqual(['active']);
+    expect(wrapper.vm.selectedStatuses).not.toContain('staging');
+    expect(wrapper.vm.selectedStatuses).not.toContain('completed');
   });
 
-  it('getList calls getCertificationList without _queryFilter when all statuses selected', async () => {
+  it('getList always sends a status filter, expanding active to its raw statuses', async () => {
     expect(CertificationApi.getCertificationList).toHaveBeenCalledWith({
-      pageNumber: 0, pageSize: 10, sortBy: 'name', sortDesc: false,
+      pageNumber: 0,
+      pageSize: 10,
+      sortBy: 'name',
+      sortDesc: false,
+      _queryFilter: "(status eq 'active' or status eq 'in-progress' or status eq 'creating')",
     });
   });
 
@@ -120,15 +122,51 @@ describe('Campaigns', () => {
     await wrapper.setData({ searchQuery: 'test campaign' });
     wrapper.vm.getList();
     expect(CertificationApi.getCertificationList).toHaveBeenCalledWith({
-      pageNumber: 0, pageSize: 10, sortBy: 'name', sortDesc: false, _queryFilter: "name co 'test campaign'",
+      pageNumber: 0,
+      pageSize: 10,
+      sortBy: 'name',
+      sortDesc: false,
+      _queryFilter: "name co 'test campaign' and (status eq 'active' or status eq 'in-progress' or status eq 'creating')",
     });
   });
 
-  it('getList passes status eq queryFilter when a subset of statuses is selected', async () => {
-    await wrapper.setData({ selectedStatuses: ['active'] });
+  it('getList expands complete to complete and signed-off', async () => {
+    await wrapper.setData({ selectedStatuses: ['completed'] });
     wrapper.vm.getList();
     expect(CertificationApi.getCertificationList).toHaveBeenCalledWith({
-      pageNumber: 0, pageSize: 10, sortBy: 'name', sortDesc: false, _queryFilter: "status eq 'active'",
+      pageNumber: 0,
+      pageSize: 10,
+      sortBy: 'name',
+      sortDesc: false,
+      _queryFilter: "(status eq 'complete' or status eq 'signed-off')",
+    });
+  });
+
+  it('getList combines the expanded status filters of multiple checkboxes', async () => {
+    await wrapper.setData({ selectedStatuses: ['active', 'completed'] });
+    wrapper.vm.getList();
+    expect(CertificationApi.getCertificationList).toHaveBeenCalledWith({
+      pageNumber: 0,
+      pageSize: 10,
+      sortBy: 'name',
+      sortDesc: false,
+      _queryFilter: "(status eq 'active' or status eq 'in-progress' or status eq 'creating' or status eq 'complete' or status eq 'signed-off')",
+    });
+  });
+
+  it('filterStatusParams dedupes overlapping raw statuses', async () => {
+    await wrapper.setData({ selectedStatuses: ['active', 'cancelled', 'expired'] });
+    expect(wrapper.vm.filterStatusParams).toEqual(['active', 'in-progress', 'creating', 'cancelled', 'expired']);
+  });
+
+  it('getList omits the status filter when every checkbox is checked', async () => {
+    await wrapper.setData({ selectedStatuses: ['active', 'staging', 'completed', 'cancelled', 'expired'] });
+    wrapper.vm.getList();
+    expect(CertificationApi.getCertificationList).toHaveBeenCalledWith({
+      pageNumber: 0,
+      pageSize: 10,
+      sortBy: 'name',
+      sortDesc: false,
     });
   });
 
@@ -140,7 +178,7 @@ describe('Campaigns', () => {
       pageSize: 10,
       sortBy: 'name',
       sortDesc: false,
-      _queryFilter: "name co 'foo' and (status eq 'active' or status eq 'staging')",
+      _queryFilter: "name co 'foo' and (status eq 'active' or status eq 'in-progress' or status eq 'creating' or status eq 'staging')",
     });
   });
 
@@ -155,7 +193,7 @@ describe('Campaigns', () => {
       pageSize: 10,
       sortBy: 'name',
       sortDesc: false,
-      _queryFilter: "ownerId co 'owner-id' and certificationType eq 'identity'",
+      _queryFilter: "ownerId co 'owner-id' and certificationType eq 'identity' and (status eq 'active' or status eq 'in-progress' or status eq 'creating')",
     });
   });
 
@@ -173,15 +211,36 @@ describe('Campaigns', () => {
       searchQuery: 'campaign',
       selectedOwner: 'managed/user/owner-id',
       selectedCampaignType: 'identity',
-      selectedStatuses: ['active'],
+      selectedStatuses: ['completed'],
     });
     const getListSpy = jest.spyOn(wrapper.vm, 'getList');
     wrapper.vm.resetFilters();
     expect(wrapper.vm.searchQuery).toBe('');
     expect(wrapper.vm.selectedOwner).toBe('');
     expect(wrapper.vm.selectedCampaignType).toBe('');
-    expect(wrapper.vm.selectedStatuses).toEqual(wrapper.vm.filterableStatusKeys);
+    expect(wrapper.vm.selectedStatuses).toEqual(['active']);
     expect(getListSpy).toHaveBeenCalled();
+  });
+
+  it('disables the last remaining status checkbox so one status is always selected', async () => {
+    expect(wrapper.vm.statusCheckboxOptions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ value: 'active', disabled: true }),
+      expect.objectContaining({ value: 'staging', disabled: false }),
+      expect.objectContaining({ value: 'completed', disabled: false }),
+    ]));
+    await wrapper.setData({ selectedStatuses: ['active', 'completed'] });
+    expect(wrapper.vm.statusCheckboxOptions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ value: 'active', disabled: false }),
+      expect.objectContaining({ value: 'completed', disabled: false }),
+    ]));
+  });
+
+  it('unchecking the last status restores the previous selection without requerying', async () => {
+    await wrapper.setData({ selectedStatuses: ['active', 'completed'] });
+    const getListSpy = jest.spyOn(wrapper.vm, 'getList');
+    await wrapper.setData({ selectedStatuses: [] });
+    expect(wrapper.vm.selectedStatuses).toEqual(['active', 'completed']);
+    expect(getListSpy).not.toHaveBeenCalled();
   });
 
   it('reset filters omit owner and type from the query filter', async () => {
@@ -190,7 +249,7 @@ describe('Campaigns', () => {
       selectedCampaignType: 'identity',
     });
     wrapper.vm.resetFilters();
-    expect(wrapper.vm.buildQueryFilter()).toBeUndefined();
+    expect(wrapper.vm.buildQueryFilter()).toBe("(status eq 'active' or status eq 'in-progress' or status eq 'creating')");
   });
 
   it('should sort ascending or descending on name', async () => {
@@ -383,7 +442,7 @@ describe('Campaigns', () => {
 
   it('escapes single quotes in the name search query filter', async () => {
     await wrapper.setData({ searchQuery: "O'Brien review" });
-    expect(wrapper.vm.buildQueryFilter()).toBe("name co 'O\\'Brien review'");
+    expect(wrapper.vm.buildQueryFilter()).toBe("name co 'O\\'Brien review' and (status eq 'active' or status eq 'in-progress' or status eq 'creating')");
   });
 
   it('renders a status badge and view details action for a mutated completed campaign', async () => {
@@ -516,7 +575,7 @@ describe('Campaigns', () => {
       wrapper.vm.debouncedSearch();
       jest.advanceTimersByTime(400);
       expect(CertificationApi.getCertificationList).toHaveBeenCalledWith(expect.objectContaining({
-        _queryFilter: "name co 'O\\'Hara'",
+        _queryFilter: "name co 'O\\'Hara' and (status eq 'active' or status eq 'in-progress' or status eq 'creating')",
       }));
     } finally {
       jest.useRealTimers();

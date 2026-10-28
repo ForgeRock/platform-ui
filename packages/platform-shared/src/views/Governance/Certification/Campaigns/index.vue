@@ -77,50 +77,50 @@ of the MIT license. See the LICENSE file for details. -->
             <BButtonToolbar
               v-if="usingNewListApi"
               class="px-4 py-3 border-bottom-0 w-100">
-              <div class="d-flex align-items-center w-100">
+              <div class="d-flex align-items-center justify-content-end w-100">
                 <BButton
-                  class="toolbar-link-text text-dark"
+                  class="mr-2 text-body"
+                  variant="link"
+                  :aria-label="$t('governance.certificationTask.export')"
+                  @click="openDownloadModal()">
+                  <FrIcon
+                    id="campaigns-export-icon"
+                    icon-class="mr-1"
+                    name="file_download" />
+                </BButton>
+                <BTooltip
+                  target="campaigns-export-icon"
+                  triggers="hover"
+                  placement="top">
+                  {{ $t('governance.certificationTask.export') }}
+                </BTooltip>
+                <BButton
                   :aria-expanded="showFilters.toString()"
                   aria-controls="campaigns-filter-panel"
                   :aria-label="showFilters ? $t('governance.toolbar.hideFilters') : $t('governance.toolbar.showFilters')"
+                  class="text-body"
                   data-testid="filter-toggle"
                   variant="link"
                   @click="showFilters = !showFilters">
                   <FrIcon
-                    icon-class="mr-lg-2"
-                    name="filter_list">
-                    <span class="d-none d-lg-inline">
-                      {{ showFilters ? $t('governance.toolbar.hideFilters') : $t('governance.toolbar.showFilters') }}
-                    </span>
-                  </FrIcon>
+                    id="campaigns-filter-icon"
+                    name="filter_list" />
                 </BButton>
-                <div class="d-flex align-items-center ml-auto">
-                  <BButton
-                    class="mr-2 text-body"
-                    variant="link"
-                    :aria-label="$t('governance.certificationTask.export')"
-                    @click="openDownloadModal()">
-                    <FrIcon
-                      id="campaigns-export-icon"
-                      icon-class="mr-1"
-                      name="file_download" />
-                  </BButton>
-                  <BTooltip
-                    target="campaigns-export-icon"
-                    triggers="hover"
-                    placement="top">
-                    {{ $t('governance.certificationTask.export') }}
-                  </BTooltip>
-                  <BButton
-                    @click="openColumnsModal"
-                    :aria-label="$t('common.customizeColumns')"
-                    variant="link"
-                    class="ml-2 text-body">
-                    <FrIcon
-                      icon-class="md-24"
-                      name="view_column" />
-                  </BButton>
-                </div>
+                <BTooltip
+                  target="campaigns-filter-icon"
+                  triggers="hover"
+                  placement="top">
+                  {{ showFilters ? $t('governance.toolbar.hideFilters') : $t('governance.toolbar.showFilters') }}
+                </BTooltip>
+                <BButton
+                  @click="openColumnsModal"
+                  :aria-label="$t('common.customizeColumns')"
+                  variant="link"
+                  class="ml-2 text-body">
+                  <FrIcon
+                    icon-class="md-24"
+                    name="view_column" />
+                </BButton>
               </div>
             </BButtonToolbar>
             <!-- also serves flag-on envs whose new endpoint is missing: restores
@@ -418,6 +418,22 @@ function mutateCampaignStatus(campaign) {
 const ACTIVE_LIKE_STATUSES = ['in-progress', 'active', 'creating', 'expiring', 'overdue'];
 const CLOSED_LIKE_STATUSES = ['closed', 'expired', 'cancelled', 'completed', 'signed-off'];
 
+// Raw backend statuses each status checkbox must expand to. The backend only
+// knows raw campaign statuses while several badges are derived client-side
+// (raw in-progress displays as In progress/Expiring/Overdue, raw
+// complete/signed-off as Complete), so one checkbox has to query every raw
+// status that can display under it — expiring/overdue/completed themselves are
+// derive-only and must never be queried directly. Checkboxes missing here fall
+// back to their statuses-map param, or the key itself.
+const FILTER_STATUS_PARAMS = {
+  active: ['active', 'in-progress', 'creating'],
+  completed: ['complete', 'signed-off'],
+};
+
+// the list always filters by at least one status — Active only on load,
+// restored by resetFilters, and never emptied by the user (see watcher)
+const DEFAULT_SELECTED_STATUSES = ['active'];
+
 export default {
   name: 'Campaigns',
   components: {
@@ -545,8 +561,18 @@ export default {
       this.currentPage = 1;
       this.getList();
     },
-    selectedStatuses() {
+    selectedStatuses(newValue, oldValue) {
       if (!this.governanceDevEnabled || this.isInitialising) return;
+      // the list must always be filtered by at least one status, so refuse to
+      // empty the selection: restore what was checked and skip the requery
+      if (!newValue.length) {
+        this.isInitialising = true; // suppress this watcher while we restore
+        this.selectedStatuses = oldValue;
+        this.$nextTick(() => {
+          this.isInitialising = false;
+        });
+        return;
+      }
       this.currentPage = 1;
       this.getList();
     },
@@ -566,18 +592,25 @@ export default {
     displayList() {
       return this.accessReviewList;
     },
-    filterableStatusKeys() {
-      return Array.from(this.statuses)
-        .filter(([, statusObj]) => !statusObj.sortHide)
-        .map(([key]) => key);
-    },
     statusCheckboxOptions() {
+      // the list is always filtered by at least one status, so the only
+      // remaining checked option can't be unchecked
+      const lastRemaining = this.selectedStatuses.length === 1 ? this.selectedStatuses[0] : null;
       return Array.from(this.statuses)
         .filter(([, statusObj]) => !statusObj.sortHide)
         .map(([key, statusObj]) => ({
           text: statusObj.text,
           value: key,
+          disabled: key === lastRemaining,
         }));
+    },
+    // every raw backend status the checked checkboxes can display, deduped
+    filterStatusParams() {
+      const params = new Set();
+      this.selectedStatuses.forEach((key) => {
+        (FILTER_STATUS_PARAMS[key] || [this.statuses.get(key)?.param || key]).forEach((param) => params.add(param));
+      });
+      return Array.from(params);
     },
     campaignTypeOptions() {
       return [
@@ -655,7 +688,7 @@ export default {
     );
     this.isInitialising = true;
     if (this.governanceDevEnabled) {
-      this.selectedStatuses = this.filterableStatusKeys;
+      this.selectedStatuses = [...DEFAULT_SELECTED_STATUSES];
     } else {
       this.sortBy = 'formattedDeadline';
     }
@@ -689,7 +722,7 @@ export default {
       this.searchQuery = '';
       this.selectedOwner = '';
       this.selectedCampaignType = '';
-      this.selectedStatuses = [...this.filterableStatusKeys];
+      this.selectedStatuses = [...DEFAULT_SELECTED_STATUSES];
       this.currentPage = 1;
       this.getList();
       this.$nextTick(() => {
@@ -708,16 +741,12 @@ export default {
       if (this.selectedCampaignType) {
         parts.push(`certificationType eq '${this.selectedCampaignType}'`);
       }
-      // an empty selection is treated as "all": the checkbox group only renders
-      // filterable statuses, and every status being un-checked would otherwise
-      // require the backend to support a negation this endpoint may not accept
-      const allSelected = !this.selectedStatuses.length
-        || this.selectedStatuses.length === this.filterableStatusKeys.length;
-      if (!allSelected) {
-        const statusParts = this.selectedStatuses.map((key) => {
-          const param = this.statuses.get(key)?.param || key;
-          return `status eq '${param}'`;
-        });
+      // every checkbox checked means "everything" — no status clause, so
+      // statuses with no checkbox of their own (closed, pending) stay visible
+      const allSelected = this.selectedStatuses.length === this.statusCheckboxOptions.length;
+      const statusParams = allSelected ? [] : this.filterStatusParams;
+      if (statusParams.length) {
+        const statusParts = statusParams.map((param) => `status eq '${param}'`);
         parts.push(statusParts.length === 1 ? statusParts[0] : `(${statusParts.join(' or ')})`);
       }
       return parts.length ? parts.join(' and ') : undefined;
