@@ -24,14 +24,22 @@ function findJourney(journeyName) {
 }
 
 /**
+ * Login-app realm for journey URLs: alpha on FraaS, root otherwise.
+ * @returns {String} realm query param value
+ */
+function loginRealmForJourney() {
+  return Cypress.env('IS_FRAAS') ? 'alpha' : '/';
+}
+
+/**
  * Generates the enduser journey url
  * @param {String} journeyName the journey name based on the JOURNEYS constants file
  * @returns {String} enduser journey url
  */
 export function generateJourneyURL(journeyName) {
   const journeyPath = findJourney(journeyName).path;
-  const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
-  return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=${journeyPath}`;
+  // Paths in the JOURNEYS constants are already URL-encoded — interpolate unencoded.
+  return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealmForJourney()}&authIndexType=service&authIndexValue=${journeyPath}`;
 }
 
 /**

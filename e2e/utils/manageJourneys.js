@@ -313,7 +313,7 @@ export function prepareJourneyTemplate(templateName, replaceDict) {
     Object.entries(replaceDict).forEach(([key, value]) => {
       // console.log(`Replacing ${key} with ${value}`);
       const regex = new RegExp(key, 'g');
-      const escapedValue = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const escapedValue = String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
       updatedTemplate = updatedTemplate.replace(regex, escapedValue);
     });
     // console.log(`Updated Template: ${updatedTemplate}`);
