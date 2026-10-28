@@ -1,5 +1,5 @@
 /**
- * Copyright 2021-2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2021-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -145,5 +145,38 @@ export function getDefaultProviderConfig(accessToken = Cypress.env('ACCESS_TOKEN
       'content-type': 'application/json',
     },
     retryOnStatusCodeFailure: true,
+  });
+}
+
+/**
+ * Gets the currently saved email provider config from the tenant
+ * @param {string} accessToken Access token to communicate with the API
+ */
+export function getProviderConfig(accessToken = Cypress.env('ACCESS_TOKEN')?.access_token) {
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/config/external.email`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    retryOnStatusCodeFailure: true,
+  });
+}
+
+/**
+ * Sends an email through the currently saved email provider
+ * @param {Object} params - email parameters { from, to, type, subject, body }
+ * @param {string} accessToken Access token to communicate with the API
+ */
+export function sendEmail(params, accessToken = Cypress.env('ACCESS_TOKEN')?.access_token) {
+  return cy.request({
+    method: 'POST',
+    url: `https://${Cypress.env('FQDN')}/openidm/external/email/?_action=send`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: params,
   });
 }

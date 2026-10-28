@@ -8,7 +8,9 @@
 
 import {
   getDefaultProviderConfig,
+  getProviderConfig,
   putEmailProviderConfig,
+  sendEmail,
 } from '@e2e/api/emailApi.e2e';
 
 export default class EmailProviderApiSteps {
@@ -34,5 +36,13 @@ export default class EmailProviderApiSteps {
 
   static interceptSendEmail() {
     cy.intercept('POST', '/openidm/external/email/?_action=send').as('sendEmail');
+  }
+
+  static getSavedProviderConfig() {
+    return getProviderConfig();
+  }
+
+  static sendEmail(params) {
+    return sendEmail(params);
   }
 }
