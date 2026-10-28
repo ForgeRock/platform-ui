@@ -2098,7 +2098,36 @@
         "entitlements": "Entitlements",
         "newRole": "New role",
         "successMemberAdded": "Request(s) created to add member to role",
-        "successMemberRemoved": "Request(s) created to remove member from role"
+        "successMemberRemoved": "Request(s) created to remove member from role",
+        "similarRoles": {
+          "showMore": "Show {count} additional roles",
+          "showLess": "Hide additional roles",
+          "similarity": "Similarity",
+          "similarityPercent": "{percent}%",
+          "sharedEntitlementsLabel": "Shared Entitlements",
+          "sharedEntitlements": "{count}"
+        },
+        "requestProgress": {
+          "title": "Creating Role",
+          "stepSimilarity": "Checking for role similarity",
+          "stepSubmit": "Submitting role request",
+          "noteNoSimilar": "No similar roles detected",
+          "noteSimilarFound": "Similar roles detected: {count}",
+          "noteRequestCreated": "Request {requestId} created",
+          "noteCheckFailed": "The similarity check could not be completed",
+          "noteSubmitFailed": "The request could not be submitted",
+          "viewSimilarRoles": "View Similar Roles",
+          "hideSimilarRoles": "Hide Similar Roles",
+          "similarRolesCount": "Similar Roles ({count})",
+          "continue": "Continue",
+          "retry": "Retry",
+          "successBanner": "Your role request was submitted successfully.",
+          "errorSimilarityBanner": "We couldn't verify similar roles, so nothing was submitted. Retry the check or cancel the request.",
+          "errorSubmitBanner": "The similarity check passed, but the request didn't reach the workflow. You can retry — the check result is still valid.",
+          "announceSubmitted": "Request submitted",
+          "announceSubmitting": "Similarity check complete. Submitting role request",
+          "announceError": "Role request submission failed"
+        }
       },
       "entitlements": {
         "title": "Entitlements",

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -109,4 +109,34 @@ export function modifyRole(id, status, payload) {
 export function publishRole(id, status, payload) {
   const url = `${roleUrl}/${id}/${status}`;
   return generateIgaApi().patch(url, payload);
+}
+
+/**
+ * Check for existing roles similar to the provided role data. Used before
+ * creating a role, since the role does not exist server-side yet.
+ *
+ * @param {Object} payload - The similarity check parameters.
+ * @param {Array} payload.entitlements - IDs of the entitlements in the role to be created.
+ * @param {string} [payload.excludeRoleId] - ID of a role to exclude from the results,
+ *   e.g. the candidate role a draft was created from.
+ * @param {number} [payload.threshold] - Minimum similarity percentage for a role to be returned.
+ * @param {number} [payload.limit] - Maximum number of similar roles to return.
+ * @returns {Promise} A promise that resolves to the list of similar roles.
+ */
+export function getRoleSimilarity(payload) {
+  const url = `${roleUrl}/similarity`;
+  return generateIgaApi().post(url, payload);
+}
+
+/**
+ * Check for existing roles similar to an existing role. Used before updating
+ * a role; the server compares the role as currently persisted.
+ *
+ * @param {string} id - The ID of the role to compare against.
+ * @param {string} status - The status of the role.
+ * @returns {Promise} A promise that resolves to the list of similar roles.
+ */
+export function getRoleSimilarityById(id, status) {
+  const url = `${roleUrl}/${id}/${status}/similarity`;
+  return generateIgaApi().get(url);
 }

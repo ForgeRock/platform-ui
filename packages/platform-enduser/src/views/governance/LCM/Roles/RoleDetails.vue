@@ -96,6 +96,16 @@ of the MIT license. See the LICENSE file for details. -->
       router-path="AdministerRoles"
       :success-text="successMessage"
       :heading-text="successHeading" />
+    <FrRoleRequestProgressModal
+      :is-testing="isTesting"
+      :step-state="progressSteps"
+      :similar-roles="similarRoles"
+      :outcome="progressOutcome"
+      :is-submitting="isSubmittingRequest"
+      :can-continue="canReviewSimilarRoles"
+      @close="closeProgressModal"
+      @retry="retryProgressStep"
+      @continue="submitRoleRequest" />
   </BContainer>
 </template>
 
@@ -126,16 +136,17 @@ import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import {
   filter, forEach, isUndefined, map,
 } from 'lodash';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { getApiErrorMessage, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
-import { getRoleDataById } from '@forgerock/platform-shared/src/api/governance/RoleApi';
+import { getRoleDataById, getRoleSimilarity, getRoleSimilarityById } from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrEntitlementsTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/EntitlementsTab';
 import FrMembersTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/MembersTab';
 import FrDetailsTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/RoleDetailsTabs/DetailsTab';
+import FrRoleRequestProgressModal from '@forgerock/platform-shared/src/components/governance/LCM/Roles/RoleRequestProgressModal';
 import FrRequestSubmitSuccessModal from '@/views/governance/LCM/RequestSubmitSuccessModal';
 import i18n from '@/i18n';
 
@@ -162,6 +173,21 @@ const successMessage = ref('');
 const successHeading = ref('');
 const createRolePermission = ref(false);
 const modifyRolePermission = ref(false);
+const similarRoles = ref([]);
+const isTesting = ref(false);
+const pendingSaveAction = ref(null);
+const pendingSaveIsPublishDraftRequest = ref(false);
+const progressSteps = ref({
+  similarity: { state: 'pending', note: '' },
+  submit: { state: 'pending', note: '' },
+});
+const progressOutcome = ref('');
+const canReviewSimilarRoles = ref(false);
+const isSubmittingRequest = ref(false);
+// The modal can be dismissed mid-check (Esc/backdrop/Cancel while not
+// submitting); this flag stops the in-flight step's continuation from
+// submitting or re-opening the review for a canceled save
+const saveFlowActive = ref(false);
 
 const isReadOnly = computed(() => {
   if (roleId.value === 'new') return !createRolePermission.value;
@@ -263,56 +289,205 @@ function showSuccessModal() {
 }
 
 /**
- * Send the updated role to the server to save.
+ * Build the request payload for saving the role.
+ * @param {Object} roleFormData - The role form data to save.
+ * @returns {Object} The request payload, along with the request type and success message.
+ */
+function buildRoleSavePayload(roleFormData) {
+  const {
+    name, description, justifications,
+  } = roleFormData.role;
+  const payload = {
+    role: {
+      status: roleStatus.value,
+      object: {
+        name,
+        description,
+        justifications: justifications || [],
+        entitlements: map(roleFormData.entitlements, 'id'),
+      },
+      glossary: roleFormData.glossary,
+    },
+  };
+  let requestType = 'createRole';
+  let successText = i18n.global.t('governance.administer.roles.successCreate');
+  successHeading.value = '';
+  if (pendingSaveIsPublishDraftRequest.value && roleStatus.value === 'draft') {
+    requestType = 'publishRole';
+    payload.role.roleId = roleId.value;
+    successText = i18n.global.t('governance.administer.roles.successPublish');
+  } else if (roleId.value !== 'new') {
+    requestType = 'modifyRole';
+    payload.role.roleId = roleId.value;
+    // Saving an existing draft keeps it a draft — it is a save, not a request
+    if (roleStatus.value === 'draft') {
+      successHeading.value = i18n.global.t('governance.administer.roles.successDraftSaved');
+    }
+    successText = i18n.global.t('governance.administer.roles.successUpdate');
+  } else if (pendingSaveAction.value === 'save') {
+    // "Save as Draft" on a new role is a save, not a request
+    successHeading.value = i18n.global.t('governance.administer.roles.successDraftSaved');
+    successText = i18n.global.t('governance.administer.roles.successDraftCreate');
+  }
+  return { payload, requestType, successText };
+}
+
+/**
+ * Perform the request submission step and route to the success modal.
+ */
+async function submitRoleRequest() {
+  isSubmittingRequest.value = true;
+  progressSteps.value.submit = { state: 'active', note: '' };
+  try {
+    const { payload, requestType, successText } = buildRoleSavePayload(formData.value);
+    successMessage.value = successText;
+    const { data } = await requestAction(requestType, pendingSaveAction.value, null, payload);
+    if (!saveFlowActive.value) return;
+    requestId.value = data.id;
+    progressSteps.value.submit = {
+      state: 'done',
+      note: i18n.global.t('governance.administer.roles.requestProgress.noteRequestCreated', { requestId: data.id }),
+    };
+    progressOutcome.value = 'success';
+    bvModal.value.hide('role-request-progress-modal');
+    showSuccessModal();
+  } catch (error) {
+    if (!saveFlowActive.value) return;
+    progressSteps.value.submit = {
+      state: 'error',
+      note: i18n.global.t('governance.administer.roles.requestProgress.noteSubmitFailed'),
+    };
+    progressOutcome.value = 'error';
+    showErrorMessage(error, i18n.global.t('errors.savingObject', { object: 'role' }));
+  } finally {
+    isSubmittingRequest.value = false;
+    isSaving.value = false;
+  }
+}
+
+/**
+ * Whether the similarity check should run: the backend rejects the call with
+ * "Entitlements must be provided for this endpoint." when the role has no
+ * entitlements to compare, so a role without them skips the check entirely.
+ */
+function roleHasEntitlementsToCompare() {
+  return map(formData.value.entitlements, 'id').length > 0;
+}
+
+/**
+ * Run the similarity check step. Auto-submits the request when the check
+ * finds nothing to review (no entitlements to compare, or no similar roles);
+ * only when matches are found does the user confirm via the Submit button.
+ *
+ * For an existing role the check compares the role as currently persisted on
+ * the server (per the IGA-5059 contract for updates), not the unsaved form
+ * data that gets submitted.
+ */
+async function runSimilarityStep() {
+  progressSteps.value.similarity = { state: 'active', note: '' };
+  try {
+    let similarRolesResult = [];
+    if (roleHasEntitlementsToCompare()) {
+      let data;
+      if (roleId.value !== 'new') {
+        // Compares the role as currently persisted on the server
+        ({ data } = await getRoleSimilarityById(roleId.value, roleStatus.value));
+      } else {
+        data = (await getRoleSimilarity({
+          entitlements: map(formData.value.entitlements, 'id'),
+          threshold: 30,
+          limit: 10,
+        })).data;
+      }
+      similarRolesResult = data?.result || [];
+    }
+    if (!saveFlowActive.value) return;
+    similarRoles.value = similarRolesResult;
+    progressSteps.value.similarity = {
+      state: 'done',
+      note: similarRolesResult.length
+        ? i18n.global.t('governance.administer.roles.requestProgress.noteSimilarFound', { count: similarRolesResult.length })
+        : i18n.global.t('governance.administer.roles.requestProgress.noteNoSimilar'),
+    };
+    if (similarRolesResult.length) {
+      // Similar matches found: the user confirms submission via the Submit button
+      canReviewSimilarRoles.value = true;
+    } else {
+      // Nothing to review: submit straight away
+      await submitRoleRequest();
+    }
+  } catch (error) {
+    if (!saveFlowActive.value) return;
+    // If the backend still rejects the check because the role has no
+    // entitlements to compare, treat the check as passed rather than failed.
+    // Matches the backend message verbatim — a wording change flips this into a
+    // check failure (pinned by the "no-entitlements backend error" test below).
+    if (getApiErrorMessage(error, '').includes('Entitlements must be provided')) {
+      similarRoles.value = [];
+      progressSteps.value.similarity = {
+        state: 'done',
+        note: i18n.global.t('governance.administer.roles.requestProgress.noteNoSimilar'),
+      };
+      await submitRoleRequest();
+      return;
+    }
+    progressSteps.value.similarity = {
+      state: 'error',
+      note: i18n.global.t('governance.administer.roles.requestProgress.noteCheckFailed'),
+    };
+    progressOutcome.value = 'error';
+  }
+}
+
+/**
+ * Retry from the progress modal: re-run only the failed step, reusing
+ * results from steps that already completed.
+ */
+async function retryProgressStep() {
+  progressOutcome.value = '';
+  if (progressSteps.value.similarity.state === 'error') {
+    await runSimilarityStep();
+  } else if (progressSteps.value.submit.state === 'error') {
+    await submitRoleRequest();
+  }
+}
+
+/**
+ * Close the progress modal from Cancel/Done without submitting, and reset the
+ * save flow so the header save buttons are re-enabled for another attempt.
+ */
+function closeProgressModal() {
+  saveFlowActive.value = false;
+  bvModal.value.hide('role-request-progress-modal');
+  isSaving.value = false;
+  canReviewSimilarRoles.value = false;
+  progressOutcome.value = '';
+  progressSteps.value = {
+    similarity: { state: 'pending', note: '' },
+    submit: { state: 'pending', note: '' },
+  };
+}
+
+/**
+ * Handle a Save/Save as Draft click: open the progress modal and run the
+ * similarity check step, then continue based on the check result.
  * @param {String} action - The action to perform for the role update request.
  * @param {Boolean} isPublishDraftRequest - Whether the request is to publish a draft role.
  */
-async function saveRoleData(action = 'publish', isPublishDraftRequest) {
+async function saveRoleData(action = 'publish', isPublishDraftRequest = false) {
   isSaving.value = true;
-  try {
-    const {
-      name, description, justifications,
-    } = formData.value.role;
-    const payload = {
-      role: {
-        status: roleStatus.value,
-        object: {
-          name,
-          description,
-          justifications: justifications || [],
-          entitlements: map(formData.value.entitlements, 'id'),
-        },
-        glossary: formData.value.glossary,
-      },
-    };
-    let requestType = 'createRole';
-    successHeading.value = '';
-    successMessage.value = i18n.global.t('governance.administer.roles.successCreate');
-    if (isPublishDraftRequest && roleStatus.value === 'draft') {
-      requestType = 'publishRole';
-      payload.role.roleId = roleId.value;
-      successMessage.value = i18n.global.t('governance.administer.roles.successPublish');
-    } else if (roleId.value !== 'new') {
-      requestType = 'modifyRole';
-      payload.role.roleId = roleId.value;
-      // Saving an existing draft keeps it a draft — it is a save, not a request
-      if (roleStatus.value === 'draft') {
-        successHeading.value = i18n.global.t('governance.administer.roles.successDraftSaved');
-      }
-      successMessage.value = i18n.global.t('governance.administer.roles.successUpdate');
-    } else if (action === 'save') {
-      // "Save as Draft" on a new role is a save, not a request
-      successHeading.value = i18n.global.t('governance.administer.roles.successDraftSaved');
-      successMessage.value = i18n.global.t('governance.administer.roles.successDraftCreate');
-    }
-    const { data } = await requestAction(requestType, action, null, payload);
-    requestId.value = data.id;
-    showSuccessModal();
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('errors.savingObject', { object: 'role' }));
-  } finally {
-    isSaving.value = false;
-  }
+  saveFlowActive.value = true;
+  pendingSaveAction.value = action;
+  pendingSaveIsPublishDraftRequest.value = isPublishDraftRequest;
+  similarRoles.value = [];
+  canReviewSimilarRoles.value = false;
+  progressOutcome.value = '';
+  progressSteps.value = {
+    similarity: { state: 'pending', note: '' },
+    submit: { state: 'pending', note: '' },
+  };
+  bvModal.value.show('role-request-progress-modal');
+  await runSimilarityStep();
 }
 
 /**
