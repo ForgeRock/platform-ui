@@ -838,6 +838,15 @@ a.card {
   border-color: $black;
 }
 
+/* The 1px black ring above is tight and low-contrast on the control's own edge, so
+outline the whole control (circle + label) with the standard focus outline for a
+clearer indicator on checked radios. */
+.custom-radio:has(.custom-control-input:focus-visible) {
+  width: fit-content;
+  outline: 2px solid $outline-blue;
+  outline-offset: 2px;
+}
+
 /* Letters & Colors */
 .letter-a,
 .letter-g,
