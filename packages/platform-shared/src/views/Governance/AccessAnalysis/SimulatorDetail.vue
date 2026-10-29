@@ -89,19 +89,14 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="!isLoading && selectorsReady"
       no-body>
       <BTableSimple
-        v-if="hasRun && allResults.length"
+        v-if="isRole && hasRun && allResults.length"
+        v-resizable-table="{ persistKey: 'access-analysis-simulator-roles' }"
         hover
         class="mb-0">
         <BThead>
           <BTr>
             <BTh class="fr-simulator__col-name">
               {{ $t('common.name') }}
-            </BTh>
-            <BTh class="fr-simulator__col-type">
-              {{ $t('common.type') }}
-            </BTh>
-            <BTh class="fr-simulator__col-application">
-              {{ $t('common.application') }}
             </BTh>
             <BTh class="fr-simulator__col-status">
               {{ $t('common.status') }}
@@ -115,24 +110,6 @@ of the MIT license. See the LICENSE file for details. -->
             <BTd class="fr-simulator__col-name">
               {{ item.name }}
             </BTd>
-            <BTd class="fr-simulator__col-type text-muted">
-              {{ item.type }}
-            </BTd>
-            <BTd class="fr-simulator__col-application">
-              <div
-                v-if="item.application"
-                class="d-flex align-items-center">
-                <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center mr-2">
-                  <img
-                    class="size-28"
-                    alt=""
-                    :src="getApplicationLogo(item.application)"
-                    :onerror="onImageError">
-                </div>
-                {{ item.application.name || item.application.id }}
-              </div>
-              <span v-else>—</span>
-            </BTd>
             <BTd class="fr-simulator__col-status">
               <div class="d-flex align-items-center">
                 <FrIcon
@@ -140,6 +117,53 @@ of the MIT license. See the LICENSE file for details. -->
                   :icon-class="`mr-1 ${item.iconClass}`" />
                 <span :class="`text-${item.labelVariant}`">{{ item.label }}</span>
               </div>
+            </BTd>
+          </BTr>
+        </BTbody>
+      </BTableSimple>
+      <BTableSimple
+        v-else-if="!isRole && hasRun && permissionRows.length"
+        v-resizable-table="{ persistKey: 'access-analysis-simulator-permissions' }"
+        hover
+        class="mb-0">
+        <BThead>
+          <BTr>
+            <BTh class="fr-simulator__col-name">
+              {{ $t('governance.accessAnalysis.scopes.permissions') }}
+            </BTh>
+            <BTh class="fr-simulator__col-state">
+              {{ $t('governance.accessAnalysis.simulator.before') }}
+            </BTh>
+            <BTh class="fr-simulator__col-status">
+              {{ $t('governance.accessAnalysis.simulator.after') }}
+            </BTh>
+          </BTr>
+        </BThead>
+        <BTbody>
+          <BTr
+            v-for="row in permissionRows"
+            :key="row.key">
+            <BTd class="fr-simulator__col-name">
+              <div class="d-flex align-items-center">
+                <FrScopePermissionIcon
+                  :category="row.category"
+                  :id-prefix="`simulator-permission-${row.key}`" />
+                <span class="ml-2">{{ $t(`governance.accessAnalysis.scopes.permissionLabels.${row.key}`) }}</span>
+              </div>
+            </BTd>
+            <BTd class="fr-simulator__col-status">
+              <FrIcon
+                :aria-label="$t(row.before ? 'governance.accessAnalysis.grants.granted' : 'governance.accessAnalysis.grants.notGranted')"
+                :name="row.before ? 'check_circle' : 'cancel'"
+                role="img"
+                :icon-class="row.before ? 'text-success' : 'text-danger'" />
+            </BTd>
+            <BTd class="fr-simulator__col-status">
+              <FrIcon
+                :aria-label="$t(row.after ? 'governance.accessAnalysis.grants.granted' : 'governance.accessAnalysis.grants.notGranted')"
+                :name="row.after ? 'check_circle' : 'cancel'"
+                role="img"
+                :icon-class="row.after ? 'text-success' : 'text-danger'" />
             </BTd>
           </BTr>
         </BTbody>
@@ -171,11 +195,11 @@ import FrGovResourceSelect from '@forgerock/platform-shared/src/components/gover
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
-import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import FrScopePermissionIcon from '@forgerock/platform-shared/src/components/governance/ScopePermissionIcons/ScopePermissionIcon';
 import { getUsers, getUserById, getUserGrants } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getRoleDataById, getRoleList } from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import { getDefaultGovOption } from '@forgerock/platform-shared/src/utils/governance/select';
+import { getScopePermissionRows } from '@forgerock/platform-shared/src/utils/governance/scopePermissions';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
 
@@ -214,6 +238,11 @@ const selectedRoleId = computed(() => selectedRoleValue.value?.split('/').pop() 
 const revokeOptions = ref([]);
 const isLoadingRevokeOptions = ref(false);
 const selectedUserId = computed(() => selectedUserValue.value?.split('/').pop() || '');
+
+// The user's held scopes with their full permission details, used to determine
+// whether a permission survives a scope removal (another held scope re-granting it).
+const userScopeDetailsById = ref({});
+
 const selectorsReady = computed(() => userSelectorReady.value
   && (isAdd.value ? roleSelectorReady.value : !selectedUserId.value || !isLoadingRevokeOptions.value));
 
@@ -229,6 +258,8 @@ const hasRun = ref(false);
 const entitlementResults = ref([]);
 const applicationResults = ref([]);
 const scopeResults = ref([]);
+// Scope simulations: one row per permission the selected scope grants, with before/after state
+const permissionRows = ref([]);
 
 watch(selectedUserId, () => {
   selectedRoleValue.value = '';
@@ -236,6 +267,7 @@ watch(selectedUserId, () => {
   entitlementResults.value = [];
   applicationResults.value = [];
   scopeResults.value = [];
+  permissionRows.value = [];
 });
 
 const allResults = computed(() => [
@@ -314,6 +346,33 @@ function revokeQueryParamFunction(queryString) {
   return params;
 }
 
+/**
+ * Load the user's held scopes with full permission details, keyed by scope id.
+ * Feeds both the removeScope dropdown and the permission-survival check.
+ * @param {String} userId the selected user's id
+ */
+async function loadUserScopeDetails(userId) {
+  userScopeDetailsById.value = {};
+  if (!userId) return;
+  try {
+    const res = await getUserById(userId);
+    const user = res?.data?.result?.[0];
+    const scopeIds = [...new Set(
+      Object.values(user?.scopes || {}).flat().map((s) => s?.id).filter(Boolean),
+    )];
+    if (!scopeIds.length) return;
+    const scopeDetails = await Promise.allSettled(scopeIds.map((id) => props.getScopeById(id)));
+    const detailsById = {};
+    scopeDetails.forEach((r, i) => {
+      const scope = r.status === 'fulfilled' ? r.value?.data : null;
+      if (scope) detailsById[scopeIds[i]] = scope;
+    });
+    userScopeDetailsById.value = detailsById;
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.accessAnalysis.simulator.errorRunning'));
+  }
+}
+
 async function loadRevokeOptions(userId) {
   revokeOptions.value = [];
   selectedRoleValue.value = '';
@@ -333,25 +392,14 @@ async function loadRevokeOptions(userId) {
         };
       });
     } else {
-      const res = await getUserById(userId);
-      const user = res?.data?.result?.[0];
-      const scopeIds = [...new Set(
-        Object.values(user?.scopes || {}).flat().map((s) => s?.id).filter(Boolean),
-      )];
-      if (scopeIds.length) {
-        const scopeDetails = await Promise.allSettled(scopeIds.map((id) => props.getScopeById(id)));
-        revokeOptions.value = scopeDetails.map((r, i) => {
-          const scope = r.status === 'fulfilled' ? r.value?.data : null;
-          const id = scopeIds[i];
-          const name = scope?.name || id;
-          return {
-            text: name,
-            value: id,
-            id,
-            name,
-          };
-        });
-      }
+      await loadUserScopeDetails(userId);
+      revokeOptions.value = Object.entries(userScopeDetailsById.value).map(([id, scope]) => ({
+        text: scope.name || id,
+        value: id,
+        id,
+        name: scope.name || id,
+        scope,
+      }));
     }
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.accessAnalysis.simulator.errorRunning'));
@@ -361,7 +409,11 @@ async function loadRevokeOptions(userId) {
 }
 
 watch(selectedUserId, (userId) => {
-  if (!isAdd.value) loadRevokeOptions(userId);
+  if (!isAdd.value) {
+    loadRevokeOptions(userId);
+  } else {
+    loadUserScopeDetails(userId);
+  }
 });
 
 function buildResultItem(item, userHas, addMode, type) {
@@ -375,7 +427,7 @@ function buildResultItem(item, userHas, addMode, type) {
       id: item.id,
       name,
       type,
-      application: item.application,
+      scope: item.scope || null,
       icon: 'check_circle',
       iconClass: 'text-muted',
       label: i18n.global.t('governance.accessAnalysis.simulator.alreadyHeld'),
@@ -387,7 +439,7 @@ function buildResultItem(item, userHas, addMode, type) {
       id: item.id,
       name,
       type,
-      application: item.application,
+      scope: item.scope || null,
       icon: 'add_circle',
       iconClass: 'text-success',
       label: i18n.global.t('governance.accessAnalysis.simulator.willBeGained'),
@@ -398,7 +450,7 @@ function buildResultItem(item, userHas, addMode, type) {
     id: item.id,
     name,
     type,
-    application: item.application,
+    scope: item.scope || null,
     icon: 'remove_circle',
     iconClass: 'text-danger',
     label: i18n.global.t('governance.accessAnalysis.simulator.willBeLost'),
@@ -460,36 +512,82 @@ async function runRoleSimulation() {
   });
 }
 
+/**
+ * Whether one of the user's OTHER held scopes (excluding the one being simulated)
+ * grants the given permission key.
+ * @param {String} permissionKey the permission key to check
+ * @returns {Boolean} true if another held scope grants it
+ */
+function otherHeldScopesGrant(permissionKey) {
+  return Object.entries(userScopeDetailsById.value)
+    .filter(([scopeId]) => scopeId !== selectedRoleId.value)
+    .some(([, scope]) => getScopePermissionRows(scope).some((row) => row.key === permissionKey));
+}
+
+/**
+ * Build the permission-level before/after rows for a scope simulation.
+ * Both states account for the user's other held scopes: a permission another held
+ * scope grants is already granted before an add and stays granted after a remove
+ * ("no change"). Only permissions uniquely granted by the selected scope flip.
+ * @param {Object} scope the selected scope resource
+ * @param {Boolean} userHoldsScope whether the user already has this scope
+ */
+function buildScopePermissionRows(scope, userHoldsScope) {
+  // Adding grants each of the scope's permissions; removing revokes them.
+  // Both states account for the user's other held scopes: a permission still
+  // (or already) granted by another scope reads as unchanged.
+  permissionRows.value = getScopePermissionRows(scope).map(({ category, key }) => {
+    const otherScopesGrant = otherHeldScopesGrant(key);
+    const before = (isAdd.value ? userHoldsScope : true) || otherScopesGrant;
+    const after = isAdd.value ? true : otherScopesGrant;
+    return {
+      category,
+      key,
+      before,
+      after,
+    };
+  });
+}
+
 async function runScopeSimulation() {
+  let scope;
+  let userHoldsScope = true; // removeScope — user picked from their own scopes
   if (props.simulationType === 'addScope') {
     const [scopeResponse, userResponse] = await Promise.allSettled([
       props.getScopeById(selectedRoleId.value),
       getUserById(selectedUserId.value),
     ]);
 
-    const scope = scopeResponse.status === 'fulfilled' ? scopeResponse.value?.data : null;
+    scope = scopeResponse.status === 'fulfilled' ? scopeResponse.value?.data : null;
     const user = userResponse.status === 'fulfilled' ? userResponse.value?.data?.result?.[0] : null;
     const userScopeIds = new Set(
       Object.values(user?.scopes || {}).flat().map((s) => s?.id).filter(Boolean),
     );
-    const userAlreadyHas = userScopeIds.has(selectedRoleId.value);
+    userHoldsScope = userScopeIds.has(selectedRoleId.value);
     scopeResults.value.push(buildResultItem(
-      { id: selectedRoleId.value, name: scope?.name || selectedRoleId.value, application: null },
-      userAlreadyHas,
+      {
+        id: selectedRoleId.value, name: scope?.name || selectedRoleId.value, application: null, scope,
+      },
+      userHoldsScope,
       true,
       i18n.global.t('governance.accessAnalysis.simulator.types.scope'),
     ));
   } else {
     // removeScope — user already picked from their own scopes via revokeOptions
     const selected = revokeOptions.value.find((o) => o.id === selectedRoleId.value);
+    scope = selected?.scope || null;
     const name = selected?.name || selectedRoleId.value;
     scopeResults.value.push(buildResultItem(
-      { id: selectedRoleId.value, name, application: null },
+      {
+        id: selectedRoleId.value, name, application: null, scope,
+      },
       false,
       false,
       i18n.global.t('governance.accessAnalysis.simulator.types.scope'),
     ));
   }
+
+  buildScopePermissionRows(scope, userHoldsScope);
 }
 
 async function runSimulation() {
@@ -498,6 +596,7 @@ async function runSimulation() {
   entitlementResults.value = [];
   applicationResults.value = [];
   scopeResults.value = [];
+  permissionRows.value = [];
 
   try {
     if (isRole.value) {
@@ -521,14 +620,7 @@ async function runSimulation() {
     font-weight: 600;
   }
 
-  &__col-type {
-    width: 25%;
-  }
-
-  &__col-application {
-    width: 25%;
-  }
-
+  &__col-state,
   &__col-status {
     width: 25%;
   }

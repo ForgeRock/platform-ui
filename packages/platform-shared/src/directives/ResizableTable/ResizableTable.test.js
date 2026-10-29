@@ -107,6 +107,32 @@ describe('ResizableTable directive', () => {
     expect(removeListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function));
   });
 
+  it('unmounted does not throw when the table was detached from the DOM before teardown', () => {
+    ResizableTable.mounted(el, binding);
+
+    // Simulate a v-if teardown racing the directive hook: table already detached
+    table.remove();
+
+    expect(() => {
+      ResizableTable.unmounted(el, binding);
+    }).not.toThrow();
+  });
+
+  it('pending mutation-observer callback is a no-op after the table is detached', () => {
+    jest.useFakeTimers();
+    try {
+      ResizableTable.mounted(el, binding);
+      // Detach, then let a structural change fire the (debounced) observer callback
+      table.remove();
+      th1.appendChild(document.createElement('span'));
+      jest.advanceTimersByTime(500);
+
+      expect(() => jest.runOnlyPendingTimers()).not.toThrow();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it('calls setLocalStorageValue to update the column width on window events', () => {
     const setLocalStorageValueSpy = jest.spyOn(localStorageUtils, 'setLocalStorageValue');
     ResizableTable.mounted(el, binding);

@@ -9,6 +9,8 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { toHaveNoViolations } from 'jest-axe';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { createAppContainer, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { useBreadcrumbStore } from '@forgerock/platform-shared/src/stores/breadcrumb';
 import * as PermissionsApi from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import * as RoleApi from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import * as AccessModelingApi from '@forgerock/platform-shared/src/api/governance/AccessModelingApi';
@@ -134,6 +136,7 @@ describe('AccessModeling', () => {
 
   function mountComponent(props = {}) {
     routerPush = mockRouter().routerPush;
+    setupTestPinia();
     wrapper = mount(AccessModeling, {
       attachTo: app,
       global: {
@@ -161,6 +164,14 @@ describe('AccessModeling', () => {
     wrapper = mountComponent();
     await flushPromises();
     expect(AccessModelingApi.getRoleMetrics).toHaveBeenCalled();
+  });
+
+  it('sets a breadcrumb back to the access modeling hub on mount', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+    const breadcrumbStore = useBreadcrumbStore();
+    expect(breadcrumbStore.returnRoute).toBe('/access-modeling');
+    expect(breadcrumbStore.returnRouteText).toBe(i18n.global.t('governance.accessModeling.hub.title'));
   });
 
   it('displays each role in a table row', async () => {

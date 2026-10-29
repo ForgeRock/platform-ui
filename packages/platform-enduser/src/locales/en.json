@@ -205,7 +205,9 @@
   },
   "pageTitles": {
     "AccessModeling": "Access Modeling",
+    "AccessModelingAnalysis": "Access Analyzer",
     "AccessModelingDetails": "Role Modeling Details",
+    "AccessModelingMenu": "Access Modeling",
     "AccessReviews": "Access Reviews",
     "AccessViewerReports": "User Access Graph",
     "Accounts": "Accounts",

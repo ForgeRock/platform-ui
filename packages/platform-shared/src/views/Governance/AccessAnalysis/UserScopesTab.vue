@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="py-5" />
     <BTableSimple
       v-else-if="allScopes.length"
+      v-resizable-table="{ persistKey: 'access-analysis-scopes' }"
       hover
       responsive
       class="mb-0">
@@ -16,6 +17,9 @@ of the MIT license. See the LICENSE file for details. -->
         <BTr>
           <BTh class="fr-scopes-tab__col-name">
             {{ $t('common.name') }}
+          </BTh>
+          <BTh class="fr-scopes-tab__col-permissions">
+            {{ $t('governance.accessAnalysis.scopes.permissions') }}
           </BTh>
           <BTh class="fr-scopes-tab__col-user">
             {{ userAName }}
@@ -31,6 +35,11 @@ of the MIT license. See the LICENSE file for details. -->
           :key="scope.id">
           <BTd class="fr-scopes-tab__col-name">
             {{ scope.name }}
+          </BTd>
+          <BTd class="fr-scopes-tab__col-permissions">
+            <FrScopePermissionIcons
+              :scope="scope"
+              id-prefix="scope-permissions-" />
           </BTd>
           <BTd>
             <div class="d-flex align-items-center">
@@ -93,6 +102,7 @@ import {
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrScopePermissionIcons from '@forgerock/platform-shared/src/components/governance/ScopePermissionIcons';
 import { getUserById } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
@@ -174,12 +184,18 @@ watchEffect(() => emit('update:count', allScopes.value.length));
 <style lang="scss" scoped>
 .fr-scopes-tab {
   &__col-name {
-    width: 30%;
+    width: 25%;
     font-weight: 600;
   }
 
+  &__col-permissions {
+    width: 15%;
+    // Room for all 4 category icons (4x28px + gaps + cell padding) without clipping
+    min-width: 180px;
+  }
+
   &__col-user {
-    width: 35%;
+    width: 30%;
   }
 }
 </style>

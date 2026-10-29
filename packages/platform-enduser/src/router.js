@@ -401,8 +401,19 @@ const router = createRouter({
       children: [
         {
           path: '',
+          name: 'AccessModelingMenu',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModelingMenu'),
+        },
+        {
+          path: 'roles',
           name: 'AccessModeling',
           component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModeling'),
+        },
+        {
+          path: 'access-analysis/:accessAnalysisTab?',
+          name: 'AccessModelingAnalysis',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessAnalysis/AccessAnalysis'),
+          props: { showBackButton: true },
         },
         {
           path: ':status/:roleId/:tab',

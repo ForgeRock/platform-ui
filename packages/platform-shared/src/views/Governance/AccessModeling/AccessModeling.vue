@@ -275,10 +275,12 @@ import { getRoleList } from '@forgerock/platform-shared/src/api/governance/RoleA
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getRoleRecommendationsCount } from '@forgerock/platform-shared/src/utils/governance/accessModeling';
 import FrAccessModelingTable from '@forgerock/platform-shared/src/components/governance/AccessModeling/AccessModelingTable';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import i18n from '@/i18n';
 import styles from '@/scss/main.scss';
 
 const router = useRouter();
+const { setBreadcrumb } = useBreadcrumb();
 const candidateRoles = ref([]);
 const entriesPerPage = ref(10);
 const totalPagedResults = ref(0);
@@ -567,6 +569,7 @@ async function saveEdit(key) {
 }
 
 onMounted(async () => {
+  setBreadcrumb('/access-modeling', i18n.global.t('governance.accessModeling.hub.title'));
   queryRoleMetrics();
   loadRoleMiningConfig();
   search();

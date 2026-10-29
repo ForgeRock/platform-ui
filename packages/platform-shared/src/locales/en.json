@@ -1699,7 +1699,31 @@
       },
       "scopes": {
         "noScopes": "No scopes found",
-        "errorLoading": "Unable to load scopes"
+        "errorLoading": "Unable to load scopes",
+        "permissions": "Permissions",
+        "categories": {
+          "application": "Applications",
+          "entitlement": "Entitlements",
+          "role": "Roles",
+          "user": "Users"
+        },
+        "permissionLabels": {
+          "viewApplications": "View Applications",
+          "createEntitlement": "Create Entitlements",
+          "viewEntitlements": "View Entitlements",
+          "modifyEntitlement": "Modify Entitlements",
+          "viewGrants": "View Grants",
+          "viewRoles": "View Roles",
+          "createRole": "Create Roles",
+          "modifyRole": "Modify Role",
+          "publishRole": "Publish Roles",
+          "deleteRole": "Delete Role",
+          "viewUsers": "View Users",
+          "createUser": "Create Users",
+          "modifyUser": "Modify User",
+          "deleteUser": "Delete User",
+          "viewUserAccess": "View Grants"
+        }
       },
       "simulator": {
         "description": "The Access Simulator shows how a user's entitlements and application access would change if a role were added to or removed from them.",
@@ -1726,6 +1750,8 @@
         "willBeGained": "Will be gained",
         "willBeLost": "Will be lost",
         "alreadyHeld": "Already held (direct)",
+        "before": "Before",
+        "after": "After",
         "addRole": {
           "title": "Add a Role to the user",
           "description": "See how adding a role would change the entitlements and application access a user has."
@@ -1851,7 +1877,29 @@
       },
       "roleMiningJobLaunched": "Role mining job successfully launched",
       "title": "Access Modeling",
-      "subtitle": "Discover, analyze, and compose business roles."
+      "subtitle": "Discover, analyze, and compose business roles.",
+      "hub": {
+        "title": "Access Modeling",
+        "subtitle": "Explore role modeling and access analysis tools.",
+        "accessModelingCard": {
+          "title": "Based on Access Patterns",
+          "description": "Use a machine learning approach to let Identity Governance discover roles and changes to previously mined roles over the entire user population."
+        },
+        "userPopulationCard": {
+          "title": "Based on User Population",
+          "description": "Use an interactive approach where you can mine birthright (common access) and specialized roles based on a user population you select."
+        },
+        "cloneUserCard": {
+          "title": "Clone an Existing User",
+          "description": "Pick a user whose access reflects the role you want, then use their entitlements as the starting point for a new role."
+        },
+        "accessAnalyzerCard": {
+          "title": "Access Analyzer",
+          "description": "Use the Access Analyzer to compare effective permissions of users, roles, and carry out simulations."
+        },
+        "comingSoon": "Coming soon",
+        "getStarted": "Get started"
+      }
     },
     "accessRequest": {
       "requestTypes": {

@@ -284,6 +284,7 @@ function createResizableTable(table, options) {
   const cols = Array.from(table.querySelectorAll('th'));
   const resizableCols = cols.filter((col) => isResizableColumn(col.classList));
   if (resizableCols.length <= 1) return; // Hide resizer if less than 2 resizable columns present in the table
+  if (!table.parentElement) return; // Table detached from the DOM
   if (options.wrap) {
     table.parentElement.classList.remove(TABLE_NOWRAP_CLASS);
   } else {
@@ -355,6 +356,8 @@ export default {
       if (hasStructuralChange) {
         clearTimeout(mutationTimeout);
         mutationTimeout = setTimeout(() => {
+          // The table may have been detached while the debounce was pending
+          if (!table.parentElement) return;
           // Always ensure the class is present
           if (!table.parentElement.classList.contains(TABLE_CLASS)) {
             table.parentElement.classList.add(TABLE_CLASS);
@@ -378,8 +381,8 @@ export default {
    */
   unmounted(el, binding) {
     const table = el.tagName === 'TABLE' ? el : el.querySelector('table');
-    const cols = Array.from(table.querySelectorAll('th'));
     if (!table) return;
+    const cols = Array.from(table.querySelectorAll('th'));
     // Remove resizer handles and attributes
     cols.forEach((col) => {
       const resizer = col.querySelector(`.${RESIZER_CLASS}`);
@@ -395,9 +398,11 @@ export default {
       resizer.remove();
     });
 
-    // Remove table class and live region
-    table.parentElement.classList.remove(TABLE_CLASS);
-    table.parentElement.classList.remove(TABLE_NOWRAP_CLASS);
+    // Remove table class and live region (the table may already be detached from the DOM)
+    if (table.parentElement) {
+      table.parentElement.classList.remove(TABLE_CLASS);
+      table.parentElement.classList.remove(TABLE_NOWRAP_CLASS);
+    }
     if (table.__resizeLiveRegion) {
       table.__resizeLiveRegion.remove();
       delete table.__resizeLiveRegion;
