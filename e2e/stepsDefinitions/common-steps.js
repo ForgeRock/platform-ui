@@ -573,6 +573,11 @@ Then('{string} button is enabled', (button) => {
   cy.findByRole('button', { name: button }).should('be.enabled');
 });
 
+Then('user waits for {string} button to no longer exist', (button) => {
+  cy.findByRole('button', { name: button, timeout: 15000 })
+    .should('not.exist');
+});
+
 Then('buttons are enabled:', (dataTable) => {
   dataTable.raw().forEach((buttonName) => {
     cy.findByRole('button', { name: buttonName }).should('be.enabled');

@@ -33,6 +33,13 @@ export default {
       type: String,
       default: 'result',
     },
+    // Guidance appended to the no-results announcement only (e.g. the empty state's visible subtitle),
+    // so pages whose zero-result text carries advice can speak it in the same polite announcement
+    // instead of rendering a competing assertive region. Ignored when the search returns results.
+    messageSuffix: {
+      type: String,
+      default: '',
+    },
     testid: {
       type: String,
       default: 'search-results-announcer',
@@ -58,9 +65,11 @@ export default {
     message() {
       if (this.count === null) return '';
       if (!this.count) {
+        // The guidance suffix describes the empty state, so it is only ever spoken with it
+        const suffix = this.messageSuffix ? ` ${this.messageSuffix}` : '';
         return this.resource !== 'result'
-          ? this.$t('common.noObjectFound', { object: pluralizeValue(this.resource) })
-          : this.$t('common.noResultsFound');
+          ? `${this.$t('common.noObjectFound', { object: pluralizeValue(this.resource) })}${suffix}`
+          : `${this.$t('common.noResultsFound')}${suffix}`;
       }
       return this.$t('common.numberElementsFound', {
         number: this.count,

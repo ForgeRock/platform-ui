@@ -127,4 +127,20 @@ describe('SearchResultsAnnouncer', () => {
     await wrapper.setProps({ count: 5 });
     expect(liveRegion(wrapper).text()).toBe('Search updated. 5 results found.');
   });
+
+  it('appends the messageSuffix to the no-results announcement only', async () => {
+    const wrapper = setup({ count: null, messageSuffix: 'Try adjusting applied filters or search keywords' });
+    await wrapper.setProps({ count: 0 });
+
+    expect(liveRegion(wrapper).text()).toBe('No results found. Try adjusting applied filters or search keywords');
+
+    // The suffix describes the empty state, so it is not spoken when results are found
+    await wrapper.setProps({ count: 3 });
+
+    expect(liveRegion(wrapper).text()).toBe('3 results found.');
+
+    await wrapper.setProps({ count: null });
+
+    expect(liveRegion(wrapper).text()).toBe('');
+  });
 });

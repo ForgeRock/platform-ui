@@ -17,7 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
         :sod-error="sodError" />
     </div>
     <FrSearchResultsAnnouncer
-      :count="activeQuery && !loading ? totalCount : null" />
+      :count="activeQuery && !loading ? totalCount : null"
+      :message-suffix="$t('governance.accessRequest.newRequest.noFilterResultsSubTitle')" />
     <BTabs
       :value="selectedTab"
       class="my-4"
@@ -135,8 +136,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mt-5 border-0 shadow-none"
                 :icon="tabNoResultsIcon"
                 :title="$t('governance.accessRequest.newRequest.noFilterResults')"
-                :subtitle="$t('governance.accessRequest.newRequest.noFilterResultsSubTitle')"
-                role="alert" />
+                :subtitle="$t('governance.accessRequest.newRequest.noFilterResultsSubTitle')" />
               <template v-else>
                 <BButtonToolbar class="p-0 mb-1 justify-content-between align-items-center border-0">
                   <!-- Visual counter only: announcements come from the always-mounted FrSearchResultsAnnouncer above, so the two regions never compete -->
