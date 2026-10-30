@@ -30,11 +30,8 @@ describe('Extended Enduser Registration', { tags: '@cloud' }, () => {
 
   // TODO: Add a test that will check for the proper password validation after https://pingidentity.atlassian.net/browse/IAM-8550 gets fixed
   describe('Enduser extended registration journey without suspend node and with all nodes options on', () => {
-    // The authenticate URL shape changed with the journey-client wellknown
-    // removal (IAM-12267): FraaS now derives
-    // /am/json/realms/root/realms/alpha/authenticate from baseUrl+realmPath
-    // instead of the wellknown issuer path /am/json/alpha/authenticate.
-    // Match both shapes with a wildcard.
+    // FraaS derives /am/json/realms/root/realms/alpha/authenticate from baseUrl+realmPath
+    // instead of the wellknown issuer path /am/json/alpha/authenticate. Match both shapes with a wildcard.
     const authenticatePath = '**/authenticate*';
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=alpha&authIndexType=service&authIndexValue=QA%20-%20Extended%20Registration`;
     const validFieldData = [

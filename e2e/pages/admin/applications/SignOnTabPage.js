@@ -28,6 +28,12 @@ export default class SignOnTabPage {
     return SignOnTabPage.setupSsoModal.should('be.visible');
   }
 
+  // The modal's domain-select step on multi-domain realms. FrField renders
+  // its translated label into its root element's data-testid.
+  static get domainSelectFieldSelector() {
+    return '[data-testid="fr-field-Select a domain"]';
+  }
+
   // BFormFile renders a visually hidden input plus a visible "Browse" button —
   // the label "Metadata file" comes from the component's placeholder text
   static get metadataFileInput() {
