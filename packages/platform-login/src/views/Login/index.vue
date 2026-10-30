@@ -1019,7 +1019,8 @@ export default {
         const isRequired = callbackRequired
           || type === this.FrCallbackType.NameCallback
           || type === this.FrCallbackType.PasswordCallback;
-        this.nextButtonDisabledArray.push(callbackRequired);
+        // Selects only emit `input` when their value changes, so a required callback that already holds a value must not block Next.
+        this.nextButtonDisabledArray.push(callbackRequired && !callback.getInputValue());
 
         if (type === this.FrCallbackType.PingOneProtectInitializeCallback || type === this.FrCallbackType.PingOneProtectEvaluationCallback) {
           type = 'PingOneProtectCallback';

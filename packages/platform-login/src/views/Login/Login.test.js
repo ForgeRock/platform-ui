@@ -924,6 +924,67 @@ describe('Login.vue', () => {
   });
 
   describe('buildTreeForm', () => {
+    // AM echoes submitted values back after a failed policy, so a required select can arrive already holding a value.
+    it('does not disable the Next button for a required callback that already holds a value', () => {
+      jest.spyOn(wrapper.vm, 'isCallbackRequired').mockReturnValue(true);
+
+      const data = {
+        loading: true,
+        step: rehydrateStep({
+          callbacks: [
+            {
+              type: 'StringAttributeInputCallback',
+              output: [
+                { name: 'name', value: 'custom_titles' },
+                { name: 'prompt', value: 'Title' },
+                { name: 'required', value: true },
+                { name: 'value', value: 'Mr' },
+              ],
+              input: [
+                { name: 'IDToken1', value: 'Mr' },
+              ],
+              _id: 1,
+            },
+          ],
+        }),
+      };
+
+      wrapper.setData(data);
+      wrapper.vm.buildTreeForm();
+
+      expect(wrapper.vm.nextButtonDisabledArray).toEqual([false, false]);
+    });
+
+    it('still disables the Next button for a required callback with no value', () => {
+      jest.spyOn(wrapper.vm, 'isCallbackRequired').mockReturnValue(true);
+
+      const data = {
+        loading: true,
+        step: rehydrateStep({
+          callbacks: [
+            {
+              type: 'StringAttributeInputCallback',
+              output: [
+                { name: 'name', value: 'phone_number' },
+                { name: 'prompt', value: 'Phone Number' },
+                { name: 'required', value: true },
+                { name: 'value', value: '' },
+              ],
+              input: [
+                { name: 'IDToken1', value: '' },
+              ],
+              _id: 1,
+            },
+          ],
+        }),
+      };
+
+      wrapper.setData(data);
+      wrapper.vm.buildTreeForm();
+
+      expect(wrapper.vm.nextButtonDisabledArray).toEqual([false, true]);
+    });
+
     it('metadata callbacks are not added to the component list', () => {
       jest.spyOn(wrapper.vm, 'isCallbackRequired').mockReturnValue(false);
 
