@@ -1373,10 +1373,66 @@ describe('Login.vue', () => {
     });
 
     it('hides rememberMe checkbox when journeyRememberMeEnabled is true but no NameCallback is present', async () => {
-      wrapper.setData({ componentList: [{ callback: { getType: () => 'PasswordCallback' }, callbackSpecificProps: { value: '' } }] });
+      // rememberMeVisible: true simulates the state left behind by a previous username step
+      wrapper.setData({
+        componentList: [{ callback: { getType: () => 'PasswordCallback' }, callbackSpecificProps: { value: '' } }],
+        rememberMeVisible: true,
+      });
       await wrapper.setProps({ journeyRememberMeEnabled: true });
       wrapper.vm.setRememberedUsername();
       expect(wrapper.vm.rememberMeVisible).toBe(false);
+    });
+
+    it('hides rememberMe checkbox on a NameCallback-free step after a username step made it visible', async () => {
+      // Step 1: username step renders the checkbox
+      wrapper.setData({ componentList: [{ callback: { getType: () => 'NameCallback' }, callbackSpecificProps: { value: '' } }] });
+      await wrapper.setProps({ journeyRememberMeEnabled: true });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(true);
+
+      // Step 2: downstream step without a NameCallback (e.g. MFA selection) — the
+      // checkbox must not leak from the username step for the rest of the journey
+      wrapper.setData({ componentList: [{ callback: { getType: () => 'PasswordCallback' }, callbackSpecificProps: { value: '' } }] });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(false);
+    });
+
+    it('hides the checkbox on subsequent steps when the journey switches to a theme with Remember Me disabled', async () => {
+      wrapper.setData({ componentList: [{ callback: { getType: () => 'NameCallback' }, callbackSpecificProps: { value: '' } }] });
+      await wrapper.setProps({ journeyRememberMeEnabled: true });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(true);
+
+      // Downstream page node uses a theme with Remember Me disabled
+      await wrapper.setProps({ journeyRememberMeEnabled: false });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(false);
+      expect(wrapper.vm.rememberMeValue).toBe(false);
+    });
+
+    it('keeps the remembered username and shows the checkbox again when the journey returns to a username step', async () => {
+      localStorage.setItem('frUsername', 'savedUser');
+
+      // Step 1: username step — checkbox shown, username prefilled
+      const nameComponent = { callback: { getType: () => 'NameCallback' }, callbackSpecificProps: { value: '' } };
+      wrapper.setData({ componentList: [nameComponent] });
+      await wrapper.setProps({ journeyRememberMeEnabled: true });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(true);
+      expect(nameComponent.callbackSpecificProps.value).toBe('savedUser');
+
+      // Step 2: MFA step without a NameCallback — checkbox hidden, remembered username preserved
+      wrapper.setData({ componentList: [{ callback: { getType: () => 'ChoiceCallback' }, callbackSpecificProps: {} }] });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(false);
+      expect(localStorage.getItem('frUsername')).toBe('savedUser');
+
+      // Step 3: journey returns to a username step — checkbox shown and username repopulated
+      const returnComponent = { callback: { getType: () => 'NameCallback' }, callbackSpecificProps: { value: '' } };
+      wrapper.setData({ componentList: [returnComponent] });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(true);
+      expect(returnComponent.callbackSpecificProps.value).toBe('savedUser');
     });
 
     it('hides rememberMe checkbox when journeyRememberMeEnabled is false', async () => {

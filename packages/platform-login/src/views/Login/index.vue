@@ -1961,7 +1961,7 @@ export default {
     },
     /**
      * Sets a remembered username in the username field of the current auth step
-     * and shows the rememberMe checkbox.
+     * and shows the rememberMe checkbox only when current step contains a valid NameCallback.
      *
      * Note: NameCallback is used for fields like username and/or OTP fields and cannot be distinguished
      * by type alone. For journeys where OTP also uses a NameCallback, per-step theme
@@ -1971,11 +1971,9 @@ export default {
       if (this.journeyRememberMeEnabled) {
         const userName = this.getRememberedUsernameIfExists();
         const nameCallback = this.componentList.find((component) => component.callback.getType() === this.FrCallbackType.NameCallback);
-        if (nameCallback) {
-          this.rememberMeVisible = true;
-          if (userName) {
-            nameCallback.callbackSpecificProps.value = userName;
-          }
+        this.rememberMeVisible = !!nameCallback;
+        if (nameCallback && userName) {
+          nameCallback.callbackSpecificProps.value = userName;
         }
         this.rememberMeValue = !!userName;
       } else {
