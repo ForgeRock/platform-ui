@@ -7,6 +7,7 @@
 
 import { createRouter, createWebHashHistory } from 'vue-router';
 import checkIfRouteCanBeAccessed from '@forgerock/platform-shared/src/utils/routerGuard';
+import reportViewGuard from '@forgerock/platform-shared/src/views/Reports/utils/reportViewGuard';
 import i18n from './i18n';
 import store from '@/store';
 
@@ -294,6 +295,7 @@ const router = createRouter({
           path: 'view/:state/:template/:id',
           name: 'ReportView',
           component: () => import('@forgerock/platform-shared/src/views/Reports/ReportView.vue'),
+          beforeEnter: reportViewGuard,
           meta: { hideNavBar: true, hideSideMenu: true },
         },
       ],
