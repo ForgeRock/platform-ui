@@ -246,6 +246,17 @@ of the MIT license. See the LICENSE file for details. -->
                       </FrIcon>
                     </BDropdownItem>
                   </template>
+                  <BDropdownItem
+                    v-if="canExportRevokes(item)"
+                    data-testid="export-revocation-decisions-button"
+                    :disabled="isRevokesExporting"
+                    @click="openExportRevokesModal(item)">
+                    <FrIcon
+                      icon-class="mr-2"
+                      name="file_download">
+                      {{ $t('governance.certificationDetails.exportRevocationDecisions') }}
+                    </FrIcon>
+                  </BDropdownItem>
                   <template v-if="governanceDevEnabled ? isActiveLikeItem(item) : isActiveLikeStatus">
                     <BDropdownItem @click="openDeadlineModal(item.id, item.deadline)">
                       <FrIcon
@@ -343,6 +354,14 @@ of the MIT license. See the LICENSE file for details. -->
       :campaign="creatingCampaign"
       @close="creatingCampaign = {}" />
     <FrDownloadItemsModal
+      modal-id="export-revocation-decisions-modal"
+      grant-type="campaigns"
+      skip-scope-step
+      :is-loading="isRevokesExporting"
+      :totals="{ currentPage: revokesTotals.currentPage, all: revokesTotals.all }"
+      :item-type-options="revokesItemTypeOptions"
+      :ok-function="exportRevokesToFile" />
+    <FrDownloadItemsModal
       modal-id="campaigns-download-items-modal"
       grant-type="campaigns"
       :is-loading="isExporting"
@@ -354,6 +373,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import dayjs from 'dayjs';
 import { debounce, startCase } from 'lodash';
+import { computed } from 'vue';
 import { Field as VeeField } from 'vee-validate';
 import {
   BBadge,
@@ -374,6 +394,7 @@ import {
   BTooltip,
 } from 'bootstrap-vue';
 import { useI18n } from 'vue-i18n';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
 import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
@@ -385,6 +406,7 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import {
   getAdminCertificationItems,
   getCertificationList,
+  getCertificationTasksListByCampaign,
   activateCertification,
   cancelCertification,
   deleteCertification,
@@ -397,6 +419,15 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { CAMPAIGN_EXPIRING_DAYS, CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
+import {
+  buildRevokesExportTargetFilter,
+  buildRevokesExportFields,
+  buildRevokesExportMappers,
+  getRevokesItemTypesForCampaign,
+  resolveRevokesExportTypes,
+  REVOKES_EXPORTABLE_CAMPAIGN_STATUSES,
+} from '@forgerock/platform-shared/src/views/Governance/utils/revokeExportFilter';
+import { getCampaignDetails } from '@forgerock/platform-shared/src/api/governance/CampaignApi';
 import FrDownloadItemsModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/TaskList/modals/DownloadItemsModal/DownloadItemsModal';
 import FrUpdateDeadlineModal from './CampaignDetails/CampaignOverview/UpdateDeadlineModal';
 import FrCampaignDetailsModal from './CampaignDetailsModal';
@@ -470,6 +501,10 @@ export default {
   },
   setup() {
     const { t } = useI18n();
+    // IGA-1116: the revokes worklist is an owner/admin remediation artifact.
+    // computed so a late auth hydration still updates the owner gate
+    const userStore = useUserStore();
+    const currentUserId = computed(() => userStore.userId);
     const tableFields = [
       {
         key: 'name',
@@ -520,6 +555,7 @@ export default {
       openColumnsModal,
       pickerProps,
       tableFields,
+      currentUserId,
     };
   },
   mixins: [
@@ -538,6 +574,10 @@ export default {
       selectedCertId: null,
       accessReviewList: [],
       isExporting: false,
+      isRevokesExporting: false,
+      revokesTotals: { currentPage: 0, all: 0 },
+      selectedRevokesCampaign: {},
+      revokesItemTypeOptions: null,
       isRequestLoading: false,
       modalType: null,
       currentDeadline: '',
@@ -580,6 +620,15 @@ export default {
   computed: {
     governanceDevEnabled() {
       return this.$store?.state?.SharedStore?.governanceDevEnabled === true;
+    },
+    /**
+     * IGA-1116: the revokes worklist is an owner/admin remediation artifact,
+     * not a reviewer report — the item shows only for those callers.
+     * Governance admins pass through the admin app's routes; a caller is an
+     * owner when their user id matches the row's owner id.
+     */
+    isGovAdmin() {
+      return this.governanceDevEnabled;
     },
     // whether the new certification list endpoint is actually being used —
     // false once the legacy fallback has engaged, even if the flag stays on
@@ -843,6 +892,147 @@ export default {
       this.isRequestLoading = true;
       deleteCertification(this.selectedCertId)
         .then(this.closeModal('campaign-modal'));
+    },
+    /**
+     * Loads the campaign's revocation worklist totals and opens the shared
+     * Export Certification Items modal — same pattern as the task list
+     * export; the ok handler runs the export for the selected campaign. Also
+     * loads the campaign's uiConfig (its template column configuration), which
+     * the list rows don't carry — the CSV columns follow it.
+     *
+     * Campaigns whose worklist can hold several item types (identity and
+     * agentAccess mix account grants, entitlement grants and role
+     * memberships) get one totals probe per candidate type; the per-type
+     * counts feed the modal's item-type step (each type downloads as its own
+     * file with its own columns). Single-type campaigns skip that step.
+     * @param {Object} item - the campaign row.
+     */
+    async openExportRevokesModal(item) {
+      try {
+        // the row template renders campaignName || name; the filename must match
+        this.selectedRevokesCampaign = { id: item.id, name: item.campaignName || item.name, certificationType: item.certificationType };
+        const candidateTypes = getRevokesItemTypesForCampaign(item.certificationType);
+        const [totals, campaignInfo] = await Promise.all([
+          getCertificationTasksListByCampaign(
+            { pageSize: 1, pageNumber: 0, fields: 'id' },
+            item.id,
+            { targetFilter: buildRevokesExportTargetFilter(null) },
+          ),
+          getCampaignDetails(item.id),
+        ]);
+        this.revokesTotals = {
+          currentPage: totals?.data?.resultCount || 0,
+          all: totals?.data?.totalCount || 0,
+        };
+        this.selectedRevokesCampaign.uiConfig = campaignInfo?.uiConfig || {};
+        if (candidateTypes.length > 1) {
+          const probes = await Promise.all(candidateTypes.map((itemType) => Promise.resolve(
+            getCertificationTasksListByCampaign(
+              { pageSize: 1, pageNumber: 0, fields: 'id' },
+              item.id,
+              { targetFilter: buildRevokesExportTargetFilter(itemType) },
+            ),
+          ).then(({ data }) => ({ itemType, count: data?.totalCount ?? 0 })).catch(() => ({ itemType, count: 0 }))));
+          const options = probes.filter(({ count }) => count > 0).map(({ itemType, count }) => ({ value: itemType, count }));
+          // More than one non-empty type → the modal offers the item-type
+          // step; zero or one → no step, with the single type preset so the
+          // columns/filter still follow it.
+          this.revokesItemTypeOptions = options.length > 0 ? options : null;
+        } else {
+          this.revokesItemTypeOptions = null;
+        }
+        this.$bvModal.show('export-revocation-decisions-modal');
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationDetails.exportRevocationDecisionsError'));
+      }
+    },
+    /**
+     * Same flow as the task list's exportItemsToFile — the modal's format
+     * option drives the page size and output format. The rows option is
+     * accepted for modal parity but ignored: the payload carries the static
+     * revocation targetFilter (signed-off certifications, revoke decisions,
+     * remediation not finished) and there is no pagination context behind
+     * the totals probe, so "Current Page" has no meaning here.
+     *
+     * Each item type resolves to its own request and file: the item.type
+     * clause rides the targetFilter and the CSV columns follow that type's
+     * template column configuration loaded when the modal opened; see
+     * buildRevokesExportMappers. The modal's "all types" choice (or no
+     * choice on a mixed-type campaign) runs the export once per candidate
+     * type, downloading one file per kind; empty kinds are skipped. Unknown
+     * campaigns keep the whole-worklist union fallback (null), whose one
+     * file covers the mixed worklist.
+     * @param {Object} downloadOptions - { format, rows, itemType } from the modal.
+     */
+    async exportRevokesToFile(downloadOptions = {}) {
+      const { format = 'csv', itemType = null } = downloadOptions;
+      const campaign = this.selectedRevokesCampaign || {};
+      const pageSize = format === 'pdf' ? 1000 : 10000;
+      // 'all' resolves to the probed non-empty groups when the modal offered
+      // them, so the fan-out matches the all-types card's promise even for
+      // campaign types outside the known map
+      const probedGroups = (this.revokesItemTypeOptions || []).map((option) => option.value);
+      const exportTypes = resolveRevokesExportTypes(itemType, campaign.certificationType, probedGroups);
+      this.isRevokesExporting = true;
+      try {
+        // one request + file per item type, chained so the downloads land in
+        // the candidate order
+        const downloadedCount = await exportTypes.reduce(
+          (chain, resolvedType) => chain.then(async (count) => {
+            const queryParams = {
+              pageSize,
+              pageNumber: 0,
+              fields: buildRevokesExportFields(resolvedType).join(','),
+            };
+            const payload = { targetFilter: buildRevokesExportTargetFilter(resolvedType) };
+            const { data } = await getCertificationTasksListByCampaign(queryParams, campaign.id, payload);
+            const items = data?.result || [];
+            // one empty slice in an all-types run is expected — skip it
+            // rather than reporting the whole export empty
+            if (items.length === 0) return count;
+            if ((data?.totalCount ?? 0) > items.length) {
+              this.displayNotification('info', this.$t('governance.certificationDetails.exportRevocationDecisionsTruncated', { limit: items.length, total: data.totalCount }));
+            }
+            const typeLabel = resolvedType ? this.$t(`governance.certificationDetails.exportRevocationDecisionsTypes.${resolvedType}`) : '';
+            const baseTitle = campaign.name || this.$t('governance.certificationDetails.exportRevocationDecisions');
+            const exportTitle = typeLabel ? `${baseTitle} - ${typeLabel}` : baseTitle;
+            // CSV columns follow the campaign's template column configuration
+            // loaded when the modal opened — see buildRevokesExportMappers
+            const mappers = buildRevokesExportMappers(resolvedType, campaign.uiConfig?.columnConfig, campaign.certificationType);
+            const exportData = items.map((item) => Object.assign(...mappers.map((map) => map(item))));
+            downloadAsType(exportData, format, `${exportTitle}.${format}`, exportTitle);
+            return count + 1;
+          }),
+          Promise.resolve(0),
+        );
+        // a wholly empty worklist (no slice produced a file) reports empty —
+        // the single-file shape matches the previous behavior
+        if (downloadedCount === 0) {
+          this.displayNotification('info', this.$t('governance.certificationDetails.exportRevocationDecisionsEmpty'));
+        } else if (downloadedCount > 1) {
+          this.displayNotification('success', this.$t('governance.certificationDetails.exportRevocationDecisionsAllTypesDone', { count: downloadedCount }));
+        }
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationDetails.exportRevocationDecisionsError'));
+      } finally {
+        this.isRevokesExporting = false;
+      }
+    },
+    /**
+     * IGA-1116: whether this caller may export the row's revokes worklist —
+     * governance admins, or the campaign's owner. Both sides are reduced to
+     * the bare id (TaskList does the same before comparing actor ids) since
+     * user references may be `managed/user/<uuid>` paths or bare uuids.
+     * Gated to signed-off campaigns: the filter selects items whose
+     * certification is signed-off, which only exists after the campaign
+     * itself is signed-off — anything earlier is a guaranteed-empty request.
+     * @param {Object} item - the campaign row.
+     */
+    canExportRevokes(item) {
+      if (!REVOKES_EXPORTABLE_CAMPAIGN_STATUSES.includes(item?.status)) return false;
+      const ownerId = item?.ownerInfo?.id?.replace?.(/^managed\/user\//, '') || item?.ownerInfo?.id;
+      const userId = this.currentUserId?.replace?.(/^managed\/user\//, '') || this.currentUserId;
+      return this.isGovAdmin || (userId && ownerId === userId);
     },
     isActiveLikeItem(item) {
       return ACTIVE_LIKE_STATUSES.includes(item.status);

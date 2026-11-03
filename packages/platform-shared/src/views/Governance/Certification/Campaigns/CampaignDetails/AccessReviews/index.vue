@@ -263,6 +263,13 @@ export default {
       currentPage: 1,
       DATE_FORMAT_MMM_D_COMMA_YYYY,
       isStaging: false,
+      // Sequences list requests so a slow stale response can't overwrite a
+      // newer one: the component fires two loads in quick succession when the
+      // page opens on a finalized campaign (lazy-mount with the status prop
+      // still null, then the campaignStatus watcher once the campaign fetch
+      // resolves), and the shared mixin's getList has no request guard.
+      // The overridden getList below applies only the newest response.
+      listRequestId: 0,
       pageSize: 10,
       selectedCertId: null,
       sortBy: null,
@@ -327,14 +334,56 @@ export default {
     },
     getItems(params) {
       this.tableLoading = true;
+      // staging tabs list the campaign's staging tasks under the STAGING
+      // status rather than the mixin-provided param
       const requestParams = {
         ...params,
-        sortBy: this.sortBy,
-        sortDesc: this.sortDesc,
-        pageSize: this.pageSize,
         status: this.isStaging ? CampaignStates.STAGING : params.status,
       };
       return getCampaignTasks(this.campaignId, requestParams);
+    },
+    /**
+     * Overrides the shared mixin's getList with a request guard: only the
+     * newest issued request may render. The component fires two loads in
+     * quick succession when the page opens on a finalized campaign
+     * (lazy-mount, then the campaignStatus watcher), and the mixin applies
+     * whatever resolves last — a slow stale response would clobber the fresh
+     * table. The normalization below mirrors the mixin's fixedData handling
+     * (totalHits/results/_source shapes) so this copy stays behaviorally
+     * identical apart from the guard.
+     */
+    getList() {
+      this.listRequestId += 1;
+      const requestId = this.listRequestId;
+      this.getItems({
+        status: this.statusSort.param,
+        pageNumber: this.currentPage - 1,
+        pageSize: this.pageSize,
+        queryString: this.searchQuery,
+        sortBy: this.getSortBy(),
+        sortDesc: this.sortDesc,
+      })
+        .then(({ data }) => {
+          if (requestId !== this.listRequestId) return;
+          if (this.$store?.state?.certificationCount) {
+            this.$store.commit('setCertificationCount', data.totalCount);
+          }
+          const fixedData = {
+            totalCount: data.totalHits || data.totalCount,
+            result: data?.results?.length > -1 ? data.results : data.result,
+          };
+          if (data.result?.[0]?._source) {
+            fixedData.result = data.result.map((item) => ({
+              ...item._source,
+            }));
+          }
+          this.setAccessReviewList(fixedData);
+        })
+        .catch(() => {
+          if (requestId !== this.listRequestId) return;
+          this.tableLoading = false;
+          this.showErrorMessage('', this.$t('governance.certificationTask.errors.certificationListError'));
+        });
     },
     viewApplicationDetails(task) {
       this.$router.push({

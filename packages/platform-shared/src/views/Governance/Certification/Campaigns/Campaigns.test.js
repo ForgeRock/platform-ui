@@ -7,7 +7,9 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { createAppContainer, findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
 import dayjs from 'dayjs';
 import store from '@/store';
 import i18n from '@/i18n';
@@ -19,9 +21,19 @@ jest.mock('@forgerock/platform-shared/src/utils/downloadFile', () => ({
   downloadAsType: jest.fn(),
 }));
 
+// the filters panel's owner select fetches managed/user on mount — without
+// this mock the real Axios mock-guard fires and pins console-error snapshots
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi', () => ({
+  getResource: jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } })),
+  getResourceList: jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } })),
+}));
+
+jest.mock('@forgerock/platform-shared/src/api/governance/CampaignApi');
+
 describe('Campaigns', () => {
   let wrapper;
   beforeEach(() => {
+    setupTestPinia({ user: { userId: 'owner-user-id' } });
     CertificationApi.getCertificationList = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         test: 'test',
@@ -440,6 +452,26 @@ describe('Campaigns', () => {
     expect(wrapper.vm.isStagedItem({ status: 'active' })).toBe(false);
   });
 
+  describe('canExportRevokes', () => {
+    it('allows the owner only once the campaign is signed-off', () => {
+      expect(wrapper.vm.canExportRevokes({ status: 'signed-off', ownerInfo: { id: 'owner-user-id' } })).toBe(true);
+      expect(wrapper.vm.canExportRevokes({ status: 'complete', ownerInfo: { id: 'owner-user-id' } })).toBe(true);
+      expect(wrapper.vm.canExportRevokes({ status: 'in-progress', ownerInfo: { id: 'owner-user-id' } })).toBe(false);
+      expect(wrapper.vm.canExportRevokes({ status: 'staging', ownerInfo: { id: 'owner-user-id' } })).toBe(false);
+      expect(wrapper.vm.canExportRevokes({ status: 'expired', ownerInfo: { id: 'owner-user-id' } })).toBe(false);
+    });
+
+    it('normalizes managed/user paths on both id sides', () => {
+      expect(wrapper.vm.canExportRevokes({ status: 'signed-off', ownerInfo: { id: 'managed/user/owner-user-id' } })).toBe(true);
+    });
+
+    it('rejects non-owners even when signed-off', () => {
+      store.state.SharedStore.governanceDevEnabled = false;
+      expect(wrapper.vm.canExportRevokes({ status: 'signed-off', ownerInfo: { id: 'someone-else' } })).toBe(false);
+      store.state.SharedStore.governanceDevEnabled = true;
+    });
+  });
+
   it('escapes single quotes in the name search query filter', async () => {
     await wrapper.setData({ searchQuery: "O'Brien review" });
     expect(wrapper.vm.buildQueryFilter()).toBe("name co 'O\\'Brien review' and (status eq 'active' or status eq 'in-progress' or status eq 'creating')");
@@ -482,7 +514,7 @@ describe('Campaigns', () => {
     await legacyWrapper.vm.handleStatusSort(legacyWrapper.vm.statuses.get('staging'));
     await new Promise(process.nextTick);
     await legacyWrapper.vm.setAccessReviewList({
-      result: [{ name: 'legacy staged campaign', status: 'staging' }],
+      result: [{ name: 'legacy staged campaign', status: 'staging', ownerInfo: { id: 'owner-user-id' } }],
       totalCount: 1,
     });
     await legacyWrapper.vm.$nextTick();
@@ -704,6 +736,265 @@ describe('Campaigns', () => {
           rules: { 'empty-heading': { enabled: false } },
         },
       });
+    });
+  });
+
+  // IGA-1116: the row menu's revokes export — the same remediation artifact
+  // the details page exposes, gated to owner/admin on signed-off campaigns
+  describe('revokes export from the row menu', () => {
+    const ActionsCellStub = { template: '<div><slot name="custom-top-actions" /></div>' };
+
+    const mountWithSignedOffCampaign = async () => {
+      // stub ActionsCell to render its custom actions inline (the real menu
+      // teleports only when opened, which these tests do not need)
+      const exportWrapper = mount(Campaigns, {
+        attachTo: createAppContainer(),
+        global: {
+          mocks: { $store: store },
+          plugins: [i18n],
+          directives: { 'resizable-table': jest.fn() },
+          stubs: { FrActionsCell: ActionsCellStub },
+        },
+      });
+      // let the background getList from mounted() settle before seeding rows,
+      // or its resolution overwrites the list with the empty mock result
+      await flushPromises();
+      await exportWrapper.vm.setAccessReviewList({
+        result: [{
+          id: 'camp-1', name: 'Signed Off Campaign', status: 'signed-off', ownerInfo: { id: 'owner-user-id' },
+        }],
+        totalCount: 1,
+      });
+      await exportWrapper.vm.$nextTick();
+      // NotificationMixin methods, stubbed so export tests can assert
+      // notification calls without the vue3-notification plugin
+      exportWrapper.vm.displayNotification = jest.fn();
+      exportWrapper.vm.showErrorMessage = jest.fn();
+      // the module-level downloadAsType mock accumulates calls across the
+      // suite; each export test asserts its own call in isolation
+      downloadAsType.mockClear();
+      return exportWrapper;
+    };
+
+    const mockItemsSearch = (data) => {
+      if (!jest.isMockFunction(CertificationApi.getCertificationTasksListByCampaign)) {
+        CertificationApi.getCertificationTasksListByCampaign = jest.fn();
+      }
+      // call history does not survive into the test — the modal-open probes
+      // and export requests assert their own call counts
+      CertificationApi.getCertificationTasksListByCampaign.mockClear();
+      CertificationApi.getCertificationTasksListByCampaign.mockReturnValue(Promise.resolve({ data }));
+    };
+
+    // Type-aware search mock for fan-out exports: data keyed by the
+    // item.type value the request's IN clause matches; an unmatched type
+    // returns empty so the fan-out skips it.
+    const mockItemsSearchByType = (dataByType) => {
+      if (!jest.isMockFunction(CertificationApi.getCertificationTasksListByCampaign)) {
+        CertificationApi.getCertificationTasksListByCampaign = jest.fn();
+      }
+      CertificationApi.getCertificationTasksListByCampaign.mockClear();
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation((urlParams, campaignId, payload) => {
+        const itemTypes = payload.targetFilter.operand.find((o) => o.operator === 'IN')?.operand.targetValue || [];
+        const match = itemTypes.find((type) => dataByType[type]);
+        return Promise.resolve({ data: (match && dataByType[match]) || { totalCount: 0, result: [] } });
+      });
+    };
+
+    it('renders the export item for the owner on a signed-off campaign row', async () => {
+      const exportWrapper = await mountWithSignedOffCampaign();
+      expect(findByTestId(exportWrapper, 'export-revocation-decisions-button').exists()).toBe(true);
+      exportWrapper.unmount();
+    });
+
+    it('hides the export item for a non-owner non-admin caller', async () => {
+      // governanceDevEnabled marks the caller an admin, so it must be off for
+      // the non-owner path — isGovAdmin is exactly that flag
+      store.state.SharedStore.governanceDevEnabled = false;
+      setupTestPinia({ user: { userId: 'someone-else' } });
+      const exportWrapper = await mountWithSignedOffCampaign();
+      expect(findByTestId(exportWrapper, 'export-revocation-decisions-button').exists()).toBe(false);
+      store.state.SharedStore.governanceDevEnabled = true;
+      exportWrapper.unmount();
+    });
+
+    it('openExportRevokesModal loads totals and uiConfig then prepares the export', async () => {
+      const exportWrapper = await mountWithSignedOffCampaign();
+      mockItemsSearch({ totalCount: 4, resultCount: 1, result: [] });
+      // jest.mock automocks the module; the component's named import reads
+      // this same mock instance
+      const {
+        getCampaignDetails,
+      } = jest.requireMock('@forgerock/platform-shared/src/api/governance/CampaignApi');
+      getCampaignDetails.mockReturnValue(Promise.resolve({
+        // real shape: uiConfig.columnConfig is a map keyed by grant type
+        uiConfig: { columnConfig: { accounts: ['user.user', 'application.application'] } },
+      }));
+      await exportWrapper.vm.openExportRevokesModal({ id: 'camp-1', name: 'Signed Off Campaign', certificationType: 'identity' });
+      await flushPromises();
+
+      // identity campaigns are mixed-type: one totals probe for the whole
+      // worklist plus one per candidate type (accounts/entitlements/roles)
+      const probeCalls = CertificationApi.getCertificationTasksListByCampaign.mock.calls;
+      expect(probeCalls.length).toBe(4);
+      // the whole-worklist probe runs first, unfiltered by item type
+      expect(probeCalls[0][0]).toEqual({ pageSize: 1, pageNumber: 0, fields: 'id' });
+      expect(probeCalls[0][2].targetFilter.operand).toHaveLength(3);
+      // each type probe carries its item.type IN clause
+      const typeProbes = probeCalls.slice(1).map(([, , payload]) => payload.targetFilter.operand.find((o) => o.operator === 'IN')?.operand.targetValue);
+      expect(typeProbes).toEqual([
+        ['accountGrant', 'AccountGrant', 'sharedAccount'],
+        ['entitlementGrant', 'resourceGrant'],
+        ['roleMembership'],
+      ]);
+      expect(getCampaignDetails).toHaveBeenCalledWith('camp-1');
+      expect(exportWrapper.vm.selectedRevokesCampaign.uiConfig).toEqual({ columnConfig: { accounts: ['user.user', 'application.application'] } });
+      // all four probes return totalCount 4 → every candidate type non-empty
+      // → the item-type step is offered
+      expect(exportWrapper.vm.revokesItemTypeOptions).toEqual([
+        { value: 'accountGrants', count: 4 },
+        { value: 'entitlementGrants', count: 4 },
+        { value: 'roleMemberships', count: 4 },
+      ]);
+      expect(exportWrapper.vm.revokesTotals).toEqual({ currentPage: 1, all: 4 });
+      exportWrapper.unmount();
+    });
+
+    it('openExportRevokesModal shows an error and no export when the probe fails', async () => {
+      const exportWrapper = await mountWithSignedOffCampaign();
+      CertificationApi.getCertificationTasksListByCampaign.mockReturnValue(Promise.reject(new Error('probe failed')));
+      await exportWrapper.vm.openExportRevokesModal({ id: 'camp-1', name: 'Signed Off Campaign', certificationType: 'identity' });
+      await flushPromises();
+      expect(exportWrapper.vm.showErrorMessage).toHaveBeenCalled();
+      exportWrapper.unmount();
+    });
+
+    it('exportRevokesToFile downloads the mapped rows with the chosen format', async () => {
+      const exportWrapper = await mountWithSignedOffCampaign();
+      // identity campaign with no type chosen fans out per type; the worklist
+      // items are account grants here
+      mockItemsSearchByType({
+        accountGrant: {
+          totalCount: 1,
+          result: [{
+            id: 'task-1',
+            user: { userName: 'andrew.och' },
+            application: { name: 'SNOW' },
+            keys: { accountId: 'system/SNOW/User/abc' },
+            entitlement: { displayName: 'sn_incident_write' },
+            decision: { certification: { remediationStatus: 'pending' } },
+          }],
+        },
+      });
+      exportWrapper.vm.selectedRevokesCampaign = { id: 'camp-1', name: 'Signed Off Campaign', certificationType: 'identity' };
+
+      await exportWrapper.vm.exportRevokesToFile({ format: 'csv', rows: 'all' });
+
+      // one request per candidate type (accounts, entitlements, roles)
+      expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalledTimes(3);
+      expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalledWith(
+        { pageSize: 10000, pageNumber: 0, fields: expect.stringContaining('id,user.userName') },
+        'camp-1',
+        { targetFilter: expect.objectContaining({ operator: 'AND' }) },
+      );
+      // only the accounts slice held items — one file
+      expect(downloadAsType).toHaveBeenCalledTimes(1);
+      const [exportData, format, fileName, title] = downloadAsType.mock.calls[0];
+      expect(format).toBe('csv');
+      // this file's suite mounts with the real i18n instance — the label
+      // renders in English (CampaignDetails stubs $t and asserts the key)
+      expect(fileName).toBe('Signed Off Campaign - Accounts.csv');
+      expect(title).toBe('Signed Off Campaign - Accounts');
+      expect(exportData[0]).toEqual({
+        'Task ID': 'task-1',
+        Identity: 'andrew.och',
+        Application: 'SNOW',
+        Account: 'system/SNOW/User/abc',
+        'Remediation Status': 'pending',
+        'Completion Date': '',
+        'Remediation Comments': '',
+        'Evidence Reference': '',
+      });
+      exportWrapper.unmount();
+    });
+
+    it('exportRevokesToFile with the all-types choice downloads one file per non-empty kind', async () => {
+      const exportWrapper = await mountWithSignedOffCampaign();
+      mockItemsSearchByType({
+        accountGrant: {
+          totalCount: 1,
+          result: [{
+            id: 'acct-task-1',
+            user: { userName: 'andrew.och' },
+            application: { name: 'SNOW' },
+            keys: { accountId: 'system/SNOW/User/abc' },
+            decision: { certification: { remediationStatus: 'pending' } },
+          }],
+        },
+        roleMembership: {
+          totalCount: 1,
+          result: [{
+            id: 'role-task-1',
+            user: { userName: 'alyson' },
+            role: { name: 'auditor-role' },
+            decision: { certification: { remediationStatus: 'pending' } },
+          }],
+        },
+      });
+      exportWrapper.vm.selectedRevokesCampaign = { id: 'camp-1', name: 'Signed Off Campaign', certificationType: 'identity' };
+
+      await exportWrapper.vm.exportRevokesToFile({ format: 'csv', itemType: 'all' });
+
+      // three requests (one per candidate type), two files (entitlements empty)
+      expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalledTimes(3);
+      expect(downloadAsType).toHaveBeenCalledTimes(2);
+      const [accountData, , accountFile] = downloadAsType.mock.calls[0];
+      const [roleData, , roleFile] = downloadAsType.mock.calls[1];
+      expect(accountFile).toBe('Signed Off Campaign - Accounts.csv');
+      expect(accountData[0]).toEqual(expect.objectContaining({ 'Task ID': 'acct-task-1', Account: 'system/SNOW/User/abc' }));
+      expect(roleFile).toBe('Signed Off Campaign - Role Memberships.csv');
+      expect(roleData[0]).toEqual(expect.objectContaining({ 'Task ID': 'role-task-1', Role: 'auditor-role' }));
+      // real i18n here — the fan-out notice renders in English
+      expect(exportWrapper.vm.displayNotification).toHaveBeenCalledWith('success', '2 files downloaded — one per item type.');
+      exportWrapper.unmount();
+    });
+
+    it('exportRevokesToFile notifies with no download when the worklist is empty', async () => {
+      const exportWrapper = await mountWithSignedOffCampaign();
+      mockItemsSearch({ totalCount: 0, result: [] });
+      exportWrapper.vm.selectedRevokesCampaign = { id: 'camp-1', name: 'Signed Off Campaign', certificationType: 'identity' };
+
+      await exportWrapper.vm.exportRevokesToFile({ format: 'csv', rows: 'all' });
+
+      expect(downloadAsType).not.toHaveBeenCalled();
+      expect(exportWrapper.vm.displayNotification).toHaveBeenCalledWith('info', 'No revoke decisions with pending remediation to export.');
+      exportWrapper.unmount();
+    });
+
+    it('exportRevokesToFile warns when the result is truncated at the page cap', async () => {
+      const exportWrapper = await mountWithSignedOffCampaign();
+      // the truncation notice fires per exported slice; the worklist items
+      // are role memberships so the fan-out covers exactly one slice
+      mockItemsSearchByType({
+        roleMembership: {
+          totalCount: 12000,
+          result: [{
+            id: 'task-1',
+            user: { userName: 'andrew.och' },
+            decision: { certification: { remediationStatus: 'pending' } },
+          }],
+        },
+      });
+      exportWrapper.vm.selectedRevokesCampaign = { id: 'camp-1', name: 'Signed Off Campaign', certificationType: 'identity' };
+
+      await exportWrapper.vm.exportRevokesToFile({ format: 'csv', rows: 'all' });
+
+      expect(exportWrapper.vm.displayNotification).toHaveBeenCalledWith(
+        'info',
+        'The export is limited to the first 1 items (12000 items have revokes pending remediation).',
+      );
+      expect(downloadAsType).toHaveBeenCalledTimes(1);
+      exportWrapper.unmount();
     });
   });
 });

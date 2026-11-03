@@ -101,20 +101,11 @@ describe('CampaignOverview Component', () => {
   });
 
   it('update deadline button works correctly', async () => {
-    const updateDeadlineButton = findByTestId(wrapper, 'update-deadline-button');
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+
+    const updateDeadlineButton = findByTestId(domWrapper, 'update-deadline-button');
     expect(updateDeadlineButton.exists()).toBe(true);
-    expect(updateDeadlineButton.text()).toBe('Update Deadline');
-
-    await updateDeadlineButton.trigger('click');
-    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('UpdateDeadlineModal');
-  });
-
-  it('update deadline button dropdown works correctly', async () => {
-    await toggleActionsMenu(wrapper);
-
-    const updateDeadlineButton = findByTestId(domWrapper, 'update-deadline-button-dropdown');
-    expect(updateDeadlineButton.exists()).toBe(true);
-    expect(updateDeadlineButton.text()).toBe('Update Deadline');
+    expect(updateDeadlineButton.text()).toContain('Update Deadline');
 
     await updateDeadlineButton.trigger('click');
     await flushPromises();
@@ -156,52 +147,37 @@ describe('CampaignOverview Component', () => {
 
   it('edit details button shown when campaign is in-progress', async () => {
     await wrapper.setProps({ campaign: { ...campaign, status: 'in-progress' } });
-    const btn = findByTestId(wrapper, 'edit-details-button');
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+    const btn = findByTestId(domWrapper, 'edit-details-button');
     expect(btn.exists()).toBe(true);
-    expect(btn.text()).toBe('Edit Details');
+    expect(btn.text()).toContain('Edit Details');
   });
 
-  it('edit details button shown when campaign is expiring', () => {
+  it('edit details button shown when campaign is expiring', async () => {
     // default fixture has status: 'expiring'
-    const btn = findByTestId(wrapper, 'edit-details-button');
-    expect(btn.exists()).toBe(true);
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+    expect(findByTestId(domWrapper, 'edit-details-button').exists()).toBe(true);
   });
 
   it('edit details button not shown for staging status', async () => {
     await wrapper.setProps({ campaign: { ...campaign, status: 'staging' } });
-    expect(findByTestId(wrapper, 'edit-details-button').exists()).toBe(false);
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+    expect(findByTestId(domWrapper, 'edit-details-button').exists()).toBe(false);
   });
 
   it('edit details button opens modal', async () => {
-    await findByTestId(wrapper, 'edit-details-button').trigger('click');
-    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('EditDetailsModal');
-  });
-
-  it('edit details button dropdown opens modal', async () => {
-    await toggleActionsMenu(wrapper);
-    const btn = findByTestId(domWrapper, 'edit-details-button-dropdown');
-    expect(btn.exists()).toBe(true);
-    await btn.trigger('click');
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+    await findByTestId(domWrapper, 'edit-details-button').trigger('click');
     await flushPromises();
     expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('EditDetailsModal');
   });
 
   it('cancel campaign button works correctly', async () => {
-    const cancelCampaignButton = findByTestId(wrapper, 'cancel-campaign-button');
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+
+    const cancelCampaignButton = findByTestId(domWrapper, 'cancel-campaign-button');
     expect(cancelCampaignButton.exists()).toBe(true);
-    expect(cancelCampaignButton.text()).toBe('Cancel Campaign');
-
-    await cancelCampaignButton.trigger('click');
-    await flushPromises();
-    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CancelCampaignModal');
-  });
-
-  it('cancel campaign button dropdown works correctly', async () => {
-    await toggleActionsMenu(wrapper);
-
-    const cancelCampaignButton = findByTestId(domWrapper, 'cancel-campaign-button-dropdown');
-    expect(cancelCampaignButton.exists()).toBe(true);
-    expect(cancelCampaignButton.text()).toBe('Cancel Campaign');
+    expect(cancelCampaignButton.text()).toContain('Cancel Campaign');
 
     await cancelCampaignButton.trigger('click');
     await flushPromises();
@@ -216,28 +192,11 @@ describe('CampaignOverview Component', () => {
       },
     });
 
-    const activateCampaignButton = findByTestId(wrapper, 'activate-campaign-button');
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+
+    const activateCampaignButton = findByTestId(domWrapper, 'activate-campaign-button');
     expect(activateCampaignButton.exists()).toBe(true);
-    expect(activateCampaignButton.text()).toBe('Activate');
-
-    await activateCampaignButton.trigger('click');
-    await flushPromises();
-    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('ActivateCampaignModal');
-  });
-
-  it('activate campaign button dropdown works correctly', async () => {
-    await wrapper.setProps({
-      campaign: {
-        ...campaign,
-        status: 'staging',
-      },
-    });
-
-    await toggleActionsMenu(wrapper);
-
-    const activateCampaignButton = findByTestId(domWrapper, 'activate-campaign-button-dropdown');
-    expect(activateCampaignButton.exists()).toBe(true);
-    expect(activateCampaignButton.text()).toBe('Activate');
+    expect(activateCampaignButton.text()).toContain('Activate');
 
     await activateCampaignButton.trigger('click');
     await flushPromises();
@@ -252,27 +211,11 @@ describe('CampaignOverview Component', () => {
       },
     });
 
-    const deleteCampaignButton = findByTestId(wrapper, 'delete-campaign-button');
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+
+    const deleteCampaignButton = findByTestId(domWrapper, 'delete-campaign-button');
     expect(deleteCampaignButton.exists()).toBe(true);
-    expect(deleteCampaignButton.text()).toBe('Delete Campaign');
-
-    await deleteCampaignButton.trigger('click');
-    await flushPromises();
-    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('DeleteCampaignModal');
-  });
-
-  it('delete campaign button dropdown works correctly', async () => {
-    await wrapper.setProps({
-      campaign: {
-        ...campaign,
-        status: 'staging',
-      },
-    });
-    await toggleActionsMenu(wrapper);
-
-    const deleteCampaignButton = findByTestId(domWrapper, 'delete-campaign-button-dropdown');
-    expect(deleteCampaignButton.exists()).toBe(true);
-    expect(deleteCampaignButton.text()).toBe('Delete Campaign');
+    expect(deleteCampaignButton.text()).toContain('Delete Campaign');
 
     await deleteCampaignButton.trigger('click');
     await flushPromises();
@@ -633,13 +576,61 @@ describe('CampaignOverview Component', () => {
   });
 
   it('should show campaigns actions when status is different than excludedStatuses', async () => {
-    await toggleActionsMenu(wrapper);
+    await toggleActionsMenu(wrapper, 0, 'Actions');
 
     const cancelCampaignBtn = findByTestId(domWrapper, 'cancel-campaign-button');
-    const cancelCampaignBtnDropdown = findByTestId(domWrapper, 'cancel-campaign-button-dropdown');
 
     expect(cancelCampaignBtn.exists()).toBe(true);
-    expect(cancelCampaignBtnDropdown.exists()).toBe(true);
+  });
+
+  it('hides only the Edit Details item when governance dev is disabled', async () => {
+    document.body.innerHTML = '';
+    const disabledWrapper = mount(CampaignOverview, {
+      attachTo: createAppContainer(),
+      global: {
+        plugins: [i18n],
+        stubs: ['FrVisualizationCard', 'BBadge'],
+        mocks: {
+          $router: { push: jest.fn() },
+          $bvModal: { show: jest.fn(), hide: jest.fn() },
+          $store: { state: { SharedStore: { governanceDevEnabled: false } } },
+        },
+      },
+      props: {
+        campaign: { ...campaign, status: 'signed-off' },
+        isCampaignOwnerOrAdmin: true,
+      },
+    });
+
+    await toggleActionsMenu(disabledWrapper, 0, 'Actions');
+    // the Actions menu itself stays; only the dev-flag-gated item is gone
+    expect(disabledWrapper.findAll('button').filter((item) => item.text().includes('Actions')).length).toBe(1);
+    expect(findByTestId(disabledWrapper, 'edit-details-button').exists()).toBe(false);
+    expect(findByTestId(disabledWrapper, 'export-revocation-decisions-button').exists()).toBe(true);
+    disabledWrapper.unmount();
+  });
+
+  it('hides the export revocation decisions item for non-owner non-admin callers', async () => {
+    await wrapper.setProps({ isCampaignOwnerOrAdmin: false });
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+    expect(findByTestId(domWrapper, 'export-revocation-decisions-button').exists()).toBe(false);
+    // the rest of the menu survives
+    expect(findByTestId(domWrapper, 'update-deadline-button').exists()).toBe(true);
+  });
+
+  // IGA-1116: the filter selects signed-off certifications, which only exist
+  // once the campaign is signed-off — earlier statuses hide the item
+  it('hides the export revocation decisions item until the campaign is signed-off', async () => {
+    await wrapper.setProps({ isCampaignOwnerOrAdmin: true, campaign: { ...campaign, status: 'in-progress' } });
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+    expect(findByTestId(domWrapper, 'export-revocation-decisions-button').exists()).toBe(false);
+    expect(findByTestId(domWrapper, 'update-deadline-button').exists()).toBe(true);
+  });
+
+  it('shows the export revocation decisions item once the campaign is signed-off', async () => {
+    await wrapper.setProps({ isCampaignOwnerOrAdmin: true, campaign: { ...campaign, status: 'signed-off' } });
+    await toggleActionsMenu(wrapper, 0, 'Actions');
+    expect(findByTestId(domWrapper, 'export-revocation-decisions-button').exists()).toBe(true);
   });
 
   it('should not show campaigns actions when status is staging', async () => {
@@ -652,11 +643,25 @@ describe('CampaignOverview Component', () => {
     await flushPromises();
 
     const cancelCampaignBtn = findByTestId(wrapper, 'cancel-campaign-button');
-    const cancelCampaignBtnDropdown = findByTestId(wrapper, 'cancel-campaign-button-dropdown');
 
     expect(cancelCampaignBtn.exists()).toBe(false);
-    expect(cancelCampaignBtnDropdown.exists()).toBe(false);
   });
+
+  // expired/closed/complete/cancelled hide the whole actions column via the
+  // enclosing BCol v-if, so these pin that the column (not just the items)
+  // is gone for each of those statuses
+  it.each(['expired', 'closed', 'complete', 'cancelled'])(
+    'hides the actions column when status is %s',
+    async (status) => {
+      await wrapper.setProps({ campaign: { ...campaign, status } });
+      await flushPromises();
+
+      expect(findByTestId(wrapper, 'cancel-campaign-button').exists()).toBe(false);
+      expect(findByTestId(wrapper, 'update-deadline-button').exists()).toBe(false);
+      expect(findByTestId(wrapper, 'export-revocation-decisions-button').exists()).toBe(false);
+      expect(wrapper.findAll('button').filter((b) => b.text().includes('Actions'))).toHaveLength(0);
+    },
+  );
 
   it('previous decision for pie chart data loaded correctly', () => {
     const localThis = {

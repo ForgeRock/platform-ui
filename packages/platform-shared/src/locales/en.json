@@ -2433,6 +2433,23 @@
       },
       "noApplications": "No Applications",
       "accessReviewsTabTitle": "Access Reviews",
+      "exportRevocationDecisions": "Export Revocation Decisions",
+      "exportRevocationDecisionsTruncated": "The export is limited to the first {limit} items ({total} items have revokes pending remediation).",
+      "exportRevocationDecisionsEmpty": "No revoke decisions with pending remediation to export.",
+      "exportRevocationDecisionsError": "There was an error trying to export the revocation decisions",
+      "exportRevocationDecisionsTypeDescription": "This campaign covers more than one kind of access item. Choose which to export — each downloads as its own file with that item's columns. Choose all types to download one file per kind in a single export.",
+      "exportRevocationDecisionsTypeCount": "{count} items with revokes pending remediation",
+      "exportRevocationDecisionsTypeAllDescription": "One file per item type, each with that type's columns ({count} items in total)",
+      "exportRevocationDecisionsAllTypesDone": "{count} files downloaded — one per item type.",
+      "exportRevocationDecisionsTypes": {
+        "all": "All item types",
+        "accountGrants": "Accounts",
+        "entitlementGrants": "Entitlements",
+        "roleMemberships": "Role Memberships",
+        "entitlementCompositions": "Entitlements",
+        "roleCompositions": "Roles",
+        "identityProfiles": "Users"
+      },
       "activateCampaignModal": {
         "text": "Are you sure you want to activate this campaign?",
         "title": "Activate Campaign?",

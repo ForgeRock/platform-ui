@@ -10,15 +10,12 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="status-card"
     >
       <BRow class="align-items-center">
-        <BCol cols="3">
+        <BCol cols="4">
           <h5 class="mb-0">
             {{ $t('governance.certificationDetails.statusCardLabel') }}
           </h5>
         </BCol>
-        <BCol
-          class="text-right"
-          cols="3"
-        >
+        <BCol cols="4">
           <BBadge
             data-testid="status-badge"
             :variant="statusVariants[campaign.status]"
@@ -28,101 +25,78 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol
           v-if="campaign.status !== CampaignStates.EXPIRED && campaign.status !== CampaignStates.CLOSED && campaign.status !== CampaignStates.COMPLETE && campaign.status !== CampaignStates.CANCELLED"
-          class="text-right"
-          cols="6"
+          cols="4"
         >
-          <div class="d-flex justify-content-end align-items-center">
-            <BButton
-              v-if="canEditCampaign"
-              class="text-nowrap d-none d-xl-block"
-              data-testid="edit-details-button"
-              variant="link"
-              @click="$bvModal.show('EditDetailsModal')"
-            >
-              {{ $t('governance.certificationDetails.editDetailsButtonText') }}
-            </BButton>
-            <BButton
-              v-if="showCampaignsActions"
-              class="text-nowrap d-none d-xl-block"
-              data-testid="update-deadline-button"
-              variant="link"
-              @click="$bvModal.show('UpdateDeadlineModal')"
-            >
-              {{ $t('governance.certificationDetails.updateDeadlineButtonText') }}
-            </BButton>
-            <BButton
-              v-if="showCampaignsActions"
-              class="text-nowrap d-none d-xl-block"
-              data-testid="cancel-campaign-button"
-              variant="link"
-              @click="$bvModal.show('CancelCampaignModal')"
-            >
-              {{ $t('governance.certificationDetails.cancelCampaignButtonText') }}
-            </BButton>
-            <BButton
-              v-if="campaign.status === CampaignStates.STAGING"
-              class="text-nowrap d-none d-xl-block"
-              data-testid="delete-campaign-button"
-              variant="link"
-              @click="$bvModal.show('DeleteCampaignModal')"
-            >
-              {{ $t('governance.certificationDetails.deleteCampaignButtonText') }}
-            </BButton>
-            <BButton
-              v-if="campaign.status === CampaignStates.STAGING"
-              class="text-nowrap d-none d-xl-block"
-              data-testid="activate-campaign-button"
-              variant="primary"
-              @click="$bvModal.show('ActivateCampaignModal')"
-            >
-              {{ $t('common.activate') }}
-            </BButton>
-            <FrActionsCell
-              v-if="canEditCampaign || showCampaignsActions || campaign.status === CampaignStates.STAGING"
-              class="d-xl-none"
-              :edit-option="false"
-              :delete-option="false"
-              :divider="false"
-            >
-              <template #custom-top-actions>
-                <BDropdownItem
-                  v-if="canEditCampaign"
-                  data-testid="edit-details-button-dropdown"
-                  @click="$bvModal.show('EditDetailsModal')"
-                >
-                  {{ $t('governance.certificationDetails.editDetailsButtonText') }}
-                </BDropdownItem>
-                <BDropdownItem
-                  v-if="showCampaignsActions"
-                  data-testid="update-deadline-button-dropdown"
-                  @click="$bvModal.show('UpdateDeadlineModal')"
-                >
-                  {{ $t('governance.certificationDetails.updateDeadlineButtonText') }}
-                </BDropdownItem>
-                <BDropdownItem
-                  v-if="showCampaignsActions"
-                  data-testid="cancel-campaign-button-dropdown"
-                  @click="$bvModal.show('CancelCampaignModal')"
-                >
-                  {{ $t('governance.certificationDetails.cancelCampaignButtonText') }}
-                </BDropdownItem>
-                <BDropdownItem
-                  v-if="campaign.status === CampaignStates.STAGING"
-                  data-testid="delete-campaign-button-dropdown"
-                  @click="$bvModal.show('DeleteCampaignModal')"
-                >
-                  {{ $t('governance.certificationDetails.deleteCampaignButtonText') }}
-                </BDropdownItem>
-                <BDropdownItem
-                  v-if="campaign.status === CampaignStates.STAGING"
-                  data-testid="activate-campaign-button-dropdown"
-                  @click="$bvModal.show('ActivateCampaignModal')"
-                >
-                  {{ $t('common.activate') }}
-                </BDropdownItem>
-              </template>
-            </FrActionsCell>
-          </div>
+          <FrActionsMenu
+            right
+            toggle-class="font-weight-normal campaign-actions-toggle"
+          >
+            <template #button-content>
+              {{ $t('common.actions') }}
+            </template>
+              <BDropdownItem
+                v-if="governanceDevEnabled && canEditCampaign"
+                data-testid="edit-details-button"
+                @click="$bvModal.show('EditDetailsModal')"
+              >
+                <FrIcon
+                  icon-class="mr-2"
+                  name="edit" />
+                {{ $t('governance.certificationDetails.editDetailsButtonText') }}
+              </BDropdownItem>
+              <BDropdownItem
+                v-if="showCampaignsActions"
+                data-testid="update-deadline-button"
+                @click="$bvModal.show('UpdateDeadlineModal')"
+              >
+                <FrIcon
+                  icon-class="mr-2"
+                  name="event" />
+                {{ $t('governance.certificationDetails.updateDeadlineButtonText') }}
+              </BDropdownItem>
+              <BDropdownItem
+                v-if="isRevokesExportable"
+                data-testid="export-revocation-decisions-button"
+                :disabled="isRevokesExporting"
+                @click="$emit('exportRevokes')"
+              >
+                <FrIcon
+                  icon-class="mr-2"
+                  name="file_download" />
+                {{ $t('governance.certificationDetails.exportRevocationDecisions') }}
+              </BDropdownItem>
+              <BDropdownItem
+                v-if="campaign.status === CampaignStates.STAGING"
+                data-testid="delete-campaign-button"
+                @click="$bvModal.show('DeleteCampaignModal')"
+              >
+                <FrIcon
+                  icon-class="mr-2"
+                  name="delete" />
+                {{ $t('governance.certificationDetails.deleteCampaignButtonText') }}
+              </BDropdownItem>
+              <BDropdownItem
+                v-if="campaign.status === CampaignStates.STAGING"
+                data-testid="activate-campaign-button"
+                @click="$bvModal.show('ActivateCampaignModal')"
+              >
+                <FrIcon
+                  icon-class="mr-2"
+                  name="play_circle" />
+                {{ $t('common.activate') }}
+              </BDropdownItem>
+              <BDropdownItem
+                v-if="showCampaignsActions"
+                data-testid="cancel-campaign-button"
+                class="campaign-cancel-item"
+                @click="$bvModal.show('CancelCampaignModal')"
+              >
+                <FrIcon
+                  icon-class="mr-2"
+                  name="cancel" />
+                {{ $t('governance.certificationDetails.cancelCampaignButtonText') }}
+              </BDropdownItem>
+          </FrActionsMenu>
         </BCol>
       </BRow>
     </BCard>
@@ -402,7 +376,7 @@ import {
 } from 'bootstrap-vue';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
 import dayjs from 'dayjs';
-import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPieChart from '@forgerock/platform-shared/src/components/Visualization/Charts/PieChart';
@@ -418,6 +392,7 @@ import {
 } from '@forgerock/platform-shared/src/api/governance/CampaignApi';
 import { getCampaignDuration } from '@forgerock/platform-shared/src/views/Governance/utils/certification';
 import { DATE_FORMAT_MMM_D_COMMA_YYYY } from '@forgerock/platform-shared/src/utils/constants';
+import { REVOKES_EXPORTABLE_CAMPAIGN_STATUSES } from '@forgerock/platform-shared/src/views/Governance/utils/revokeExportFilter';
 import { uiTypeMap } from '../../../Templates/templateTypes';
 import FrActivateCampaignModal from './ActivateCampaignModal';
 import FrCancelCampaignModal from './CancelCampaignModal';
@@ -436,7 +411,7 @@ export default {
     BImg,
     BModal,
     BRow,
-    FrActionsCell,
+    FrActionsMenu,
     FrEditDetailsModal,
     FrIcon,
     FrUpdateDeadlineModal,
@@ -455,6 +430,19 @@ export default {
     campaign: {
       type: Object,
       required: true,
+    },
+    isRevokesExporting: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * IGA-1116: whether the current caller may take the revokes worklist
+     * out of the product (campaign owner or governance admin). Owned by the
+     * parent, which knows the current user.
+     */
+    isCampaignOwnerOrAdmin: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -564,6 +552,9 @@ export default {
         ? Math.floor(progress)
         : Math.ceil(progress);
     },
+    governanceDevEnabled() {
+      return this.$store.state.SharedStore.governanceDevEnabled;
+    },
     showCampaignsActions() {
       const excludeStatuses = [CampaignStates.STAGING, CampaignStates.COMPLETE, CampaignStates.SIGNED_OFF];
       return !excludeStatuses.includes(this.campaign.status);
@@ -578,8 +569,17 @@ export default {
       return this.campaign.certificationType === uiTypeMap.ROLECOMPOSITION;
     },
     canEditCampaign() {
-      return this.$store.state.SharedStore.governanceDevEnabled
-        && (this.campaign.status === CampaignStates.IN_PROGRESS || this.campaign.status === CampaignStates.EXPIRING);
+      return this.campaign.status === CampaignStates.IN_PROGRESS || this.campaign.status === CampaignStates.EXPIRING;
+    },
+    /**
+     * IGA-1116: the revokes worklist is an owner/admin remediation artifact,
+     * not a reviewer report — the item shows only for those callers, and
+     * only once the campaign is signed-off (the filter selects signed-off
+     * certifications, which cannot exist before that).
+     */
+    isRevokesExportable() {
+      return this.isCampaignOwnerOrAdmin
+        && REVOKES_EXPORTABLE_CAMPAIGN_STATUSES.includes(this.campaign?.status);
     },
     previousDecisionChart() {
       const colors = [this.styles.green, this.styles.blue];
@@ -699,5 +699,33 @@ export default {
     .owner-name {
       line-height: 1.25rem;
     }
+  }
+
+  // The actions menu's own style forces dark text on its toggle; restore the
+  // blue link look for this labeled button — text, caret and border in the
+  // same primary blue, with a larger hover backdrop and generous right margin.
+  .menu-container :deep(.campaign-actions-toggle) {
+    color: var(--primary) !important;
+    border: 1px solid var(--primary) !important;
+    border-radius: 50rem;
+    padding: 0.375rem 0.75rem !important;
+    margin-right: 4rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .menu-container :deep(.campaign-actions-toggle::after) {
+    // bootstrap caret inherits currentColor — it already follows the blue
+    border-top-color: var(--primary) !important;
+  }
+
+  // Cancel Campaign is a destructive action: render its item in red even
+  // though bootstrap-vue drops the utility class on custom dropdown items —
+  // the class lands on the li while bootstrap colors the inner a.dropdown-item,
+  // so both are targeted (the icon ligature inherits from them).
+  :deep(.campaign-cancel-item),
+  :deep(.campaign-cancel-item a),
+  :deep(.campaign-cancel-item span) {
+    color: var(--danger, #dc3545) !important;
   }
 </style>

@@ -36,6 +36,26 @@ function getTaskData(actor) {
   };
 }
 
+// an actor row shaped like the mixin's setAccessReviewList output (actor.key
+// present for isCertifierAUser, formatted* added by the mixin)
+function getListData(actor) {
+  return [{
+    actor: { ...actor, key: 'managed/user/newest-key' },
+    inProgress: 28,
+    complete: 5,
+    deadline: null,
+    total: 33,
+    status: 'in-progress',
+    formattedStartDate: '–',
+    formattedDeadline: '–',
+  }];
+}
+
+// a getCampaignTasks response whose actor carries key (render-safe)
+function getListResponse(actor) {
+  return { data: { result: getListData(actor), totalCount: 1 } };
+}
+
 describe('AccessReviews', () => {
   let getListSpy;
 
@@ -96,15 +116,17 @@ describe('AccessReviews', () => {
 
     it('getItems should call getCampaignTasks', async () => {
       const wrapper = mountComponent();
+      // the mount load fires getList first — isolate this test's own call
+      CampaignApi.getCampaignTasks.mockClear();
       const items = await wrapper.vm.getItems({
         test: 'test',
       });
 
+      // getItems passes params through with the staging-status override —
+      // the request-shaping params (sortBy/pageSize) come from getList
       expect(CampaignApi.getCampaignTasks).toHaveBeenCalledWith('123', {
-        sortBy: null,
-        sortDesc: false,
         test: 'test',
-        pageSize: 10,
+        status: undefined,
       });
       expect(items).toEqual(getTaskData(
         {
@@ -241,6 +263,67 @@ describe('AccessReviews', () => {
       });
 
       expect(result).toEqual('test@castillo.com');
+    });
+  });
+
+  // IGA-4705: the lazy-mounted tab can fire two loads in quick succession —
+  // first with the status prop still null (statusSort=active), then again via
+  // the campaignStatus watcher once the campaign fetch resolves signed-off
+  // (statusSort=closed). The shared mixin's getList has no request guard, so
+  // the component overrides it: a slow stale response that resolves after the
+  // fresh one must not reach setAccessReviewList at all.
+  describe('stale request sequencing', () => {
+    it('a slow stale getList response does not clobber the fresh table data', async () => {
+      let resolveStale;
+      const wrapper = mountComponent({ campaignStatus: CampaignStates.SIGNED_OFF });
+      await flushPromises();
+      // after the mount load settles, hold the next (stale) request in flight,
+      // then let the fresh one through
+      CampaignApi.getCampaignTasks
+        .mockImplementationOnce(() => new Promise((resolve) => { resolveStale = resolve; }))
+        .mockImplementationOnce(() => Promise.resolve(getListResponse({ userName: 'newest' })));
+
+      // two getList calls back to back — the stale one issued first
+      const staleList = wrapper.vm.getList();
+      const newestList = wrapper.vm.getList();
+      await flushPromises();
+
+      // the fresh list owns the table
+      expect(wrapper.vm.accessReviewList).toEqual(getListData({ userName: 'newest' }));
+
+      // now the held stale response lands after its successor
+      resolveStale(getListResponse({ userName: 'stale' }));
+      await flushPromises();
+      await Promise.all([staleList, newestList]);
+
+      // the table still shows the fresh data — the stale response was dropped
+      // before setAccessReviewList, not converted to an empty write
+      expect(wrapper.vm.accessReviewList).toEqual(getListData({ userName: 'newest' }));
+      wrapper.unmount();
+    });
+
+    it('prop change from the campaign fetch re-loads the list with the closed sort', async () => {
+      CampaignApi.getCampaignTasks.mockResolvedValue(getTaskData({
+        cn: 'Test Test',
+        givenName: 'Test',
+        sn: 'Castillo',
+        id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+        type: 'user',
+        key: 'managed/user/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+        userName: 'reviewer',
+      }));
+      const wrapper = mountComponent({ campaignStatus: CampaignStates.ACTIVE });
+      await flushPromises();
+      expect(wrapper.vm.statusSort.param).toBe('active');
+      CampaignApi.getCampaignTasks.mockClear();
+
+      // what the parent's refreshed campaignDetails does after a sign-off
+      await wrapper.setProps({ campaignStatus: CampaignStates.SIGNED_OFF });
+      await flushPromises();
+
+      expect(wrapper.vm.statusSort.param).toBe('closed');
+      expect(CampaignApi.getCampaignTasks).toHaveBeenCalledWith('123', expect.objectContaining({ status: 'closed' }));
+      wrapper.unmount();
     });
   });
 
