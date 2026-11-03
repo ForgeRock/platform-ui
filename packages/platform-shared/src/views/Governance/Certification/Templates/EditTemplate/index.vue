@@ -97,19 +97,6 @@ export default {
       type: String,
       default: '',
     },
-    /**
-     * Entity context for event-based certifications, forwarded to the
-     * FrEventDetails tab. Defaults preserve the pre-genericization user
-     * rendering when only the display name is known.
-     */
-    entityType: {
-      type: String,
-      default: 'user',
-    },
-    mutationType: {
-      type: String,
-      default: '',
-    },
     eventFilterProperties: {
       type: Array,
       default: () => [],
