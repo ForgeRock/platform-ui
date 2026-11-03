@@ -6,8 +6,7 @@ Feature: Default enduser password reset from Login journey
     And admin is logged out
     And user navigates to "Login" journey
 
-  @TC-13074
-  Scenario: Enduser accesses default Reset Password journey via default Login journey and changes their password
+  Scenario: [TC-13074] Enduser accesses default Reset Password journey via default Login journey and changes their password
     When user clicks on "Forgot Password?" link
     Then page url contains "/service/ResetPassword"
     And page title is "Reset Password"
@@ -24,8 +23,7 @@ Feature: Default enduser password reset from Login journey
     When user clicks on "Next" button
     Then enduser dashboard is loaded with enduser data
 
-  @TC-13100
-  Scenario: Start Over on used password reset link opens Reset Password journey when sourced from default Login journey
+  Scenario: [TC-13100] Start Over on used password reset link opens Reset Password journey when sourced from default Login journey
     When user clicks on "Forgot Password?" link
     And user types the stored value of "endUserEmail" in "Email Address" field
     And user clicks on "Next" button

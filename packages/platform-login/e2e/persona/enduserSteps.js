@@ -8,6 +8,7 @@
 import commonEnduserSteps from '@e2e/steps/commonEnduserSteps';
 import CommonLoginSteps from '@e2e/steps/login/commonLoginSteps';
 import MessageNodeStylingSteps from '../steps/login/MessageNodeStylingSteps';
+import PasswordPolicySteps from '../steps/enduser/PasswordPolicySteps';
 import RegistrationSteps from '../steps/enduser/RegistrationSteps';
 import RequiredInputsSteps from '../steps/enduser/RequiredInputsSteps';
 import SocialLoginSteps from '../steps/login/SocialLoginSteps';
@@ -18,6 +19,7 @@ import DeviceProfileSteps from '../steps/login/DeviceProfileSteps';
 export default {
   ...commonEnduserSteps,
   messageNodeStyling: MessageNodeStylingSteps,
+  passwordPolicy: PasswordPolicySteps,
   registration: RegistrationSteps,
   requiredInputs: RequiredInputsSteps,
   socialLogin: SocialLoginSteps,
