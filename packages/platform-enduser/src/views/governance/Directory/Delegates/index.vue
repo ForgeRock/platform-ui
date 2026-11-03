@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
               data-testid="search-delegate"
               :placeholder="$t('common.search')"
               @clear="clear"
-              @search="paginationPage = 1; loadData()" />
+              @search="search" />
             <BButton
               @click="openColumnsModal"
               variant="link-dark"
@@ -233,6 +233,9 @@ export default {
       items: [],
       paginationPage: 1,
       paginationPageSize: 10,
+      // True once the user commits a search or clears one; keyed on the action rather than the
+      // query text so a cleared search still announces its refreshed result count
+      searchInitiated: false,
       searchQuery: '',
       selectedDelegate: {},
       sortDesc: null,
@@ -251,7 +254,11 @@ export default {
   methods: {
     clear() {
       this.searchQuery = '';
+      this.search();
+    },
+    search() {
       this.paginationPage = 1;
+      this.searchInitiated = true;
       this.loadData();
     },
     getStartDate(duration) {
@@ -307,7 +314,7 @@ export default {
       }).catch((err) => {
         this.showErrorMessage(err, this.$t('governance.delegates.errorGettingDelegates'));
       }).finally(() => {
-        this.activeQuery = Boolean(this.searchQuery);
+        this.activeQuery = this.searchInitiated;
       });
     },
     removeDelegate() {

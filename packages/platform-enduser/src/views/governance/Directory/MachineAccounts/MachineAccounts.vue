@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-model="searchQuery"
                   :placeholder="i18n.global.t('common.search')"
                   @clear="clear"
-                  @search="search(1)" />
+                  @search="search(1, true)" />
               </BButtonToolbar>
             </BCardHeader>
             <FrSearchResultsAnnouncer
@@ -151,6 +151,9 @@ const accounts = ref([]);
 const sortBy = ref('displayName');
 const sortDesc = ref(false);
 const searchQuery = ref('');
+// True once the user commits a search or clears one; keyed on the action rather than the
+// query text so a cleared search still announces its refreshed result count
+const searchInitiated = ref(false);
 // Gates the results announcer; reset at the start of every search so a new
 // search re-announces even when the result count matches the previous one
 const activeQuery = ref(false);
@@ -217,9 +220,11 @@ function getQueryFilterForAccounts() {
 /**
  * Search accounts
  * @param page number|null The page number to search for, if null current page is used
+ * @param fromUserAction boolean Whether the search was triggered by a user search or clear action (announcer re-arms only for these)
  */
-async function search(page = null) {
+async function search(page = null, fromUserAction = false) {
   if (page) currentPage.value = page;
+  if (fromUserAction) searchInitiated.value = true;
 
   // Reset the announcer so each search gets a fresh empty -> text transition,
   // even when a new search returns the same result count
@@ -254,7 +259,7 @@ async function search(page = null) {
     accounts.value = [];
   } finally {
     tableLoading.value = false;
-    activeQuery.value = Boolean(searchQuery.value);
+    activeQuery.value = searchInitiated.value;
   }
 }
 
@@ -300,6 +305,7 @@ function navigateToEdit(accountId) {
 function clear() {
   searchQuery.value = '';
   currentPage.value = 1;
+  searchInitiated.value = true;
   search();
 }
 

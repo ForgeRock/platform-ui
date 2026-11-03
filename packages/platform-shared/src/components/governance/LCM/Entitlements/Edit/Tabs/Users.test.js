@@ -337,5 +337,21 @@ describe('Users', () => {
       await flushPromises();
       expect(announcer.props('count')).toBe(11);
     });
+
+    it('announces the refreshed result count when the search is cleared', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const searchInput = wrapper.findComponent('.fr-search-input-holder');
+      searchInput.vm.$emit('input', 'searchQuery');
+      searchInput.vm.$emit('search');
+      await flushPromises();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(11);
+
+      searchInput.vm.$emit('clear');
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(11);
+    });
   });
 });

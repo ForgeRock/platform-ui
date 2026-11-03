@@ -259,8 +259,9 @@ describe('AccessReviews', () => {
           data: { result: [{ user: 'testUser', start: 'testStart', end: 'testEnd' }], resultCount: 1 },
         });
 
-        wrapper.vm.searchQuery = 'testUser';
-        wrapper.vm.loadData();
+        const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+        await searchInput.vm.$emit('input', 'testUser');
+        await searchInput.vm.$emit('search');
         await wrapper.vm.$nextTick();
         await flushPromises();
         await wrapper.vm.$nextTick();
@@ -275,8 +276,9 @@ describe('AccessReviews', () => {
           data: { result: [], resultCount: 0 },
         });
 
-        wrapper.vm.searchQuery = 'nobody';
-        wrapper.vm.loadData();
+        const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+        await searchInput.vm.$emit('input', 'nobody');
+        await searchInput.vm.$emit('search');
         await wrapper.vm.$nextTick();
         await flushPromises();
         await wrapper.vm.$nextTick();
@@ -289,17 +291,19 @@ describe('AccessReviews', () => {
           data: { result: [{ user: 'testUser', start: 'testStart', end: 'testEnd' }], resultCount: 1 },
         });
 
-        wrapper.vm.searchQuery = 'testUser';
-        wrapper.vm.loadData();
+        const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+        await searchInput.vm.$emit('input', 'testUser');
+        await searchInput.vm.$emit('search');
         await wrapper.vm.$nextTick();
         await flushPromises();
         await wrapper.vm.$nextTick();
         expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(1);
 
         // Same count (1), different search text — the count must pass through null at the start of the new load
-        // so the live region's text changes and the screen reader re-announces
-        wrapper.vm.searchQuery = 'testUser2';
-        wrapper.vm.loadData();
+        // so the live region's text changes and the screen reader re-announces.
+        // Emitted without flushing so the null state (set before the request resolves) can be observed.
+        await searchInput.vm.$emit('input', 'testUser2');
+        searchInput.vm.$emit('search');
         await wrapper.vm.$nextTick();
         expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
 
@@ -314,15 +318,16 @@ describe('AccessReviews', () => {
           data: { result: [], resultCount: 0 },
         });
 
-        wrapper.vm.searchQuery = 'nobody';
-        wrapper.vm.loadData();
+        const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+        await searchInput.vm.$emit('input', 'nobody');
+        await searchInput.vm.$emit('search');
         await wrapper.vm.$nextTick();
         await flushPromises();
         await wrapper.vm.$nextTick();
         expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
 
-        wrapper.vm.searchQuery = 'nobody2';
-        wrapper.vm.loadData();
+        await searchInput.vm.$emit('input', 'nobody2');
+        searchInput.vm.$emit('search');
         await wrapper.vm.$nextTick();
         expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
 
@@ -330,6 +335,31 @@ describe('AccessReviews', () => {
         await flushPromises();
         await wrapper.vm.$nextTick();
         expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+      });
+
+      it('announces the refreshed result count when the search is cleared', async () => {
+        const getTaskProxies = jest.spyOn(DirectoryApi, 'getTaskProxies')
+          .mockResolvedValue({
+            data: { result: [{ user: 'testUser', start: 'testStart', end: 'testEnd' }], resultCount: 3 },
+          });
+
+        const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+        await searchInput.vm.$emit('input', 'testUser');
+        await searchInput.vm.$emit('search');
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(3);
+
+        getTaskProxies.mockResolvedValue({
+          data: { result: [{ user: 'testUser', start: 'testStart', end: 'testEnd' }], resultCount: 5 },
+        });
+
+        await searchInput.vm.$emit('clear');
+        await wrapper.vm.$nextTick();
+        await flushPromises();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(5);
       });
     });
 

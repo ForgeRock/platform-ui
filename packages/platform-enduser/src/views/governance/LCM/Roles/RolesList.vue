@@ -298,6 +298,9 @@ const searchValue = ref('');
 // Gates the results announcer off the committed search (not the v-model input, which changes on every keystroke with a stale count);
 // reset at the start of every query so a new search re-announces even with an unchanged result count
 const activeQuery = ref(false);
+// True once the user commits a search or clears one; keyed on the action rather than the
+// query text so a cleared search still announces its refreshed result count
+const searchInitiated = ref(false);
 const statusOptions = ref(['active', 'draft']);
 const showAddButton = ref(false);
 const showDeleteButton = ref(false);
@@ -404,7 +407,7 @@ async function queryRoles(resource = 'role') {
     showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: i18n.global.t('common.roles') }));
   } finally {
     isLoading.value = false;
-    activeQuery.value = Boolean(searchValue.value);
+    activeQuery.value = searchInitiated.value;
   }
 }
 
@@ -444,6 +447,8 @@ function tabActivated(tab) {
   sortBy.value = `${sortKeyBase}.name`; // Reset sort by to name when tab changes
   sortDesc.value = false; // Reset sort direction when tab changes
   searchValue.value = '';
+  // Reset the search flag too, or the announcer would speak a count for the freshly switched tab's unfiltered list
+  searchInitiated.value = false;
   currentPage.value = 1;
   queryRoles();
 }
@@ -489,6 +494,7 @@ async function deleteRoles() {
 function search(query) {
   currentPage.value = 1;
   searchValue.value = query;
+  searchInitiated.value = true;
   queryRoles();
 }
 

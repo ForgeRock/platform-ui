@@ -174,6 +174,11 @@ describe('DirectReports Component', () => {
   });
 
   describe('search results announcement', () => {
+    // mount load returns no results, which hides the search input behind the first-load empty state
+    beforeEach(async () => {
+      await wrapper.setData({ isNoResultsFirstLoad: false });
+    });
+
     it('passes no count to the announcer when there is no active search', async () => {
       wrapper.vm.searchQuery = '';
       await wrapper.vm.loadData();
@@ -185,8 +190,9 @@ describe('DirectReports Component', () => {
         data: { result: mockResultItems, resultCount: 2 },
       });
 
-      wrapper.vm.searchQuery = 'employee';
-      await wrapper.vm.loadData();
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'employee');
+      await searchInput.vm.$emit('search');
       await flushPromises();
       await wrapper.vm.$nextTick();
 
@@ -199,12 +205,35 @@ describe('DirectReports Component', () => {
         data: { result: [], resultCount: 0 },
       });
 
-      wrapper.vm.searchQuery = 'nobody';
-      await wrapper.vm.loadData();
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'nobody');
+      await searchInput.vm.$emit('search');
       await flushPromises();
       await wrapper.vm.$nextTick();
 
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+    });
+
+    it('announces the refreshed result count when the search is cleared', async () => {
+      DirectoryApi.getDirectReports.mockResolvedValue({
+        data: { result: mockResultItems, resultCount: 2 },
+      });
+
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'employee');
+      await searchInput.vm.$emit('search');
+      await flushPromises();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(2);
+
+      DirectoryApi.getDirectReports.mockResolvedValue({
+        data: { result: [...mockResultItems, ...mockResultItems], resultCount: 4 },
+      });
+
+      await searchInput.vm.$emit('clear');
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(4);
     });
   });
 

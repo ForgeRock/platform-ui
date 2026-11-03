@@ -150,8 +150,9 @@ describe('Machine Accounts Unit', () => {
       const wrapper = mountComponent();
       await flushPromises();
 
-      wrapper.vm.searchQuery = 'name';
-      await wrapper.vm.search();
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'name');
+      await searchInput.vm.$emit('search');
       await flushPromises();
 
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(2);
@@ -161,15 +162,16 @@ describe('Machine Accounts Unit', () => {
       const wrapper = mountComponent();
       await flushPromises();
 
-      wrapper.vm.searchQuery = 'name';
-      await wrapper.vm.search();
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'name');
+      await searchInput.vm.$emit('search');
       await flushPromises();
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(2);
 
       // Same count (2), different search text — the count must pass through null at the start of the new search so the live region's text changes
-      // and the screen reader re-announces. Called without awaiting so the null state (set before the request resolves) can be observed.
-      wrapper.vm.searchQuery = 'name2';
-      wrapper.vm.search();
+      // and the screen reader re-announces. Emitted without flushing so the null state (set before the request resolves) can be observed.
+      await searchInput.vm.$emit('input', 'name2');
+      searchInput.vm.$emit('search');
       await wrapper.vm.$nextTick();
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
 
@@ -183,11 +185,33 @@ describe('Machine Accounts Unit', () => {
       const wrapper = mountComponent();
       await flushPromises();
 
-      wrapper.vm.searchQuery = 'nobody';
-      await wrapper.vm.search();
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'nobody');
+      await searchInput.vm.$emit('search');
       await flushPromises();
 
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(0);
+    });
+
+    it('announces the refreshed result count when the search is cleared', async () => {
+      AccountApi.getAccounts = jest.fn()
+        .mockResolvedValue({ data: { result: sampleData, totalCount: 2 } });
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'name');
+      await searchInput.vm.$emit('search');
+      await flushPromises();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(2);
+
+      AccountApi.getAccounts = jest.fn()
+        .mockResolvedValue({ data: { result: [...sampleData, ...sampleData], totalCount: 4 } });
+
+      await searchInput.vm.$emit('clear');
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(4);
     });
   });
 });

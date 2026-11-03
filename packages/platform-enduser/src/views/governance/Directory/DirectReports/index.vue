@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
               data-testid="search-directreports"
               :placeholder="$t('common.search')"
               @clear="clear"
-              @search="$event => loadData()"
+              @search="search"
             />
             <BButton
               @click="openColumnsModal"
@@ -232,6 +232,9 @@ export default {
       sortBy: 'userName',
       isNoResultsFirstLoad: false,
       totalCount: 0,
+      // True once the user commits a search or clears one; keyed on the action rather than the
+      // query text so a cleared search still announces its refreshed result count
+      searchInitiated: false,
     };
   },
   computed: {
@@ -247,7 +250,11 @@ export default {
   methods: {
     async clear() {
       this.searchQuery = '';
+      await this.search();
+    },
+    async search() {
       this.paginationPage = 1;
+      this.searchInitiated = true;
       await this.loadData();
     },
     /**
@@ -292,7 +299,7 @@ export default {
         this.showErrorMessage(err, this.$t('governance.directReports.errorGettingDirectReports'));
       });
       this.isLoading = false;
-      this.activeQuery = Boolean(this.searchQuery);
+      this.activeQuery = this.searchInitiated;
     },
     async pageChange(page) {
       this.paginationPage = page;

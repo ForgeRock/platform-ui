@@ -390,6 +390,50 @@ describe('GovResourceList', () => {
       const announcer = wrapper.findComponent(SearchResultsAnnouncer);
       expect(announcer.props('count')).toBe(7);
     });
+
+    it('announces the refreshed result count when the search is cleared', async () => {
+      // first response is the initial mount load; then search, then clear
+      const resourceFunction = jest.fn()
+        .mockResolvedValueOnce({ data: { result: [], totalCount: 12 } })
+        .mockResolvedValueOnce({ data: { result: [], totalCount: 3 } })
+        .mockResolvedValueOnce({ data: { result: [], totalCount: 9 } });
+      wrapper = mountComponent({
+        resource: 'entitlement',
+        resourceFunction,
+      });
+
+      const search = wrapper.findComponent(FrSearchInput);
+      await search.vm.$emit('input', 'test');
+      await flushPromises();
+      await search.vm.$emit('search');
+      await flushPromises();
+      // the typed query must actually reach the load, not fall through to the empty-query branch
+      expect(resourceFunction).toHaveBeenLastCalledWith(
+        'entitlement',
+        expect.objectContaining({ queryFilter: 'descriptor.idx./entitlement.displayName co "test"' }),
+      );
+      expect(wrapper.findComponent(SearchResultsAnnouncer).props('count')).toBe(3);
+
+      await search.vm.$emit('clear');
+      await flushPromises();
+
+      expect(resourceFunction).toHaveBeenLastCalledWith(
+        'entitlement',
+        expect.objectContaining({ queryFilter: true }),
+      );
+      expect(wrapper.findComponent(SearchResultsAnnouncer).props('count')).toBe(9);
+    });
+
+    it('does not announce when the initial load has not been searched', async () => {
+      const resourceFunction = jest.fn().mockResolvedValue({ data: { result: [], totalCount: 5 } });
+      wrapper = mountComponent({
+        resource: 'entitlement',
+        resourceFunction,
+      });
+      await flushPromises();
+
+      expect(wrapper.findComponent(SearchResultsAnnouncer).props('count')).toBeNull();
+    });
   });
 
   describe('search constraint hint association', () => {

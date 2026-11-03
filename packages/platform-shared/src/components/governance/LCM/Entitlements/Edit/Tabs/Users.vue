@@ -280,6 +280,9 @@ const totalRows = ref(0);
 // Gates the results announcer; reset at the start of every search so a new
 // search re-announces even when the result count matches the previous one
 const activeQuery = ref(false);
+// True once the user commits a search or clears one; keyed on the action rather than the
+// query text so a cleared search still announces its refreshed result count
+const searchInitiated = ref(false);
 const itemToExtendRequest = ref(null);
 const columns = [
   {
@@ -373,7 +376,7 @@ async function loadUsers() {
     totalRows.value = 0;
   } finally {
     isLoading.value = false;
-    activeQuery.value = Boolean(searchValue.value);
+    activeQuery.value = searchInitiated.value;
   }
 }
 
@@ -587,6 +590,7 @@ async function updateEntitlementMembers(operation) {
 function search(query) {
   searchValue.value = query;
   activeQuery.value = false;
+  searchInitiated.value = true;
   loadUsers();
 }
 

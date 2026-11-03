@@ -230,6 +230,9 @@ const searchHelpTextId = ref(`fr-search-help-${uuid()}`);
 const searchStateAnnouncement = ref('');
 const hasFocus = ref(false);
 const submitBeforeLengthValid = ref(false);
+// True once the user commits a search or clears one; keyed on the action rather than the
+// query text so a cleared search still announces its refreshed result count
+const searchInitiated = ref(false);
 // Gates the results announcer off the committed search; reset at the start of
 // every load so a new search re-announces even with an unchanged result count
 const activeQuery = ref(false);
@@ -473,7 +476,7 @@ async function loadData() {
     isLoading.value = false;
     // BTable's show-empty announces the no-results state (role="alert"), so the
     // announcer covers only the result count; 0 collapses to null (silent)
-    activeQuery.value = searchValue.value && totalRows.value ? Boolean(searchValue.value) : false;
+    activeQuery.value = Boolean(searchInitiated.value && totalRows.value);
   }
 }
 
@@ -487,6 +490,7 @@ function search(query) {
     submitBeforeLengthValid.value = false;
     currentPage.value = 1;
     searchValue.value = query;
+    searchInitiated.value = true;
     loadData();
     return;
   }
@@ -494,6 +498,7 @@ function search(query) {
     submitBeforeLengthValid.value = false;
     currentPage.value = 1;
     searchValue.value = query;
+    searchInitiated.value = true;
     loadData();
   } else {
     submitBeforeLengthValid.value = true;

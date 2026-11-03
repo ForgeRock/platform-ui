@@ -236,7 +236,9 @@ describe('RolesList', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      wrapper.vm.search('Test Role');
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'Test Role');
+      await searchInput.vm.$emit('search');
       await flushPromises();
 
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(3);
@@ -246,14 +248,17 @@ describe('RolesList', () => {
       wrapper = mountComponent();
       await flushPromises();
 
-      wrapper.vm.search('Test Role');
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'Test Role');
+      await searchInput.vm.$emit('search');
       await flushPromises();
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(3);
 
       // Same count (3), different search text — the count must pass through null at the start of the new query
       // so the live region's text changes and the screen reader re-announces.
-      // Called without awaiting so the null state (set before the request resolves) can be observed.
-      wrapper.vm.search('Test Role 2');
+      // Emitted without flushing so the null state (set before the request resolves) can be observed.
+      await searchInput.vm.$emit('input', 'Test Role 2');
+      searchInput.vm.$emit('search');
       await wrapper.vm.$nextTick();
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
 
@@ -272,6 +277,22 @@ describe('RolesList', () => {
       expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
     });
 
+    it('announces the refreshed result count when the search is cleared', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'Test Role');
+      await searchInput.vm.$emit('search');
+      await flushPromises();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(3);
+
+      await searchInput.vm.$emit('clear');
+      await flushPromises();
+
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(3);
+    });
+
     it('renders a single persistent announcer across tab switches', async () => {
       // Both tabs share one live region, mounted once outside the lazy tab panes
       AccessRequestApi.getUserRequests.mockResolvedValue({
@@ -287,6 +308,25 @@ describe('RolesList', () => {
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.roleStatus).toBe('draft');
       expect(wrapper.findAllComponents({ name: 'SearchResultsAnnouncer' }).length).toBe(1);
+    });
+
+    it('stays silent when switching tabs after a prior search', async () => {
+      // Tab switch clears the query and reloads an unfiltered list — that is not a
+      // user search, so the announcer must not speak the new tab's count
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
+      await searchInput.vm.$emit('input', 'Test Role');
+      await searchInput.vm.$emit('search');
+      await flushPromises();
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBe(3);
+
+      wrapper.vm.tabActivated(1);
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.findComponent({ name: 'SearchResultsAnnouncer' }).props('count')).toBeNull();
     });
   });
 });
