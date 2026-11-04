@@ -6589,22 +6589,22 @@
     "loginFailure": "Login failure"
   },
   "selfServiceJourneys": {
-    "title": "Self-service journeys",
+    "title": "Self-service Journeys",
     "description": "Map self-service user actions (for example, forgot password or registration) to authentication journeys.",
     "status": "Status",
     "treeMappingCardTitle": "Settings",
     "addMapping": "Add mapping",
     "journeyNotFound": "Previously saved journey no longer exists",
     "deactivateModal": {
-      "title": "Deactivate Self-service journeys?",
-      "body": "Are you sure you want to deactivate Self-service journeys?",
+      "title": "Deactivate Self-service Journeys?",
+      "body": "Are you sure you want to deactivate Self-service Journeys?",
       "confirm": "Deactivate"
     },
-    "saveSuccess": "Self-service journeys settings saved successfully.",
-    "saveError": "Failed to save Self-service journeys settings.",
-    "loadError": "Failed to load Self-service journeys settings.",
-    "statusUpdateSuccess": "Self-service journeys status updated successfully.",
-    "statusUpdateError": "Failed to update Self-service journeys status."
+    "saveSuccess": "Self-service Journeys settings saved successfully.",
+    "saveError": "Failed to save Self-service Journeys settings.",
+    "loadError": "Failed to load Self-service Journeys settings.",
+    "statusUpdateSuccess": "Self-service Journeys status updated successfully.",
+    "statusUpdateError": "Failed to update Self-service Journeys status."
   },
   "navigationProfiles": {
     "deleteConfirm": "Are you sure you want to delete the {name} navigation profile?",
