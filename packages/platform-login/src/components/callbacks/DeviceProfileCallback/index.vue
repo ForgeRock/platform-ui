@@ -40,7 +40,8 @@ export default {
   },
   methods: {
     deviceProfileCallback() {
-      const device = new Device();
+      // Keep the legacy storage key FR-SDK-DeviceID so existing device profiles stay matchable after the journey-client migration
+      const device = new Device(undefined, undefined, 'FR-SDK');
       device.getProfile({
         location: this.callback.isLocationRequired(),
         metadata: this.callback.isMetadataRequired(),
