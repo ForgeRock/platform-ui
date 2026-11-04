@@ -91,9 +91,8 @@ const cards = [
   {
     id: 'userPopulation',
     icon: 'groups',
-    enabled: false,
-    // TODO: remove this hidden flag once Based on User Population ships
-    hidden: true,
+    enabled: true,
+    routeTo: { name: 'PopulationRoleMiningSessions' },
     titleKey: 'governance.accessModeling.hub.userPopulationCard.title',
     descriptionKey: 'governance.accessModeling.hub.userPopulationCard.description',
   },

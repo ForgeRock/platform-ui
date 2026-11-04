@@ -303,8 +303,10 @@ async function submitRequest(userId, name) {
     const types = REQUEST_TYPES[props.grantType];
     const anyGrant = getAnyGrantByName(name);
     const grantId = get(anyGrant, ID_PATH[props.grantType]) || '';
+    // No context set: the backend defaults to { type: 'request' }, which needs no admin
+    // role — 'admin' is a reserved context non-admins get a 400 for, and this UI's only
+    // host is the end-user app's access analysis
     const common = {
-      context: { type: 'admin' },
       entitlementId: grantId,
       userId,
       ...(props.grantType === 'roleMembership' && { roleId: grantId }),
@@ -335,8 +337,8 @@ async function submitRevoke(userId, grant) {
   try {
     const types = REQUEST_TYPES[props.grantType];
     const grantId = get(grant, ID_PATH[props.grantType]) || '';
+    // Same as submitRequest: omit context so the backend defaults to 'request'
     const common = {
-      context: { type: 'admin' },
       entitlementId: grantId,
       userId,
       ...(props.grantType === 'roleMembership' && { roleId: grantId }),

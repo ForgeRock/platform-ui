@@ -91,22 +91,28 @@ describe('SimulatorDetail', () => {
   });
 
   it('shows a granted check before and after when adding a scope the user already holds', async () => {
+    // The user already holds scope-1 AND a second scope granting the same
+    // permissions — every permission is held before and unchanged after.
     CommonsApi.getUserById = jest.fn().mockResolvedValue({
-      data: { result: [{ id: 'user1', scopes: { assigned: [{ id: 'scope-1' }] } }] },
+      data: { result: [{ id: 'user1', scopes: { assigned: [{ id: 'scope-1' }, { id: 'scope-2' }] } }] },
     });
-    wrapper = mountComponent();
+    wrapper = mountComponent({
+      getScopeById: jest.fn((id) => Promise.resolve({
+        data: id === 'scope-2' ? overlappingScope : scopeWithRoleAndUserPermissions,
+      })),
+    });
     await runSimulation();
 
     const rows = wrapper.findAll('tbody tr');
     expect(rows).toHaveLength(4);
-    rows.forEach((row) => {
-      const cells = row.findAll('td');
-      // unchanged permission: granted check icon in both before and after
-      expect(cells[1].find('.material-icons-outlined').classes()).toContain('text-success');
-      expect(cells[1].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
-      expect(cells[2].find('.material-icons-outlined').classes()).toContain('text-success');
-      expect(cells[2].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
-    });
+    // Only the overlapping permission (deleteUser via scope-2) is held before;
+    // the rest of scope-1's permissions are new grants even though the user
+    // technically already holds scope-1 — holding the scope alone doesn't
+    // mark its permissions as held.
+    const rowTexts = rows.map((row) => row.text());
+    const deleteUserCells = rows[rowTexts.findIndex((text) => text.includes(i18n.global.t('governance.accessAnalysis.scopes.permissionLabels.deleteUser')))].findAll('td');
+    expect(deleteUserCells[1].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
+    expect(deleteUserCells[2].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
   });
 
   it('shows a cancel icon before and a check icon after when adding a scope the user does not hold', async () => {
@@ -126,6 +132,34 @@ describe('SimulatorDetail', () => {
       expect(afterIcon.find('.material-icons-outlined').classes()).toContain('text-success');
       expect(afterIcon.attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
     });
+  });
+
+  it('shows the before column per-permission: only permissions another held scope grants are checked', async () => {
+    // The user holds scope-2, which grants deleteUser but not createRole. Adding
+    // scope-1 must show deleteUser as already granted before, createRole as not.
+    CommonsApi.getUserById = jest.fn().mockResolvedValue({
+      data: { result: [{ id: 'user1', scopes: { assigned: [{ id: 'scope-2' }] } }] },
+    });
+    wrapper = mountComponent({
+      getScopeById: jest.fn((id) => Promise.resolve({
+        data: id === 'scope-2' ? overlappingScope : scopeWithRoleAndUserPermissions,
+      })),
+    });
+    await runSimulation();
+
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows).toHaveLength(4);
+    const rowTexts = rows.map((row) => row.text());
+
+    // deleteUser comes from the other held scope (scope-2): granted before and after
+    const deleteUserCells = rows[rowTexts.findIndex((text) => text.includes(i18n.global.t('governance.accessAnalysis.scopes.permissionLabels.deleteUser')))].findAll('td');
+    expect(deleteUserCells[1].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
+    expect(deleteUserCells[2].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
+
+    // createRole is unique to scope-1: not granted before, granted after
+    const createRoleCells = rows[rowTexts.findIndex((text) => text.includes(i18n.global.t('governance.accessAnalysis.scopes.permissionLabels.createRole')))].findAll('td');
+    expect(createRoleCells[1].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.notGranted'));
+    expect(createRoleCells[2].find('[aria-label]').attributes('aria-label')).toBe(i18n.global.t('governance.accessAnalysis.grants.granted'));
   });
 
   it('shows a check icon before and a cancel icon after when removing a scope the user holds', async () => {

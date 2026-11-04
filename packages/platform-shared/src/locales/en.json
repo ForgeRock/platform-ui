@@ -1878,7 +1878,17 @@
         "identityCoverageDetails": "Percentage of identities covered by the role",
         "jobInfo": "Configuration parameters for the most recent role mining run",
         "confidenceThreshold": "Confidence score threshold for grants to be considered for role mining",
-        "entitlementsThreshold": "Minimum number of entitlement grants in a role"
+        "entitlementsThreshold": "Minimum number of entitlement grants in a role",
+        "populationRoleMining": {
+          "similarityThreshold": "How similar users' access must be to be grouped into the same role. Lower values produce broader roles; higher values produce tighter roles.",
+          "universalThreshold": "The fraction of the population that must hold an entitlement for it to be considered part of a birthright role.",
+          "coverageThreshold": "The minimum prevalence within a detected group for an entitlement to define that role.",
+          "softThreshold": "The minimum prevalence within a group for an entitlement to appear as supporting metadata on a role, without being role-defining. Must be lower than the role-defining coverage threshold.",
+          "outlierThreshold": "How much a user's access can deviate from a role's profile before they're flagged as an outlier.",
+          "birthrightCooccurrenceThreshold": "How similar two universal entitlements' holder sets must be for them to be grouped into the same birthright role.",
+          "maxRoles": "The maximum number of candidate roles this session will produce.",
+          "minGroupSize": "The minimum number of members a candidate role must have to be included in the results."
+        }
       },
       "roleMiningJobLaunched": "Role mining job successfully launched",
       "title": "Access Modeling",
@@ -1904,6 +1914,127 @@
         },
         "comingSoon": "Coming soon",
         "getStarted": "Get started"
+      },
+      "populationRoleMining": {
+        "title": "Based on User Population",
+        "subtitle": "Mine birthright and job roles from a user population you select.",
+        "newDiscoverySession": "New Discovery Session",
+        "sessionLabel": "Session",
+        "sessionLimitReached": "You've reached the limit of 5 concurrent sessions. Delete or wait for a session to finish before starting another.",
+        "sessionLimitPageOnly": "The limit is checked against the sessions loaded on this page; a session on another page may still be running.",
+        "deleteSuccess": "Session \"{name}\" successfully deleted",
+        "failedGettingSessions": "There was an error retrieving your mining sessions.",
+        "failedGettingSession": "There was an error retrieving this mining session.",
+        "failedGettingAttributes": "There was an error retrieving the identity attributes available for filtering.",
+        "failedGettingValues": "There was an error retrieving the values for this attribute.",
+        "failedToDeleteSession": "There was an error deleting this session.",
+        "table": {
+          "noResults": "No mining sessions found"
+        },
+        "tabs": {
+          "popBasedRoles": "Discovered Roles",
+          "sessions": "Sessions"
+        },
+        "statCards": {
+          "sessionsRun": "Sessions run",
+          "totalSessions": "Total discovery sessions",
+          "candidateRolesFound": "Candidate roles found",
+          "acrossAllSessions": "Across all sessions",
+          "sessionsComplete": "Sessions complete",
+          "readyForReview": "Ready for review"
+        },
+        "sessionCard": {
+          "viewResults": "View Results",
+          "deleteSession": "Delete session",
+          "identities": "Identities"
+        },
+        "sessionResultsPage": {
+          "title": "Role Discovery Results",
+          "identitiesAnalysed": "{count} identities analysed | {count} identity analysed | {count} identities analysed",
+          "couldNotBeGrouped": "{count} could not be grouped | {count} could not be grouped | {count} could not be grouped",
+          "viewDiscarded": "View Discarded",
+          "viewCandidates": "View Candidates",
+          "viewRole": "View details for {name}",
+          "discarded": "Discarded",
+          "discardedRolesHeading": "Discarded Roles",
+          "specializedRolesHeading": "Specialized Roles",
+          "birthrightRolesHeading": "Birthright Roles",
+          "rolesCount": "{count} roles | {count} role | {count} roles",
+          "members": "{count} members | {count} member | {count} members",
+          "entitlements": "{count} entitlements | {count} entitlement | {count} entitlements",
+          "highConfidence": "High confidence",
+          "mediumConfidence": "Medium confidence",
+          "lowConfidence": "Low confidence",
+          "noRoles": "This session did not produce any roles.",
+          "failedGettingRoles": "There was an error retrieving the roles from this mining session."
+        },
+        "roleDetailsPage": {
+          "createDraftRole": "Create Draft Role",
+          "specialized": "Specialized",
+          "compositionTab": "Composition",
+          "supportingAccessTab": "Shared by Some",
+          "supportingAccessTooltip": "Common but not consistent enough to define the role",
+          "membersTab": "Members",
+          "sessionContext": "Session Context",
+          "session": "Session",
+          "population": "Population",
+          "filter": "Filter",
+          "groupId": "Group ID",
+          "searchEntitlements": "Search entitlements...",
+          "entitlementName": "Entitlement Name",
+          "pctOfMembers": "% of members who have this",
+          "criticality": "Criticality",
+          "selectAll": "Select all entitlements",
+          "selectEntitlement": "Select {name}",
+          "noEntitlements": "No entitlements found",
+          "noIdentities": "No identities found",
+          "failedGettingIdentities": "There was an error retrieving this role's identities."
+        },
+        "status": {
+          "initializing": "Initializing",
+          "pending": "Pending",
+          "running": "Running",
+          "complete": "Complete",
+          "failed": "Failed",
+          "candidate": "Candidate",
+          "discarded": "Discarded"
+        },
+        "mode": {
+          "birthright": "Birthright roles",
+          "job": "Job roles"
+        },
+        "newSessionPage": {
+          "title": "Select Identities",
+          "subtitle": "Use filters to select a group of identities that you expect to have shared entitlements through roles.",
+          "settingsButton": "Settings",
+          "discoverRoles": "Discover Roles",
+          "filterIdentities": "Filter Identities",
+          "selectAttribute": "Select attribute",
+          "selectValues": "Select values",
+          "addFilter": "Add filter row",
+          "removeFilter": "Remove filter row",
+          "emptyFilterHint": "Use the filter to select a group of identities",
+          "search": "Search",
+          "searching": "Searching...",
+          "noUsersMatch": "No users match the selected filters.",
+          "failedSearch": "There was an error searching for users matching this filter.",
+          "settingsTitle": "Mining Settings",
+          "settingsSubtitle": "Defaults are provided for each setting; adjust them to tune how roles are detected.",
+          "settings": {
+            "similarityThreshold": "Degree of Access Overlap",
+            "universalThreshold": "Universal Access Threshold",
+            "coverageThreshold": "Role-Defining Coverage",
+            "softThreshold": "Common-Not-Universal Floor",
+            "outlierThreshold": "Outlier Sensitivity",
+            "birthrightCooccurrenceThreshold": "Birthright Co-Occurrence",
+            "maxRoles": "Maximum Number of Roles",
+            "minGroupSize": "Minimum Group Size"
+          },
+          "softThresholdError": "The common-not-universal floor must be lower than the role-defining coverage threshold.",
+          "sessionStarted": "Session started",
+          "failedToStartSession": "There was an error starting this mining session.",
+          "sessionLimitError": "The maximum of 5 concurrent sessions has been reached. Try again once a session completes."
+        }
       }
     },
     "accessRequest": {

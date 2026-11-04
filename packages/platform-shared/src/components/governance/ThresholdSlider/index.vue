@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
   <VueSlider
     :enable-cross="false"
+    :hide-label="props.hideLabels"
     :marks="props.marks"
     :max="props.max"
     :min="props.min"
@@ -77,6 +78,12 @@ const props = defineProps({
     default: 0,
   },
   showLabelCount: {
+    type: Boolean,
+    default: false,
+  },
+  // Hide the numeric labels rendered under the slider's marks (the marks themselves stay).
+  // vue-slider-component renders a "0"/"1" caption under each endpoint dot when marks are set.
+  hideLabels: {
     type: Boolean,
     default: false,
   },

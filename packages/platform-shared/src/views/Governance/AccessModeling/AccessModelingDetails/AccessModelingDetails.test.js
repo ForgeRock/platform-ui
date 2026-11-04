@@ -173,10 +173,8 @@ async function mountComponent(roleOverride = {}) {
         FrEntitlementsTab: true,
         FrMembersTab: true,
         FrListOrganizer: true,
-        FrCircleProgressBar: true,
         FrDeleteModal: true,
         FrRequestSubmitSuccessModal: true,
-        FrAccessPatterns: true,
         FrRecommendations: true,
         FrField: true,
         BBadge: true,
@@ -203,6 +201,24 @@ describe('AccessModelingDetails.vue', () => {
     expect(mockGetSchema).toHaveBeenCalledWith('managed/alpha_role');
     expect(mockGetRoleDataById).toHaveBeenCalledWith('role-1', 'draft');
     expect(mockGetMemberDistribution).toHaveBeenCalledWith('role-1', 'draft');
+  });
+
+  it('shows the members-tab attribute distribution card by default', async () => {
+    const wrapper = await mountComponent();
+    expect(wrapper.vm.showAttributeDistribution).toBe(true);
+    expect(mockGetMemberDistribution).toHaveBeenCalledWith('role-1', 'draft');
+  });
+
+  it('hides the attribute distribution card and skips its API call for pop-mining drafts', async () => {
+    // PopulationRoleMiningRoleDetails.moveToDraft hands this flag over via router state
+    window.history.replaceState({ hideAttributeDistribution: true }, '');
+    try {
+      const wrapper = await mountComponent();
+      expect(wrapper.vm.showAttributeDistribution).toBe(false);
+      expect(mockGetMemberDistribution).not.toHaveBeenCalled();
+    } finally {
+      window.history.replaceState({}, '');
+    }
   });
 
   it('exports role json with expected file metadata', async () => {

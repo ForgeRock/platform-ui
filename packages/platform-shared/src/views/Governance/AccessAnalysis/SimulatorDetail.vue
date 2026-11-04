@@ -5,14 +5,14 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BButton
-      variant="outline-secondary"
+      variant="link"
       type="button"
-      class="d-inline-flex align-items-center mb-3"
+      class="color-blue d-inline-flex align-items-center mb-3 p-0"
       :aria-label="$t('governance.accessAnalysis.simulator.backToSimulator')"
       @click="$emit('back')">
       <FrIcon
         name="arrow_back"
-        icon-class="mr-1 text-body" />
+        icon-class="mr-1" />
       <span>{{ $t('governance.accessAnalysis.simulator.backToSimulator') }}</span>
     </BButton>
 
@@ -281,7 +281,10 @@ function igaUserResourceFunction(_resource, params) {
   return getUsers(params);
 }
 function igaUserQueryParamFunction(queryString) {
-  const params = { pageSize: 10, sortBy: 'userName', sortDir: 'asc' };
+  // only users holding the viewGrants scope permission are analyzable
+  const params = {
+    pageSize: 10, sortBy: 'userName', sortDir: 'asc', scopePermission: 'viewGrants',
+  };
   if (queryString) {
     params._queryFilter = ['sn', 'givenName', 'userName', 'mail']
       .map((field) => `${field} co "${queryString}"`)
@@ -526,19 +529,17 @@ function otherHeldScopesGrant(permissionKey) {
 
 /**
  * Build the permission-level before/after rows for a scope simulation.
- * Both states account for the user's other held scopes: a permission another held
- * scope grants is already granted before an add and stays granted after a remove
- * ("no change"). Only permissions uniquely granted by the selected scope flip.
+ * Both columns are measured against the permissions the user holds via scopes
+ * OTHER than the one being simulated: adding a scope only grants permissions
+ * no other held scope already gave them, and removing one leaves only what
+ * the other scopes still grant. The simulated scope's id appearing in the
+ * user's scopes list does not by itself mark its permissions as held.
  * @param {Object} scope the selected scope resource
- * @param {Boolean} userHoldsScope whether the user already has this scope
  */
-function buildScopePermissionRows(scope, userHoldsScope) {
-  // Adding grants each of the scope's permissions; removing revokes them.
-  // Both states account for the user's other held scopes: a permission still
-  // (or already) granted by another scope reads as unchanged.
+function buildScopePermissionRows(scope) {
   permissionRows.value = getScopePermissionRows(scope).map(({ category, key }) => {
     const otherScopesGrant = otherHeldScopesGrant(key);
-    const before = (isAdd.value ? userHoldsScope : true) || otherScopesGrant;
+    const before = isAdd.value ? otherScopesGrant : true;
     const after = isAdd.value ? true : otherScopesGrant;
     return {
       category,
@@ -587,7 +588,7 @@ async function runScopeSimulation() {
     ));
   }
 
-  buildScopePermissionRows(scope, userHoldsScope);
+  buildScopePermissionRows(scope);
 }
 
 async function runSimulation() {

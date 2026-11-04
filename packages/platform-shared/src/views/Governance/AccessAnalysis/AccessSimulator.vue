@@ -59,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import { computed, ref } from 'vue';
+import { useStore } from 'vuex';
 import {
   BCard,
   BCardBody,
@@ -66,7 +67,6 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSimulatorDetail from './SimulatorDetail';
 
@@ -75,7 +75,7 @@ defineProps({
   getScopeById: { type: Function, default: null },
 });
 
-const userStore = useUserStore();
+const store = useStore();
 const activeSimulation = ref(null);
 
 const cards = computed(() => {
@@ -107,7 +107,7 @@ const cards = computed(() => {
       descriptionKey: 'governance.accessAnalysis.simulator.removeScope.description',
     },
   ];
-  return userStore.adminUser ? [...roleCards, ...scopeCards] : roleCards;
+  return store.state.SharedStore.governanceDevEnabled ? [...roleCards, ...scopeCards] : roleCards;
 });
 
 /**

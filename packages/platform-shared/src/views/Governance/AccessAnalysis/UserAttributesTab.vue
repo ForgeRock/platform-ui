@@ -7,37 +7,60 @@ of the MIT license. See the LICENSE file for details. -->
     <FrSpinner
       v-if="isLoading"
       class="py-5" />
-    <BTableSimple
-      v-else-if="attributeKeys.length"
-      hover
-      responsive
-      class="mb-0">
-      <BThead>
-        <BTr>
-          <BTh class="fr-attributes-tab__col-key">
-            {{ $t('governance.accessAnalysis.attributes.attribute') }}
-          </BTh>
-          <BTh class="fr-attributes-tab__col-value">
-            {{ userAName }}
-          </BTh>
-          <BTh class="fr-attributes-tab__col-value">
-            {{ userBName }}
-          </BTh>
-        </BTr>
-      </BThead>
-      <BTbody>
-        <BTr
-          v-for="key in attributeKeys"
-          :key="key"
-          :class="{ 'fr-attributes-tab__row--diff': isDiff(key) }">
-          <BTd class="fr-attributes-tab__col-key text-muted">
-            {{ key }}
-          </BTd>
-          <BTd>{{ formatValue(userAData[key], key) }}</BTd>
-          <BTd>{{ formatValue(userBData[key], key) }}</BTd>
-        </BTr>
-      </BTbody>
-    </BTableSimple>
+    <template v-else-if="attributeKeys.length">
+      <BRow class="mb-3">
+        <BCol class="d-flex justify-content-end">
+          <FrListOrganizer
+            :column-organizer-key="ATTRIBUTE_ORGANIZER_KEY"
+            v-model="availableAttributes"
+            @list-updated="updateAttributeList">
+            <!-- icon-only default button needs an accessible name -->
+            <template #button="{ open }">
+              <BButton
+                variant="link"
+                class="text-dark"
+                :aria-label="$t('common.customizeColumns')"
+                :data-testid="`attributes-organizer-button`"
+                @click="open">
+                <FrIcon
+                  icon-class="md-24"
+                  name="view_column" />
+              </BButton>
+            </template>
+          </FrListOrganizer>
+        </BCol>
+      </BRow>
+      <BTableSimple
+        hover
+        responsive
+        class="mb-0">
+        <BThead>
+          <BTr>
+            <BTh class="fr-attributes-tab__col-key">
+              {{ $t('governance.accessAnalysis.attributes.attribute') }}
+            </BTh>
+            <BTh class="fr-attributes-tab__col-value">
+              {{ userAName }}
+            </BTh>
+            <BTh class="fr-attributes-tab__col-value">
+              {{ userBName }}
+            </BTh>
+          </BTr>
+        </BThead>
+        <BTbody>
+          <BTr
+            v-for="attribute in selectedAttributes"
+            :key="attribute.key"
+            :class="{ 'fr-attributes-tab__row--diff': isDiff(attribute.key) }">
+            <BTd class="fr-attributes-tab__col-key text-muted">
+              {{ attribute.key }}
+            </BTd>
+            <BTd>{{ formatValue(userAData[attribute.key], attribute.key) }}</BTd>
+            <BTd>{{ formatValue(userBData[attribute.key], attribute.key) }}</BTd>
+          </BTr>
+        </BTbody>
+      </BTableSimple>
+    </template>
     <FrNoData
       v-else
       :card="false"
@@ -55,6 +78,9 @@ import {
   watchEffect,
 } from 'vue';
 import {
+  BButton,
+  BCol,
+  BRow,
   BTableSimple,
   BTbody,
   BTd,
@@ -62,9 +88,11 @@ import {
   BThead,
   BTr,
 } from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrListOrganizer from '@forgerock/platform-shared/src/components/ListOrganizer';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
-import { getUserById } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getFilterSchema, getUserById } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
 
@@ -80,17 +108,67 @@ const emit = defineEmits(['update:count']);
 const isLoading = ref(false);
 const userAData = ref({});
 const userBData = ref({});
+// standard user attributes from the filter schema - the same source the other
+// governance column pickers use
+const schemaAttributes = ref([]);
 
-const EXCLUDED_KEYS = new Set([
-  '_rev', '_refResourceCollection', '_refProperties', 'password',
-  'scopes', 'applications', 'assignments', 'metadata',
-  'permissions', 'authzRoles', 'roles',
+const ATTRIBUTE_ORGANIZER_KEY = 'access_analysis_attributes_rows';
+
+// Attributes active by default until the user customizes the picker
+const DEFAULT_ACTIVE_ATTRIBUTES = new Set([
+  'accountStatus', 'cn', 'compositeId', 'fr', 'givenName', 'id', 'mail', 'sn', 'userName',
 ]);
 
-const attributeKeys = computed(() => {
-  const keys = new Set([...Object.keys(userAData.value), ...Object.keys(userBData.value)]);
-  EXCLUDED_KEYS.forEach((k) => keys.delete(k));
-  return [...keys].sort();
+// Full picker list - schema attributes plus any attribute present on the loaded users
+const availableAttributes = ref([]);
+
+// union of attribute keys present across the two loaded users
+const attributeKeys = computed(() => (
+  [...new Set([...Object.keys(userAData.value), ...Object.keys(userBData.value)])].sort()
+));
+
+/**
+ * Rebuild the picker list: the standard user attributes from the schema first (labeled
+ * by displayName), then any attributes on the loaded users the schema doesn't cover.
+ * The user's current selection is preserved; attributes seen for the first time default
+ * to active only when listed in DEFAULT_ACTIVE_ATTRIBUTES.
+ */
+function buildAttributeList() {
+  const previousState = new Map(availableAttributes.value.map((attribute) => [attribute.key, attribute.enabled]));
+  const schemaEntries = schemaAttributes.value.map((attribute) => ({
+    key: attribute.key,
+    label: attribute.displayName || attribute.key,
+  }));
+  const schemaKeys = new Set(schemaEntries.map((entry) => entry.key));
+  const extraEntries = attributeKeys.value
+    .filter((key) => !schemaKeys.has(key))
+    .map((key) => ({ key, label: key }));
+  availableAttributes.value = [...schemaEntries, ...extraEntries].map((entry) => ({
+    ...entry,
+    enabled: previousState.has(entry.key)
+      ? previousState.get(entry.key)
+      : DEFAULT_ACTIVE_ATTRIBUTES.has(entry.key),
+  }));
+}
+
+// Rows shown in the table: the picker's enabled attributes, in the picker's order
+const selectedAttributes = computed(() => (
+  availableAttributes.value.filter((attribute) => attribute.enabled)
+));
+
+/**
+ * Apply the picker's selection; the table rows re-render from the already-loaded user data
+ * @param {Array} updatedList the organizer's full attribute list with enabled flags
+ */
+function updateAttributeList(updatedList) {
+  availableAttributes.value = updatedList;
+}
+
+watch([attributeKeys, schemaAttributes], () => {
+  // mid-reload the keys collapse to [] before the new users resolve; keep the
+  // selection so a reload doesn't reset attributes the user removed
+  if (!attributeKeys.value.length && isLoading.value) return;
+  buildAttributeList();
 });
 
 function formatManager(manager) {
@@ -136,9 +214,26 @@ async function loadUsers() {
   isLoading.value = false;
 }
 
-onMounted(loadUsers);
+/**
+ * Load the standard user attribute list for the picker. Non-fatal: the picker then
+ * covers only the attributes present on the loaded users.
+ */
+async function loadSchema() {
+  try {
+    const { data } = await getFilterSchema();
+    schemaAttributes.value = data?.user ?? [];
+  } catch {
+    schemaAttributes.value = [];
+  }
+}
+
+onMounted(() => {
+  loadSchema();
+  loadUsers();
+});
 watch(() => [props.userAId, props.userBId], loadUsers);
-watchEffect(() => emit('update:count', attributeKeys.value.length));
+// the tab's count badge shows the rows currently displayed, matching the other tabs
+watchEffect(() => emit('update:count', selectedAttributes.value.length));
 </script>
 
 <style lang="scss" scoped>

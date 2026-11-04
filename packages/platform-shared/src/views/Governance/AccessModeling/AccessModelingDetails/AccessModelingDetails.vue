@@ -48,130 +48,6 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BRow>
       </BCard>
-      <BRow
-        class="mb-4">
-        <BCol sm="6">
-          <BCard class="access-card">
-            <div class="d-flex align-items-center justify-content-start">
-              <h2 class="h5 mb-0">
-                {{ i18n.global.t('governance.accessModeling.roleDetails.charts.identityCoverage.title') }}
-              </h2>
-              <div
-                id="identityCoverage-tooltip"
-                class="tooltip-button"
-                tabindex="0">
-                <FrIcon
-                  icon-class="ml-1 mt-1"
-                  name="info" />
-                <BTooltip
-                  no-fade
-                  target="identityCoverage-tooltip"
-                  triggers="hover"
-                  position="top">
-                  {{ $t('governance.accessModeling.tooltips.identityCoverageDetails') }}
-                </BTooltip>
-              </div>
-            </div>
-            <div class="d-flex justify-content-center mt-4">
-              <FrSpinner
-                v-if="isLoading"
-                class="fr-spinner"
-                size="md" />
-              <FrCircleProgressBar
-                v-else
-                :progress="identityCoverage"
-                :size="196"
-              >
-                <template #count>
-                  <h1 class="mb-0 display-4">
-                    {{ `${identityCoverage}%` }}
-                  </h1>
-                </template>
-                <template #caption>
-                  <p data-testid="campaign-progress-caption-text">
-                    {{
-                      i18n.global.t('governance.accessModeling.roleDetails.charts.identityCoverage.percentSubtitle', {
-                        total: role?.role?.totalSystemUsers?.toLocaleString() || '0'
-                      })
-                    }}
-                  </p>
-                </template>
-              </FrCircleProgressBar>
-            </div>
-            <div class="d-flex justify-content-center mt-1">
-              <small
-                v-if="identityCoverageDifference !== 0"
-                class="d-flex align-items-end mr-2">
-                <FrIcon
-                  :icon-class="`ml-1 mt-2 ${identityCoverageDifference > 0 ? 'color-green' : 'color-red'}`"
-                  :name="identityCoverageDifference > 0 ? 'arrow_drop_up' : 'arrow_drop_down'" />
-                {{ i18n.global.t('governance.accessModeling.roleDetails.charts.candidateRoleComparison', { percent: Math.abs(identityCoverageDifference) }) }}
-              </small>
-            </div>
-          </BCard>
-        </BCol>
-        <BCol sm="6">
-          <BCard class="access-card">
-            <div class="d-flex align-items-center justify-content-start">
-              <h2 class="h5 mb-0">
-                {{ i18n.global.t('governance.accessModeling.roleDetails.charts.assignmentConfidence.title') }}
-              </h2>
-              <div
-                id="assignmentConfidence-tooltip"
-                class="tooltip-button"
-                tabindex="0">
-                <FrIcon
-                  icon-class="ml-1 mt-1"
-                  name="info" />
-                <BTooltip
-                  no-fade
-                  target="assignmentConfidence-tooltip"
-                  triggers="hover"
-                  position="top">
-                  {{ $t('governance.accessModeling.tooltips.assignmentConfidenceDetails') }}
-                </BTooltip>
-              </div>
-            </div>
-            <div class="d-flex justify-content-center mt-4">
-              <FrSpinner
-                v-if="isLoading"
-                class="fr-spinner"
-                size="md" />
-              <FrCircleProgressBar
-                v-else
-                :progress="averageAssignmentConfidence"
-                :size="196"
-                :color="styles.green"
-              >
-                <template #count>
-                  <h1 class="mb-0 display-4">
-                    {{ `${averageAssignmentConfidence}%` }}
-                  </h1>
-                </template>
-                <template #caption>
-                  <p data-testid="campaign-progress-caption-text">
-                    {{
-                      i18n.global.t('governance.accessModeling.roleDetails.charts.assignmentConfidence.percentSubtitle', {
-                        total: role?.role?.entitlementCount || 0
-                      })
-                    }}
-                  </p>
-                </template>
-              </FrCircleProgressBar>
-            </div>
-            <div class="d-flex justify-content-center mt-1">
-              <small
-                v-if="averageAssignmentConfidenceDifference !== 0"
-                class="d-flex align-items-end mr-2">
-                <FrIcon
-                  :icon-class="`ml-1 mt-2 ${averageAssignmentConfidenceDifference > 0 ? 'color-green' : 'color-red'}`"
-                  :name="averageAssignmentConfidenceDifference > 0 ? 'arrow_drop_up' : 'arrow_drop_down'" />
-                {{ i18n.global.t('governance.accessModeling.roleDetails.charts.candidateRoleComparison', { percent: Math.abs(averageAssignmentConfidenceDifference) }) }}
-              </small>
-            </div>
-          </BCard>
-        </BCol>
-      </BRow>
       <BTabs
         content-class="mt-3"
         nav-class="fr-tabs"
@@ -222,7 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BTab
           :title="$t('governance.accessModeling.roleDetails.tabs.members')"
           key="members">
-          <BCard>
+          <BCard v-if="showAttributeDistribution">
             <h3
               class="h5 mb-3">
               {{ $t('governance.accessModeling.attributeDistribution') }}
@@ -329,18 +205,6 @@ of the MIT license. See the LICENSE file for details. -->
             @update-tab-data="updateRoleRelationships" />
         </BTab>
         <BTab
-          v-if="tabs.includes('accessPatterns')"
-          :title="$t('governance.accessModeling.roleDetails.tabs.accessPatterns')"
-          key="accessPatterns"
-          lazy>
-          <FrAccessPatterns
-            :role="role.role"
-            :user-schema="userSchema"
-            :is-saving="isSaving"
-            :available-attributes="availableAttributes"
-            :save-patterns="updateRoleRelationships" />
-        </BTab>
-        <BTab
           v-if="tabs.includes('recommendations')"
           :title="$t('governance.accessModeling.roleDetails.tabs.recommendations')"
           key="recommendations"
@@ -420,7 +284,6 @@ import {
   BRow,
   BTabs,
   BTab,
-  BTooltip,
   BCard,
 } from 'bootstrap-vue';
 import {
@@ -449,16 +312,13 @@ import { getFilterSchema } from '@forgerock/platform-shared/src/api/governance/C
 import {
   getRoleDataById, getRoleList, deleteRole, createRole, modifyRole, getMemberDistribution,
 } from '@forgerock/platform-shared/src/api/governance/RoleApi';
-import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getRoleStatusVariant, getRoleDateText } from '@forgerock/platform-shared/src/utils/governance/accessModeling';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import FrRequestSubmitSuccessModal from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccessModal';
 import { downloadFile } from '@forgerock/platform-shared/src/utils/downloadFile';
-import FrAccessPatterns from './AccessModelingTabs/AccessPatterns';
 import FrRecommendations from './AccessModelingTabs/Recommendations';
 import i18n from '@/i18n';
-import styles from '@/scss/main.scss';
 
 const { setBreadcrumb } = useBreadcrumb();
 const { bvModal } = useBvModal();
@@ -480,12 +340,15 @@ const entitlementTotalCount = ref(0);
 const selectedAttribute = ref(null);
 const showAll = ref(false);
 const attributeColumns = ref([]);
-const availableAttributes = ref([]);
 const availableAttributeColumns = ref([]);
 const attributeDistributionData = ref({});
 const attributeDropdownOptions = ref([]);
 const isQuerying = ref(false);
 const { roleId, status } = route.params;
+// Drafts created from a pop-mining session role get their members from the mined memberIds
+// list (passed via router state from PopulationRoleMiningRoleDetails.moveToDraft); the
+// justification-based attribute distribution does not apply to them.
+const showAttributeDistribution = ref(window.history.state?.hideAttributeDistribution !== true);
 const userSchema = ref({});
 const glossarySchema = ref({});
 const roleSchema = ref({});
@@ -495,15 +358,11 @@ const entitlementSearchQuery = ref('');
 const requestId = ref('');
 
 const lastUpdated = computed(() => getRoleDateText(role.value?.role?.metadata?.modifiedDate));
-const identityCoverage = computed(() => (round((role.value?.role?.memberCount / role.value?.role?.totalSystemUsers) * 100, 1) || 0));
-const identityCoverageDifference = computed(() => round(identityCoverage.value - ((round((candidateRole.value?.role?.memberCount / candidateRole.value?.role?.totalSystemUsers) * 100, 1) || 0)), 1));
-const averageAssignmentConfidence = computed(() => round(role.value.role?.confidence * 100, 1) || 0);
-const averageAssignmentConfidenceDifference = computed(() => round(averageAssignmentConfidence.value - (round(candidateRole.value?.role?.confidence * 100, 1) || 0), 1));
 const allEntitlementData = computed(() => entitlementList.value.concat(candidateEntitlementList.value));
 const isSaving = ref(false);
 const tabs = computed(() => (role.value?.role?.candidateRoleId?.length > 0
-  ? ['details', 'entitlements', 'members', 'accessPatterns', 'recommendations']
-  : ['details', 'entitlements', 'members', 'accessPatterns']));
+  ? ['details', 'entitlements', 'members', 'recommendations']
+  : ['details', 'entitlements', 'members']));
 
 /**
  * Download/export the role to a .json file
@@ -578,7 +437,6 @@ async function queryRoleEntitlements(params = {}) {
 function parseAttributeDistribution(distributionData) {
   const newAttributeDropdownOptions = [];
   const newAttributeDistributionData = {};
-  const newAvailableAttributes = [];
   const newAttributeColumns = [{
     key: 'userName',
     label: i18n.global.t('common.user.userName'),
@@ -606,13 +464,9 @@ function parseAttributeDistribution(distributionData) {
       sortable: true,
       enabled: newAttributeColumns.length < 5,
     });
-    if (matchingSchema) {
-      newAvailableAttributes.push(matchingSchema);
-    }
   });
   attributeDistributionData.value = newAttributeDistributionData;
   attributeDropdownOptions.value = newAttributeDropdownOptions;
-  availableAttributes.value = newAvailableAttributes;
   const selectedAttributeColumns = cloneDeep(newAttributeColumns).slice(0, 5);
   selectedAttributeColumns.unshift({
     key: 'selected',
@@ -678,10 +532,18 @@ async function getRole() {
       getRoleDataById(roleId, status),
       queryRoleEntitlements(),
       queryRoleMembers(),
-      getMemberDistribution(roleId, status),
+      // The distribution endpoint aggregates justification-based membership, which pop-mining
+      // drafts don't have — skip the call when the members tab hides the card.
+      ...(showAttributeDistribution.value ? [getMemberDistribution(roleId, status)] : [Promise.resolve({ data: {} })]),
     ];
     const results = await Promise.all(rolePromises);
-    parseAttributeDistribution(results[3].data);
+    if (showAttributeDistribution.value) {
+      parseAttributeDistribution(results[3].data);
+    } else {
+      // The members table columns are also derived from the distribution response; without
+      // it the table falls back to the default userName column set.
+      parseAttributeDistribution({ memberProperties: [], distribution: {} });
+    }
     const roleData = { ...results[0].data };
     if (roleData.role.candidateRoleId) {
       const searchParameters = {

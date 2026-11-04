@@ -31,11 +31,11 @@ describe('AccessModelingMenu', () => {
     wrapper.unmount();
   });
 
-  it('renders only the active hub cards, hiding the coming soon cards', () => {
+  it('renders the active hub cards, hiding only the coming soon cards', () => {
     wrapper = mountComponent();
     expect(wrapper.find('[data-testid="hub-card-accessModeling"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="hub-card-accessAnalyzer"]').exists()).toBe(true);
-    expect(wrapper.find('[data-testid="hub-card-userPopulation"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="hub-card-userPopulation"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="hub-card-cloneUser"]').exists()).toBe(false);
   });
 
@@ -44,8 +44,10 @@ describe('AccessModelingMenu', () => {
     const text = wrapper.text();
     expect(text).toContain(i18n.global.t('governance.accessModeling.hub.accessModelingCard.title'));
     expect(text).toContain(i18n.global.t('governance.accessModeling.hub.accessAnalyzerCard.title'));
+    expect(text).toContain(i18n.global.t('governance.accessModeling.hub.userPopulationCard.title'));
     expect(text).toContain(i18n.global.t('governance.accessModeling.hub.accessModelingCard.description'));
     expect(text).toContain(i18n.global.t('governance.accessModeling.hub.accessAnalyzerCard.description'));
+    expect(text).toContain(i18n.global.t('governance.accessModeling.hub.userPopulationCard.description'));
   });
 
   it('navigates to the roles list when the access modeling card is clicked', async () => {
@@ -58,6 +60,18 @@ describe('AccessModelingMenu', () => {
     wrapper = mountComponent();
     await wrapper.find('[data-testid="hub-card-accessAnalyzer"]').trigger('click');
     expect(routerPush).toHaveBeenCalledWith({ name: 'AccessModelingAnalysis' });
+  });
+
+  it('navigates to the population-based role mining sessions list when the user population card is clicked', async () => {
+    wrapper = mountComponent();
+    await wrapper.find('[data-testid="hub-card-userPopulation"]').trigger('click');
+    expect(routerPush).toHaveBeenCalledWith({ name: 'PopulationRoleMiningSessions' });
+  });
+
+  it('does not have a "coming soon" badge on the user population card now that it is active', () => {
+    wrapper = mountComponent();
+    const card = wrapper.find('[data-testid="hub-card-userPopulation"]');
+    expect(card.text()).not.toContain(i18n.global.t('governance.accessModeling.hub.comingSoon'));
   });
 
   it('navigates on keyboard enter for enabled cards', async () => {
@@ -76,7 +90,7 @@ describe('AccessModelingMenu', () => {
     wrapper = mountComponent();
     const getStartedText = i18n.global.t('governance.accessModeling.hub.getStarted');
 
-    ['hub-card-accessModeling', 'hub-card-accessAnalyzer'].forEach((testId) => {
+    ['hub-card-accessModeling', 'hub-card-accessAnalyzer', 'hub-card-userPopulation'].forEach((testId) => {
       const card = wrapper.find(`[data-testid="${testId}"]`);
       expect(card.text()).toContain(getStartedText);
       expect(card.find('.color-blue.hover-underline').exists()).toBe(true);

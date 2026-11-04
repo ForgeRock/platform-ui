@@ -96,7 +96,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </template>
       </BTab>
-      <BTab v-if="userStore.adminUser">
+      <BTab v-if="governanceDevEnabled">
         <template #title>
           <div class="d-flex align-items-center">
             <span class="mr-2">{{ $t('governance.accessAnalysis.compareTabs.scopes') }}</span>
@@ -152,7 +152,7 @@ of the MIT license. See the LICENSE file for details. -->
           @update:count="(n) => entitlementsCount = n"
           @open-details="openGrantDetails" />
         <FrUserScopesTab
-          v-if="userStore.adminUser"
+          v-if="governanceDevEnabled"
           v-show="comparisonTabIndex === 4"
           :user-a-id="userAId"
           :user-b-id="userBId"
@@ -181,7 +181,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useStore } from 'vuex';
 import {
   BButton,
   BCard,
@@ -213,7 +213,10 @@ function igaUserResourceFunction(_resource, params) {
 }
 
 function igaUserQueryParamFunction(queryString) {
-  const params = { pageSize: 10, sortBy: 'userName', sortDir: 'asc' };
+  // only users holding the viewGrants scope permission are analyzable
+  const params = {
+    pageSize: 10, sortBy: 'userName', sortDir: 'asc', scopePermission: 'viewGrants',
+  };
   if (queryString) {
     params._queryFilter = ['sn', 'givenName', 'userName', 'mail']
       .map((field) => `${field} co "${queryString}"`)
@@ -232,7 +235,8 @@ defineProps({
 
 const emit = defineEmits(['update:userA', 'update:userB']);
 
-const userStore = useUserStore();
+const store = useStore();
+const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 const { bvModal } = useBvModal();
 const modalNode = ref(null);
 const glossarySchema = ref({});

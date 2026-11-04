@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -63,6 +63,19 @@ describe('ThresholdSlider', () => {
       const high = wrapper.find('.high');
       expect(high.element.style.right).toBe('0px');
       expect(high.element.style.width).toBe(`${100 - props.value[1]}%`);
+    });
+  });
+
+  describe('hideLabels', () => {
+    it('renders mark labels by default', () => {
+      expect(wrapper.findAll('.vue-slider-mark-label').length).toBeGreaterThan(0);
+    });
+
+    it('hides mark labels when hideLabels is true', async () => {
+      await wrapper.setProps({ hideLabels: true });
+      expect(wrapper.find('.vue-slider-mark-label').exists()).toBe(false);
+      // the marks themselves (dots) stay visible
+      expect(wrapper.findAll('.vue-slider-mark').length).toBeGreaterThan(0);
     });
   });
 });

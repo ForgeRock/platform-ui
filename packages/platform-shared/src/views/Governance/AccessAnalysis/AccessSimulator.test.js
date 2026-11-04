@@ -6,8 +6,8 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { createStore } from 'vuex';
 import { createAppContainer, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
-import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import AccessSimulator from './AccessSimulator';
 import i18n from '@/i18n';
 
@@ -22,14 +22,14 @@ describe('AccessSimulator', () => {
   let wrapper;
 
   const app = createAppContainer();
-  function mountComponent({ adminUser = false } = {}) {
-    const idmRoles = adminUser ? ['internal/role/openidm-admin'] : [];
-    const idmUIAdminRoles = adminUser ? ['internal/role/openidm-admin'] : [];
-    setupTestPinia({ user: { idmRoles, idmUIAdminRoles } });
+  function mountComponent({ governanceDevEnabled = false } = {}) {
+    const store = createStore({
+      state: { SharedStore: { governanceDevEnabled } },
+    });
     wrapper = mount(AccessSimulator, {
       attachTo: app,
       global: {
-        plugins: [i18n],
+        plugins: [i18n, store],
       },
     });
     return wrapper;
@@ -39,7 +39,7 @@ describe('AccessSimulator', () => {
     wrapper.unmount();
   });
 
-  it('renders only the role cards for a non-admin user', () => {
+  it('renders only the role cards when governance dev features are disabled', () => {
     wrapper = mountComponent();
     expect(wrapper.find('[data-testid="simulator-card-addRole"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="simulator-card-removeRole"]').exists()).toBe(true);
@@ -47,8 +47,8 @@ describe('AccessSimulator', () => {
     expect(wrapper.find('[data-testid="simulator-card-removeScope"]').exists()).toBe(false);
   });
 
-  it('renders the role and scope cards for an admin user', () => {
-    wrapper = mountComponent({ adminUser: true });
+  it('renders the role and scope cards when governance dev features are enabled', () => {
+    wrapper = mountComponent({ governanceDevEnabled: true });
     expect(wrapper.find('[data-testid="simulator-card-addRole"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="simulator-card-removeRole"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="simulator-card-addScope"]').exists()).toBe(true);

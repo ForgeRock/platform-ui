@@ -416,6 +416,26 @@ const router = createRouter({
           props: { showBackButton: true },
         },
         {
+          path: 'population-role-mining',
+          name: 'PopulationRoleMiningSessions',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/PopulationRoleMining/PopulationRoleMiningSessions'),
+        },
+        {
+          path: 'population-role-mining/new',
+          name: 'PopulationRoleMiningNewSession',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/PopulationRoleMining/NewMiningSession/NewMiningSession'),
+        },
+        {
+          path: 'population-role-mining/:sessionId',
+          name: 'PopulationRoleMiningSessionResults',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/PopulationRoleMining/SessionResults/PopulationRoleMiningSessionResults'),
+        },
+        {
+          path: 'population-role-mining/:sessionId/role/:roleId',
+          name: 'PopulationRoleMiningRoleDetails',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/PopulationRoleMining/RoleDetails/PopulationRoleMiningRoleDetails'),
+        },
+        {
           path: ':status/:roleId/:tab',
           name: 'AccessModelingDetails',
           component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModelingDetails/AccessModelingDetails'),

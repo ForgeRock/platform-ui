@@ -1,7 +1,6 @@
 {
   "pageTitles": {
     "Accounts": "Accounts",
-    "AccessAnalysis": "Access Analyzer",
     "AccountsDetails": "Account Details",
     "Agents": "Agents",
     "AgentsDetails": "Agent Details",
@@ -159,7 +158,6 @@
   },
   "sideMenu": {
     "accessManagement": "Access Management",
-    "accessAnalysis": "Access Analyzer",
     "agents": "Agents",
     "applications": "Applications",
     "assertionServers": "Assertion Servers",

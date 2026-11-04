@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
+import { createStore } from 'vuex';
 import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import CompareUserAccess from './CompareUserAccess';
@@ -15,14 +16,18 @@ import i18n from '@/i18n';
 CommonsApi.getResource = jest.fn().mockResolvedValue({ data: { result: [] } });
 CommonsApi.getUserById = jest.fn().mockResolvedValue({ data: { result: [] } });
 CommonsApi.getUserGrants = jest.fn().mockResolvedValue({ data: { result: [] } });
+CommonsApi.getFilterSchema = jest.fn().mockResolvedValue({ data: { result: [] } });
 
 const app = createAppContainer();
 
-function mountComponent() {
+function mountComponent({ governanceDevEnabled = false } = {}) {
+  const store = createStore({
+    state: { SharedStore: { governanceDevEnabled } },
+  });
   return mount(CompareUserAccess, {
     attachTo: app,
     global: {
-      plugins: [i18n, createTestingPinia()],
+      plugins: [i18n, createTestingPinia(), store],
       stubs: ['GovResourceSelect', 'FrIcon'],
     },
   });
@@ -88,5 +93,17 @@ describe('CompareUserAccess', () => {
 
     expect(wrapper.vm.userAValue).toBe('managed/user/user-b');
     expect(wrapper.vm.userBValue).toBe('managed/user/user-a');
+  });
+
+  describe('scopes tab', () => {
+    // The Scopes tab only renders once two users are selected (bothSelected), which the
+    // stubbed GovResourceSelects never trigger — assert the gating computed directly.
+    it('gates the Scopes tab on governanceDevEnabled', () => {
+      const disabled = mountComponent();
+      expect(disabled.vm.governanceDevEnabled).toBe(false);
+
+      const enabled = mountComponent({ governanceDevEnabled: true });
+      expect(enabled.vm.governanceDevEnabled).toBe(true);
+    });
   });
 });

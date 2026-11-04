@@ -221,6 +221,31 @@ describe('AccessModeling', () => {
     });
   });
 
+  describe('role list search filter', () => {
+    it('excludes pop-mining roles (sessionId present) from the role list', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+      RoleApi.getRoleList.mockClear();
+      await wrapper.vm.search({}, {});
+      expect(RoleApi.getRoleList).toHaveBeenCalledWith('role', expect.objectContaining({
+        roleStatus: 'candidate',
+        _queryFilter: '!(sessionId co "")',
+      }));
+    });
+
+    it('joins the sessionId exclusion before toolbar filters and excludes it from the filter badge', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+      RoleApi.getRoleList.mockClear();
+      await wrapper.vm.search({}, { minMembersFilter: 5, nameFilter: 'test' });
+      expect(RoleApi.getRoleList).toHaveBeenCalledWith('role', expect.objectContaining({
+        _queryFilter: '!(sessionId co "") and memberCount gte 5 and name co "test"',
+      }));
+      // Only the toolbar filters count — the sessionId exclusion is not a user-applied filter
+      expect(wrapper.vm.numFilters).toBe(1);
+    });
+  });
+
   describe('role mining config', () => {
     afterEach(() => {
       // Reset getRoleMetrics to the default mock after each test in this block

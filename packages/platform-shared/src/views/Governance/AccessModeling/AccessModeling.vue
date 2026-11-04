@@ -402,7 +402,11 @@ async function loadRoleMiningConfig() {
 }
 
 /**
- * Search roles
+ * Search roles. The list excludes pop-mining candidates via a sessionId clause: only
+ * population-based mining writes sessionId onto role documents, so `!(sessionId co "")`
+ * keeps this table to legacy cluster-mined roles and drafts. The clause goes first so the
+ * joined filter always parses even when no toolbar filter is set (the backend rejects a
+ * bare `!` prefix).
  * @param page number|null The page number to search for, if null current page is used
  */
 async function search(searchParams = {}, queryFilter = {}) {
@@ -426,7 +430,7 @@ async function search(searchParams = {}, queryFilter = {}) {
     searchParameters._sortKeys = `-${searchParameters._sortKeys}`;
   }
   if (queryFilter) {
-    const query = [];
+    const query = ['!(sessionId co "")'];
     const { statusFilter, ...filters } = queryFilter;
     if (statusFilter) {
       searchParameters.roleStatus = statusFilter;
@@ -446,12 +450,15 @@ async function search(searchParams = {}, queryFilter = {}) {
     if (filters.minEntitlementsFilter > 0) {
       query.push(`entitlementCount gte ${filters.minEntitlementsFilter}`);
     }
-    numFilters.value = query.length;
+    numFilters.value = query.length - 1;
     if (filters.nameFilter) {
       // Don't include nameFilter in the filter count badge
       query.push(`name co "${filters.nameFilter}"`);
     }
     searchParameters._queryFilter = query.join(' and ');
+  } else {
+    // Same exclusion for the no-filter path (mount, request-modal list refresh)
+    searchParameters._queryFilter = '!(sessionId co "")';
   }
   const rolesWithCandidateId = [];
   try {
