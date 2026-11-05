@@ -193,6 +193,24 @@ export function withSetup(composable) {
 }
 
 /**
+ * Normalizes the many override shapes callers have used into a single flat
+ * rule map: { ruleId: { enabled: ... }, ... }. Tolerates any number of
+ * `rules` wrappers (flat map, { rules: {...} }, { rules: { rules: {...} } })
+ * so existing callers keep working after the wrapper/nesting fix.
+ *
+ * @param {Object} overrideRules Caller-provided rule overrides
+ * @returns {Object} Flat map of ruleId -> override
+ */
+function flattenRuleOverrides(overrideRules) {
+  let current = overrideRules;
+  // Walk through any number of { rules: ... } wrapper levels
+  while (current && typeof current === 'object' && current.rules && Object.keys(current).length === 1) {
+    current = current.rules;
+  }
+  return current || {};
+}
+
+/**
  * Runs axe accessibility checks on a Vue wrapper, DOM node, or HTML string.
  *
  * @param {Object|HTMLElement|Node|string} wrapper
@@ -200,7 +218,9 @@ export function withSetup(composable) {
  *   - HTMLElement / Node
  *   - HTML string
  * @param {Object} options
- * @param {Object} [options.overrideRules] Axe rule overrides passed to getAxe()
+ * @param {Object} [options.overrideRules] Axe rule toggles — flat map like
+ *   { 'aria-required-children': { enabled: false } }; `rules`-wrapped variants
+ *   from older callers are also accepted
  * @param {boolean} [options.cleanupTempContainer=true] Remove temp container if created from HTML string
  * @returns {Promise<Object>} axe results
  *
@@ -208,7 +228,7 @@ export function withSetup(composable) {
  * it('component does not have accessibility violations', async () => {
  *   const wrapper = mount(MyComponent);
  *   await flushPromises(); // <-- REQUIRED for async components
- *   await runA11yTest(wrapper, { rules: { 'image-alt': { enabled: false } } });
+ *   await runA11yTest(wrapper, { overrideRules: { 'image-alt': { enabled: false } } });
  * });
  * // Other usage examples:
  * await runA11yTest(wrapper);                       // Vue wrapper
@@ -219,7 +239,7 @@ export async function runA11yTest(wrapper, {
   overrideRules = {},
   cleanupTempContainer = true,
 } = {}) {
-  const axe = getAxe(overrideRules);
+  const axe = getAxe({ rules: flattenRuleOverrides(overrideRules) });
   let target = null;
   let tempContainer = null;
 

@@ -548,7 +548,7 @@ describe('GlossaryEditForm', () => {
       await nextTick();
 
       const dateAttribute = wrapper.find('div[id="Date Attribute"]');
-      dateAttribute.find('input').setValue('2023-04-02');
+      dateAttribute.find('input[type="date"]').setValue('2023-04-02');
       await nextTick();
       expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ dateAttribute: '2023-04-02' });
     });

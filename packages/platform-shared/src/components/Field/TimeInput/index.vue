@@ -13,48 +13,52 @@ of the MIT license. See the LICENSE file for details. -->
       :label="label"
       :show-required-indicator="showRequiredIndicator"
       :floating-label="floatingLabel">
-      <input
-        :value="inputValue"
-        @input="inputValue = $event.target.value; debounceEmitValidTime(inputValue)"
-        v-on="validationListeners"
-        ref="input"
-        type="time"
-        :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
-        :data-vv-as="label"
-        :disabled="disabled"
-        :id="internalId"
-        :name="name"
-        :readonly="readonly"
-        :aria-required="isRequiredAria">
-    </FrInputLayout>
-    <BFormTimepicker
-      v-model="inputValue"
-      :dropleft="dropleft"
-      button-only
-      label-help=""
-      no-close-button
-      ref="timePicker"
-      :show-seconds="showSeconds"
-      :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control time-button position-absolute']"
-      :disabled="disabled"
-      :id="internalId"
-      :name="name"
-      :aria-label="fieldLabel || labelTranslation"
-      :placeholder="fieldLabel || labelTranslation"
-      :label-hours="timePickerHoursLabel"
-      :label-minutes="timePickerMinutesLabel"
-      :label-ampm="timePickerAmpmLabel"
-      @input="debounceEmitValidTime"
-      @shown="fixTimePickerDialogLabel">
-      <template #button-content>
-        <span class="sr-only">
-          {{ `${fieldLabel || labelTranslation} ${$t('common.dateTimePicker.openTimePicker')}` }}
-        </span>
-        <FrIcon
-          name="schedule"
-        />
+      <template #default="{ helpTextId }">
+        <BFormTimepicker
+          v-model="inputValue"
+          :dropleft="dropleft"
+          button-only
+          label-help=""
+          no-close-button
+          ref="timePicker"
+          :show-seconds="showSeconds"
+          :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control time-button position-absolute']"
+          :disabled="disabled"
+          :id="`${internalId}-picker`"
+          :name="name"
+          :aria-label="fieldLabel || labelTranslation"
+          :placeholder="fieldLabel || labelTranslation"
+          :label-hours="timePickerHoursLabel"
+          :label-minutes="timePickerMinutesLabel"
+          :label-ampm="timePickerAmpmLabel"
+          @input="debounceEmitValidTime"
+          @shown="fixTimePickerDialogLabel">
+          <template #button-content>
+            <span class="sr-only">
+              {{ `${fieldLabel || labelTranslation} ${$t('common.dateTimePicker.openTimePicker')}` }}
+            </span>
+            <FrIcon
+              name="schedule"
+            />
+          </template>
+        </BFormTimepicker>
+        <input
+          :value="inputValue"
+          @input="inputValue = $event.target.value; debounceEmitValidTime(inputValue)"
+          v-on="validationListeners"
+          ref="input"
+          type="time"
+          :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
+          :data-vv-as="label"
+          :disabled="disabled"
+          :id="internalId"
+          :name="name"
+          :readonly="readonly"
+          :aria-label="fieldLabel || labelTranslation || undefined"
+          :aria-describedby="describedByIds(helpTextId)"
+          :aria-required="isRequiredAria">
       </template>
-    </BFormTimepicker>
+    </FrInputLayout>
   </div>
 </template>
 
@@ -67,6 +71,7 @@ import {
 import dayjs from 'dayjs';
 import { BFormTimepicker } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
 import { toRef } from 'vue';
@@ -139,6 +144,23 @@ export default {
     return { inputValue, fieldErrors, validationListeners };
   },
   methods: {
+    /**
+     * Returns the ids of the elements describing this field for the input's `aria-describedby` attribute:
+     * the ids of the validation errors, when present, followed by the id of the help text, when a description exists.
+     * When there are no errors it falls back to the help text id (preferred, as the rendered description should win),
+     * then the `describedbyId` prop, or undefined if neither is set.
+     *
+     * @param {String} helpTextId - id of the description rendered by InputLayout, passed through the default slot scope
+     */
+    describedByIds(helpTextId) {
+      const describedBy = [this.describedbyId, helpTextId].filter(Boolean).join(' ') || undefined;
+      if (!this.combinedErrors.length) {
+        return describedBy;
+      }
+
+      const errorIds = createAriaDescribedByList(this.name, this.combinedErrors);
+      return [errorIds, describedBy].filter(Boolean).join(' ') || undefined;
+    },
     fixTimePickerDialogLabel() {
       this.$nextTick(() => {
         const dialog = this.$el.querySelector('.time-button .dropdown-menu');
@@ -252,39 +274,52 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .time-button {
-    width: 46.5px;
-    border: none;
-    right: 1px;
-    bottom: 1px;
+  :deep() {
+    .time-button {
+      width: 46.5px;
+      border: none;
+      right: 1px;
+      bottom: 1px;
 
-    :deep(button) {
-      background-color: initial;
-      color: $gray-500;
-      padding: 0.85rem 0.5rem;
+      .dropdown-toggle {
+        background-color: initial;
+        color: $gray-500;
+        padding: 0.85rem 0.5rem;
+        margin-bottom: 1px;
+        border: none !important;
+        border-width: 0 !important;
+        border-radius: 0 !important;
+        .material-icons-outlined {
+          font-size: 1em;
+          line-height: 1;
+        }
+      }
+      &.show > .btn-secondary.dropdown-toggle {
+        background-color: initial;
+        color: $gray-500;
+      }
+    }
+    // no border for timepicker's toggle button in error state
+    .form-label-group {
+      &.fr-field-error {
+        button {
+          border: none !important;
+        }
+      }
     }
 
-    :deep(&.show > .btn-secondary.dropdown-toggle) {
-      background-color: initial;
-      color: $gray-500;
+    .form-control.is-invalid {
+      background-image: none;
     }
 
-    :deep(button .material-icons-outlined) {
-      font-size: 1em;
-      line-height: 1;
-    }
-  }
-
-  .form-control.is-invalid {
-    background-image: none;
-  }
-
-  // Hide the native clock icon: BFormTimepicker's overlaid button already
-  // occupies that corner, so the native indicator would duplicate it.
-  // .fr-hide-native-picker (on the input) keeps the rule off the timepicker overlay.
-  .fr-hide-native-picker {
-    &::-webkit-calendar-picker-indicator {
-      visibility: hidden;
+    // Hide the native clock icon (not customizable); the picker toggle is the
+    // field's single picker affordance.
+    // .fr-hide-native-picker (on the input) keeps the rule off the timepicker overlay.
+    .fr-hide-native-picker {
+      &::-webkit-calendar-picker-indicator {
+        visibility: hidden;
+        pointer-events: none; // the invisible spot is otherwise still clickable in Chromium
+      }
     }
   }
 </style>

@@ -374,10 +374,8 @@ export default {
       }
     }
 
-    // Clearance padding on focus/autofill only makes sense when a label element
-    // actually renders — without one the padding pushes the value down to clear
-    // nothing, leaving an unwanted gap.
-    &:has(label:not(:empty)) {
+    // Clearance padding for focus/autofill when a label renders, else it leaves an unwanted gap.
+    &:has(label:not(:empty):not(.sr-only)) {
       input.form-control:not(:placeholder-shown):focus,
       input.form-control:autofill {
         &:not([placeholder=""]):not(.iti__tel-input):not(.iti__search-input):not(textarea) {

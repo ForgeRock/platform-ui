@@ -980,8 +980,8 @@ describe('FormBuilder', () => {
     expect(label.text()).toBe('Date 1');
     const description = field.find('small');
     expect(description.text()).toBe('This is a date field');
-    const input = field.find('input');
-    expect(input.attributes('type')).toBe('date');
+    const input = field.find('input[type="date"]');
+    expect(input.exists()).toBe(true);
     expect(input.element.value).toBe('2021-01-01');
   });
 
@@ -1021,8 +1021,8 @@ describe('FormBuilder', () => {
     expect(label.text()).toBe('Date 1');
     const description = field.find('small');
     expect(description.text()).toBe('This is a date field');
-    const input = field.find('input');
-    expect(input.attributes('type')).toBe('date');
+    const input = field.find('input[type="date"]');
+    expect(input.exists()).toBe(true);
     expect(input.element.value).toBe('2024-01-01');
   });
 
@@ -1046,7 +1046,7 @@ describe('FormBuilder', () => {
     await wrapper.vm.$nextTick();
 
     const field = wrapper.findComponent({ name: 'DateDisplay' });
-    const input = field.find('input');
+    const input = field.find('input[type="date"]');
     input.setValue('2022-01-01');
     input.trigger('input');
 

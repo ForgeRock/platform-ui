@@ -14,20 +14,6 @@ of the MIT license. See the LICENSE file for details. -->
       :label="label"
       :show-required-indicator="showRequiredIndicator">
       <template #default="{ helpTextId }">
-        <input
-          v-model="inputValue"
-          v-on="validationListeners"
-          ref="input"
-          type="date"
-          :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
-          :data-vv-as="label"
-          :disabled="disabled"
-          :id="internalId"
-          :name="name"
-          :readonly="readonly"
-          :aria-describedby="describedByIds(helpTextId)"
-          :aria-invalid="isAriaInvalid"
-          :aria-required="isRequiredAria">
         <BFormDatepicker
           v-model="inputValue"
           v-calendar-grid
@@ -37,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
           ref="datePicker"
           :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control date-button position-absolute']"
           :disabled="disabled"
-          :id="internalId"
+          :id="`${internalId}-picker`"
           :name="name"
           :min="minDate"
           :aria-label="labelTranslation"
@@ -52,6 +38,21 @@ of the MIT license. See the LICENSE file for details. -->
             />
           </template>
         </BFormDatepicker>
+        <input
+          v-model="inputValue"
+          v-on="validationListeners"
+          ref="input"
+          type="date"
+          :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control fr-hide-native-picker']"
+          :data-vv-as="label"
+          :disabled="disabled"
+          :id="internalId"
+          :name="name"
+          :readonly="readonly"
+          :aria-label="labelTranslation || undefined"
+          :aria-describedby="describedByIds(helpTextId)"
+          :aria-invalid="isAriaInvalid"
+          :aria-required="isRequiredAria">
       </template>
     </FrInputLayout>
   </div>
@@ -137,7 +138,7 @@ export default {
     },
     fixDatePickerDialogLabel() {
       this.$nextTick(() => {
-        const dialog = this.$el.querySelector('.date-button ~ .dropdown-menu, .date-button .dropdown-menu');
+        const dialog = this.$el.querySelector('.date-button .dropdown-menu');
         if (dialog) {
           dialog.removeAttribute('aria-labelledby');
           dialog.setAttribute('aria-label', this.datePickerDialogLabel);
@@ -260,15 +261,26 @@ export default {
       background-color: initial;
       color: $gray-500;
       padding: 0.85rem 0.5rem;
+      margin-bottom: 1px;
     }
   }
-  .form-label-group.fr-field-error {
+  // no border for datepicker's toggle button in error state
+  .form-label-group {
+    &.fr-field-error {
+      button {
+        border: none !important;
+      }
+    }
     .date-button {
       :deep(button) {
         border-width: 0 !important;
-        border-radius: 0.25rem !important;
+        border-radius: 0 !important;
       }
     }
+  }
+
+  :deep(.date-button .dropdown-toggle) {
+    border: none !important;
   }
 
   :deep(.date-button.show > .btn-secondary.dropdown-toggle) {
@@ -285,12 +297,13 @@ export default {
     background-image: none;
   }
 
-  // Hide the native calendar icon: BFormDatepicker's overlaid button already
-  // occupies that corner, so the native indicator would duplicate it.
+  // Hide the native calendar icon (not customizable); the picker toggle is the
+  // field's single picker affordance.
   // .fr-hide-native-picker (on the input) keeps the rule off the datepicker overlay.
   .fr-hide-native-picker {
     &::-webkit-calendar-picker-indicator {
       visibility: hidden;
+      pointer-events: none; // the invisible spot is otherwise still clickable in Chromium
     }
   }
 </style>

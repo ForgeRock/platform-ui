@@ -92,6 +92,16 @@ describe('DateInput', () => {
       expect(dialog.attributes('aria-labelledby')).toBeUndefined();
       wrapper.unmount();
     });
+
+    it('has no accessibility violations when the date picker dialog is open', async () => {
+      // Known BV finding (aria-atomic caption inside the grid) — accepted as in
+      // calendarGrid.test.js; any other violation still fails.
+      const wrapper = await mountAndOpenPicker();
+      await runA11yTest(wrapper, {
+        overrideRules: { 'aria-required-children': { enabled: false } },
+      });
+      wrapper.unmount();
+    });
   });
 
   describe('date picker button accessible name', () => {
@@ -216,20 +226,63 @@ describe('DateInput', () => {
   });
 
   describe('@a11y', () => {
-    it('has no accessibility violations', async () => {
-      const wrapper = mount(DateInput, {
+    let wrapper;
+    function mountDateInput(extraProps = {}) {
+      return mount(DateInput, {
         props: {
           ...defaultMixinProps,
           ...defaultProps,
-          label: 'test',
+          label: 'Access Start Date',
+          ...extraProps,
         },
         global: {
           mocks: {
             $t: (text) => (text),
           },
         },
+        attachTo: document.body,
       });
+    }
 
+    afterEach(() => {
+      wrapper.unmount();
+      wrapper = null;
+    });
+
+    it('has no accessibility violations', async () => {
+      wrapper = mountDateInput();
+      await runA11yTest(wrapper);
+    });
+
+    it('places the calendar toggle before the native input in the tab order', () => {
+      wrapper = mountDateInput();
+
+      const tabables = wrapper.findAll('.date-button button, input[type="date"]');
+      expect(tabables).toHaveLength(2);
+      expect(tabables[0].classes()).toContain('dropdown-toggle');
+      expect(tabables[0].attributes('disabled')).toBeUndefined();
+      expect(tabables[1].attributes('type')).toBe('date');
+    });
+
+    it('keeps the native date input tabable for typed entry', () => {
+      wrapper = mountDateInput();
+
+      const nativeInput = wrapper.find('input[type="date"]');
+      expect(nativeInput.exists()).toBe(true);
+      expect(nativeInput.attributes('tabindex')).toBeUndefined();
+    });
+
+    it('names the native date input for screen readers independently of the toggle', () => {
+      wrapper = mountDateInput();
+
+      const nativeInput = wrapper.find('input[type="date"]');
+      const toggle = wrapper.find('.date-button button');
+      expect(nativeInput.attributes('aria-label')).toBe('Access Start Date');
+      expect(nativeInput.attributes('id')).not.toBe(toggle.attributes('id'));
+    });
+
+    it('has no accessibility violations on the closed picker-first field', async () => {
+      wrapper = mountDateInput();
       await runA11yTest(wrapper);
     });
   });

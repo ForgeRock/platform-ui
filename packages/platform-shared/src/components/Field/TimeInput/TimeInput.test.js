@@ -20,6 +20,11 @@ const defaultMixinProps = {
   autofocus: true,
 };
 
+const defaultProps = {
+  autofocus: false,
+  type: 'test',
+};
+
 let wrapper;
 afterEach(() => {
   if (wrapper) {
@@ -145,14 +150,6 @@ describe('TimeInput', () => {
       expect(dialog.attributes('aria-label')).toBe('Select time for Access End Date');
       expect(dialog.attributes('aria-labelledby')).toBeUndefined();
     });
-
-    describe('@a11y', () => {
-      it('has no accessibility violations when the time picker dialog is open', async () => {
-        const dialog = findByRole(wrapper, 'dialog');
-        expect(dialog.exists()).toBe(true);
-        await runA11yTest(dialog);
-      });
-    });
   });
 
   describe('time picker button accessible name', () => {
@@ -181,6 +178,74 @@ describe('TimeInput', () => {
 
       const srOnly = wrapper.find('.time-button .sr-only');
       expect(srOnly.text()).toBe('Access Start Date time common.dateTimePicker.openTimePicker');
+    });
+  });
+
+  describe('@a11y', () => {
+    // Picker-first (WCAG 2.4.3): time picker toggle, then typed time segments.
+    function mountTimeInput(extraProps = {}) {
+      return mount(TimeInput, {
+        props: {
+          ...defaultMixinProps,
+          ...defaultProps,
+          label: 'Access Start Date',
+          ...extraProps,
+        },
+        global: {
+          mocks: {
+            $t: (text) => (text),
+          },
+        },
+        attachTo: document.body,
+      });
+    }
+
+    afterEach(() => {
+      wrapper.unmount();
+      wrapper = null;
+    });
+
+    it('places the time picker toggle before the native input in the tab order', () => {
+      wrapper = mountTimeInput();
+
+      const tabables = wrapper.findAll('.time-button button, input[type="time"]');
+      expect(tabables).toHaveLength(2);
+      expect(tabables[0].classes()).toContain('dropdown-toggle');
+      expect(tabables[0].attributes('disabled')).toBeUndefined();
+      expect(tabables[1].attributes('type')).toBe('time');
+    });
+
+    it('keeps the native time input tabbable for typed entry', () => {
+      wrapper = mountTimeInput();
+
+      const nativeInput = wrapper.find('input[type="time"]');
+      expect(nativeInput.exists()).toBe(true);
+      expect(nativeInput.attributes('tabindex')).toBeUndefined();
+    });
+
+    it('names the native time input for screen readers independently of the toggle', () => {
+      wrapper = mountTimeInput();
+
+      const nativeInput = wrapper.find('input[type="time"]');
+      const toggle = wrapper.find('.time-button button');
+      expect(nativeInput.attributes('aria-label')).toBe('Access Start Date');
+      expect(nativeInput.attributes('id')).not.toBe(toggle.attributes('id'));
+    });
+
+    it('has no accessibility violations on the closed picker-first field', async () => {
+      wrapper = mountTimeInput();
+      await runA11yTest(wrapper);
+    });
+
+    it('has no accessibility violations when the time picker dialog is open', async () => {
+      wrapper = mountTimeInput();
+      await wrapper.find('button').trigger('click');
+      await flushPromises();
+      await wrapper.vm.$nextTick();
+
+      const dialog = findByRole(wrapper, 'dialog');
+      expect(dialog.exists()).toBe(true);
+      await runA11yTest(dialog);
     });
   });
 });
