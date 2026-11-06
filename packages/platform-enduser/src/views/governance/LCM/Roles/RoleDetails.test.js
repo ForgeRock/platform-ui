@@ -56,7 +56,6 @@ jest.mock('@forgerock/platform-shared/src/components/governance/LCM/Roles/RoleRe
 jest.spyOn(SchemaApi, 'getSchema').mockImplementation((obj) => getSchemaMock(obj));
 jest.spyOn(RoleApi, 'getRoleDataById').mockImplementation((id, status, dataType, queryParams = {}, requestId) => getRoleByIdMock(id, status, dataType, queryParams, requestId));
 jest.spyOn(RoleApi, 'getRoleSimilarity').mockImplementation(() => Promise.resolve({ data: { result: [] } }));
-jest.spyOn(RoleApi, 'getRoleSimilarityById').mockImplementation(() => Promise.resolve({ data: { result: [] } }));
 PermissionsApi.getPrivileges = jest.fn().mockImplementation(() => getPrivilegesMock());
 jest.spyOn(ManagedResourceApi, 'getManagedResourceList').mockImplementation((resource, queryParams = {}) => getManagedResourceListMock(resource, queryParams));
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
@@ -245,20 +244,10 @@ describe('RoleDetails', () => {
     expect(saveBtn.exists()).toBe(false);
   });
 
-  it('runs the similarity check and submits the request from the progress modal when no similar roles are found', async () => {
-    const mockPayload = {
-      role: {
-        glossary: {},
-        object: {
-          description: '',
-          entitlements: ['ent1'],
-          justifications: [],
-          name: 'Test',
-        },
-        status: 'active',
-      },
-    };
+  it('holds at the review step without submitting when no similar roles are found', async () => {
     mockRouter({ params: { roleId: 'new', roleStatus: 'active' } });
+    AccessRequestApi.requestAction.mockClear();
+    RoleApi.getRoleSimilarity.mockClear();
     wrapper = mountComponent();
     await flushPromises();
     wrapper.vm.updateTabData('details', null, {
@@ -269,13 +258,16 @@ describe('RoleDetails', () => {
     wrapper.vm.updateTabData('entitlements', 'load', { result: [{ id: 'ent1' }], resultCount: 1 });
     await flushPromises();
     const saveBtns = wrapper.findAll('div.d-flex.justify-content-end > button');
-    expect(saveBtns.length).toBe(2);
-    expect(saveBtns[1].text()).toBe('Save');
     saveBtns[1].trigger('click');
     await flushPromises();
     expect(RoleApi.getRoleSimilarity).toHaveBeenCalled();
-    // No similar roles found: submission goes straight through without confirmation
-    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'publish', null, mockPayload);
+    // No matches still holds at the review step for explicit confirmation
+    expect(wrapper.find('[data-testid="progress-modal-can-continue"]').text()).toBe('true');
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalled();
+    // Submitting from the progress modal goes through
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
+    await flushPromises();
+    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'publish', null, expect.anything());
     expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('success');
   });
 
@@ -335,12 +327,16 @@ describe('RoleDetails', () => {
     await flushPromises();
     expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('error');
     expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('createRole', 'publish', null, expect.anything());
-    // Retry re-runs the failed check; the retried check finds no matches and auto-submits
+    // Retry re-runs the failed check; the retried check finds no matches and holds for confirmation
     RoleApi.getRoleSimilarity.mockClear();
     RoleApi.getRoleSimilarity.mockImplementationOnce(() => Promise.resolve({ data: { result: [] } }));
     await wrapper.find('[data-testid="progress-modal-retry-button"]').trigger('click');
     await flushPromises();
     expect(RoleApi.getRoleSimilarity).toHaveBeenCalledTimes(1);
+    expect(wrapper.find('[data-testid="progress-modal-can-continue"]').text()).toBe('true');
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalled();
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
+    await flushPromises();
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'publish', null, expect.anything());
     expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('success');
   });
@@ -385,7 +381,11 @@ describe('RoleDetails', () => {
     const saveBtns = wrapper.findAll('div.d-flex.justify-content-end > button');
     saveBtns[1].trigger('click');
     await flushPromises();
-    // No matches found: submission auto-proceeds and fails
+    // Check passes with no matches; the flow holds for confirmation
+    expect(wrapper.find('[data-testid="progress-modal-can-continue"]').text()).toBe('true');
+    // Submitting fails
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
+    await flushPromises();
     expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('error');
     // Retry re-runs only the submit step, not the similarity check
     RoleApi.getRoleSimilarity.mockClear();
@@ -422,7 +422,7 @@ describe('RoleDetails', () => {
     expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('');
   });
 
-  it('submits without calling the similarity check when the role has no entitlements', async () => {
+  it('holds at the review step without calling the similarity check when the role has no entitlements', async () => {
     mockRouter({ params: { roleId: 'new', roleStatus: 'active' } });
     AccessRequestApi.requestAction.mockClear();
     RoleApi.getRoleSimilarity.mockClear();
@@ -437,29 +437,96 @@ describe('RoleDetails', () => {
     const saveBtns = wrapper.findAll('div.d-flex.justify-content-end > button');
     saveBtns[1].trigger('click');
     await flushPromises();
-    // Nothing to compare: the check is skipped entirely and submission goes straight through
+    // Nothing to compare: the check is skipped entirely, but the flow still
+    // holds for explicit confirmation before submitting
     expect(RoleApi.getRoleSimilarity).not.toHaveBeenCalled();
+    expect(wrapper.find('[data-testid="progress-modal-can-continue"]').text()).toBe('true');
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalled();
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
+    await flushPromises();
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'publish', null, expect.anything());
     expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('success');
   });
 
-  it('treats the no-entitlements backend error as a passed check and submits', async () => {
+  it('treats the no-entitlements backend error as a passed check and holds for confirmation', async () => {
     mockRouter({ params: { roleId: 'testId', roleStatus: 'active' } });
     AccessRequestApi.requestAction.mockClear();
-    RoleApi.getRoleSimilarityById.mockClear();
-    // Existing role with entitlements in the form, but the backend rejects the
-    // check because it resolves the persisted role to having none to compare
+    RoleApi.getRoleSimilarity.mockClear();
+    // Existing role whose saved entitlements resolve to none to compare, so
+    // the backend rejects the working-list check
     const noEntitlementsError = new Error('Entitlements must be provided for this endpoint.');
     noEntitlementsError.response = { data: { message: 'Entitlements must be provided for this endpoint.' } };
-    RoleApi.getRoleSimilarityById.mockImplementationOnce(() => Promise.reject(noEntitlementsError));
+    RoleApi.getRoleSimilarity.mockImplementationOnce(() => Promise.reject(noEntitlementsError));
     wrapper = mountComponent();
     await flushPromises();
     const saveBtn = wrapper.find('div.d-flex.justify-content-end > button');
     saveBtn.trigger('click');
     await flushPromises();
-    // Backend rejects with no-entitlements: check treated as passed, submission auto-proceeds
-    expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('success');
+    // Backend rejects with no-entitlements: check treated as passed, flow holds for confirmation
+    expect(wrapper.find('[data-testid="progress-modal-can-continue"]').text()).toBe('true');
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalled();
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
+    await flushPromises();
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('modifyRole', 'publish', null, expect.anything());
+  });
+
+  it('re-runs the similarity check at the new threshold when recheck is emitted from the progress modal', async () => {
+    mockRouter({ params: { roleId: 'new', roleStatus: 'active' } });
+    AccessRequestApi.requestAction.mockClear();
+    RoleApi.getRoleSimilarity.mockClear();
+    // First check at the default threshold finds a match; the re-check at a
+    // raised threshold finds none and auto-submits
+    RoleApi.getRoleSimilarity
+      .mockImplementationOnce(() => Promise.resolve({
+        data: {
+          result: [{
+            id: 'similar1',
+            name: 'Existing Role',
+            status: 'active',
+            jaccard: 0.4,
+            sharedItems: ['ent1'],
+            totalShared: 1,
+            entitlementCount: 2,
+          }],
+        },
+      }))
+      .mockImplementationOnce(() => Promise.resolve({ data: { result: [] } }));
+    wrapper = mountComponent();
+    await flushPromises();
+    wrapper.vm.updateTabData('details', null, {
+      role: {
+        name: 'Test',
+      },
+    });
+    wrapper.vm.updateTabData('entitlements', 'load', { result: [{ id: 'ent1' }], resultCount: 1 });
+    await flushPromises();
+    const saveBtns = wrapper.findAll('div.d-flex.justify-content-end > button');
+    saveBtns[1].trigger('click');
+    await flushPromises();
+    // First run used the default threshold of 50
+    expect(RoleApi.getRoleSimilarity).toHaveBeenCalledWith({
+      entitlements: ['ent1'],
+      threshold: 50,
+      limit: 10,
+    });
+    expect(wrapper.find('[data-testid="progress-modal-can-continue"]').text()).toBe('true');
+    // User raises the threshold and re-checks
+    wrapper.findComponent({ name: 'RoleRequestProgressModal' }).vm.$emit('update:threshold', 75);
+    await wrapper.vm.$nextTick();
+    wrapper.findComponent({ name: 'RoleRequestProgressModal' }).vm.$emit('recheck');
+    await flushPromises();
+    // Re-check ran with the adjusted threshold; no matches at 75%, flow holds for confirmation
+    expect(RoleApi.getRoleSimilarity).toHaveBeenLastCalledWith({
+      entitlements: ['ent1'],
+      threshold: 75,
+      limit: 10,
+    });
+    expect(wrapper.find('[data-testid="progress-modal-can-continue"]').text()).toBe('true');
+    expect(AccessRequestApi.requestAction).not.toHaveBeenCalled();
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
+    await flushPromises();
+    expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'publish', null, expect.anything());
+    expect(wrapper.find('[data-testid="progress-modal-outcome"]').text()).toBe('success');
   });
 
   it('issues a roleGrant request immediately when members are added', async () => {
@@ -538,12 +605,21 @@ describe('RoleDetails', () => {
     wrapper = mountComponent();
     await flushPromises();
     AccessRequestApi.requestAction.mockClear();
-    RoleApi.getRoleSimilarityById.mockClear();
+    RoleApi.getRoleSimilarity.mockClear();
     const saveBtn = wrapper.find('div.d-flex.justify-content-end > button');
     saveBtn.trigger('click');
     await flushPromises();
-    expect(RoleApi.getRoleSimilarityById).toHaveBeenCalledWith('testId', 'active');
-    // Check passed with no matches: submission auto-proceeds
+    // Update path uses the working entitlement list via the same endpoint as
+    // create, excluding the role being edited
+    expect(RoleApi.getRoleSimilarity).toHaveBeenCalledWith({
+      entitlements: ['ent1', 'ent2'],
+      threshold: 50,
+      limit: 10,
+      excludeRoleId: 'testId',
+    });
+    // Check passed with no matches: flow holds, then submission goes through
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
+    await flushPromises();
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('modifyRole', 'publish', null, mockPayload);
     expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleGrant', expect.anything(), expect.anything(), expect.anything());
     expect(AccessRequestApi.requestAction).not.toHaveBeenCalledWith('roleRemove', expect.anything(), expect.anything(), expect.anything());
@@ -559,6 +635,9 @@ describe('RoleDetails', () => {
       .filter((button) => button.text() === 'Save')[0];
     expect(saveBtn.exists()).toBe(true);
     saveBtn.trigger('click');
+    await flushPromises();
+    // Check completes without matches, then submission goes through on Submit
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
     await flushPromises();
 
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('modifyRole', 'publish', null, expect.objectContaining({
@@ -577,6 +656,9 @@ describe('RoleDetails', () => {
       .filter((button) => button.text() === 'Publish')[0];
     expect(publishBtn.exists()).toBe(true);
     publishBtn.trigger('click');
+    await flushPromises();
+    // Check completes without matches, then submission goes through on Submit
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
     await flushPromises();
 
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('publishRole', 'publish', null, expect.objectContaining({
@@ -601,6 +683,9 @@ describe('RoleDetails', () => {
     const saveDraftBtn = wrapper.find('div.d-flex.justify-content-end > button');
     expect(saveDraftBtn.text()).toBe('Save as Draft');
     saveDraftBtn.trigger('click');
+    await flushPromises();
+    // Check completes without matches, then submission goes through on Submit
+    await wrapper.find('[data-testid="progress-modal-continue-button"]').trigger('click');
     await flushPromises();
 
     expect(AccessRequestApi.requestAction).toHaveBeenCalledWith('createRole', 'save', null, expect.anything());

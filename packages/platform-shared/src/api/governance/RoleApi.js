@@ -134,9 +134,11 @@ export function getRoleSimilarity(payload) {
  *
  * @param {string} id - The ID of the role to compare against.
  * @param {string} status - The status of the role.
+ * @param {Object} [queryParams] - Query parameters to include in the request,
+ *   e.g. { threshold: 50 } for the minimum similarity percentage (0-100).
  * @returns {Promise} A promise that resolves to the list of similar roles.
  */
-export function getRoleSimilarityById(id, status) {
-  const url = `${roleUrl}/${id}/${status}/similarity`;
+export function getRoleSimilarityById(id, status, queryParams = {}) {
+  const url = `${roleUrl}/${id}/${status}/similarity${encodeQueryString(queryParams, false)}`;
   return generateIgaApi().get(url);
 }

@@ -103,9 +103,15 @@ of the MIT license. See the LICENSE file for details. -->
       :outcome="progressOutcome"
       :is-submitting="isSubmittingRequest"
       :can-continue="canReviewSimilarRoles"
+      :threshold="similarityThreshold"
+      :is-checking="isSimilarityChecking"
+      :title="progressModalTitle"
       @close="closeProgressModal"
       @retry="retryProgressStep"
-      @continue="submitRoleRequest" />
+      @continue="submitRoleRequest"
+      @submit-anyway="submitRoleRequest"
+      @update:threshold="similarityThreshold = $event"
+      @recheck="runSimilarityStep" />
   </BContainer>
 </template>
 
@@ -141,7 +147,7 @@ import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb
 import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
-import { getRoleDataById, getRoleSimilarity, getRoleSimilarityById } from '@forgerock/platform-shared/src/api/governance/RoleApi';
+import { getRoleDataById, getRoleSimilarity } from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrEntitlementsTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/EntitlementsTab';
 import FrMembersTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/MembersTab';
@@ -175,6 +181,10 @@ const createRolePermission = ref(false);
 const modifyRolePermission = ref(false);
 const similarRoles = ref([]);
 const isTesting = ref(false);
+// Similarity threshold percentage for the check; 50 is the backend's default
+const DEFAULT_SIMILARITY_THRESHOLD = 50;
+const similarityThreshold = ref(DEFAULT_SIMILARITY_THRESHOLD);
+const isSimilarityChecking = ref(false);
 const pendingSaveAction = ref(null);
 const pendingSaveIsPublishDraftRequest = ref(false);
 const progressSteps = ref({
@@ -375,31 +385,30 @@ function roleHasEntitlementsToCompare() {
 }
 
 /**
- * Run the similarity check step. Auto-submits the request when the check
- * finds nothing to review (no entitlements to compare, or no similar roles);
- * only when matches are found does the user confirm via the Submit button.
- *
- * For an existing role the check compares the role as currently persisted on
- * the server (per the IGA-5059 contract for updates), not the unsaved form
- * data that gets submitted.
+ * Run the similarity check step at the current threshold (50% on a fresh save
+ * flow; adjustable via the modal's slider before a re-check). Both create and
+ * update compare the working session's entitlement list — for an update that's
+ * the unsaved form data, so the check reflects what is about to be submitted;
+ * the role being edited is excluded via excludeRoleId so it can't match
+ * itself. The save always holds at the review step once the check completes,
+ * matches or not; the user confirms submission via the Submit button.
  */
 async function runSimilarityStep() {
+  isSimilarityChecking.value = true;
   progressSteps.value.similarity = { state: 'active', note: '' };
   try {
     let similarRolesResult = [];
     if (roleHasEntitlementsToCompare()) {
-      let data;
+      const payload = {
+        entitlements: map(formData.value.entitlements, 'id'),
+        threshold: similarityThreshold.value,
+        limit: 10,
+      };
       if (roleId.value !== 'new') {
-        // Compares the role as currently persisted on the server
-        ({ data } = await getRoleSimilarityById(roleId.value, roleStatus.value));
-      } else {
-        data = (await getRoleSimilarity({
-          entitlements: map(formData.value.entitlements, 'id'),
-          threshold: 30,
-          limit: 10,
-        })).data;
+        // Exclude the role being edited so it can't match its own entitlements
+        payload.excludeRoleId = roleId.value;
       }
-      similarRolesResult = data?.result || [];
+      similarRolesResult = (await getRoleSimilarity(payload)).data?.result || [];
     }
     if (!saveFlowActive.value) return;
     similarRoles.value = similarRolesResult;
@@ -409,13 +418,7 @@ async function runSimilarityStep() {
         ? i18n.global.t('governance.administer.roles.requestProgress.noteSimilarFound', { count: similarRolesResult.length })
         : i18n.global.t('governance.administer.roles.requestProgress.noteNoSimilar'),
     };
-    if (similarRolesResult.length) {
-      // Similar matches found: the user confirms submission via the Submit button
-      canReviewSimilarRoles.value = true;
-    } else {
-      // Nothing to review: submit straight away
-      await submitRoleRequest();
-    }
+    canReviewSimilarRoles.value = true;
   } catch (error) {
     if (!saveFlowActive.value) return;
     // If the backend still rejects the check because the role has no
@@ -428,7 +431,7 @@ async function runSimilarityStep() {
         state: 'done',
         note: i18n.global.t('governance.administer.roles.requestProgress.noteNoSimilar'),
       };
-      await submitRoleRequest();
+      canReviewSimilarRoles.value = true;
       return;
     }
     progressSteps.value.similarity = {
@@ -436,6 +439,8 @@ async function runSimilarityStep() {
       note: i18n.global.t('governance.administer.roles.requestProgress.noteCheckFailed'),
     };
     progressOutcome.value = 'error';
+  } finally {
+    isSimilarityChecking.value = false;
   }
 }
 
@@ -482,6 +487,7 @@ async function saveRoleData(action = 'publish', isPublishDraftRequest = false) {
   similarRoles.value = [];
   canReviewSimilarRoles.value = false;
   progressOutcome.value = '';
+  similarityThreshold.value = DEFAULT_SIMILARITY_THRESHOLD;
   progressSteps.value = {
     similarity: { state: 'pending', note: '' },
     submit: { state: 'pending', note: '' },
@@ -599,6 +605,10 @@ async function updateTabData(tabUpdated, operation, data) {
   }
   isFormChanged.value = true;
 }
+
+const progressModalTitle = computed(() => (roleId.value === 'new'
+  ? i18n.global.t('governance.administer.roles.requestProgress.title')
+  : i18n.global.t('governance.administer.roles.requestProgress.updateTitle')));
 
 const tabsToShow = computed(() => tabs.filter((tab) => tab.component !== FrMembersTab || roleId.value !== 'new'));
 const activeTabKey = computed(() => tabsToShow.value[tabIndex.value]?.key);

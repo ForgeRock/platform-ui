@@ -24,12 +24,12 @@ const runningSteps = {
 };
 
 const checkDoneSteps = {
-  similarity: { state: 'done', note: 'No similar roles detected' },
+  similarity: { state: 'done', note: '1 similar role(s) detected' },
   submit: { state: 'pending', note: '' },
 };
 
 const successSteps = {
-  similarity: { state: 'done', note: 'No similar roles detected' },
+  similarity: { state: 'done', note: '1 similar role(s) detected' },
   submit: { state: 'done', note: 'Request REQ-123 created' },
 };
 
@@ -89,7 +89,7 @@ describe('RoleRequestProgressModal', () => {
   it('shows a check icon and note for a completed step', () => {
     const wrapper = mountComponent({ stepState: checkDoneSteps });
     expect(wrapper.find('.fr-request-progress__icon--done').exists()).toBe(true);
-    expect(wrapper.find('[data-testid="progress-modal-note-similarity"]').text()).toContain('No similar roles detected');
+    expect(wrapper.find('[data-testid="progress-modal-note-similarity"]').text()).toContain('1 similar role(s) detected');
   });
 
   it('shows an error icon and note for a failed step', () => {
@@ -143,13 +143,13 @@ describe('RoleRequestProgressModal', () => {
     expect(wrapper.emitted('continue')).toHaveLength(1);
   });
 
-  it('collapses the review table via the header toggle and shows its rows when expanded', async () => {
+  it('collapses the review table via the inline toggle and shows its rows when expanded', async () => {
     const wrapper = mountComponent({ stepState: checkDoneSteps, canContinue: true, similarRoles });
     const rows = wrapper.findAll('tbody tr');
     expect(rows.length).toBe(1);
     expect(rows[0].text()).toContain('Support Agent');
     expect(rows[0].text()).toContain('72%');
-    expect(wrapper.find('[data-testid="progress-modal-toggle-similar-button"]').text()).toBe('Hide Similar Roles');
+    expect(wrapper.find('[data-testid="progress-modal-toggle-similar-button"]').text()).toBe('Hide');
     await wrapper.find('[data-testid="progress-modal-toggle-similar-button"]').trigger('click');
     expect(wrapper.find('table').exists()).toBe(false);
     // Submit still works with the table collapsed
@@ -163,17 +163,22 @@ describe('RoleRequestProgressModal', () => {
     expect(wrapper.find('[data-testid="progress-modal-toggle-similar-button"]').exists()).toBe(false);
   });
 
-  it('shows the review card with the count in its header and the table expanded by default', () => {
+  it('shows the note with the match count and the table expanded by default', () => {
     const wrapper = mountComponent({ stepState: checkDoneSteps, canContinue: true, similarRoles });
     const card = wrapper.find('[data-testid="progress-modal-similar-roles-card"]');
     expect(card.exists()).toBe(true);
-    expect(card.find('.fr-request-progress__review-title').text()).toBe('Similar Roles (1)');
+    expect(wrapper.find('[data-testid="progress-modal-note-similarity"]').text()).toContain('1 similar role(s) detected');
     expect(wrapper.find('table').exists()).toBe(true);
-    expect(wrapper.find('[data-testid="progress-modal-toggle-similar-button"]').text()).toBe('Hide Similar Roles');
+    expect(wrapper.find('[data-testid="progress-modal-toggle-similar-button"]').text()).toBe('Hide');
   });
 
   it('shows the similarity note inline with the step label in a single line', () => {
-    const wrapper = mountComponent({ stepState: checkDoneSteps, canContinue: true, similarRoles });
+    const wrapper = mountComponent({
+      stepState: {
+        similarity: { state: 'done', note: 'No similar roles detected' },
+        submit: { state: 'pending', note: '' },
+      },
+    });
     const note = wrapper.find('[data-testid="progress-modal-note-similarity"]');
     expect(note.exists()).toBe(true);
     const label = wrapper.find('.fr-request-progress__label');
@@ -261,5 +266,85 @@ describe('RoleRequestProgressModal', () => {
   it('has no accessibility violations', async () => {
     const wrapper = mountComponent({ stepState: checkDoneSteps, canContinue: true, similarRoles });
     expect(await runA11yTest(wrapper)).toHaveNoViolations();
+  });
+
+  it('has no accessibility violations with the threshold re-check controls shown', async () => {
+    const wrapper = mountComponent({
+      stepState: checkDoneSteps,
+      canContinue: true,
+      similarRoles,
+      threshold: 50,
+    });
+    expect(await runA11yTest(wrapper)).toHaveNoViolations();
+  });
+
+  describe('threshold re-check controls', () => {
+    it('shows the threshold slider and Re-check button while holding at the review', () => {
+      const wrapper = mountComponent({
+        stepState: checkDoneSteps,
+        canContinue: true,
+        similarRoles,
+        threshold: 50,
+      });
+      expect(wrapper.find('[data-testid="progress-modal-recheck-controls"]').exists()).toBe(true);
+      expect(wrapper.find('.fr-request-progress__threshold-label').text()).toBe('Similarity threshold');
+      expect(wrapper.find('[data-testid="progress-modal-recheck-button"]').text()).toBe('Re-check');
+      const sliderDot = wrapper.find('.vue-slider-dot');
+      expect(sliderDot.attributes('aria-valuenow')).toBe('50');
+    });
+
+    it('hides the re-check controls once an outcome is reached', () => {
+      const wrapper = mountComponent({
+        stepState: successSteps,
+        outcome: 'success',
+        canContinue: true,
+        similarRoles,
+        threshold: 50,
+      });
+      expect(wrapper.find('[data-testid="progress-modal-recheck-controls"]').exists()).toBe(false);
+    });
+
+    it('hides the re-check controls when not holding at the review', () => {
+      const wrapper = mountComponent({ stepState: runningSteps, canContinue: false });
+      expect(wrapper.find('[data-testid="progress-modal-recheck-controls"]').exists()).toBe(false);
+    });
+
+    it('emits update:threshold when the slider value changes', async () => {
+      const wrapper = mountComponent({
+        stepState: checkDoneSteps,
+        canContinue: true,
+        similarRoles,
+        threshold: 50,
+      });
+      wrapper.findComponent({ name: 'VueSlider' }).vm.$emit('update:modelValue', 51);
+      await wrapper.vm.$nextTick();
+      expect(wrapper.emitted('update:threshold')).toHaveLength(1);
+      expect(wrapper.emitted('update:threshold')[0][0]).toBe(51);
+    });
+
+    it('emits recheck when the Re-check button is clicked', async () => {
+      const wrapper = mountComponent({
+        stepState: checkDoneSteps,
+        canContinue: true,
+        similarRoles,
+        threshold: 50,
+      });
+      await wrapper.find('[data-testid="progress-modal-recheck-button"]').trigger('click');
+      expect(wrapper.emitted('recheck')).toHaveLength(1);
+    });
+
+    it('disables the slider, Re-check button and Submit while a re-check is in flight', () => {
+      const wrapper = mountComponent({
+        stepState: checkDoneSteps,
+        canContinue: true,
+        similarRoles,
+        threshold: 50,
+        isChecking: true,
+      });
+      expect(wrapper.find('.vue-slider-dot').classes()).toContain('vue-slider-dot-disabled');
+      expect(wrapper.find('[data-testid="progress-modal-recheck-button"]').attributes('disabled')).toBeDefined();
+      expect(wrapper.find('[data-testid="progress-modal-continue-button"]').attributes('disabled')).toBeDefined();
+      expect(wrapper.find('[data-testid="progress-modal-recheck-button"]').text()).toBe('Re-checking…');
+    });
   });
 });

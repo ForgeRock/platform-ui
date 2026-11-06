@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
     title-tag="h2"
     header-class="p-3"
     :static="isTesting"
-    :title="$t('governance.administer.roles.requestProgress.title')"
+    :title="title"
     @hidden="$emit('close')">
     <!-- aria-live announces each step transition to screen readers -->
     <p
@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-else
             class="fr-request-progress__circle" />
         </span>
-        <span class="fr-request-progress__body">
+        <div class="fr-request-progress__body">
           <span class="fr-request-progress__label">
             {{ step.label }}
             <span
@@ -56,74 +56,110 @@ of the MIT license. See the LICENSE file for details. -->
               :data-testid="`progress-modal-note-${step.key}`">
               — {{ step.note }}
             </span>
+            <!-- Show/Hide toggle for the similarity step's review table, inline
+            with the step note -->
+            <BButton
+              v-if="step.key === 'similarity' && similarRoles.length"
+              variant="link"
+              class="fr-request-progress__toggle p-0 ml-2"
+              :aria-expanded="showSimilarRoles ? 'true' : 'false'"
+              aria-controls="progress-modal-similar-roles-body"
+              data-testid="progress-modal-toggle-similar-button"
+              @click="toggleSimilarRoles">
+              {{ showSimilarRoles
+                ? $t('common.hide')
+                : $t('common.show') }}
+            </BButton>
           </span>
-        </span>
+          <!-- Similar-roles review, rendered inside the similarity step so it reads
+          as that step's outcome; hidden together with the table when collapsed -->
+          <BCard
+            v-if="step.key === 'similarity' && similarRoles.length && showSimilarRoles"
+            class="fr-request-progress__review-card"
+            no-body
+            data-testid="progress-modal-similar-roles-card">
+            <BCardBody
+              id="progress-modal-similar-roles-body">
+              <BTable
+                :items="rolesToDisplay"
+                :fields="similarRolesFields"
+                hover
+                responsive>
+                <template #cell(name)="{ item }">
+                  <div class="h5 mb-0">
+                    {{ item.name || blankValueIndicator }}
+                  </div>
+                </template>
+                <template #cell(status)="{ item }">
+                  <BBadge :variant="item.status ? getRoleStatusVariant(item.status) : 'light'">
+                    {{ item.status || blankValueIndicator }}
+                  </BBadge>
+                </template>
+                <template #cell(similarity)="{ item }">
+                  {{ $t('governance.administer.roles.similarRoles.similarityPercent', { percent: round((item.jaccard ?? 0) * 100, 0) }) }}
+                </template>
+                <template #cell(sharedEntitlements)="{ item }">
+                  {{ $t('governance.administer.roles.similarRoles.sharedEntitlements', { count: item.totalShared || 0 }) }}
+                </template>
+              </BTable>
+              <div
+                v-if="similarRoles.length > initialResultsLimit"
+                class="d-flex justify-content-end">
+                <BButton
+                  variant="link"
+                  class="p-0"
+                  :aria-expanded="showAllResults ? 'true' : 'false'"
+                  aria-controls="progress-modal-similar-rows-extra"
+                  data-testid="progress-modal-show-more-button"
+                  @click="showAllResults = !showAllResults">
+                  {{ showAllResults
+                    ? $t('governance.administer.roles.similarRoles.showLess')
+                    : $t('governance.administer.roles.similarRoles.showMore', { count: similarRoles.length - initialResultsLimit }) }}
+                </BButton>
+              </div>
+            </BCardBody>
+          </BCard>
+          <!-- Threshold adjustment and re-check toolbar, available once the check
+          completes whether or not matches were found -->
+          <div
+            v-if="step.key === 'similarity' && canContinue && !outcome"
+            class="fr-request-progress__recheck"
+            role="group"
+            aria-labelledby="progress-modal-threshold-label"
+            data-testid="progress-modal-recheck-controls">
+            <div class="fr-request-progress__threshold-group">
+              <span
+                id="progress-modal-threshold-label"
+                class="fr-request-progress__threshold-label">
+                {{ $t('governance.administer.roles.requestProgress.similarityThreshold') }}
+              </span>
+              <!-- Block wrapper: the slider has no intrinsic width, so as a direct flex
+              item it would collapse to zero -->
+              <div class="fr-request-progress__threshold-slider">
+                <ThresholdSlider
+                  :value="threshold"
+                  :min="1"
+                  :max="100"
+                  :marks="[1, 50, 100]"
+                  :disabled="isChecking || isSubmitting"
+                  :aria-label="$t('governance.administer.roles.requestProgress.similarityThresholdAria')"
+                  @input="$emit('update:threshold', $event)" />
+              </div>
+            </div>
+            <BButton
+              variant="outline-secondary"
+              class="text-nowrap"
+              :disabled="isChecking || isSubmitting"
+              data-testid="progress-modal-recheck-button"
+              @click="$emit('recheck')">
+              {{ isChecking
+                ? $t('governance.administer.roles.requestProgress.rechecking')
+                : $t('governance.administer.roles.requestProgress.recheck') }}
+            </BButton>
+          </div>
+        </div>
       </li>
     </ol>
-    <!-- Similar-roles review card, shown after the check finds matches -->
-    <BCard
-      v-if="similarRoles.length"
-      class="fr-request-progress__review-card"
-      no-body
-      data-testid="progress-modal-similar-roles-card">
-      <BCardHeader class="fr-request-progress__review-header">
-        <span class="fr-request-progress__review-title">
-          {{ $t('governance.administer.roles.requestProgress.similarRolesCount', { count: similarRoles.length }) }}
-        </span>
-        <BButton
-          variant="link"
-          class="p-0"
-          :aria-expanded="showSimilarRoles ? 'true' : 'false'"
-          aria-controls="progress-modal-similar-roles-body"
-          data-testid="progress-modal-toggle-similar-button"
-          @click="toggleSimilarRoles">
-          {{ showSimilarRoles
-            ? $t('governance.administer.roles.requestProgress.hideSimilarRoles')
-            : $t('governance.administer.roles.requestProgress.viewSimilarRoles') }}
-        </BButton>
-      </BCardHeader>
-      <BCardBody
-        v-if="showSimilarRoles"
-        id="progress-modal-similar-roles-body">
-        <BTable
-          :items="rolesToDisplay"
-          :fields="similarRolesFields"
-          hover
-          responsive>
-          <template #cell(name)="{ item }">
-            <div class="h5 mb-0">
-              {{ item.name || blankValueIndicator }}
-            </div>
-          </template>
-          <template #cell(status)="{ item }">
-            <BBadge :variant="item.status ? getRoleStatusVariant(item.status) : 'light'">
-              {{ item.status || blankValueIndicator }}
-            </BBadge>
-          </template>
-          <template #cell(similarity)="{ item }">
-            {{ $t('governance.administer.roles.similarRoles.similarityPercent', { percent: round((item.jaccard ?? 0) * 100, 0) }) }}
-          </template>
-          <template #cell(sharedEntitlements)="{ item }">
-            {{ $t('governance.administer.roles.similarRoles.sharedEntitlements', { count: item.totalShared || 0 }) }}
-          </template>
-        </BTable>
-        <div
-          v-if="similarRoles.length > initialResultsLimit"
-          class="d-flex justify-content-end">
-          <BButton
-            variant="link"
-            class="p-0"
-            :aria-expanded="showAllResults ? 'true' : 'false'"
-            aria-controls="progress-modal-similar-rows-extra"
-            data-testid="progress-modal-show-more-button"
-            @click="showAllResults = !showAllResults">
-            {{ showAllResults
-              ? $t('governance.administer.roles.similarRoles.showLess')
-              : $t('governance.administer.roles.similarRoles.showMore', { count: similarRoles.length - initialResultsLimit }) }}
-          </BButton>
-        </div>
-      </BCardBody>
-    </BCard>
     <p
       v-if="outcome"
       class="mt-3 mb-0 p-3 rounded"
@@ -147,6 +183,16 @@ of the MIT license. See the LICENSE file for details. -->
           @click="$emit('close')">
           {{ $t('common.cancel') }}
         </BButton>
+        <!-- Submit anyway: offered only when the similarity check failed; a
+        failed submission has nothing to bypass -->
+        <BButton
+          v-if="isSimilarityError"
+          variant="outline-secondary"
+          :disabled="isChecking"
+          data-testid="progress-modal-submit-anyway-button"
+          @click="$emit('submit-anyway')">
+          {{ $t('common.submit') }}
+        </BButton>
         <BButton
           variant="primary"
           data-testid="progress-modal-retry-button"
@@ -162,9 +208,11 @@ of the MIT license. See the LICENSE file for details. -->
           @click="$emit('close')">
           {{ $t('common.cancel') }}
         </BButton>
+        <!-- Disabled while a re-check runs: its completion can auto-submit, and
+        allowing Submit concurrently could submit the request twice -->
         <BButton
           variant="primary"
-          :disabled="isSubmitting"
+          :disabled="isSubmitting || isChecking"
           data-testid="progress-modal-continue-button"
           @click="$emit('continue')">
           {{ $t('common.submit') }}
@@ -190,9 +238,11 @@ of the MIT license. See the LICENSE file for details. -->
  * followed by the request submission. Each step shows a live state
  * (pending/active/done/error) with a result note. When the check finds similar
  * roles, a review table is shown expanded by default (collapsible via the
- * card header toggle) with the Submit button in the footer. On success the
- * parent proceeds to the request-submitted modal; on error the user can retry
- * the failed step.
+ * card header toggle) with the Submit button in the footer; inside the
+ * expanded table body, a threshold slider and Re-check button let the user
+ * re-run the check at a different similarity threshold before submitting. On
+ * success the parent proceeds to the request-submitted modal; on error the
+ * user can retry the failed step.
  * @component RoleRequestProgressModal
  * @prop {Object} stepState - State machine for the two steps:
  *   { similarity: { state: 'pending'|'active'|'done'|'error', note: String },
@@ -206,9 +256,18 @@ of the MIT license. See the LICENSE file for details. -->
  * @prop {Boolean} canContinue - Whether to show the Submit footer button
  *   (similarity check passed and the request is waiting to be submitted).
  * @prop {Boolean} isTesting - Renders the modal statically for unit testing.
+ * @prop {Number} threshold - Current similarity threshold percentage (1-100);
+ *   shown on the slider next to the re-check button.
+ * @prop {Boolean} isChecking - Whether a similarity re-check is in flight;
+ *   disables the slider and re-check button.
+ * @prop {String} title - Modal header text; the parent chooses it based on
+ *   whether the flow creates or updates a role.
  * @emits close - The user dismissed the modal (Done or Cancel).
  * @emits retry - The user asked to retry the failed step.
  * @emits continue - The user reviewed the similar roles and wants to submit.
+ * @emits submit-anyway - The user chose to submit despite a failed similarity check.
+ * @emits update:threshold - The user moved the threshold slider.
+ * @emits recheck - The user asked to re-run the check at the current threshold.
  */
 import {
   computed,
@@ -219,13 +278,13 @@ import {
   BButton,
   BCard,
   BCardBody,
-  BCardHeader,
   BModal,
   BTable,
 } from 'bootstrap-vue';
 import { round } from 'lodash';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getRoleStatusVariant } from '@forgerock/platform-shared/src/utils/governance/accessModeling';
+import ThresholdSlider from '@forgerock/platform-shared/src/components/governance/ThresholdSlider';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
@@ -258,9 +317,21 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  threshold: {
+    type: Number,
+    default: 50,
+  },
+  isChecking: {
+    type: Boolean,
+    default: false,
+  },
+  title: {
+    type: String,
+    default: () => i18n.global.t('governance.administer.roles.requestProgress.title'),
+  },
 });
 
-defineEmits(['close', 'retry', 'continue']);
+defineEmits(['close', 'retry', 'continue', 'submit-anyway', 'update:threshold', 'recheck']);
 
 // Number of similar roles shown in the review table before the "Show x additional roles" toggle appears
 const initialResultsLimit = 5;
@@ -288,7 +359,10 @@ const steps = computed(() => [
   },
   {
     key: 'submit',
-    label: i18n.global.t('governance.administer.roles.requestProgress.stepSubmit'),
+    // Pending shows what will happen later; active shows what is happening now
+    label: props.stepState.submit.state === 'active'
+      ? i18n.global.t('governance.administer.roles.requestProgress.stepSubmitActive')
+      : i18n.global.t('governance.administer.roles.requestProgress.stepSubmit'),
     state: props.stepState.submit.state,
     note: props.stepState.submit.note,
   },
@@ -311,11 +385,16 @@ const liveAnnouncement = computed(() => {
   return '';
 });
 
+// The failure was in the similarity check, not the submission: submission is
+// still possible, so the footer offers Submit anyway alongside Retry
+const isSimilarityError = computed(() => props.stepState.similarity.state === 'error'
+  && props.stepState.submit.state !== 'error');
+
 const outcomeMessage = computed(() => {
   if (props.outcome === 'success') {
     return i18n.global.t('governance.administer.roles.requestProgress.successBanner');
   }
-  if (props.stepState.similarity.state === 'error') {
+  if (isSimilarityError.value) {
     return i18n.global.t('governance.administer.roles.requestProgress.errorSimilarityBanner');
   }
   return i18n.global.t('governance.administer.roles.requestProgress.errorSubmitBanner');
@@ -349,18 +428,21 @@ const similarRolesFields = [
     align-items: flex-start;
     padding: 0.5rem 0;
 
-    // Vertical connector rail between consecutive step badges
-    &:not(:last-child) .fr-request-progress__badge {
+    // Vertical connector rail between consecutive step badges, anchored to the
+    // step so it stretches with the step's height (the review card can make the
+    // similarity step far taller than its badge): from the badge's bottom edge
+    // (0.5rem step padding + 24px badge) down to the next badge's top edge, which
+    // sits 0.5rem (its padding-top) below this step's bottom edge
+    &:not(:last-child) {
       position: relative;
 
       &::after {
         content: '';
         position: absolute;
-        top: 100%;
-        left: 50%;
+        top: calc(0.5rem + 24px);
+        bottom: -0.5rem;
+        left: 11px;
         width: 2px;
-        height: 1rem;
-        transform: translateX(-50%);
         background-color: $gray-300;
       }
     }
@@ -397,6 +479,10 @@ const similarRolesFields = [
   &__body {
     display: flex;
     flex-direction: column;
+    // Fill the step row so the review card and re-check toolbar hold the same
+    // width whether the (wide) table is shown or not; flex-grow defaults to 0,
+    // which shrinks this column — and everything in it — to content width
+    flex-grow: 1;
   }
 
   &__label {
@@ -422,21 +508,16 @@ const similarRolesFields = [
     }
   }
 
-  // Similar-roles review card below the step list
+  // Similar-roles review card nested inside the similarity step
   &__review-card {
     margin-top: 0.75rem;
+    margin-right: 0.5rem;
   }
 
-  &__review-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.25rem;
-    background-color: $gray-100;
-  }
-
-  &__review-title {
-    font-weight: 500;
+  &__toggle {
+    // Align with the step note's smaller text
+    font-size: 0.875rem;
+    vertical-align: baseline;
   }
 
   &__banner--success {
@@ -447,6 +528,34 @@ const similarRolesFields = [
   &__banner--error {
     background-color: rgba($danger, 0.1);
     color: theme-color-level('danger', 6);
+  }
+
+  // Threshold slider + re-check toolbar below the review table
+  &__recheck {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__threshold-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  &__threshold-slider {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  &__threshold-label {
+    font-weight: 500;
+    white-space: nowrap;
   }
 }
 </style>

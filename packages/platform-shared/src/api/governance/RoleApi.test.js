@@ -92,4 +92,10 @@ describe('Role API', () => {
     expect(get).toBeCalledWith('governance/role/roleId/draft/similarity');
     expect(BaseApi.generateIgaApi).toBeCalled();
   });
+
+  it('should pass the threshold as a query parameter when checking similarity on update', async () => {
+    await RoleApi.getRoleSimilarityById('roleId', 'draft', { threshold: 50 });
+    expect(get).toBeCalledWith('governance/role/roleId/draft/similarity?threshold=50');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+  });
 });

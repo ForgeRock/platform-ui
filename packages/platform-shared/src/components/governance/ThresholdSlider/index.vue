@@ -23,12 +23,14 @@ of the MIT license. See the LICENSE file for details. -->
   <VueSlider
     :enable-cross="false"
     :hide-label="props.hideLabels"
+    :disabled="props.disabled"
     :marks="props.marks"
     :max="props.max"
     :min="props.min"
     :model-value="props.value"
     height="8px"
     :interval="props.interval"
+    :aria-label="props.ariaLabel || undefined"
     @update:modelValue="$emit('input', $event)">
     <template
       v-if="showRangeLabels"
@@ -90,6 +92,16 @@ const props = defineProps({
   showRangeLabels: {
     type: Boolean,
     default: false,
+  },
+  // Explicitly forwarded to VueSlider because the component has multiple root
+  // nodes, so fallthrough attributes are disabled
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  ariaLabel: {
+    type: String,
+    default: '',
   },
 });
 const rangeLabels = [
