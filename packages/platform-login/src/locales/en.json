@@ -65,7 +65,7 @@
         "enrollHeadline": "Enrollment Complete",
         "authBody": "Your identity has been verified. Signing you in…",
         "enrollBody": "You have been enrolled successfully.",
-        "continue": "Continue to Dashboard"
+        "continue": "Continue"
       },
       "error": {
         "authHeadline": "Verification Failed",
