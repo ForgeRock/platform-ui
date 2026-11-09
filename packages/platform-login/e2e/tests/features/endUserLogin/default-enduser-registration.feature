@@ -1,4 +1,4 @@
-@cloud
+@cloud @forgeops
 @smoke
 Feature: Enduser Registration
 
