@@ -59,7 +59,9 @@ function mountComponent(props = {}) {
           props: ['items'],
         },
         Draggable: {
-          template: '<div><slot name="item" v-for="element in list" :element="element" /></div>',
+          // :key mirrors the real component's item-key so row identity is stable across removals,
+          // matching how the real Draggable patches rows
+          template: '<div><slot name="item" v-for="element in list" :key="element.value || element.key" :element="element" /></div>',
           props: ['list'],
         },
       },
@@ -337,5 +339,140 @@ describe('ColumnPicker', () => {
 
     const modal = wrapper.findComponent({ name: 'BModal' });
     expect(modal.props('okDisabled')).toBe(false);
+  });
+
+  it('renders an always-present sr-only status live region', () => {
+    const wrapper = mountComponent();
+
+    const region = wrapper.find('[role="status"]');
+    expect(region.exists()).toBe(true);
+    expect(region.classes()).toContain('sr-only');
+    expect(region.attributes('aria-live')).toBe('polite');
+    expect(region.attributes('aria-atomic')).toBe('true');
+    expect(region.text()).toBe('');
+  });
+
+  it('announces column removal and keeps focus on the next row remove button', async () => {
+    const wrapper = mountComponent({
+      activeColumns: [
+        { label: 'User Name', value: 'user.name' },
+        { label: 'Email', value: 'user.email' },
+      ],
+    });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    // Inline :ref arrows re-fire on every render, so spy at prototype level to catch the
+    // focus call on whichever element the registry currently holds for the next row
+    const focusSpy = jest.spyOn(HTMLElement.prototype, 'focus');
+    focusSpy.mockClear();
+
+    wrapper.vm.removeColumn({ label: 'User Name', value: 'user.name' });
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[role="status"]').text()).toBe('User Name column removed');
+    expect(focusSpy).toHaveBeenCalled();
+  });
+
+  it('moves focus to the empty state message when the last column is removed', async () => {
+    const wrapper = mountComponent({ activeColumns: [{ label: 'User Name', value: 'user.name' }] });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    const focusSpy = jest.spyOn(HTMLElement.prototype, 'focus');
+    focusSpy.mockClear();
+    wrapper.vm.removeColumn({ label: 'User Name', value: 'user.name' });
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[role="status"]').text()).toBe('User Name column removed');
+    expect(focusSpy).toHaveBeenCalled();
+    expect(focusSpy.mock.instances[0].classList.contains('active-column-empty-state')).toBe(true);
+  });
+
+  it('announces a moved column with its new position after drag reorder', async () => {
+    const wrapper = mountComponent();
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    // Real pendingColumns = [User Name]; simulate dragging it to position 1
+    wrapper.vm.onDragChange({ oldIndex: 1, newIndex: 0 });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[role="status"]').text()).toBe('User Name column moved to position 1');
+  });
+
+  it('does not announce a drag that drops the row back in the same position', async () => {
+    const wrapper = mountComponent({ activeColumns: [{ label: 'User Name', value: 'user.name' }] });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    wrapper.vm.onDragChange({ oldIndex: 0, newIndex: 0 });
+
+    expect(wrapper.find('[role="status"]').text()).toBe('');
+  });
+
+  it('announces the reset through the status region', async () => {
+    const wrapper = mountComponent({
+      activeColumns: [{ label: 'User Name', value: 'user.name' }],
+    });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    const resetBtn = wrapper.find('button.text-secondary');
+    await resetBtn.trigger('click');
+
+    expect(wrapper.find('[role="status"]').text()).toBe('Columns reset to default');
+  });
+
+  it('announces the fallback label for a key-only column removal', async () => {
+    const wrapper = mountComponent({
+      availableColumns: [{ key: 'col1', label: 'Column One' }],
+      activeColumns: [{ key: 'col1', label: 'Column One' }],
+    });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    wrapper.vm.removeColumn({ key: 'col1' });
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[role="status"]').text()).toBe('Col 1 column removed');
+  });
+
+  it('does not announce or move focus when removing a column that is not in the list', async () => {
+    const wrapper = mountComponent({ activeColumns: [{ label: 'User Name', value: 'user.name' }] });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    const focusSpy = jest.spyOn(HTMLElement.prototype, 'focus');
+    focusSpy.mockClear();
+    wrapper.vm.removeColumn({ label: 'Missing', value: 'missing' });
+    await wrapper.vm.$nextTick();
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find('[role="status"]').text()).toBe('');
+    expect(focusSpy).not.toHaveBeenCalled();
+    expect(wrapper.find('.active-column-list').text()).toContain('User Name');
+  });
+
+  it('clears a previous session status message when the dialog reopens', async () => {
+    const wrapper = mountComponent({
+      activeColumns: [
+        { label: 'User Name', value: 'user.name' },
+        { label: 'Email', value: 'user.email' },
+      ],
+    });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    wrapper.vm.removeColumn({ label: 'User Name', value: 'user.name' });
+    await wrapper.vm.$nextTick();
+    expect(wrapper.find('[role="status"]').text()).toBe('User Name column removed');
+
+    // Close and reopen: the old message must not greet the next session
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+    expect(wrapper.find('[role="status"]').text()).toBe('');
   });
 });

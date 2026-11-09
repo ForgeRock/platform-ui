@@ -81,7 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="d-flex align-items-center column-row">
                 <FrField
                   :value="isColumnActive(item)"
-                  :label="item.label || item.selectLabel || item.value || startCase(item.key)"
+                  :label="getColumnLabel(item)"
                   class="column-row__input w-100 p-2 mb-0"
                   type="checkbox"
                   @change="toggleColumn(item, $event)" />
@@ -108,7 +108,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="d-flex align-items-center column-row">
               <FrField
                 :value="isColumnActive(column)"
-                :label="column.label || column.selectLabel || column.value || startCase(column.key)"
+                :label="getColumnLabel(column)"
                 class="column-row__input w-100 p-2 mb-0"
                 type="checkbox"
                 @change="toggleColumn(column, $event)" />
@@ -121,10 +121,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="p-0 border-left"
         cols="7">
         <div class="column-picker-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
-          <h3
-            ref="activeColumnsHeader"
-            class="mb-0 h5"
-            tabindex="-1">
+          <h3 class="mb-0 h5">
             {{ $t('columnPicker.activeColumns') }}
           </h3>
           <BButton
@@ -139,6 +136,14 @@ of the MIT license. See the LICENSE file for details. -->
               name="replay"
               class="ml-1" />
           </BButton>
+        </div>
+        <!-- Persistent live region: screen readers only announce content added to a region that exists at page load (WCAG 4.1.3) -->
+        <div
+          class="sr-only"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true">
+          {{ statusAnnouncement }}
         </div>
         <div class="active-column-list pl-2 pr-4">
           <BTableSimple
@@ -163,12 +168,13 @@ of the MIT license. See the LICENSE file for details. -->
                         aria-hidden="true"
                         icon-class="mr-4"
                         name="drag_indicator" />
-                      <span>{{ element.label || element.listLabel || element.value || startCase(element.key) }}</span>
+                      <span>{{ getColumnLabel(element) }}</span>
                     </div>
                   </BTd>
                   <BTd class="py-2 pl-0 pr-2 border-0 flex-shrink-0">
                     <BButton
-                      :aria-label="$t('columnPicker.removeColumn', { columnName: element.label || element.listLabel || element.value || startCase(element.key) })"
+                      :ref="(el) => setRemoveButtonRef(getColumnId(element), el)"
+                      :aria-label="$t('columnPicker.removeColumn', { columnName: getColumnLabel(element) })"
                       variant="link"
                       class="text-dark p-0"
                       @click="removeColumn(element)">
@@ -181,6 +187,8 @@ of the MIT license. See the LICENSE file for details. -->
           </BTableSimple>
           <div
             v-else
+            ref="emptyState"
+            tabindex="-1"
             class="active-column-empty-state d-flex flex-column align-items-center justify-content-center text-muted py-5">
             <FrIcon
               aria-hidden="true"
@@ -220,6 +228,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import { getColumnId } from './utils';
+import i18n from '@/i18n';
 
 Draggable.compatConfig = { MODE: 3 };
 
@@ -276,8 +285,24 @@ const hiddenColumns = ref([]);
 // Element focused just before the modal was opened; focus is restored to it on close.
 let previouslyFocusedElement = null;
 const listSearchQuery = ref('');
-const activeColumnsHeader = ref(null);
+const emptyState = ref(null);
+const statusAnnouncement = ref('');
 const computedModalId = props.modalId || `column-picker-${uuidv4()}`;
+
+// Per-instance registry of rendered remove buttons; function refs fire with null on unmount,
+// so entries clean themselves up.
+const removeButtonRefs = new Map();
+
+/**
+ * Registers/unregisters a rendered remove button for focus targeting after removal.
+ * @param {String} columnId - Canonical id of the column the button belongs to.
+ * @param {Object} instance - Component public instance (BButton) or element the ref points at.
+ */
+function setRemoveButtonRef(columnId, instance) {
+  const el = instance && instance.$el ? instance.$el : instance;
+  if (el) removeButtonRefs.set(columnId, el);
+  else removeButtonRefs.delete(columnId);
+}
 
 // Reset search query when view mode changes
 watch(viewMode, () => {
@@ -303,6 +328,16 @@ const computedIgnoredColumnKeys = computed(() => {
  * @returns {Boolean} - True if the column is not ignored.
  */
 const isIgnored = (column) => computedIgnoredColumnKeys.value.includes(column.key) || computedIgnoredColumnKeys.value.includes(column.value);
+
+/**
+ * Resolves a column's display name, shared by the row text, remove-button aria-label, search filter  and status announcements
+ * so every surface names a column identically, including key-only columns with no label.
+ * @param {Object} column - The column object.
+ * @returns {String} The column's display label.
+ */
+function getColumnLabel(column) {
+  return column.label || column.listLabel || column.selectLabel || column.value || startCase(column.key);
+}
 
 /**
  * Single normalisation pass over availableColumns. Produces an array of
@@ -368,7 +403,7 @@ const filteredAvailableColumns = computed(() => {
   if (!listSearchQuery.value) return allAvailableColumns.value;
   const query = listSearchQuery.value.toLowerCase().replace(/_/g, ' ');
   return allAvailableColumns.value.filter((column) => {
-    const label = (column.label || column.selectLabel || column.value || startCase(column.key) || '').toLowerCase();
+    const label = getColumnLabel(column).toLowerCase();
     return label.includes(query);
   });
 });
@@ -393,7 +428,9 @@ function isColumnActive(column) {
 }
 
 /**
- * Toggles a column in or out of the pending selection.
+ * Toggles a column in or out of the pending selection. Removals go through
+ * {@link removeColumn} to get the announcement and focus handling; additions
+ * are silent because the checkbox state change is announced natively.
  * @param {Object} column - The column to toggle.
  * @param {Boolean} active - Whether the column should be active.
  */
@@ -410,29 +447,49 @@ function toggleColumn(column, active) {
 }
 
 /**
- * Removes a column from the pending selection.
+ * Removes a column from the pending selection, announces the removal and moves focus to the next
+ * row's remove button (previous row when the last one was removed), or the empty-state message
+ * when the list empties — keeping focus in context after the clicked button unmounts.
  * @param {Object} column - The column to remove.
  */
 function removeColumn(column) {
+  const index = pendingColumns.value.findIndex((c) => getColumnId(c) === getColumnId(column));
+  // Nothing to remove (stale object or double activation): keep state and focus untouched
+  if (index === -1) return;
+  statusAnnouncement.value = i18n.global.t('columnPicker.columnRemoved', { columnName: getColumnLabel(column) });
   toggleColumn(column, false);
-  nextTick(() => activeColumnsHeader.value?.focus());
+  nextTick(() => {
+    const next = pendingColumns.value[Math.min(index, pendingColumns.value.length - 1)];
+    const focusTarget = next ? removeButtonRefs.get(getColumnId(next)) : emptyState.value;
+    if (focusTarget) {
+      focusTarget.focus();
+    }
+  });
 }
 
 /**
- * Handles the change event from the draggable component.
+ * Handles the end of a drag reorder: announces the moved column's new position and applies
+ * the change when the consumer wants on-change behavior. An out-of-bounds newIndex
+ * (SortableJS can report one for a drop outside the list) announces nothing by design.
+ * @param {Object} evt - Draggable end event, carrying the old and new index of the moved row.
  */
-function onDragChange() {
+function onDragChange(evt) {
+  const { oldIndex, newIndex } = evt;
+  if (oldIndex !== newIndex && pendingColumns.value[newIndex]) {
+    statusAnnouncement.value = i18n.global.t('columnPicker.columnMoved', { columnName: getColumnLabel(pendingColumns.value[newIndex]), position: newIndex + 1 });
+  }
   if (props.moveAndReorderItemOnchange) onApply();
 }
 
 /**
- * Resets the pending columns to the default/initial columns
+ * Resets the pending columns to the default/initial columns and announces the reset.
  */
 function resetToDefault() {
   const availableKeys = allAvailableColumns.value.map((c) => getColumnId(c));
   pendingColumns.value = cloneDeep(props.defaultColumns)
     .filter((c) => !isIgnored(c))
     .filter((c) => availableKeys.includes(getColumnId(c)));
+  statusAnnouncement.value = i18n.global.t('columnPicker.columnsReset');
   if (props.moveAndReorderItemOnchange) onApply();
 }
 
@@ -471,6 +528,8 @@ watch(() => props.show, (isVisible) => {
     pendingColumns.value = cloneDeep(props.activeColumns)
       .filter((c) => !isIgnored(c))
       .filter((c) => availableKeys.includes(getColumnId(c)));
+    // A previous dialog session's message must not greet the next open
+    statusAnnouncement.value = '';
   }
 }, { immediate: true });
 

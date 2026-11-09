@@ -4229,6 +4229,9 @@
     "noColumnsSelected": "No columns selected",
     "reset": "Reset",
     "removeColumn": "Remove {columnName} column",
+    "columnRemoved": "{columnName} column removed",
+    "columnMoved": "{columnName} column moved to position {position}",
+    "columnsReset": "Columns reset to default",
     "categories": "Categories",
     "list": "List"
   },
