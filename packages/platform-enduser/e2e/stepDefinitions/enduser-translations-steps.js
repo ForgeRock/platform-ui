@@ -70,8 +70,9 @@ after(() => {
   if (Cypress.spec.relative.includes('enduser-translations.feature')) {
     cy.logout();
     cy.loginAsAdminCachedForCucumber().then(() => {
-      // Delete locale overrides for all languages added on the test
-      deleteOverrides(LOCALES.ja.code);
+      // Delete locale overrides for all languages added on the test.
+      // Tolerate 404s: when the Japanese scenario is filtered out, ja was never created.
+      deleteOverrides(LOCALES.ja.code, false);
       deleteOverrides(LOCALES.fr.code, false);
       deleteOverrides(LOCALES.en.code, false);
 

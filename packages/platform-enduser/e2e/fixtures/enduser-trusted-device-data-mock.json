@@ -42,10 +42,6 @@
                     "timezone": 300
                 }
             },
-            "location": {
-                "latitude": 6.2593346,
-                "longitude": -75.5670909
-            },
             "lastSelectedDate": 1739491055663,
             "alias": "Mac (Browser)",
             "recoveryCodes": []
