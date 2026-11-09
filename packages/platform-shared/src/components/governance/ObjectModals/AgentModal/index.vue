@@ -116,7 +116,7 @@ of the MIT license. See the LICENSE file for details. -->
         preserve-order
         :schema="mappedSchema"
         @toggle-collapse="isVisible.attributes = !isVisible.attributes" />
-      <template v-for="resource in agentResourceProps">
+      <template v-for="resource in resourcesDevEnabled ? agentResourceProps : []">
         <BCard
           v-if="agentAccountId"
           :key="resource.type"
@@ -215,7 +215,7 @@ of the MIT license. See the LICENSE file for details. -->
                 v-for="actor in custodianActors"
                 class="mb-2"
                 :key="actor.id"
-                sm="3">
+                :sm="stackCustodiansVertically ? 12 : 3">
                 <FrUserDetails :user-object="actor" />
               </BCol>
             </BRow>
@@ -319,6 +319,12 @@ export default {
       type: Object,
       required: true,
     },
+    // Stacked one-per-row layout for contexts with narrow columns (request
+    // details cards); the default keeps the 4-across grid
+    stackCustodiansVertically: {
+      type: Boolean,
+      default: false,
+    },
     modalId: {
       type: String,
       default: 'CertificationTaskAgentModal',
@@ -364,6 +370,11 @@ export default {
   computed: {
     account() {
       return this.grant?.account || {};
+    },
+    // Resource tables (guardrails, tools, knowledge...) are dev-only until the
+    // resources ship — hidden from full releases, and not fetched when hidden
+    resourcesDevEnabled() {
+      return this.$store?.state?.SharedStore?.governanceDevEnabled ?? false;
     },
     agentDisplayName() {
       return this.grant?.descriptor?.idx?.['/account']?.displayName || '';
@@ -464,12 +475,38 @@ export default {
     getApplicationLogo,
     onImageError,
     /**
-     * Fetch the account's custodians through the agent custodians endpoint,
-     * which resolves the glossary's bare managed/user refs into display users
-     * (same source as the details page's Custodians tab).
+     * Resolve the account's custodians. When the grant carries the stamped
+     * actor refs AND their resolved display data (request records via
+     * expandPaths=glossary.idx, cert items fetched by id), custodians render
+     * from content — no agent-API call, which the viewer may not be authorized
+     * for. A stamped glossary without actors means no custodians. Unresolved
+     * refs (empty or partial _displayData) fall back to the custodians
+     * endpoint, which resolves bare managed/user refs into users.
      */
     async resolveCustodians() {
       if (!this.agentAccountId) return;
+      const actors = this.grant?.glossary?.idx?.['/account']?.actors
+        || this.grant?.glossary?.actors
+        || [];
+      const displayData = this.grant?._displayData;
+      const hasResolvedDisplayData = displayData
+        && Object.keys(displayData).length > 0
+        && actors.every((actorRef) => displayData[actorRef]);
+      if (this.grant?.glossary && (actors.length === 0 || hasResolvedDisplayData)) {
+        this.custodianActors = actors.map((actorRef) => {
+          const resolved = displayData?.[actorRef] || {};
+          const fullName = i18n.global.t('common.userFullName', {
+            givenName: resolved.givenName || '',
+            sn: resolved.sn || '',
+          }).trim();
+          return {
+            id: actorRef.split('/').pop(),
+            ...resolved,
+            fullName: fullName || resolved.name || actorRef,
+          };
+        });
+        return;
+      }
       try {
         const { data } = await getAgentCustodians(this.agentAccountId, { pageSize: 100, pageNumber: 0 });
         this.custodianActors = (data?.result || []).map((custodian) => ({
@@ -491,7 +528,7 @@ export default {
      */
     async loadResources() {
       this.resourceData = {};
-      if (!this.agentAccountId) return;
+      if (!this.agentAccountId || !this.resourcesDevEnabled) return;
       await Promise.all(this.agentResourceProps.map(async (resource) => {
         try {
           this.resourceData[resource.type] = { isLoading: true };

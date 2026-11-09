@@ -139,7 +139,7 @@ describe('Agents Unit', () => {
     await rowToClick.trigger('click');
 
     expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({
-      params: expect.objectContaining({ agentId: 'system/Target/User/103' }),
+      params: expect.objectContaining({ agentId: 'system/Target/User/103', tab: 'details' }),
     }));
   });
 });

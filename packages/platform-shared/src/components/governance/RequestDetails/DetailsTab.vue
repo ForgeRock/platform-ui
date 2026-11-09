@@ -153,6 +153,8 @@ const isInitialized = ref(false);
 const isOOTBNoFormRequestType = computed(() => OOTB_NO_FORM_REQUEST_TYPES.some((type) => type?.value === requestType?.value));
 const isRoleRequestType = computed(() => ['createRole', 'modifyRole', 'publishRole', 'deleteRole'].includes(requestType.value));
 const isOotbNoFormRequestType = computed(() => OOTB_NO_FORM_REQUEST_TYPES.some((type) => type?.value === requestType.value));
+// Agent requests resolve their target in RequestedItemCard; the glossary schema fetch only feeds application/entitlement/role cards
+const isAgentRequestType = computed(() => ['createAgent', 'modifyAgent', 'deleteAgent'].includes(requestType.value));
 /**
  * Retrieves the details for a given item.
  * @param {Object} item - The item for which to retrieve the details.
@@ -175,6 +177,7 @@ function getDetails(item) {
  * Get the role glossary schema.
  */
 async function getSchemaData() {
+  if (isAgentRequestType.value) return;
   try {
     const glossaryData = await getGlossarySchema();
     glossarySchema.value = {

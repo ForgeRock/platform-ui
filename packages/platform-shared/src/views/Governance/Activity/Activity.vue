@@ -107,6 +107,10 @@ import activityConstants from './activityConstants';
 import i18n from '@/i18n';
 
 const props = defineProps({
+  activityUrl: {
+    type: String,
+    default: '',
+  },
   objectId: {
     type: String,
     default: '',
@@ -222,24 +226,27 @@ async function queryActivity(params = {}) {
   lastTableParams.value = params;
   activityIsLoading.value = true;
   const queryParams = { ...params };
-  const conditions = [];
-  if (props.objectId) {
-    conditions.push(`object_id eq "${props.objectId}"`);
-  }
-  if (props.objectTypes.length === 1) {
-    conditions.push(`object_type eq "${props.objectTypes[0]}"`);
-  } else if (props.objectTypes.length > 1) {
-    const typeConditions = props.objectTypes.map((t) => `object_type eq "${t}"`).join(' or ');
-    conditions.push(`(${typeConditions})`);
-  }
 
-  const allConditions = [
-    conditions.length ? `(${conditions.join(' and ')})` : null,
-    queryParams.queryFilter || null,
-  ].filter(Boolean);
+  if (!props.activityUrl) {
+    const conditions = [];
+    if (props.objectId) {
+      conditions.push(`object_id eq "${props.objectId}"`);
+    }
+    if (props.objectTypes.length === 1) {
+      conditions.push(`object_type eq "${props.objectTypes[0]}"`);
+    } else if (props.objectTypes.length > 1) {
+      const typeConditions = props.objectTypes.map((t) => `object_type eq "${t}"`).join(' or ');
+      conditions.push(`(${typeConditions})`);
+    }
 
-  if (allConditions.length) {
-    queryParams.queryFilter = allConditions.join(' and ');
+    const allConditions = [
+      conditions.length ? `(${conditions.join(' and ')})` : null,
+      queryParams.queryFilter || null,
+    ].filter(Boolean);
+
+    if (allConditions.length) {
+      queryParams.queryFilter = allConditions.join(' and ');
+    }
   }
 
   if (queryParams.sortBy) {
@@ -256,7 +263,7 @@ async function queryActivity(params = {}) {
 
   const finalQueryParams = omit(queryParams, ['sortBy', 'sortDir', 'grantType', 'paginationPage']);
   try {
-    const { data } = await getActivityLogs(finalQueryParams);
+    const { data } = await getActivityLogs(finalQueryParams, props.activityUrl || undefined);
     activityLogList.value = data?.result?.map(transformActivityLog);
     activityLogTotalCount.value = data?.totalCount;
   } catch (e) {

@@ -5,13 +5,76 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
+import { loadAgentViewConfig } from '@forgerock/platform-shared/src/utils/governance/agentView';
 import RequestedItemCard from './RequestedItemCard';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils');
-jest.mock('@forgerock/platform-shared/src/utils/applicationImageResolver');
+jest.mock('@forgerock/platform-shared/src/utils/applicationImageResolver', () => ({
+  onImageError: jest.fn(),
+  resolveImage: jest.fn((image) => `https://cdn.forgerock.com/platform/app-templates/images/${image}`),
+}));
+// buildAgentView resolves the platform label/icon through the agent config the
+// card loads on mount; tests override the resolved config per-case
+jest.mock('@forgerock/platform-shared/src/utils/governance/agentView', () => ({
+  ...jest.requireActual('@forgerock/platform-shared/src/utils/governance/agentView'),
+  loadAgentViewConfig: jest.fn().mockResolvedValue({
+    agentMappings: {},
+    agentTemplateSources: {},
+    agentTemplateIcons: {},
+    agentTemplateDisplayNames: {},
+  }),
+}));
+// The card renders agent requests purely from stamped request content, but the
+// mounted AgentModal destructures getAgentConfig at import time — a mock that
+// strips AgentApi exports breaks it. getAgentConfig is rejected like the real
+// axios mock does on un-mocked calls, keeping the modal on its static fallback
+// config without console-error snapshot noise.
+jest.mock('@forgerock/platform-shared/src/api/governance/AgentApi', () => ({
+  ...jest.requireActual('@forgerock/platform-shared/src/api/governance/AgentApi'),
+  getAgentConfig: jest.fn().mockRejectedValue(new Error('config unavailable')),
+  // the mounted modal resolves custodians when the grant lacks _displayData
+  getAgentCustodians: jest.fn().mockResolvedValue({ data: { result: [], totalCount: 0 } }),
+}));
+
+// Mirrors the shape the backend stamps on agent requests (see a real
+// modifyAgent record): agent fields top-level, display name under
+// descriptor.idx./account.displayName, bare glossary
+const agentAccountRecord = {
+  id: 'M1QX7GSZWW',
+  agentId: 'M1QX7GSZWW',
+  agentName: 'ProcyonFixtureCollaborator',
+  description: '',
+  foundationModel: 'amazon.nova-lite-v1:0',
+  state: 'ACTIVE',
+  platform: 'awsbedrock',
+};
+
+const agentRequest = {
+  requestType: 'modifyAgent',
+  request: {
+    agent: { agentId: 'app-1/Agent/M1QX7GSZWW', applicationId: 'app-1' },
+  },
+  account: agentAccountRecord,
+  application: {
+    id: 'app-1',
+    name: 'AWS Bedrock Agents',
+    templateName: 'aws.bedrock',
+  },
+  descriptor: {
+    idx: {
+      '/account': { displayName: 'ProcyonFixtureCollaborator' },
+    },
+  },
+  glossary: {
+    idx: {
+      '/account': { accountType: 'agent' },
+    },
+  },
+};
 
 const entitlementRequest = {
   requestType: 'entitlementGrant',
@@ -44,6 +107,7 @@ const setup = (propsData = {}) => mount(RequestedItemCard, {
       FrAccountModal: true,
       FrEntitlementModal: true,
       FrRoleModal: true,
+      FrAgentModal: true,
     },
   },
   props: { ...propsData },
@@ -52,6 +116,15 @@ const setup = (propsData = {}) => mount(RequestedItemCard, {
 describe('RequestedItemCard', () => {
   beforeEach(() => {
     ({ modalShow } = mockModal());
+    jest.clearAllMocks();
+    AgentApi.getAgentConfig.mockRejectedValue(new Error('config unavailable'));
+    AgentApi.getAgentCustodians.mockResolvedValue({ data: { result: [], totalCount: 0 } });
+    loadAgentViewConfig.mockResolvedValue({
+      agentMappings: {},
+      agentTemplateSources: {},
+      agentTemplateIcons: {},
+      agentTemplateDisplayNames: {},
+    });
   });
 
   describe('entitlement request type', () => {
@@ -151,6 +224,102 @@ describe('RequestedItemCard', () => {
       const wrapper = setup({ request: roleRequest, requestType: 'roleRemove' });
       expect(wrapper.text()).toContain('Role Information');
       expect(wrapper.text()).toContain('Admin Role');
+    });
+  });
+
+  describe('agent request type', () => {
+    it('renders the agent information header', () => {
+      const wrapper = setup({ request: agentRequest, requestType: 'modifyAgent' });
+      expect(wrapper.text()).toContain('Agent Information');
+    });
+
+    it('displays the agent name from the stamped request content', () => {
+      const wrapper = setup({ request: agentRequest, requestType: 'modifyAgent' });
+      expect(wrapper.text()).toContain('ProcyonFixtureCollaborator');
+    });
+
+    it('makes no agent API calls on mount', () => {
+      // request viewers may lack agent read permissions — everything renders
+      // from the request record
+      setup({ request: agentRequest, requestType: 'modifyAgent' });
+      expect(AgentApi.getAgentCustodians).not.toHaveBeenCalled();
+    });
+
+    it('shows the blank indicator when the request carries no agent name at all', () => {
+      const wrapper = setup({
+        request: {
+          ...agentRequest,
+          account: {},
+          descriptor: {},
+          application: {},
+        },
+        requestType: 'deleteAgent',
+      });
+      expect(wrapper.text()).toContain('--');
+    });
+
+    it('renders the platform entry derived like the cert platform column', () => {
+      const wrapper = setup({ request: agentRequest, requestType: 'modifyAgent' });
+      const text = wrapper.text();
+      // buildAgentView: templateName (aws.bedrock) wins over aiAgentSource; the
+      // test env loads no agent config, so the label falls back to the raw id
+      expect(text).toContain('aws.bedrock');
+      expect(wrapper.find('img.size-24').exists()).toBe(false);
+      // no template icon resolved — the generic agent icon renders instead
+      expect(wrapper.find('.fr-icon').exists() || wrapper.text()).toContain('smart_toy');
+    });
+
+    it('renders the platform entry with the template icon when the config carries one', async () => {
+      loadAgentViewConfig.mockResolvedValue({
+        agentMappings: {},
+        agentTemplateSources: {},
+        agentTemplateIcons: { 'aws.bedrock': 'bedrock-icon.svg' },
+        agentTemplateDisplayNames: { 'aws.bedrock': 'AWS Bedrock' },
+      });
+      const wrapper = setup({ request: agentRequest, requestType: 'modifyAgent' });
+      await flushPromises();
+
+      expect(wrapper.text()).toContain('AWS Bedrock');
+      const icon = wrapper.find('img.size-24');
+      expect(icon.exists()).toBe(true);
+      expect(icon.attributes('alt')).toBe('AWS Bedrock');
+    });
+
+    it('opens the agent modal when the agent name is clicked', async () => {
+      const wrapper = setup({ request: agentRequest, requestType: 'modifyAgent' });
+      const agentBtn = wrapper.findAll('button').find((b) => b.text().includes('ProcyonFixtureCollaborator'));
+      await agentBtn.trigger('click');
+      expect(modalShow).toHaveBeenCalledWith('requestDetailsAgentModal');
+    });
+
+    it('renders the agent modal with the stamped fields adapted into the line-item grant shape', () => {
+      const wrapper = setup({ request: agentRequest, requestType: 'createAgent' });
+      const agentModal = wrapper.findComponent({ name: 'AgentModal' });
+      expect(agentModal.exists()).toBe(true);
+      // the modal reads account fields, display name, template and the agent id
+      // through the grant — mirror of the cert line-item shape
+      expect(agentModal.props('grant')).toEqual({
+        account: agentAccountRecord,
+        application: agentRequest.application,
+        descriptor: agentRequest.descriptor,
+        glossary: agentRequest.glossary,
+        _displayData: {},
+        keys: { accountId: 'app-1/Agent/M1QX7GSZWW' },
+      });
+      expect(agentModal.props('modalId')).toBe('requestDetailsAgentModal');
+    });
+
+    it('does not render the agent modal when the request carries no stamped account', () => {
+      const wrapper = setup({
+        request: { ...agentRequest, account: undefined },
+        requestType: 'modifyAgent',
+      });
+      expect(wrapper.findComponent({ name: 'AgentModal' }).exists()).toBe(false);
+    });
+
+    it('does not render agent content for entitlement request types', () => {
+      const wrapper = setup({ request: entitlementRequest, requestType: 'entitlementGrant' });
+      expect(wrapper.text()).not.toContain('Agent Information');
     });
   });
 });

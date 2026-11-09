@@ -80,7 +80,7 @@ of the MIT license. See the LICENSE file for details. -->
             :require-request-justification="requireRequestJustification" />
         </BTab>
         <BTab
-          v-for="group in resourceGroups"
+          v-for="group in visibleResourceGroups"
           :key="group.key"
           lazy>
           <template #title>
@@ -167,6 +167,8 @@ const props = defineProps({
 });
 const store = useStore();
 const governanceDevEnabled = computed(() => props.isLcm && (store?.state?.SharedStore?.governanceDevEnabled ?? false));
+// Resource group tabs (Data & Tools / Security) are dev-only until the resources ship
+const resourceGroupsDevEnabled = computed(() => (store?.state?.SharedStore?.governanceDevEnabled ?? false));
 const { setBreadcrumb } = useBreadcrumb();
 const route = useRoute();
 const {
@@ -265,6 +267,8 @@ function buildResourceGroups(resourceProps) {
     .filter((group) => group.resources.length > 0);
 }
 
+const visibleResourceGroups = computed(() => (resourceGroupsDevEnabled.value ? resourceGroups.value : []));
+
 onMounted(async () => {
   try {
     if (props.isLcm) {
@@ -316,7 +320,8 @@ onMounted(async () => {
       showErrorMessage(agentResult.reason, i18n.global.t('governance.agents.failedToLoad'));
     }
 
-    const tabKeys = ['details', 'access', ...resourceGroups.value.map((g) => g.key), 'activity'];
+    // Only flag-enabled groups are rendered — deep links must not activate a hidden tab.
+    const tabKeys = ['details', 'access', ...visibleResourceGroups.value.map((g) => g.key), 'activity'];
     // Accept legacy per-resource-type tab params by mapping them to their group.
     const requestedTab = RESOURCE_TYPE_TO_GROUP[route.params.tab] || route.params.tab;
     const matchedTab = tabKeys.findIndex((key) => key === requestedTab);

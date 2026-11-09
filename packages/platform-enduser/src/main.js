@@ -221,6 +221,8 @@ const startApp = async () => {
       store.commit('setGovRoleMining', userInfoData);
       store.commit('setGovAccessRequests', userInfoData);
       store.commit('setGovCertAdmin', userInfoData);
+      // agent lcm
+      store.commit('setGovLcmAgent', userInfoData);
     }
 
     overrideTranslations(i18n, 'enduser');

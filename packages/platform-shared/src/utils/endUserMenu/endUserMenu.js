@@ -246,8 +246,22 @@ export function generateEndUserMenuItems({
         return undefined; // Skip LCM menu item if governance is not enabled
       }
 
+      // Backfill LCM sub-items the theme has never seen (added by newer releases
+      // after the theme was last saved) so they aren't lost to stale
+      // selectedSubItems. Curated-out sub-items stay excluded: they exist in the
+      // theme's own subItems list, so only ids unknown to the theme are merged.
+      const presentIds = new Set((finalSubItems || []).map((s) => s.id));
+      const themeKnownIds = new Set((menuItem.subItems || []).map((s) => s.id));
+      const defaultLcmItem = DEFAULT_MENU_ITEMS.find((item) => item.id === 'lcm');
+      const missingSubItems = (defaultLcmItem?.subItems || [])
+        .filter((sub) => !presentIds.has(sub.id) && !themeKnownIds.has(sub.id) && flags[LCM_SUBITEMS_ID_FLAG_MAP[sub.id]])
+        .map(processSubItemForEndUser);
+      if (missingSubItems.length) {
+        finalSubItems = [...(finalSubItems || []), ...missingSubItems];
+      }
+
       // If LCM menu item is present, ensure it has eligible subItems populated
-      finalSubItems = finalSubItems.filter((subItem) => {
+      finalSubItems = (finalSubItems || []).filter((subItem) => {
         const flag = LCM_SUBITEMS_ID_FLAG_MAP[subItem.id];
         return flags[flag]; // Only include subItems if the corresponding flag is true
       });

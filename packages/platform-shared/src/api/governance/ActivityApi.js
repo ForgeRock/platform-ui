@@ -8,17 +8,18 @@
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
-const activityUrl = 'governance/activity';
+const defaultActivityUrl = 'governance/activity';
 
 /**
  * Get a list of activity logs.
  *
  * @param {Object} queryParams - The query parameters to include in the request.
+ * @param {string} [url] - Optional URL override (e.g. 'governance/agent/<id>/activity').
  * @returns {Promise} - A promise that resolves to a list of activity logs.
  */
-export async function getActivityLogs(queryParams = {}) {
+export async function getActivityLogs(queryParams = {}, url = defaultActivityUrl) {
   const encodedQueryParams = encodeQueryString(queryParams);
-  return generateIgaApi().get(`${activityUrl}${encodedQueryParams}`);
+  return generateIgaApi().get(`${url}${encodedQueryParams}`);
 }
 
 /**

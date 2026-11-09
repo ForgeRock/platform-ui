@@ -3700,6 +3700,7 @@
         "applicationInformation": "Application Information",
         "entitlementInformation": "Entitlement Information",
         "roleInformation": "Role Information",
+        "agentInformation": "Agent Information",
         "failed": "Failed",
         "toggleErrorDetails": "Toggle error details",
         "errorDetails": "Error details"

@@ -38,6 +38,7 @@ export default createStore({
     // governance lcm settings
     govLcmSettings: {},
     govLcmEnabled: false,
+    govLcmAgent: false,
     govLcmEntitlement: false,
     govLcmUser: false,
     govLcmRole: false,
@@ -137,6 +138,11 @@ export default createStore({
     setGovLcmEntitlement(state, { createEntitlement, viewEntitlement }) {
       state.govLcmEntitlement = (createEntitlement || viewEntitlement);
       if (state.govLcmEntitlement) state.govLcmEnabled = true;
+    },
+
+    setGovLcmAgent(state, { groups }) {
+      state.govLcmAgent = Array.isArray(groups) && groups.includes('agent-admin');
+      if (state.govLcmAgent) state.govLcmEnabled = true;
     },
 
     setGovLcmUser(state, { viewUser }) {

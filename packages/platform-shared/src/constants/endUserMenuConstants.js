@@ -12,6 +12,7 @@ const END_USER_MENU_CONSTANTS = Object.freeze({
   DIVIDER: 'divider',
   GROUP: 'group',
   INTERNAL_ROLE: 'internal/role',
+  LCM_AGENTS: 'lcmAgents',
   LCM_USERS: 'lcmUsers',
   LCM_ENTITLEMENTS: 'lcmEntitlements',
   LCM_ROLES: 'lcmRoles',
@@ -163,6 +164,10 @@ export const DEFAULT_MENU_ITEMS = [
     available: (flag) => flag.ifGovernance,
     subItems: [
       {
+        id: END_USER_MENU_CONSTANTS.LCM_AGENTS,
+        routeTo: { name: 'AdministerAgents' },
+      },
+      {
         id: END_USER_MENU_CONSTANTS.LCM_USERS,
         routeTo: { name: 'AdministerUsers' },
       },
@@ -190,6 +195,7 @@ export const DEFAULT_MENU_ITEMS = [
  *  on which they depend for their visibility.
 */
 export const LCM_SUBITEMS_ID_FLAG_MAP = {
+  [END_USER_MENU_CONSTANTS.LCM_AGENTS]: 'govLcmAgent',
   [END_USER_MENU_CONSTANTS.LCM_USERS]: 'govLcmUser',
   [END_USER_MENU_CONSTANTS.LCM_ENTITLEMENTS]: 'govLcmEntitlement',
   [END_USER_MENU_CONSTANTS.LCM_ROLES]: 'govLcmRole',

@@ -123,8 +123,12 @@ function buildObjectTypeProperty(attribute, {
  */
 export function buildAgentObjectType(subtypeSchema, source) {
   const accountClass = subtypeSchema?.objectClasses?.find((objectClass) => objectClass.name === '__ACCOUNT__');
-  const attributes = accountClass?.attributes || [];
   const { idAttribute, nameAttribute } = accountClass || {};
+  // returnedByDefault: false attributes are internal connector plumbing the
+  // object type must not expose — the structural id/name attributes are exempt
+  const attributes = (accountClass?.attributes || [])
+    .filter((attribute) => attribute.returnedByDefault !== false
+      || attribute.name === idAttribute || attribute.name === nameAttribute);
 
   const isPrivilege = source === 'privilege';
   const promotedAttributes = isPrivilege ? ['agentId', 'agentName'] : [];

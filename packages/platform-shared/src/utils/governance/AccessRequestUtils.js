@@ -131,9 +131,17 @@ export const requestTypes = {
     label: 'governance.accessRequest.requestTypes.deleteUser',
     value: 'deleteUser',
   },
+  CREATE_AGENT: {
+    label: 'governance.accessRequest.requestTypes.createAgent',
+    value: 'createAgent',
+  },
   MODIFY_AGENT: {
     label: 'governance.accessRequest.requestTypes.modifyAgent',
     value: 'modifyAgent',
+  },
+  DELETE_AGENT: {
+    label: 'governance.accessRequest.requestTypes.deleteAgent',
+    value: 'deleteAgent',
   },
   ROLE_GRANT: {
     label: 'governance.accessRequest.requestTypes.roleGrant',
@@ -161,6 +169,9 @@ export const OOTB_NO_FORM_REQUEST_TYPES = [
   requestTypes.ENTITLEMENT_GRANT,
   requestTypes.ENTITLEMENT_REVOKE,
   requestTypes.EXTEND_END_DATE,
+  requestTypes.CREATE_AGENT,
+  requestTypes.MODIFY_AGENT,
+  requestTypes.DELETE_AGENT,
 ];
 
 export function isSupportedRequestType(requestType) {

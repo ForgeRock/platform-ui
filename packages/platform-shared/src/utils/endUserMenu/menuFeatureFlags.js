@@ -20,6 +20,7 @@ export function generateFeatureFlags(store) {
 
   const {
     govLcmEnabled,
+    govLcmAgent,
     govLcmUser,
     govLcmEntitlement,
     govLcmRole,
@@ -45,6 +46,7 @@ export function generateFeatureFlags(store) {
     autoReportsEnabled,
     governanceAgentsEnabled,
     govLcmEnabled,
+    govLcmAgent,
     govLcmEntitlement,
     govLcmRole,
     govLcmUser,

@@ -96,6 +96,24 @@ const router = createRouter({
           ],
         },
         {
+          path: 'agents',
+          children: [
+            {
+              path: '',
+              name: 'AdministerAgents',
+              component: () => import('@/views/governance/LCM/Agents/AgentList'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmAgent]),
+            },
+            {
+              path: ':agentId/:tab',
+              name: 'AdministerAgentDetails',
+              component: () => import('@forgerock/platform-shared/src/views/Governance/Agents/AgentsDetails/AgentsDetails'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmAgent]),
+              props: { readOnly: false, isEndUser: false, isLcm: true },
+            },
+          ],
+        },
+        {
           path: 'roles',
           children: [
             {
@@ -330,7 +348,7 @@ const router = createRouter({
     },
     {
       path: '/my-agents',
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceAgentsEnabled]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceAgentsEnabled]),
       meta: { authenticate: true },
       children: [
         {
@@ -339,7 +357,9 @@ const router = createRouter({
           component: () => import('@/views/governance/Directory/Agents/Agents'),
         },
         {
-          path: ':agentId',
+          // :tab is optional so pre-existing /my-agents/<id> deep links still
+          // resolve (details tab is the component's default)
+          path: ':agentId/:tab?',
           name: 'AgentsDetails',
           component: () => import('@forgerock/platform-shared/src/views/Governance/Agents/AgentsDetails/AgentsDetails'),
           props: { readOnly: true, isEndUser: true },

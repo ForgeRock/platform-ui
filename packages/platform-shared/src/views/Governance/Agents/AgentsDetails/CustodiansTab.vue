@@ -4,9 +4,17 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
-    class="border-0 shadow-none"
     no-body>
-    <BCardHeader class="p-0">
+    <BCardHeader
+      v-if="readOnly"
+      class="p-0">
+      <h5 class="p-3 mb-0">
+        {{ $t('governance.agents.custodians') }}
+      </h5>
+    </BCardHeader>
+    <BCardHeader
+      v-else
+      class="p-0">
       <BButtonToolbar class="justify-content-between p-3 border-bottom-0">
         <div>
           <BButton
@@ -30,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </BButtonToolbar>
     </BCardHeader>
-    <div v-if="isLoading">
+    <div v-if="isLoading || isSaving">
       <FrSpinner class="py-5" />
     </div>
     <template v-else>
@@ -46,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-0"
         responsive
         no-select-on-click
-        selectable
+        :selectable="!readOnly"
         :fields="fields"
         :items="custodians"
         @row-selected="onRowSelected">
@@ -103,6 +111,7 @@ of the MIT license. See the LICENSE file for details. -->
 
   <!-- Add Custodians Modal -->
   <BModal
+    v-if="!readOnly"
     id="addCustodiansModal"
     no-close-on-backdrop
     no-close-on-esc
@@ -114,85 +123,18 @@ of the MIT license. See the LICENSE file for details. -->
     :title="$t('governance.agents.custodiansTab.addCustodians')"
     @ok="addCustodians"
     @hidden="onAddModalHidden">
-    <BListGroup
-      v-if="selectedUsers.length"
-      class="mb-3">
-      <BListGroupItem
-        v-for="user in selectedUsers"
-        :key="user._id"
-        class="d-flex align-items-center justify-content-between">
-        <BMedia
-          class="align-items-center"
-          no-body>
-          <BImg
-            class="mr-3 rounded-circle size-28"
-            :alt="user.fullName"
-            :src="user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
-          <BMediaBody>
-            <div class="mb-0 font-weight-bold">
-              {{ user.fullName }}
-            </div>
-            <small class="text-muted">
-              {{ user.userName }}
-            </small>
-          </BMediaBody>
-        </BMedia>
-        <BButton
-          variant="link"
-          class="p-0 text-dark"
-          :aria-label="$t('common.remove')"
-          @click="toggleUserSelection(user)">
-          <FrIcon name="close" />
-        </BButton>
-      </BListGroupItem>
-    </BListGroup>
-    <FrSearchInput
-      v-model="userSearchQuery"
-      :placeholder="$t('governance.agents.custodiansTab.searchPlaceholder')"
-      @input="debouncedSearchUsers"
-      @search="searchUsers"
-      @clear="clearUserSearch" />
-    <div
-      v-if="isSearching"
-      class="py-3 text-center">
-      <FrSpinner />
-    </div>
-    <BListGroup
-      v-else-if="userSearchResults.length"
-      class="mt-3">
-      <BListGroupItem
-        v-for="user in userSearchResults"
-        :key="user._id"
-        button
-        :active="isUserSelected(user)"
-        @click="toggleUserSelection(user)">
-        <BMedia
-          class="align-items-center"
-          no-body>
-          <BImg
-            class="mr-3 rounded-circle size-28"
-            :alt="user.fullName"
-            :src="user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
-          <BMediaBody>
-            <div class="mb-0 font-weight-bold">
-              {{ user.fullName }}
-            </div>
-            <small class="text-muted">
-              {{ user.userName }}
-            </small>
-          </BMediaBody>
-        </BMedia>
-      </BListGroupItem>
-    </BListGroup>
-    <p
-      v-else-if="userSearchQuery && !isSearching"
-      class="mt-3 text-muted">
-      {{ $t('governance.agents.custodiansTab.noResults') }}
-    </p>
+    <FrGovResourceMultiselect
+      name="custodian-select"
+      resource="user"
+      :label="$t('governance.agents.custodiansTab.selectUsers')"
+      :option-function="getDefaultGovOption"
+      :value="selectedUsers"
+      @input="selectedUsers = $event" />
   </BModal>
 
   <!-- Remove Custodians Confirmation Modal -->
   <BModal
+    v-if="!readOnly"
     id="removeCustodiansModal"
     no-close-on-backdrop
     no-close-on-esc
@@ -208,7 +150,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import { computed, ref, onMounted } from 'vue';
-import { debounce } from 'lodash';
 import {
   BButton,
   BButtonToolbar,
@@ -216,8 +157,6 @@ import {
   BCardHeader,
   BFormCheckbox,
   BImg,
-  BListGroup,
-  BListGroupItem,
   BMedia,
   BMediaBody,
   BModal,
@@ -227,13 +166,11 @@ import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrGovResourceMultiselect from '@forgerock/platform-shared/src/components/governance/GovResourceMultiselect';
+import { getDefaultGovOption } from '@forgerock/platform-shared/src/utils/governance/select';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { queryParamFunction } from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 import { getAgentCustodians, getAgentGlossaryAttributesData, saveAgentGlossaryAttributesData } from '@forgerock/platform-shared/src/api/governance/AgentApi';
-import store from '@/store';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -245,13 +182,16 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const { bvModal } = useBvModal();
 
 const isLoading = ref(true);
 const isSaving = ref(false);
-const isSearching = ref(false);
 const custodians = ref([]);
 const totalCount = ref(0);
 const currentPage = ref(1);
@@ -259,16 +199,9 @@ const pageSize = 10;
 const grid = ref(null);
 const selectedCustodians = ref([]);
 const allRowsSelected = ref(false);
-const userSearchQuery = ref('');
-const userSearchResults = ref([]);
 const selectedUsers = ref([]);
 
-const fields = [
-  {
-    key: 'selected',
-    label: '',
-    class: 'checkbox-column',
-  },
+const baseFields = [
   {
     key: 'name',
     label: i18n.global.t('common.name'),
@@ -282,6 +215,17 @@ const fields = [
     label: i18n.global.t('common.user.lastName'),
   },
 ];
+// The checkbox column only exists in edit mode; read-only tables show data columns alone.
+const fields = computed(() => (props.readOnly
+  ? baseFields
+  : [
+    {
+      key: 'selected',
+      label: '',
+      class: 'checkbox-column',
+    },
+    ...baseFields,
+  ]));
 
 function mapCustodian(custodian) {
   const givenName = custodian.givenName || '';
@@ -336,48 +280,7 @@ function toggleSelectAll(checked) {
   }
 }
 
-async function searchUsers() {
-  if (!userSearchQuery.value) return;
-  isSearching.value = true;
-  try {
-    const realm = store.state.realm || 'alpha';
-    const resourceType = `${realm}_user`;
-    const queryParams = queryParamFunction(userSearchQuery.value, resourceType);
-    const { data } = await getManagedResourceList(resourceType, queryParams);
-    userSearchResults.value = (data?.result || []).map((u) => ({
-      ...u,
-      fullName: i18n.global.t('common.userFullName', { givenName: u.givenName || '', sn: u.sn || '' }).trim() || u.userName,
-    }));
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.agents.custodiansTab.noResults'));
-  } finally {
-    isSearching.value = false;
-  }
-}
-
-const debouncedSearchUsers = debounce(searchUsers, 300);
-
-function clearUserSearch() {
-  userSearchQuery.value = '';
-  userSearchResults.value = [];
-}
-
-function isUserSelected(user) {
-  return selectedUsers.value.some((u) => u._id === user._id);
-}
-
-function toggleUserSelection(user) {
-  const idx = selectedUsers.value.findIndex((u) => u._id === user._id);
-  if (idx === -1) {
-    selectedUsers.value.push(user);
-  } else {
-    selectedUsers.value.splice(idx, 1);
-  }
-}
-
 function onAddModalHidden() {
-  userSearchQuery.value = '';
-  userSearchResults.value = [];
   selectedUsers.value = [];
 }
 
@@ -388,9 +291,9 @@ async function addCustodians() {
   isSaving.value = true;
   try {
     const { data: glossary } = await getAgentGlossaryAttributesData(glossaryId.value);
-    const realm = store.state.realm || 'alpha';
     const existingActors = glossary?.actors || [];
-    const newRefs = usersToAdd.map((u) => `managed/${realm}_user/${u._id}`);
+    // Same ref format as the glossary editor's object selects (managed/user/<id>), realm-independent
+    const newRefs = usersToAdd.map((id) => `managed/user/${id}`);
     const mergedActors = [...new Set([...existingActors, ...newRefs])];
     await saveAgentGlossaryAttributesData(glossaryId.value, { ...glossary, actors: mergedActors });
     displayNotification('success', i18n.global.t('governance.agents.custodiansTab.addCustodianSuccess'));

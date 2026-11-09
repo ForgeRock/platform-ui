@@ -7,6 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
+import { createStore } from 'vuex';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
@@ -70,7 +71,7 @@ const testAgent = {
   },
 };
 
-function mountComponent(props = {}, agentOverrides = {}) {
+function mountComponent(props = {}, agentOverrides = {}, storeOverrides = {}) {
   const agent = { ...cloneDeep(testAgent), ...cloneDeep(agentOverrides) };
   AgentApi.getAgentById = jest.fn().mockReturnValue(Promise.resolve({
     data: agent,
@@ -106,7 +107,12 @@ function mountComponent(props = {}, agentOverrides = {}) {
   setupTestPinia();
   wrapper = mount(AgentsDetails, {
     global: {
-      plugins: [Notifications],
+      plugins: [
+        Notifications,
+        createStore({
+          state: { SharedStore: { governanceDevEnabled: true, ...storeOverrides.SharedStore } },
+        }),
+      ],
       mocks: {
         $t: (t) => t,
         $bvModal: { show: jest.fn(), hide: jest.fn() },
@@ -256,6 +262,37 @@ describe('AgentsDetails', () => {
 
     // Legacy toolCredentials link maps to the Security group tab (index 3)
     expect(wrapper.vm.tabIndex).toBe(3);
+  });
+
+  it('should hide the resource group tabs when governance dev is disabled', async () => {
+    // The Data & Tools / Security tabs are dev-flag-only; a full release shows
+    // Details and Access (+ Activity for admins)
+    mountComponent({ isEndUser: false }, {}, { SharedStore: { governanceDevEnabled: false } });
+    await flushPromises();
+
+    const tabs = wrapper.find('.tabs').findAll('li');
+
+    // Details, Access, Activity
+    expect(tabs.length).toBe(3);
+    expect(tabs[0].text()).not.toContain('Data & Tools');
+    expect(wrapper.text()).not.toContain('Security');
+  });
+
+  it('should hide the resource group tabs for end users when governance dev is disabled', async () => {
+    mountComponent({ isEndUser: true }, {}, { SharedStore: { governanceDevEnabled: false } });
+    await flushPromises();
+
+    // Details, Access
+    expect(wrapper.find('.tabs').findAll('li').length).toBe(2);
+  });
+
+  it('should not activate a group tab from a legacy deep link when the flag is off', async () => {
+    // Legacy per-resource links must not land on a hidden tab — details (0) instead
+    mockRouter({ params: { agentId: 'system/Target/User/102', tab: 'toolCredentials' }, query: {} });
+    mountComponent({ isEndUser: false }, {}, { SharedStore: { governanceDevEnabled: false } });
+    await flushPromises();
+
+    expect(wrapper.vm.tabIndex).toBe(0);
   });
 
   async function activateAccessTab() {

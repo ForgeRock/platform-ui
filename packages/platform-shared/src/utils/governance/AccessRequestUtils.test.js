@@ -458,6 +458,24 @@ describe('getFormattedRequest', () => {
     });
   });
 });
+
+describe('requestTypes agent entries', () => {
+  it('exposes create, modify and delete agent request types', () => {
+    expect(requestTypes.CREATE_AGENT).toEqual({
+      label: 'governance.accessRequest.requestTypes.createAgent',
+      value: 'createAgent',
+    });
+    expect(requestTypes.MODIFY_AGENT).toEqual({
+      label: 'governance.accessRequest.requestTypes.modifyAgent',
+      value: 'modifyAgent',
+    });
+    expect(requestTypes.DELETE_AGENT).toEqual({
+      label: 'governance.accessRequest.requestTypes.deleteAgent',
+      value: 'deleteAgent',
+    });
+  });
+});
+
 describe('getPriorityImageAltText', () => {
   it('returns the alt text for a high priority', () => {
     const priority = 'high';

@@ -90,7 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
               :value="currentPage"
               :per-page="entriesPerPage"
               :total-rows="totalPagedResults"
-              @input="search()"
+              @input="search($event)"
               @on-page-size-change="pageSizeChange"
             />
           </BCard>
@@ -259,6 +259,7 @@ function navigateToEdit(agentId) {
     name: 'AgentsDetails',
     params: {
       agentId,
+      tab: 'details',
     },
   });
 }

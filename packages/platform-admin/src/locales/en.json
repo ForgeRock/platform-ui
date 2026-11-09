@@ -6164,7 +6164,8 @@
       "listView": {
         "addUnmanagedApp": "New Application",
         "managedTab": "Managed",
-        "unmanagedTab": "Unmanaged"
+        "unmanagedTab": "Unmanaged",
+        "showPrivilegeApplications": "Show Privilege Applications"
       },
       "addUnmanagedAppModal": {
         "title": "New Unmanaged Application",

@@ -2081,12 +2081,21 @@ export default {
     },
     // agent items are agent accounts — the agent details modal renders their
     // glossary, custodians, and template-mapped properties (same cards as the
-    // Agents directory detail page, in the certification read-only context)
-    openAgentModal(item) {
+    // Agents directory detail page, in the certification read-only context).
+    // The item fetch resolves the stamped actor refs into display data so the
+    // modal renders custodians without agent-API calls certifiers may not be
+    // authorized for (same pattern as the application/entitlement/role modals)
+    async openAgentModal(item) {
       this.currentAgentSelectedModal = { ...item };
       delete this.currentAgentSelectedModal.account?.metadata;
       delete this.currentAgentSelectedModal.account?.proxyAddresses;
 
+      try {
+        const { data } = await getCertificationItemById(this.campaignId, item.id);
+        this.currentAgentSelectedModal._displayData = data?._displayData || {};
+      } catch {
+        // displayData is optional — the modal degrades to resolving actor refs itself
+      }
       this.$nextTick(() => {
         this.$bvModal.show('CertificationTaskAgentModal');
       });

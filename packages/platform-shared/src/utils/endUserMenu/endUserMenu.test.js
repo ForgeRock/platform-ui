@@ -9,6 +9,7 @@ import {
   generateEndUserMenuItems,
   buildMenuItemsFromTheme,
 } from './endUserMenu';
+import { generateFeatureFlags } from './menuFeatureFlags';
 
 jest.mock('./menuItemTranslations', () => ({
   ...jest.requireActual('./menuItemTranslations'),
@@ -298,6 +299,143 @@ describe('generateEndUserMenuItems', () => {
       });
       expect(result.find((item) => item.id === 'profile')).toBeUndefined();
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// LCM sub-items: flag gating and merge of flag-enabled sub-items missing from
+// the theme's selectedSubItems
+// ---------------------------------------------------------------------------
+
+describe('generateEndUserMenuItems LCM sub-items', () => {
+  // Theme-selected sub-items that predate the Agents sub-item (no lcmAgents)
+  const lcmItem = {
+    id: 'lcm',
+    icon: 'manage_accounts',
+    label: { en: 'Administer' },
+    selectedSubItems: ['lcmUsers', 'lcmRoles'],
+  };
+
+  const governanceFlags = {
+    ifGovernance: true,
+    govLcmEnabled: true,
+    govLcmAgent: true,
+    govLcmUser: true,
+    govLcmEntitlement: true,
+    govLcmRole: true,
+  };
+
+  function lcmMenuIds(result) {
+    const lcm = result.find((item) => item.id === 'lcm');
+    return lcm ? lcm.subItems.map((sub) => sub.id) : [];
+  }
+
+  it('appends a flag-enabled sub-item missing from selectedSubItems', () => {
+    generateFeatureFlags.mockReturnValue(governanceFlags);
+    const result = generateEndUserMenuItems({
+      configuredMenuItems: [{ ...lcmItem }],
+      exactList: true,
+      isEndUserUI: true,
+    });
+    const subIds = lcmMenuIds(result);
+    // lcmAgents is not in selectedSubItems but its flag is on — merged in
+    expect(subIds).toContain('lcmAgents');
+    expect(subIds).toContain('lcmUsers');
+    expect(subIds).toContain('lcmRoles');
+  });
+
+  it('does not append a sub-item whose flag is off', () => {
+    generateFeatureFlags.mockReturnValue({ ...governanceFlags, govLcmAgent: false });
+    const result = generateEndUserMenuItems({
+      configuredMenuItems: [{ ...lcmItem }],
+      exactList: true,
+      isEndUserUI: true,
+    });
+    expect(lcmMenuIds(result)).not.toContain('lcmAgents');
+  });
+
+  it('filters out theme-selected sub-items whose flag is off', () => {
+    generateFeatureFlags.mockReturnValue({ ...governanceFlags, govLcmUser: false });
+    const result = generateEndUserMenuItems({
+      configuredMenuItems: [{ ...lcmItem }],
+      exactList: true,
+      isEndUserUI: true,
+    });
+    const subIds = lcmMenuIds(result);
+    expect(subIds).not.toContain('lcmUsers');
+    expect(subIds).toContain('lcmAgents');
+  });
+
+  it('omits the LCM item entirely when no sub-item flag is on', () => {
+    generateFeatureFlags.mockReturnValue({
+      ...governanceFlags,
+      govLcmAgent: false,
+      govLcmUser: false,
+      govLcmEntitlement: false,
+      govLcmRole: false,
+    });
+    const result = generateEndUserMenuItems({
+      configuredMenuItems: [{ ...lcmItem }],
+      exactList: true,
+      isEndUserUI: true,
+    });
+    expect(result.find((item) => item.id === 'lcm')).toBeUndefined();
+  });
+
+  it('omits the LCM item when governance is disabled even with sub-item flags on', () => {
+    generateFeatureFlags.mockReturnValue({ ...governanceFlags, ifGovernance: false });
+    const result = generateEndUserMenuItems({
+      configuredMenuItems: [{ ...lcmItem }],
+      exactList: true,
+      isEndUserUI: true,
+    });
+    expect(result.find((item) => item.id === 'lcm')).toBeUndefined();
+  });
+
+  it('does not re-add sub-items a curated theme deliberately removed', () => {
+    // A theme that knows all sub-items (its persisted subItems holds the full
+    // set) but curated its selection down must keep that curation — the
+    // backfill only applies to sub-items the theme has never seen
+    generateFeatureFlags.mockReturnValue(governanceFlags);
+    const curatedThemeItem = {
+      id: 'lcm',
+      icon: 'manage_accounts',
+      label: { en: 'Administer' },
+      subItems: [
+        { id: 'lcmUsers' }, { id: 'lcmAgents' }, { id: 'lcmEntitlements' }, { id: 'lcmRoles' },
+      ],
+      selectedSubItems: ['lcmUsers'],
+    };
+    const result = generateEndUserMenuItems({
+      configuredMenuItems: [{ ...curatedThemeItem, subItems: [...curatedThemeItem.subItems] }],
+      exactList: true,
+      isEndUserUI: true,
+    });
+    expect(lcmMenuIds(result)).toEqual(['lcmUsers']);
+  });
+
+  it('backfills only sub-items unknown to the theme for a stale persisted selection', () => {
+    // Theme saved before lcmAgents existed: its subItems list lacks the id, so
+    // the flag-enabled new sub-item is backfilled alongside the curated ones
+    generateFeatureFlags.mockReturnValue(governanceFlags);
+    const staleThemeItem = {
+      id: 'lcm',
+      icon: 'manage_accounts',
+      label: { en: 'Administer' },
+      subItems: [{ id: 'lcmUsers' }, { id: 'lcmEntitlements' }, { id: 'lcmRoles' }],
+      selectedSubItems: ['lcmUsers'],
+    };
+    const result = generateEndUserMenuItems({
+      configuredMenuItems: [{ ...staleThemeItem, subItems: [...staleThemeItem.subItems] }],
+      exactList: true,
+      isEndUserUI: true,
+    });
+    const subIds = lcmMenuIds(result);
+    expect(subIds).toContain('lcmAgents');
+    expect(subIds).toContain('lcmUsers');
+    // entitlements/roles were known to this theme but curated out — stay excluded
+    expect(subIds).not.toContain('lcmEntitlements');
+    expect(subIds).not.toContain('lcmRoles');
   });
 });
 

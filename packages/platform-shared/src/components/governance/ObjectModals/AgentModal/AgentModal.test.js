@@ -6,6 +6,7 @@
  */
 
 import { shallowMount, flushPromises } from '@vue/test-utils';
+import { createStore } from 'vuex';
 import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import AgentModal from './index';
 
@@ -44,9 +45,7 @@ jest.mock('@forgerock/platform-shared/src/api/governance/AgentApi', () => ({
   getAgentCustodians: jest.fn(),
 }));
 
-let grantCounter = 0;
 function makeGrant(overrides = {}) {
-  grantCounter += 1;
   return {
     id: 'test-item',
     descriptor: {
@@ -62,21 +61,21 @@ function makeGrant(overrides = {}) {
     },
     application: { id: 'app1', name: 'AWS Bedrock', templateName: 'aws.bedrock' },
     keys: { accountId: 'test-agent-account' },
-    glossary: {
-      idx: {
-        '/account': {
-          accountType: 'agent',
-          actors: [`managed/user/user-${grantCounter}`],
-        },
-      },
-    },
+    // glossary-less grant: the modal only fetches custodians through the
+    // endpoint when the grant carries no stamped glossary (request records
+    // always carry one, and render from it)
     ...overrides,
   };
 }
 
-function shallowMountAgentModal(propsData = {}) {
+function shallowMountAgentModal(propsData = {}, storeOverrides = {}) {
   return shallowMount(AgentModal, {
     global: {
+      plugins: [
+        createStore({
+          state: { SharedStore: { governanceDevEnabled: true, ...storeOverrides } },
+        }),
+      ],
       mocks: {
         $t: (t) => t,
       },
@@ -245,6 +244,105 @@ describe('AgentModal', () => {
     expect(wrapper.vm.custodianActors[0].fullName).toBe('Ally Agent');
   });
 
+  it('resolves custodians from the grant _displayData without calling the custodians endpoint', async () => {
+    // Request records fetched with expandPaths=glossary.idx carry the resolved
+    // actor display data — the request viewer may not have agent API permission
+    const grant = makeGrant({
+      _displayData: {
+        'managed/user/user-1': {
+          id: 'user-1', givenName: 'Stella', sn: 'Stamped', userName: 'stella',
+        },
+      },
+      glossary: {
+        idx: {
+          '/account': { accountType: 'agent', actors: ['managed/user/user-1'] },
+        },
+      },
+    });
+    wrapper = shallowMountAgentModal({ grant });
+    await flushPromises();
+
+    expect(AgentApi.getAgentCustodians).not.toHaveBeenCalled();
+    expect(wrapper.vm.custodianActors).toHaveLength(1);
+    expect(wrapper.vm.custodianActors[0].id).toBe('user-1');
+    expect(wrapper.vm.custodianActors[0].fullName).toBe('Stella Stamped');
+  });
+
+  it('renders no custodians for a stamped glossary without actors (no endpoint call)', async () => {
+    // the real modifyAgent record shape — no custodians stamped, and the
+    // composite agent id would not resolve against the endpoint anyway
+    const grant = makeGrant({
+      glossary: {
+        idx: {
+          '/account': { accountType: 'agent' },
+        },
+      },
+    });
+    wrapper = shallowMountAgentModal({ grant });
+    await flushPromises();
+
+    expect(AgentApi.getAgentCustodians).not.toHaveBeenCalled();
+    expect(wrapper.vm.custodianActors).toHaveLength(0);
+  });
+
+  it('falls back to the custodians endpoint for a stamped glossary with unresolved actor refs', async () => {
+    // cert line items carry a glossary with actor refs but no _displayData;
+    // TaskList fetches it by id on open, but a failed fetch must degrade to the
+    // endpoint rather than rendering bare managed/user refs
+    const grant = makeGrant({
+      glossary: {
+        idx: {
+          '/account': { accountType: 'agent', actors: ['managed/user/user-9'] },
+        },
+      },
+    });
+    wrapper = shallowMountAgentModal({ grant });
+    await flushPromises();
+
+    expect(AgentApi.getAgentCustodians).toHaveBeenCalledWith('test-agent-account', { pageSize: 100, pageNumber: 0 });
+    expect(wrapper.vm.custodianActors).toHaveLength(1);
+    expect(wrapper.vm.custodianActors[0].givenName).toBe('Ally');
+  });
+
+  it('falls back to the custodians endpoint when _displayData is present but empty', async () => {
+    // the exact shape RequestedItemCard passes: enrichment ran but resolved
+    // nothing — an empty _displayData object must not count as resolved content
+    const grant = makeGrant({
+      _displayData: {},
+      glossary: {
+        idx: {
+          '/account': { accountType: 'agent', actors: ['managed/user/user-7'] },
+        },
+      },
+    });
+    wrapper = shallowMountAgentModal({ grant });
+    await flushPromises();
+
+    expect(AgentApi.getAgentCustodians).toHaveBeenCalledWith('test-agent-account', { pageSize: 100, pageNumber: 0 });
+    expect(wrapper.vm.custodianActors).toHaveLength(1);
+  });
+
+  it('renders content-resolved custodians only when every actor ref is resolved', async () => {
+    // partial enrichment (one of two refs resolved) is not enough — bare refs
+    // must degrade to the endpoint rather than render as raw names
+    const grant = makeGrant({
+      _displayData: {
+        'managed/user/user-1': {
+          id: 'user-1', givenName: 'Stella', sn: 'Stamped', userName: 'stella',
+        },
+      },
+      glossary: {
+        idx: {
+          '/account': { accountType: 'agent', actors: ['managed/user/user-1', 'managed/user/user-2'] },
+        },
+      },
+    });
+    wrapper = shallowMountAgentModal({ grant });
+    await flushPromises();
+
+    expect(AgentApi.getAgentCustodians).toHaveBeenCalledWith('test-agent-account', { pageSize: 100, pageNumber: 0 });
+  });
+
   it('shows no custodians when the custodians fetch fails', async () => {
     AgentApi.getAgentCustodians.mockRejectedValue(new Error('fail'));
     wrapper = shallowMountAgentModal();
@@ -351,6 +449,20 @@ describe('AgentModal', () => {
     });
     await flushPromises();
 
+    expect(wrapper.vm.resourceItems('tools')).toHaveLength(0);
+  });
+
+  it('hides resource cards and skips their fetches when governance dev is disabled', async () => {
+    wrapper = shallowMountAgentModal(
+      { grant: makeGrant({ keys: { accountId: 'account-123' } }) },
+      { governanceDevEnabled: false },
+    );
+    await flushPromises();
+
+    // The template config still matches — the cards are gated, not the config
+    expect(wrapper.vm.agentResourceProps).toHaveLength(1);
+    expect(wrapper.vm.resourcesDevEnabled).toBe(false);
+    expect(AgentApi.getAgentResources).not.toHaveBeenCalled();
     expect(wrapper.vm.resourceItems('tools')).toHaveLength(0);
   });
 });
