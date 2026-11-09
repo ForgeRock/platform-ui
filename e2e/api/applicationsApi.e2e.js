@@ -188,3 +188,96 @@ export function deleteOAuth2Client(clientId) {
     failOnStatusCode: false,
   });
 }
+
+/**
+ * Lists the scheduled reconciliation jobs derived from an application name — the same
+ * query the Jobs page issues for a provisioner-created app. Connecting a provisioner
+ * creates schedules named <ConnectorName>FullRecon / <...>IncrementalRecon, where the
+ * connector name derives from the application name with [\s-_] stripped, so the filter
+ * matches jobs whose id CONTAINS the application name.
+ * @param {string} appName - The application name the provisioner was created from
+ * @param {string} accessToken - Optional access token, defaults to environment ACCESS_TOKEN
+ * @returns {Cypress.Chainable} The response with `result` array of scheduled jobs
+ */
+export function getReconJobsForApp(appName, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  // Provisioner schedules are named <ConnectorName>FullRecon / <...>IncrementalRecon,
+  // where the connector name derives from the app name (ScheduleEditorModal.getScheduleName),
+  // so match jobs CONTAINING the app name rather than prefix-matching it
+  const queryFilter = `(_id co '${appName}') and persisted eq true and (schedule pr or type eq 'simple') and (invokeContext/action/ eq 'liveSync' or invokeContext/action/ eq 'reconcile')`;
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/scheduler/job?_queryFilter=${encodeURIComponent(queryFilter)}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  });
+}
+
+/**
+ * Deletes the provisioner connector config (config/system/<connectorName>) and the
+ * mappings (config/mapping/...) created by connecting an application's provisioner —
+ * artifacts the UI's own delete flows never remove. The connector name derives from
+ * the application name with [\s-_] stripped (configurePageName in Provisioning/index.vue).
+ * @param {string} appName - Name of the application the provisioner was created from
+ * @param {string} accessToken - Optional access token, defaults to environment ACCESS_TOKEN
+ * @returns {Cypress.Chainable} The responses of the delete requests
+ */
+export function deleteProvisionerConfig(appName, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  const connectorPrefix = appName.replace(/[\s-_]/g, '');
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/config`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  }).then((response) => {
+    const pids = (response.body.configurations ?? []).map((configuration) => configuration.pid);
+    const connectorPids = pids.filter((pid) => pid.startsWith('system/') && pid.includes(connectorPrefix));
+    // Mappings are named system<Connector><ObjectType>_managed<Resource> /
+    // managed<Resource>_system<Connector><ObjectType> (getMappingNames in
+    // defaultAccountNaoMappings.js) — both contain the connector name
+    const mappingPids = connectorPids.flatMap((connectorPid) => {
+      const connectorName = connectorPid.slice('system/'.length);
+      return pids.filter((pid) => pid.startsWith('mapping/') && pid.includes(`system${connectorName}`));
+    });
+    return cy.wrap([...connectorPids, ...mappingPids]).each((pid) => cy.request({
+      method: 'DELETE',
+      url: `https://${Cypress.env('FQDN')}/openidm/config/${pid}`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      failOnStatusCode: false,
+    }));
+  });
+}
+
+/**
+ * Creates an AIC (AdvancedIdentityCloud) catalog application, the same way the UI's
+ * catalog wizard saves it: templateName is the template's id ('aic'), and no
+ * provisioning fields — those derive from the template on the edit page.
+ * @param {Object} applicationData
+ * @param {string} applicationData.name - Application name
+ * @param {string} applicationData.ownerId - User id set as the application owner
+ * @param {string} accessToken - Optional access token, defaults to environment ACCESS_TOKEN
+ * @returns {Cypress.Chainable} The response with the created application (body._id)
+ */
+export function createAicApplication({ name, ownerId }, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  const applicationResource = Cypress.env('IS_FRAAS') ? 'alpha_application' : 'application';
+  const userResource = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
+  return cy.request({
+    method: 'POST',
+    url: `https://${Cypress.env('FQDN')}/openidm/managed/${applicationResource}?_action=create`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: {
+      name,
+      description: `E2E ${name}`,
+      owners: [{ _ref: `managed/${userResource}/${ownerId}`, _refProperties: {} }],
+      templateName: 'aic',
+      templateVersion: '1.0',
+      authoritative: false,
+    },
+  });
+}

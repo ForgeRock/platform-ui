@@ -55,6 +55,85 @@ export function deleteIDMUser(id, failOnStatusCode = true) {
   return deleteIDMResource('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', id, Cypress.env('ACCESS_TOKEN').access_token, failOnStatusCode);
 }
 
+/**
+ * Creates a user with the openidm-admin authorization role in the tenant's user realm
+ * (bravo_user on cloud, root's user on ForgeOps) — the subject the AIC connector's
+ * client-credentials token maps to.
+ * @param {string} userName - Username (and mail) for the user
+ * @param {string} accessToken - Optional access token, defaults to environment ACCESS_TOKEN
+ * @returns {Cypress.Chainable} The response with the created user (body._id)
+ */
+export function createIDMAdminUser(userName, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  const userResource = Cypress.env('IS_FRAAS') ? 'bravo_user' : 'user';
+  return createIDMResource('managed', userResource, {
+    userName,
+    givenName: 'e2e',
+    sn: 'admin',
+    mail: userName,
+    authzRoles: [{ _ref: 'internal/role/openidm-admin' }],
+  }, accessToken);
+}
+
+/**
+ * Deletes the openidm-admin user created by createIDMAdminUser.
+ * @param {string} userId - The user id to delete
+ * @param {string} accessToken - Optional access token, defaults to environment ACCESS_TOKEN
+ * @returns {Cypress.Chainable} The response from the delete request
+ */
+export function deleteIDMAdminUser(userId, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  const userResource = Cypress.env('IS_FRAAS') ? 'bravo_user' : 'user';
+  return deleteIDMResource('managed', userResource, userId, accessToken, false);
+}
+
+/**
+ * Creates the AIC connector's OIDC client, named after an existing openidm-admin user
+ * so IDM maps the client-credentials token's subject to that user (client_credentials,
+ * fr:idm:*). Lives in the user's realm: bravo on cloud, root on ForgeOps.
+ * @param {string} userId - Id of the user the client is named after
+ * @param {string} clientSecret - Secret for the client
+ * @returns {Cypress.Chainable} The response from the create request
+ */
+export function createAicOAuth2Client(userId, clientSecret = '123') {
+  const realmPath = Cypress.env('IS_FRAAS') ? 'realms/root/realms/bravo' : 'realms/root';
+  return cy.request({
+    method: 'PUT',
+    url: `https://${Cypress.env('FQDN')}/am/json/${realmPath}/realm-config/agents/OAuth2Client/${userId}`,
+    headers: {
+      'content-type': 'application/json',
+      'Accept-API-Version': 'protocol=2.1,resource=1.0',
+    },
+    body: {
+      coreOAuth2ClientConfig: {
+        userpassword: clientSecret,
+        scopes: ['fr:idm:*'],
+        clientType: 'Confidential',
+        tokenEndpointAuthMethod: 'client_secret_basic',
+      },
+      advancedOAuth2ClientConfig: {
+        grantTypes: ['client_credentials'],
+      },
+    },
+  });
+}
+
+/**
+ * Deletes the OAuth2 client created by createAicOAuth2Client.
+ * @param {string} clientId - The OAuth2 client ID to delete
+ * @returns {Cypress.Chainable} The response from the delete request
+ */
+export function deleteAicOAuth2Client(clientId) {
+  const realmPath = Cypress.env('IS_FRAAS') ? 'realms/root/realms/bravo' : 'realms/root';
+  return cy.request({
+    method: 'DELETE',
+    url: `https://${Cypress.env('FQDN')}/am/json/${realmPath}/realm-config/agents/OAuth2Client/${clientId}`,
+    headers: {
+      'content-type': 'application/json',
+      'Accept-API-Version': 'protocol=2.1,resource=1.0',
+    },
+    failOnStatusCode: false,
+  });
+}
+
 export function addRoleMember(roleId, userId, resourceType = 'internal') {
   const accessToken = Cypress.env('ACCESS_TOKEN').access_token;
   let requestResourceType;

@@ -10,6 +10,7 @@ import {
   buildScriptJob,
   buildSlowScriptJob,
   buildFullReconJob,
+  buildTaskScannerJob,
   createJob,
   deleteJob,
 } from '@e2e/api/jobsApi.e2e';
@@ -25,6 +26,13 @@ export default class JobsApiSteps {
    */
   static createScriptJob(name, overrides = {}) {
     return createJob(name, buildScriptJob(name, overrides)).then((response) => {
+      JobsApiSteps.createdJobNames.push(name);
+      return response;
+    });
+  }
+
+  static createTaskScannerJob(name, overrides = {}) {
+    return createJob(name, buildTaskScannerJob(name, overrides)).then((response) => {
       JobsApiSteps.createdJobNames.push(name);
       return response;
     });

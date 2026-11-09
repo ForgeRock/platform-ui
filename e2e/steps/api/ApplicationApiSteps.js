@@ -10,8 +10,11 @@ import createApplication, {
   createOAuth2Client,
   deleteApplication,
   deleteOAuth2Client,
+  deleteProvisionerConfig,
   getApplication,
+  getReconJobsForApp,
 } from '@e2e/api/applicationsApi.e2e';
+import { deleteJob } from '@e2e/api/jobsApi.e2e';
 import { deleteSaml2Entity } from '@e2e/api/saml2Api.e2e';
 
 export default class ApplicationApiSteps {
@@ -20,6 +23,8 @@ export default class ApplicationApiSteps {
   static createdClientIds = [];
 
   static createdApplicationIds = [];
+
+  static createdUiAppNames = [];
 
   static trackedSamlManagedAppIds = [];
 
@@ -228,6 +233,48 @@ export default class ApplicationApiSteps {
             throw new Error(`Failed to delete managed application ${id} — tenant may be in a dirty state. Status: ${deleteResponse.status}`);
           }
         }));
+    });
+  }
+
+  /**
+   * Tracks a UI-created application name so afterEach can derive and delete the
+   * reconciliation jobs the provisioner scheduled (ids <ConnectorName>FullRecon /
+   * <ConnectorName>IncrementalRecon, where the connector name derives from the app
+   * name) plus the provisioner's connector config and mappings.
+   * @param {string} appName - Name the application was created with in the UI
+   */
+  static trackUiCreatedApp(appName) {
+    ApplicationApiSteps.createdUiAppNames.push(appName);
+  }
+
+  /**
+   * Deletes every reconciliation job scheduled by UI-created applications (matched via
+   * the Jobs page's own queryFilter). Tracking is cleared by deleteCreatedProvisionerConfigs.
+   */
+  static deleteReconJobsForCreatedApps() {
+    return cy.wrap(null).then(() => {
+      const appNames = [...ApplicationApiSteps.createdUiAppNames];
+      if (!appNames.length) return null;
+
+      return cy.wrap(appNames).each((appName) => getReconJobsForApp(appName).then((response) => {
+        const jobIds = (response.body?.result ?? []).map((job) => job._id);
+        return cy.wrap(jobIds).each((jobId) => deleteJob(jobId, undefined, { failOnStatusCode: false }));
+      }));
+    });
+  }
+
+  /**
+   * Deletes the provisioner connector config and mappings created for UI-created
+   * applications, then clears the tracking list. Called after
+   * deleteReconJobsForCreatedApps in afterEach.
+   */
+  static deleteCreatedProvisionerConfigs() {
+    return cy.wrap(null).then(() => {
+      const appNames = [...ApplicationApiSteps.createdUiAppNames];
+      ApplicationApiSteps.createdUiAppNames = [];
+      if (!appNames.length) return null;
+
+      return cy.wrap(appNames).each((appName) => deleteProvisionerConfig(appName)).then(() => null);
     });
   }
 }
