@@ -102,6 +102,43 @@ export function deleteTreeNode(nodeType, nodeVersion, nodeId) {
   });
 }
 
+/**
+ * PUT a tree node via the v3 nodes API (`resource=3.0`), matching the UI's
+ * `putNode` (TreeApi.js).
+ */
+export function putTreeNode(nodeType, nodeVersion, nodeId, body) {
+  const realm = Cypress.env('IS_FRAAS') ? '/realms/root/realms/alpha' : '/realms/root';
+  const resource = 'realm-config/authentication/authenticationtrees/nodes';
+  return cy.request({
+    method: 'PUT',
+    url: `https://${Cypress.env('FQDN')}/am/json${realm}/${resource}/${nodeType}/${nodeVersion}/${nodeId}`,
+    headers: {
+      'content-type': 'application/json',
+      'Accept-API-Version': 'protocol=2.1,resource=3.0',
+    },
+    body,
+  });
+}
+
+/**
+ * Clone an existing tree via the same `_action=clone` endpoint the admin UI's
+ * duplicate-journey flow uses (TreeApi.cloneTree).
+ */
+export function cloneTree(treeId, newTreeId) {
+  const realm = Cypress.env('IS_FRAAS') ? '/realms/root/realms/alpha' : '/realms/root';
+  const resource = 'realm-config/authentication/authenticationtrees/trees';
+  return cy.request({
+    method: 'POST',
+    url: `https://${Cypress.env('FQDN')}/am/json${realm}/${resource}/${encodeURIComponent(treeId)}?_action=clone`,
+    headers: {
+      'content-type': 'application/json',
+      'Accept-API-Version': 'protocol=2.1,resource=1.0',
+    },
+    body: { newId: newTreeId },
+    failOnStatusCode: false,
+  });
+}
+
 export function getIDMResource(resourceType = 'managed', resourceName, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
   return cy.request({
     method: 'GET',

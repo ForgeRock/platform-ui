@@ -7,10 +7,12 @@
  */
 
 import {
+  cloneTree,
   createJourney,
   deleteAMResource,
   deleteIDMResource,
   deleteTreeNode,
+  getAMResource,
   getTreeForExport,
 } from '@e2e/api/journeyApi.e2e';
 import { deleteThemes } from '@e2e/utils/themeutils';
@@ -67,10 +69,39 @@ export default class JourneyApiSteps {
   }
 
   /**
+   * Clones an existing journey via the AM `_action=clone` trees endpoint (the
+   * same call the admin UI's duplicate-journey flow makes) and tracks the clone
+   * for deletion by deleteCreatedJourneys(). Retries on 412 — AM config-store
+   * replication intermittently rejects clone writes with "Precondition Failed".
+   * @param {string} sourceJourneyName name of the journey to duplicate
+   * @param {string} newJourneyName name for the cloned journey
+   * @param {number} [maxRetries=2] number of 412 retries, 30s apart
+   * @returns {Cypress.Chainable<Object>} the successful clone response
+   */
+  static cloneJourney(sourceJourneyName, newJourneyName, maxRetries = 2) {
+    const attempt = (n) => cloneTree(sourceJourneyName, newJourneyName).then((response) => {
+      if (response.status === 412 && n > 0) {
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        return cy.wait(30000).then(() => attempt(n - 1));
+      }
+      return response;
+    });
+    return attempt(maxRetries).then((response) => {
+      if (!JourneyApiSteps.createdJourneyNames.includes(newJourneyName)) {
+        JourneyApiSteps.createdJourneyNames.push(newJourneyName);
+      }
+      expect(response.status).to.equal(200);
+      return response;
+    });
+  }
+
+  /**
    * Delete every tracked journey the same way the admin UI does — read the
-   * tree config, DELETE the tree, then DELETE every inner node it referenced.
-   * Mirrors `deleteTreeAndNodes` in TreeManagementMixin.vue so afterEach leaves
-   * behind no orphan nodes that would poison later tests in the same run.
+   * tree config, DELETE the tree, then DELETE every inner node it referenced,
+   * plus the child sub-nodes of PageNode/CustomPageNode containers (those are
+   * NOT in the tree's `nodes` map — they are only reachable by GETting the
+   * container node), mirroring `deleteTreeAndNodes` in TreeManagementMixin.vue
+   * so afterEach leaves behind no orphan nodes that would poison later tests.
    */
   static deleteCreatedJourneys() {
     const realm = Cypress.env('IS_FRAAS') ? '/realms/root/realms/alpha/' : '/realms/root/';
@@ -82,12 +113,32 @@ export default class JourneyApiSteps {
       return cy.wrap(names).each((name) => (
         getTreeForExport(name).then((treeResponse) => {
           const nodes = treeResponse?.body?.nodes || {};
-          return deleteAMResource(realm, resource, name).then(() => (
+          const containerNodeIds = Object.keys(nodes).filter(
+            (nodeId) => ['PageNode', 'CustomPageNode'].includes(nodes[nodeId].nodeType),
+          );
+          // Child sub-nodes must be fetched BEFORE the tree is deleted —
+          // container nodes are unreachable once their tree is gone
+          const containerRealm = Cypress.env('IS_FRAAS')
+            ? '/realms/root/realms/alpha/realm-config/'
+            : '/realms/root/realm-config/';
+          return cy.wrap(containerNodeIds).each((containerId) => {
+            const containerNode = nodes[containerId];
+            return getAMResource(
+              containerRealm,
+              'authentication/authenticationtrees/nodes',
+              `${containerNode.nodeType}/${containerId}`,
+              { failOnStatusCode: false },
+            ).then((containerResponse) => (
+              cy.wrap(containerResponse?.body?.nodes || []).each((subNode) => (
+                deleteTreeNode(subNode.nodeType, subNode.version, subNode._id)
+              ))
+            ));
+          }).then(() => deleteAMResource(realm, resource, name).then(() => (
             cy.wrap(Object.keys(nodes)).each((nodeId) => {
               const node = nodes[nodeId];
               return deleteTreeNode(node.nodeType, node.version, nodeId);
             })
-          ));
+          )));
         })
       ));
     });

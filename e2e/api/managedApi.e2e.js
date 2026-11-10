@@ -208,7 +208,7 @@ export function assignUserDashboard(userId, dashboards) {
   });
 }
 
-export function getIDMResource(resourceType = 'config', resourceName = 'managed', accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+export function getIDMResource(resourceType = 'config', resourceName = 'managed', accessToken = Cypress.env('ACCESS_TOKEN').access_token, failOnStatusCode = true) {
   return cy.request({
     method: 'GET',
     url: `https://${Cypress.env('FQDN')}/openidm/${resourceType}/${resourceName}`,
@@ -216,6 +216,27 @@ export function getIDMResource(resourceType = 'config', resourceName = 'managed'
       authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
     },
+    failOnStatusCode,
+  });
+}
+
+/**
+ * Applies JSON Patch operations to an IDM config document.
+ * @param {string} resourceName config resource, e.g. 'managed'
+ * @param {Array<Object>} patch JSON Patch operations
+ * @param {boolean} failOnStatusCode whether a non-2xx response fails the test
+ * @returns {Cypress.Chainable} the response
+ */
+export function patchIDMConfig(resourceName, patch, failOnStatusCode = true) {
+  return cy.request({
+    method: 'PATCH',
+    url: `https://${Cypress.env('FQDN')}/openidm/config/${resourceName}`,
+    headers: {
+      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
+      'content-type': 'application/json',
+    },
+    body: patch,
+    failOnStatusCode,
   });
 }
 

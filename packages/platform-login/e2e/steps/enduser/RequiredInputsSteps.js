@@ -6,16 +6,17 @@
  */
 
 import LoginJourneyPage from '@e2e/pages/login/LoginJourneyPage';
-import { generateJourneyURL } from '@e2e/utils/journeyUtils';
+import { resolveJourneyURL } from '@e2e/utils/journeyUtils';
 
 export default class RequiredInputsSteps {
   /**
    * Visit a journey URL and wait for the theme to be applied to the page.
-   * @param {String} journeyName the journey name based on the JOURNEYS constants file
+   * @param {String} journeyName the journey name based on the JOURNEYS constants file,
+   *   or a dynamically created journey (e.g. a duplicate)
    */
   static visit(journeyName) {
     cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
-    cy.visit(generateJourneyURL(journeyName));
+    cy.visit(resolveJourneyURL(journeyName));
     cy.wait('@getTheme', { timeout: 10000 });
   }
 
@@ -28,7 +29,7 @@ export default class RequiredInputsSteps {
    */
   static assertAsteriskOnLabels(labels) {
     labels.forEach((label) => {
-      cy.contains('label', label)
+      cy.contains('label', label, { timeout: 10000 })
         .should('be.visible')
         .find('span.text-danger')
         .should('contain', '*');

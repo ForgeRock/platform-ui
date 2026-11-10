@@ -49,7 +49,7 @@ export function generateJourneyURL(journeyName) {
  * @returns {String} login app URL for the journey
  */
 export function generateRawJourneyURL(journeyName) {
-  const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
+  const loginRealm = loginRealmForJourney();
   return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=${encodeURIComponent(journeyName)}`;
 }
 
@@ -71,7 +71,11 @@ export function resolveJourneyURL(journeyName) {
  * @returns {String} journey filename based on the environment
  */
 export function generateJourneyFileName(journeyName) {
-  const journeyFileName = findJourney(journeyName).fileName;
+  const journey = findJourney(journeyName);
+  if (!journey.fileName) {
+    throw new Error(`No journey fixture found for "${journeyName}" — check JOURNEYS in e2e/support/constants.js`);
+  }
+  const journeyFileName = journey.fileName;
   if (journeyFileName.includes('_template')) {
     const identityResourceValue = Cypress.env('IS_FRAAS') ? 'managed/alpha_user' : 'managed/user';
     return prepareJourneyTemplate(`${journeyFileName}.json`, { identity_resource: identityResourceValue });
