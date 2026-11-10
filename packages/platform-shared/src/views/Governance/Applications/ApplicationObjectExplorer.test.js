@@ -28,7 +28,7 @@ jest.mock('@/store', () => ({
   state: jest.requireActual('vue').reactive({
     SharedStore: {
       governanceAgentsEnabled: true,
-      governanceDevEnabled: false,
+      governanceDevEnabled: true,
     },
   }),
 }));
@@ -55,7 +55,7 @@ jest.mock('@forgerock/platform-shared/src/components/governance/LCM/Resources/Re
 }));
 
 function setup(props = {}, storeState = {}) {
-  store.state.SharedStore = { governanceAgentsEnabled: true, governanceDevEnabled: false, ...storeState };
+  store.state.SharedStore = { governanceAgentsEnabled: true, governanceDevEnabled: true, ...storeState };
 
   return mount(ApplicationObjectExplorer, {
     global: {
@@ -151,22 +151,14 @@ describe('ApplicationObjectExplorer', () => {
       expect(wrapper.findComponent({ name: 'FrAccounts' }).exists()).toBe(true);
     });
 
-    it('shows the dev-flagged Resources tab when governanceDevEnabled is true', async () => {
-      const wrapper = setup({}, { governanceDevEnabled: true });
+    it('shows the Resources tab', async () => {
+      const wrapper = setup();
       await flushPromises();
 
       const navText = wrapper.find('.object-explorer-nav').text();
       expect(navText).toContain('governance.administer.resources.title');
       // 4 account types + Entitlements + Agents table + Resources
       expect(wrapper.vm.selections.length).toBe(7);
-    });
-
-    it('hides the dev-flagged Resources tab when governanceDevEnabled is false', async () => {
-      const wrapper = setup({}, { governanceDevEnabled: false });
-      await flushPromises();
-
-      expect(wrapper.vm.selections.length).toBe(6);
-      expect(wrapper.find('.object-explorer-nav').text()).not.toContain('governance.administer.resources.title');
     });
 
     it('renders the Agents side tab as the flat application-scoped agent table', async () => {
@@ -177,8 +169,22 @@ describe('ApplicationObjectExplorer', () => {
       expect(wrapper.findComponent({ name: 'FrAgents' }).exists()).toBe(false);
     });
 
-    it('deep-links to a dev-flagged tab by slug', async () => {
-      const wrapper = setup({ objectTab: 'resources' }, { governanceDevEnabled: true });
+    it('hides the Agents tab when only one of governanceAgentsEnabled/governanceDevEnabled is on (requires both)', async () => {
+      const wrapper = setup({}, { governanceDevEnabled: false });
+      await flushPromises();
+
+      expect(wrapper.find('.object-explorer-nav').text()).not.toContain('governance.agents.title');
+    });
+
+    it('shows the Agents tab when both governanceAgentsEnabled and governanceDevEnabled are on', async () => {
+      const wrapper = setup();
+      await flushPromises();
+
+      expect(wrapper.find('.object-explorer-nav').text()).toContain('governance.agents.title');
+    });
+
+    it('deep-links to the Resources tab by slug', async () => {
+      const wrapper = setup({ objectTab: 'resources' });
       await flushPromises();
 
       // 4 account types + Entitlements + Agents table = index 6 is Resources
@@ -246,16 +252,22 @@ describe('ApplicationObjectExplorer', () => {
     });
 
     it('clamps the selection when visible tabs shrink below the current index', async () => {
-      const wrapper = setup({ objectTab: 'agents' });
+      // Resources now renders unflagged, so flat entries: accounts(4) +
+      // entitlements + agents + resources = 7; disabling agents leaves 6 —
+      // index 5 stays in range (it re-points at Resources) and the clamp only
+      // fires when the selection passes the end of the list. Kill both
+      // trailing tabs to exercise the clamp.
+      const wrapper = setup({ objectTab: 'resources' });
       await flushPromises();
-      // Flat index 5 = Agents (4 account types + Entitlements)
-      expect(wrapper.vm.selectedFlatIndex).toBe(5);
+      // Flat index 6 = Resources (4 account types + Entitlements + Agents)
+      expect(wrapper.vm.selectedFlatIndex).toBe(6);
 
-      // Simulate the agents flag turning off mid-session
+      // Simulate the agents flag turning off mid-session (the dev flag is
+      // still on, so the AND fails and the tab disappears)
       store.state.SharedStore.governanceAgentsEnabled = false;
       await nextTick();
       await flushPromises();
-      expect(wrapper.vm.selectedFlatIndex).toBe(4);
+      expect(wrapper.vm.selectedFlatIndex).toBe(5);
     });
   });
 

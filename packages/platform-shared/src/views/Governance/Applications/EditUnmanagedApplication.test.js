@@ -69,7 +69,7 @@ const objectTypeData = {
 };
 
 const store = createStore({
-  state: { SharedStore: { governanceDevEnabled: true } },
+  state: { SharedStore: {} },
 });
 
 function setup(props = {}) {

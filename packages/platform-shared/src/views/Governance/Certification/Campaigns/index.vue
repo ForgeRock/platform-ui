@@ -237,7 +237,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :delete-option="false"
                 :divider="false">
                 <template #custom-top-actions>
-                  <template v-if="(governanceDevEnabled && (isActiveLikeItem(item) || isClosedLikeItem(item))) || (!governanceDevEnabled && (isActiveLikeStatus || isClosedLikeStatus))">
+                  <template v-if="usingNewListApi ? (isActiveLikeItem(item) || isClosedLikeItem(item)) : (isActiveLikeStatus || isClosedLikeStatus)">
                     <BDropdownItem @click="navigateToEdit(item)">
                       <FrIcon
                         icon-class="mr-2"
@@ -257,7 +257,7 @@ of the MIT license. See the LICENSE file for details. -->
                       {{ $t('governance.certificationDetails.exportRevocationDecisions') }}
                     </FrIcon>
                   </BDropdownItem>
-                  <template v-if="governanceDevEnabled ? isActiveLikeItem(item) : isActiveLikeStatus">
+                  <template v-if="usingNewListApi ? isActiveLikeItem(item) : isActiveLikeStatus">
                     <BDropdownItem @click="openDeadlineModal(item.id, item.deadline)">
                       <FrIcon
                         icon-class="mr-2"
@@ -274,7 +274,7 @@ of the MIT license. See the LICENSE file for details. -->
                       </FrIcon>
                     </BDropdownItem>
                   </template>
-                  <template v-if="governanceDevEnabled ? isStagedItem(item) : isStagedStatus">
+                  <template v-if="usingNewListApi ? isStagedItem(item) : isStagedStatus">
                     <BDropdownItem @click="openModal('activate', item.id)">
                       <FrIcon
                         icon-class="mr-2"
@@ -467,6 +467,18 @@ const DEFAULT_SELECTED_STATUSES = ['active'];
 
 export default {
   name: 'Campaigns',
+  props: {
+    /**
+     * IGA-1116: governance admins reach this view through admin routes/roles
+     * (the admin app passes `isAdmin: true`, the enduser app only through the
+     * cert-admin route guard); admins may export any campaign's revokes
+     * worklist, other callers only their own campaigns'.
+     */
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     BBadge,
     BButton,
@@ -592,17 +604,17 @@ export default {
   },
   watch: {
     selectedOwner() {
-      if (!this.governanceDevEnabled || this.isInitialising) return;
+      if (!this.usingNewListApi || this.isInitialising) return;
       this.currentPage = 1;
       this.getList();
     },
     selectedCampaignType() {
-      if (!this.governanceDevEnabled || this.isInitialising) return;
+      if (!this.usingNewListApi || this.isInitialising) return;
       this.currentPage = 1;
       this.getList();
     },
     selectedStatuses(newValue, oldValue) {
-      if (!this.governanceDevEnabled || this.isInitialising) return;
+      if (!this.usingNewListApi || this.isInitialising) return;
       // the list must always be filtered by at least one status, so refuse to
       // empty the selection: restore what was checked and skip the requery
       if (!newValue.length) {
@@ -618,9 +630,6 @@ export default {
     },
   },
   computed: {
-    governanceDevEnabled() {
-      return this.$store?.state?.SharedStore?.governanceDevEnabled === true;
-    },
     /**
      * IGA-1116: the revokes worklist is an owner/admin remediation artifact,
      * not a reviewer report — the item shows only for those callers.
@@ -628,12 +637,12 @@ export default {
      * owner when their user id matches the row's owner id.
      */
     isGovAdmin() {
-      return this.governanceDevEnabled;
+      return this.isAdmin;
     },
     // whether the new certification list endpoint is actually being used —
-    // false once the legacy fallback has engaged, even if the flag stays on
+    // false once the legacy fallback has engaged
     usingNewListApi() {
-      return this.governanceDevEnabled && !this.newListUnavailable;
+      return !this.newListUnavailable;
     },
     fields() {
       return this.activeColumns;
@@ -712,7 +721,7 @@ export default {
   },
   created() {
     this.debouncedSearch = debounce(() => {
-      if (!this.governanceDevEnabled) return;
+      if (!this.usingNewListApi) return;
       this.currentPage = 1;
       this.getList();
     }, 300);
@@ -737,7 +746,7 @@ export default {
       },
     );
     this.isInitialising = true;
-    if (this.governanceDevEnabled) {
+    if (this.usingNewListApi) {
       this.selectedStatuses = [...DEFAULT_SELECTED_STATUSES];
     } else {
       this.sortBy = 'formattedDeadline';
@@ -767,7 +776,7 @@ export default {
       });
     },
     resetFilters() {
-      if (!this.governanceDevEnabled || this.isInitialising) return;
+      if (!this.usingNewListApi || this.isInitialising) return;
       this.isInitialising = true;
       this.searchQuery = '';
       this.selectedOwner = '';

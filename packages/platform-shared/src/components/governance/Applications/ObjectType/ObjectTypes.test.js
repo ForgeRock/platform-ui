@@ -35,7 +35,7 @@ const objectTypeData = {
 };
 
 const store = createStore({
-  state: { SharedStore: { governanceDevEnabled: true } },
+  state: { SharedStore: {} },
 });
 
 function setup(props = {}) {
@@ -66,10 +66,10 @@ function setupFull(props = {}) {
   });
 }
 
-function setupFlagged(flagEnabled) {
+function setupFlagged() {
   return shallowMount(ObjectTypes, {
     global: {
-      plugins: [createStore({ state: { SharedStore: { governanceDevEnabled: flagEnabled } } })],
+      plugins: [store],
       mocks: { $t: (k) => k },
     },
     props: {
@@ -180,28 +180,8 @@ describe('ObjectTypes', () => {
   });
 
   describe('@details', () => {
-    it('omits the Details tab when governanceDevEnabled is off, leaving Properties first, but keeps Agent Classification', async () => {
-      const wrapper = setupFlagged(false);
-      await flushPromises();
-
-      expect(wrapper.vm.navItems.map((item) => item.displayName)).toEqual([
-        'governance.applications.edit.objectTypesTab.propertiesTab',
-        'governance.applications.edit.objectTypesTab.dataTab',
-        'governance.unmanagedApplications.correlationTab.navLabel',
-        'governance.applications.edit.objectTypesTab.agentClassification.title',
-      ]);
-      expect(wrapper.vm.selectedInnerTab).toBe(0);
-    });
-
-    it('shows the Details tab when governanceDevEnabled is on', async () => {
-      const wrapper = setupFlagged(true);
-      await flushPromises();
-
-      expect(wrapper.vm.navItems[0].displayName).toBe('governance.applications.edit.objectTypesTab.details.navLabel');
-    });
-
-    it('places Details before Properties, Data, and account-only Correlation in nav order', async () => {
-      const wrapper = setup({ objectTypes: [objectTypeData] });
+    it('renders the Details tab first, before Properties, Data, and account-only Correlation', async () => {
+      const wrapper = setupFlagged();
       await flushPromises();
 
       expect(wrapper.vm.navItems.map((item) => item.displayName)).toEqual([
@@ -211,6 +191,7 @@ describe('ObjectTypes', () => {
         'governance.unmanagedApplications.correlationTab.navLabel',
         'governance.applications.edit.objectTypesTab.agentClassification.title',
       ]);
+      expect(wrapper.vm.selectedInnerTab).toBe(0);
     });
 
     it('places Details before Properties and Data for resource object types with no Correlation tab', async () => {

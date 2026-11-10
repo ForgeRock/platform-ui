@@ -73,7 +73,6 @@ describe('AccessReviews', () => {
         mocks: {
           $t: (id) => id,
           $router: { push: jest.fn() },
-          $store: { state: { SharedStore: { governanceDevEnabled: true } } },
           $bvModal: { show: jest.fn(), hide: jest.fn() },
         },
       },

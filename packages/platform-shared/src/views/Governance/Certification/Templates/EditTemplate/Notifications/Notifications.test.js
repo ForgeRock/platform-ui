@@ -40,7 +40,6 @@ describe('Notifications View', () => {
               state: {
                 SharedStore: {
                   uiConfig: {},
-                  governanceDevEnabled: true,
                 },
               },
             },
@@ -99,60 +98,6 @@ describe('Notifications View', () => {
       expect(wrapper.text()).toContain('Send to specific users');
       expect(findByTestId(wrapper, 'expiration-cc-users').exists()).toBeTruthy();
       expect(wrapper.text()).toContain('Specific users to notify');
-    });
-
-    it('hides the recipient checkboxes for expiration and reminders when the governance dev flag is off', async () => {
-      wrapper = mount(Notifications, {
-        global: {
-          mocks: {
-            $t: (text) => ({
-              'governance.editTemplate.expirationNotificationSendToOwner': 'Send to Campaign Owner',
-              'governance.editTemplate.remindersNotificationIncludeCc': 'Send to specific users',
-              'governance.editTemplate.remindersNotificationCcUsers': 'Specific users to notify',
-              'governance.editTemplate.expirationNotificationIncludeCc': 'Send to specific users',
-              'governance.editTemplate.expirationNotificationCcUsers': 'Specific users to notify',
-            }[text] || text),
-            $store: {
-              state: {
-                SharedStore: {
-                  uiConfig: {},
-                  governanceDevEnabled: false,
-                },
-              },
-            },
-          },
-        },
-        propsData: {
-          value: {
-            expirationDays: 1,
-            expirationEmail: '',
-            expirationIncludeCc: false,
-            expirationIncludeOwner: false,
-            expirationCcUserIds: [],
-            expirationNotification: false,
-            initialEmail: '',
-            initialNotification: false,
-            reassignEmail: '',
-            reassignNotification: false,
-            reminders: false,
-            remindersDuration: 1,
-            remindersEmail: '',
-            remindersTimespan: '',
-          },
-        },
-      });
-
-      findByTestId(wrapper, 'expiration-notification').setChecked(true);
-      await flushPromises();
-      await findByTestId(wrapper, 'expiration-reminders').setChecked(true);
-      await flushPromises();
-
-      expect(findByTestId(wrapper, 'expiration-include-owner').exists()).toBeFalsy();
-      expect(findByTestId(wrapper, 'expiration-include-cc').exists()).toBeFalsy();
-      expect(findByTestId(wrapper, 'expiration-cc-users').exists()).toBeFalsy();
-      expect(findByTestId(wrapper, 'reminders-include-owner').exists()).toBeFalsy();
-      expect(findByTestId(wrapper, 'reminders-include-cc').exists()).toBeFalsy();
-      expect(findByTestId(wrapper, 'reminders-cc-users').exists()).toBeFalsy();
     });
 
     it('toggles expiration recipients and emits managed user paths', async () => {
@@ -270,7 +215,6 @@ describe('Notifications View', () => {
               state: {
                 SharedStore: {
                   uiConfig: {},
-                  governanceDevEnabled: true,
                 },
               },
             },
@@ -393,7 +337,7 @@ describe('Notifications View', () => {
             }[text] || text),
             $store: {
               state: {
-                SharedStore: { uiConfig: {}, governanceDevEnabled: true },
+                SharedStore: { uiConfig: {} },
               },
             },
           },
@@ -441,7 +385,7 @@ describe('Notifications View', () => {
             }[text] || text),
             $store: {
               state: {
-                SharedStore: { uiConfig: {}, governanceDevEnabled: true },
+                SharedStore: { uiConfig: {} },
               },
             },
           },

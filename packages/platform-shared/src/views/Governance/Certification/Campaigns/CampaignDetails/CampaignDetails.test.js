@@ -198,7 +198,7 @@ describe('CampaignDetails Component', () => {
   });
 
   describe('actions dropdown', () => {
-    const mountWithStore = async (governanceDevEnabled, status = 'in-progress', certificationType = 'identity', columnConfig = null) => {
+    const mountWithStore = async (isAdmin = true, status = 'in-progress', certificationType = 'identity', columnConfig = null) => {
       jest.clearAllMocks();
       CampaignApi.getCampaignDetails.mockImplementation(() => Promise.resolve({
         id: 'camp-1',
@@ -209,6 +209,7 @@ describe('CampaignDetails Component', () => {
         systemMessages: { errors: [], info: [] },
       }));
       wrapper = shallowMount(CampaignDetails, {
+        props: { isAdmin },
         global: {
           renderStubDefaultSlot: true,
           mocks: {
@@ -219,7 +220,6 @@ describe('CampaignDetails Component', () => {
                 tab: 'details',
               },
             },
-            $store: { state: { SharedStore: { governanceDevEnabled } } },
             $bvModal: { show: jest.fn() },
           },
         },
@@ -260,9 +260,9 @@ describe('CampaignDetails Component', () => {
 
     // IGA-1116: the export is an owner/admin remediation artifact; the
     // computed reduces both id sides from managed/user/<uuid> paths or bare
-    // uuids before comparing, and governanceDevEnabled marks admin callers
+    // uuids before comparing, and the isAdmin prop marks admin callers
     describe('isCampaignOwnerOrAdmin', () => {
-      const mountWithOwner = async (ownerId, governanceDevEnabled = false) => {
+      const mountWithOwner = async (ownerId, isAdmin = false) => {
         jest.clearAllMocks();
         setupTestPinia({ user: { userId: 'owner-user-id' } });
         CampaignApi.getCampaignDetails.mockImplementation(() => Promise.resolve({
@@ -274,6 +274,7 @@ describe('CampaignDetails Component', () => {
           systemMessages: { errors: [], info: [] },
         }));
         const ownerWrapper = shallowMount(CampaignDetails, {
+          props: { isAdmin },
           global: {
             renderStubDefaultSlot: true,
             mocks: {
@@ -284,7 +285,6 @@ describe('CampaignDetails Component', () => {
                   tab: 'details',
                 },
               },
-              $store: { state: { SharedStore: { governanceDevEnabled } } },
               $bvModal: { show: jest.fn() },
             },
           },
@@ -303,8 +303,13 @@ describe('CampaignDetails Component', () => {
         expect(ownerWrapper.vm.isCampaignOwnerOrAdmin).toBe(true);
       });
 
-      it('is true for a non-owner caller when governance dev marks them admin', async () => {
+      it('is true for a non-owner caller when the isAdmin prop is set', async () => {
         const ownerWrapper = await mountWithOwner('someone-else', true);
+        expect(ownerWrapper.vm.isCampaignOwnerOrAdmin).toBe(true);
+      });
+
+      it('is true for an admin caller even when the campaign carries no owner', async () => {
+        const ownerWrapper = await mountWithOwner(undefined, true);
         expect(ownerWrapper.vm.isCampaignOwnerOrAdmin).toBe(true);
       });
 

@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     fluid>
@@ -17,7 +16,7 @@ to such license between the licensee and ForgeRock AS. -->
         data-testid="cert-tabs"
         @activate-tab="tabActivated">
         <BTab
-          v-if="govCertAdminGroup || isAdmin"
+          v-if="govCertAdmin || isAdmin"
           :title="$t('governance.certification.overview')"
           key="overview"
           :active="tabIndex === 0"
@@ -28,10 +27,12 @@ to such license between the licensee and ForgeRock AS. -->
           :title="$t('governance.certification.campaigns')"
           key="campaigns"
           lazy>
-          <FrCampaigns data-testid="cert-campaigns" />
+          <FrCampaigns
+            data-testid="cert-campaigns"
+            :is-admin="govCertAdmin || isAdmin" />
         </BTab>
         <BTab
-          v-if="govCertAdminGroup || isAdmin"
+          v-if="govCertAdmin || isAdmin"
           :title="$t('governance.templates.title')"
           key="template"
           lazy>
@@ -73,7 +74,7 @@ export default {
   },
   data() {
     return {
-      govCertAdminGroup: store.state.govCertAdminGroup,
+      govCertAdmin: store.state.govCertAdmin,
       tabIndex: 0,
       tabMap: [
         'overview', 'campaigns', 'templates',
@@ -84,7 +85,7 @@ export default {
     const tabIndex = this.tabMap.findIndex((key) => key === this.$route.params.certificationTab);
     this.tabIndex = tabIndex !== -1 ? tabIndex : 0;
     const certificationTab = this.tabMap[this.tabIndex];
-    if (this.govCertAdminGroup || this.isAdmin) {
+    if (this.govCertAdmin || this.isAdmin) {
       window.history.pushState(window.history.state, '', `#/certification/${certificationTab}`);
     } else {
       window.history.pushState(window.history.state, '', '#/certification/campaigns');

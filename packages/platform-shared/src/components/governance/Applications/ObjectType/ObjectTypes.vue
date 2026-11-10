@@ -140,7 +140,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="flex-grow-1 fr-object-type-tabs"
         nav-class="d-none"
         lazy>
-        <BTab v-if="governanceDevEnabled">
+        <BTab>
           <FrDetailsForm
             :object-type="loadedObjectType"
             :application="application"
@@ -189,7 +189,6 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   computed, ref, watch,
 } from 'vue';
-import { useStore } from 'vuex';
 import {
   BButton,
   BButtonToolbar,
@@ -248,9 +247,6 @@ const props = defineProps({
 
 const emit = defineEmits(['object-type-added', 'object-type-deleted', 'applicationUpdated']);
 
-const store = useStore();
-const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
-
 const { bvModal } = useBvModal();
 
 const selectedObjectTypeTab = ref(0);
@@ -270,17 +266,11 @@ const selectedObjectType = computed(() => props.objectTypes[selectedObjectTypeTa
 const hasAccountType = computed(() => props.objectTypes.some((ot) => ot.type === 'account'));
 
 const navItems = computed(() => {
-  const items = [];
-  // Details is feature-flagged behind governanceDevEnabled like Agent
-  // Classification; when off, Properties stays first and the editor behaves
-  // exactly as before this feature.
-  if (governanceDevEnabled.value) {
-    items.push({ displayName: i18n.global.t('governance.applications.edit.objectTypesTab.details.navLabel') });
-  }
-  items.push(
+  const items = [
+    { displayName: i18n.global.t('governance.applications.edit.objectTypesTab.details.navLabel') },
     { displayName: i18n.global.t('governance.applications.edit.objectTypesTab.propertiesTab') },
     { displayName: i18n.global.t('governance.applications.edit.objectTypesTab.dataTab') },
-  );
+  ];
   if (loadedObjectType.value?.type === 'account') {
     items.push({ displayName: i18n.global.t('governance.unmanagedApplications.correlationTab.navLabel') });
     items.push({ displayName: i18n.global.t('governance.applications.edit.objectTypesTab.agentClassification.title') });

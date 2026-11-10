@@ -112,7 +112,7 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </template>
           <div
-            v-if="formFields.expirationNotification && governanceDevEnabled"
+            v-if="formFields.expirationNotification"
             class="w-100 mt-3">
             <FrField
               v-model="formFields.expirationIncludeOwner"
@@ -194,9 +194,7 @@ of the MIT license. See the LICENSE file for details. -->
             validation="required"
             :options="timespanOptions"
             :searchable="false" />
-          <div
-            v-if="governanceDevEnabled"
-            class="w-100 mt-3">
+          <div class="w-100 mt-3">
             <FrField
               v-model="formFields.remindersIncludeOwner"
               class="mb-1"
@@ -304,9 +302,6 @@ export default {
     });
   },
   computed: {
-    governanceDevEnabled() {
-      return this.$store.state.SharedStore.governanceDevEnabled;
-    },
     expirationCcUserIds() {
       return this.formFields.expirationCcUserIds.map((path) => path.split('/').pop());
     },

@@ -80,9 +80,7 @@ describe('NewRequest', () => {
           $router: { push: jest.fn() },
           $store: {
             state: {
-              SharedStore: {
-                governanceDevEnabled: false,
-              },
+              SharedStore: {},
               requestCartUsers: [{
                 name: 'Barbara Jensen',
                 userName: 'bjensen',

@@ -495,6 +495,8 @@ const router = createRouter({
           path: 'campaigns/:campaignId/:tab',
           name: 'CampaignDetails',
           component: () => import('@forgerock/platform-shared/src/views/Governance/Certification/Campaigns/CampaignDetails'),
+          // function form: govCertAdmin hydrates after the router module loads
+          props: () => ({ isAdmin: store.state.govCertAdmin }),
         },
         {
           path: '/certification/templates/creation/:type?',

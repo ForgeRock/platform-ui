@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('common.actions') }}
             </template>
               <BDropdownItem
-                v-if="governanceDevEnabled && canEditCampaign"
+                v-if="isCampaignOwnerOrAdmin && canEditCampaign"
                 data-testid="edit-details-button"
                 @click="$bvModal.show('EditDetailsModal')"
               >
@@ -551,9 +551,6 @@ export default {
       return progress >= 50
         ? Math.floor(progress)
         : Math.ceil(progress);
-    },
-    governanceDevEnabled() {
-      return this.$store.state.SharedStore.governanceDevEnabled;
     },
     showCampaignsActions() {
       const excludeStatuses = [CampaignStates.STAGING, CampaignStates.COMPLETE, CampaignStates.SIGNED_OFF];

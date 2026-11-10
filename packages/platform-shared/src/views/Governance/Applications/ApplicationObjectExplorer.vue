@@ -124,15 +124,14 @@ const objectTabs = [
     key: 'agents',
     titleKey: 'governance.agents.title',
     component: FrAgentTable,
-    enabled: () => !!store.state.SharedStore.governanceAgentsEnabled || !!store.state.SharedStore.governanceDevEnabled,
+    enabled: () => !!store.state.SharedStore.governanceAgentsEnabled && !!store.state.SharedStore.governanceDevEnabled,
     getComponentProps: embeddedProps,
   },
-  // Dev-flagged object types (governanceDevEnabled) — in-progress features
   {
     key: 'resources',
     titleKey: 'governance.administer.resources.title',
     component: FrResourceList,
-    enabled: () => !!store.state.SharedStore.governanceDevEnabled,
+    enabled: () => true,
     getComponentProps: embeddedProps,
   },
 ];

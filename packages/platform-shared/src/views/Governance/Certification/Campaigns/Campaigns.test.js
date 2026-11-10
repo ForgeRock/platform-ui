@@ -68,11 +68,13 @@ describe('Campaigns', () => {
     store.replaceState({
       SharedStore: {
         webStorageAvailable: true,
-        governanceDevEnabled: true,
       },
     });
     wrapper = mount(Campaigns, {
       attachTo: createAppContainer(),
+      props: {
+        isAdmin: true,
+      },
       global: {
         mocks: {
           $store: store,
@@ -85,8 +87,8 @@ describe('Campaigns', () => {
     });
   });
 
-  it('uses the legacy admin endpoint and status dropdown when governance dev is disabled', async () => {
-    store.state.SharedStore.governanceDevEnabled = false;
+  it('uses the legacy admin endpoint and status dropdown when the new list endpoint has fallen back', async () => {
+    wrapper.vm.engageLegacyFallback();
     wrapper.vm.sortBy = 'formattedDeadline';
     await wrapper.vm.$nextTick();
     wrapper.vm.getList();
@@ -465,10 +467,10 @@ describe('Campaigns', () => {
       expect(wrapper.vm.canExportRevokes({ status: 'signed-off', ownerInfo: { id: 'managed/user/owner-user-id' } })).toBe(true);
     });
 
-    it('rejects non-owners even when signed-off', () => {
-      store.state.SharedStore.governanceDevEnabled = false;
+    it('rejects non-owner non-admin callers even when signed-off', async () => {
+      await wrapper.setProps({ isAdmin: false });
       expect(wrapper.vm.canExportRevokes({ status: 'signed-off', ownerInfo: { id: 'someone-else' } })).toBe(false);
-      store.state.SharedStore.governanceDevEnabled = true;
+      await wrapper.setProps({ isAdmin: true });
     });
   });
 
@@ -488,8 +490,8 @@ describe('Campaigns', () => {
     expect(wrapper.vm.isClosedLikeItem(wrapper.vm.displayList[0])).toBe(true);
   });
 
-  it('keeps legacy actions on the status dropdown path when governance dev is disabled', async () => {
-    store.state.SharedStore.governanceDevEnabled = false;
+  it('keeps legacy actions on the status dropdown path when the list endpoint has fallen back', async () => {
+    wrapper.vm.engageLegacyFallback();
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.isStagedStatus).toBe(false);
     wrapper.vm.handleStatusSort(wrapper.vm.statuses.get('staging'));
@@ -498,12 +500,12 @@ describe('Campaigns', () => {
   });
 
   it('renders activate and delete actions for a staged campaign in legacy mode', async () => {
-    store.state.SharedStore.governanceDevEnabled = false;
     // stub ActionsCell to render its custom actions inline (the real menu
     // teleports only when opened, which this test does not need)
     const ActionsCellStub = { template: '<div><slot name="custom-top-actions" /></div>' };
     const legacyWrapper = mount(Campaigns, {
       attachTo: createAppContainer(),
+      props: { isAdmin: true },
       global: {
         mocks: { $store: store },
         plugins: [i18n],
@@ -511,6 +513,7 @@ describe('Campaigns', () => {
         stubs: { FrActionsCell: ActionsCellStub },
       },
     });
+    legacyWrapper.vm.engageLegacyFallback();
     await legacyWrapper.vm.handleStatusSort(legacyWrapper.vm.statuses.get('staging'));
     await new Promise(process.nextTick);
     await legacyWrapper.vm.setAccessReviewList({
@@ -529,7 +532,7 @@ describe('Campaigns', () => {
     // truthy count at boot; mirror that contract with a mock store
     const mockStore = {
       state: {
-        SharedStore: { webStorageAvailable: true, governanceDevEnabled: true },
+        SharedStore: { webStorageAvailable: true },
         certificationCount: 1,
       },
       commit: jest.fn(),
@@ -556,7 +559,7 @@ describe('Campaigns', () => {
   it('commits the normalized totalHits to the store when the list endpoint returns totalHits', async () => {
     const mockStore = {
       state: {
-        SharedStore: { webStorageAvailable: true, governanceDevEnabled: true },
+        SharedStore: { webStorageAvailable: true },
         certificationCount: 1,
       },
       commit: jest.fn(),
@@ -744,11 +747,12 @@ describe('Campaigns', () => {
   describe('revokes export from the row menu', () => {
     const ActionsCellStub = { template: '<div><slot name="custom-top-actions" /></div>' };
 
-    const mountWithSignedOffCampaign = async () => {
+    const mountWithSignedOffCampaign = async (props = {}) => {
       // stub ActionsCell to render its custom actions inline (the real menu
       // teleports only when opened, which these tests do not need)
       const exportWrapper = mount(Campaigns, {
         attachTo: createAppContainer(),
+        props: { isAdmin: true, ...props },
         global: {
           mocks: { $store: store },
           plugins: [i18n],
@@ -808,13 +812,9 @@ describe('Campaigns', () => {
     });
 
     it('hides the export item for a non-owner non-admin caller', async () => {
-      // governanceDevEnabled marks the caller an admin, so it must be off for
-      // the non-owner path — isGovAdmin is exactly that flag
-      store.state.SharedStore.governanceDevEnabled = false;
       setupTestPinia({ user: { userId: 'someone-else' } });
-      const exportWrapper = await mountWithSignedOffCampaign();
+      const exportWrapper = await mountWithSignedOffCampaign({ isAdmin: false });
       expect(findByTestId(exportWrapper, 'export-revocation-decisions-button').exists()).toBe(false);
-      store.state.SharedStore.governanceDevEnabled = true;
       exportWrapper.unmount();
     });
 

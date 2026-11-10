@@ -98,6 +98,17 @@ import FrSystemMessages from './SystemMessages/SystemMessages';
 
 export default {
   name: 'CampaignDetails',
+  props: {
+    /**
+     * IGA-1116: governance admins reach this page through admin routes/roles
+     * (the admin route passes `isAdmin: true`); admins may edit any campaign
+     * and export its revokes worklist, other callers only their own.
+     */
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     BContainer,
     BTabs,
@@ -129,9 +140,8 @@ export default {
     isCampaignOwnerOrAdmin() {
       const ownerId = this.campaignDetails?.ownerInfo?.id?.replace?.(/^managed\/user\//, '') || this.campaignDetails?.ownerInfo?.id;
       const userId = this.currentUserId?.replace?.(/^managed\/user\//, '') || this.currentUserId;
-      if (!ownerId) return false;
-      return userId === ownerId
-        || this.$store?.state?.SharedStore?.governanceDevEnabled === true;
+      if (!ownerId) return this.isAdmin;
+      return this.isAdmin || userId === ownerId;
     },
   },
   data() {

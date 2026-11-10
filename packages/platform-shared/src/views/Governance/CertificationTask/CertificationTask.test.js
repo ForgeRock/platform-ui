@@ -108,7 +108,7 @@ describe('CertificationTask', () => {
     },
   }));
 
-  function mountComponent({ governanceDevEnabled = false } = {}) {
+  function mountComponent() {
     setupTestPinia();
     return mount(CertificationTask, {
       global: {
@@ -125,7 +125,6 @@ describe('CertificationTask', () => {
           },
           $bvModal: { show: modalShow, hide: modalHide },
           $router: { push: jest.fn() },
-          $store: { state: { SharedStore: { governanceDevEnabled } } },
         },
         plugins: [Notifications],
         stubs: [
@@ -404,7 +403,7 @@ describe('CertificationTask', () => {
         },
       }));
 
-      wrapper = mountComponent({ governanceDevEnabled: true });
+      wrapper = mountComponent();
 
       await flushPromises();
 

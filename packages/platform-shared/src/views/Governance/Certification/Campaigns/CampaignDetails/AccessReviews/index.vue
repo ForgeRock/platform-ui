@@ -32,7 +32,6 @@ of the MIT license. See the LICENSE file for details. -->
           </BDropdown>
           <div class="d-flex align-items-center">
             <BButton
-              v-if="governanceDevEnabled"
               class="mr-2 text-body"
               variant="link"
               data-testid="notify-reviewers-button"
@@ -509,9 +508,6 @@ export default {
     },
   },
   computed: {
-    governanceDevEnabled() {
-      return this.$store.state.SharedStore.governanceDevEnabled;
-    },
     states() {
       return this.isStaging
         ? {

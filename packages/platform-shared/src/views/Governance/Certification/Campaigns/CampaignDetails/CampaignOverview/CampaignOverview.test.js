@@ -81,11 +81,11 @@ describe('CampaignOverview Component', () => {
             show: jest.fn(),
             hide: jest.fn(),
           },
-          $store: { state: { SharedStore: { governanceDevEnabled: true } } },
         },
       },
       props: {
         campaign: { ...campaign },
+        isCampaignOwnerOrAdmin: true,
       },
     });
   });
@@ -583,7 +583,7 @@ describe('CampaignOverview Component', () => {
     expect(cancelCampaignBtn.exists()).toBe(true);
   });
 
-  it('hides only the Edit Details item when governance dev is disabled', async () => {
+  it('hides only the Edit Details item when the caller is neither the owner nor an admin', async () => {
     document.body.innerHTML = '';
     const disabledWrapper = mount(CampaignOverview, {
       attachTo: createAppContainer(),
@@ -593,20 +593,19 @@ describe('CampaignOverview Component', () => {
         mocks: {
           $router: { push: jest.fn() },
           $bvModal: { show: jest.fn(), hide: jest.fn() },
-          $store: { state: { SharedStore: { governanceDevEnabled: false } } },
         },
       },
       props: {
         campaign: { ...campaign, status: 'signed-off' },
-        isCampaignOwnerOrAdmin: true,
+        isCampaignOwnerOrAdmin: false,
       },
     });
 
     await toggleActionsMenu(disabledWrapper, 0, 'Actions');
-    // the Actions menu itself stays; only the dev-flag-gated item is gone
+    // the Actions menu itself stays; both owner/admin-gated items are gone
     expect(disabledWrapper.findAll('button').filter((item) => item.text().includes('Actions')).length).toBe(1);
     expect(findByTestId(disabledWrapper, 'edit-details-button').exists()).toBe(false);
-    expect(findByTestId(disabledWrapper, 'export-revocation-decisions-button').exists()).toBe(true);
+    expect(findByTestId(disabledWrapper, 'export-revocation-decisions-button').exists()).toBe(false);
     disabledWrapper.unmount();
   });
 
