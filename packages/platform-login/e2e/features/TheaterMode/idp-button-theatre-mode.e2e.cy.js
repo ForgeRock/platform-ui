@@ -32,6 +32,7 @@ describe('Theater mode', { tags: ['@cloud'] }, () => {
   after(() => {
     if (!journeyFixture) return;
     cy.deleteTreesViaAPI([journeyFixture]);
+    cy.task('deleteFileIfExists', `../../e2e/fixtures/${journeyFixture}`);
   });
 
   retryableBeforeEach(() => {

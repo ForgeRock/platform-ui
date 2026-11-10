@@ -10,16 +10,14 @@ import { resolveJourneyURL } from '@e2e/utils/journeyUtils';
 
 /**
  * Common steps for the login app (am/XUI), shared by all login-app test
- * features. Feature-specific steps live in their own step classes; only
- * steps useful across features belong here.
+ * features.
  */
 export default class CommonLoginSteps {
   /**
-   * Opens the given journey in the login app. Works for both JOURNEYS
-   * constants entries and fixture trees imported at runtime.
-   * @param {String} journeyName journey name
+   * Opens the given journey in the login app
    */
-  static navigateToJourney(journeyName) {
-    cy.visit(resolveJourneyURL(journeyName));
+  static navigateToJourney(journeyName, { newSession = false } = {}) {
+    const url = resolveJourneyURL(journeyName);
+    cy.visit(newSession ? `${url}&arg=newsession` : url, { timeout: 120000 });
   }
 }

@@ -17,6 +17,10 @@ export function createIDMResource(resourceType = 'managed', resourceName, body, 
       'content-type': 'application/json',
     },
     body,
+    failOnStatusCode: false,
+  }).then((response) => {
+    expect(response.status, `create ${resourceType}/${resourceName}`).to.equal(201);
+    return response;
   });
 }
 
@@ -48,6 +52,30 @@ export function deleteIDMResource(resourceType = 'managed', resourceName, id, ac
       authorization: `Bearer ${accessToken}`,
     },
     failOnStatusCode,
+  });
+}
+
+/**
+ * Fetches a managed user record
+ */
+export function getIDMUser(id, attemptsLeft = 5) {
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/managed/${Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user'}/${id}`,
+    headers: {
+      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
+      'content-type': 'application/json',
+    },
+    failOnStatusCode: false,
+  }).then((response) => {
+    if (response.status === 404 && attemptsLeft > 0) {
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      return cy.wait(1000).then(() => getIDMUser(id, attemptsLeft - 1));
+    }
+    if (response.status !== 200) {
+      throw new Error(`GET managed user ${id} failed: HTTP ${response.status} ${JSON.stringify(response.body).slice(0, 200)}`);
+    }
+    return response;
   });
 }
 

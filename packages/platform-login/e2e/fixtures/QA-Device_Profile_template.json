@@ -1,0 +1,360 @@
+{
+ "meta": {
+  "origin": "https://openam-ui-rc-16sep26.forgeblocks.com/platform/?realm=alpha#/journeys/QA%20-%20Device%20Profile%20Test",
+  "exportedBy": "oneustroieva@pingidentity.com",
+  "exportDate": "2026-11-05T01:58:23.755Z",
+  "exportTool": "platform-admin ui tree export",
+  "exportToolVersion": "1.1",
+  "treesSelectedForExport": [
+   "QA - Device Profile Test"
+  ],
+  "innerTreesIncluded": []
+ },
+ "trees": {
+  "QA - Device Profile Test": {
+   "tree": {
+    "_id": "QA - Device Profile Test",
+    "_rev": "1809519939",
+    "identityResource": "identity_resource",
+    "entryNodeId": "e67c7e43-f360-42e4-9e81-0ccc87c53040",
+    "innerTreeOnly": false,
+    "noSession": false,
+    "mustRun": false,
+    "enabled": true,
+    "transactionalOnly": false,
+    "uiConfig": {
+     "categories": "[]"
+    },
+    "nodes": {
+     "b0f2217b-6355-4596-be06-9ceb64fc41f3": {
+      "x": 762,
+      "y": 565.015625,
+      "connections": {
+       "true": "a80b41d2-9cba-465c-ad3f-e70b860b90cd",
+       "false": "a80b41d2-9cba-465c-ad3f-e70b860b90cd"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     },
+     "e67c7e43-f360-42e4-9e81-0ccc87c53040": {
+      "x": 66,
+      "y": 370.015625,
+      "connections": {
+       "outcome": "b6bc2100-f939-4162-a84b-a690fec40edb"
+      },
+      "nodeType": "PageNode",
+      "displayName": "Page Node"
+     },
+     "b6bc2100-f939-4162-a84b-a690fec40edb": {
+      "x": 110,
+      "y": 673.015625,
+      "connections": {
+       "true": "26ff03b3-2f46-48c3-80df-f3b5ab194147",
+       "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+      },
+      "nodeType": "DataStoreDecisionNode",
+      "displayName": "Data Store Decision"
+     },
+     "6d7e5278-f1d5-46de-a8fa-e43360b920d3": {
+      "x": 578,
+      "y": 353.015625,
+      "connections": {
+       "true": "27b50a6d-7b9a-49eb-b6db-0d8352be6239",
+       "false": "f5324bcd-9725-43fe-9eec-2a7b22d8b907",
+       "unknownDevice": "b0f2217b-6355-4596-be06-9ceb64fc41f3"
+      },
+      "nodeType": "DeviceMatchNode",
+      "displayName": "Device Match"
+     },
+     "26ff03b3-2f46-48c3-80df-f3b5ab194147": {
+      "x": 408,
+      "y": 879.015625,
+      "connections": {
+       "outcome": "6d7e5278-f1d5-46de-a8fa-e43360b920d3"
+      },
+      "nodeType": "DeviceProfileCollectorNode",
+      "displayName": "Device Profile Collector"
+     },
+     "a80b41d2-9cba-465c-ad3f-e70b860b90cd": {
+      "x": 1090,
+      "y": 745.015625,
+      "connections": {
+       "outcome": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+      },
+      "nodeType": "DeviceSaveNode",
+      "displayName": "Device Profile Save"
+     },
+     "f5324bcd-9725-43fe-9eec-2a7b22d8b907": {
+      "x": 926,
+      "y": 410.015625,
+      "connections": {
+       "false": "e301438c-0bd0-429c-ab0c-66126501069a",
+       "true": "e301438c-0bd0-429c-ab0c-66126501069a"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     },
+     "27b50a6d-7b9a-49eb-b6db-0d8352be6239": {
+      "x": 862,
+      "y": 229.015625,
+      "connections": {
+       "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+       "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     }
+    },
+    "staticNodes": {
+     "startNode": {
+      "x": 50,
+      "y": 250
+     },
+     "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+      "x": 1394,
+      "y": 74
+     },
+     "e301438c-0bd0-429c-ab0c-66126501069a": {
+      "x": 1657,
+      "y": 644
+     }
+    }
+   },
+   "nodes": {
+    "b0f2217b-6355-4596-be06-9ceb64fc41f3": {
+     "_id": "b0f2217b-6355-4596-be06-9ceb64fc41f3",
+     "_rev": "961303312",
+     "messageYes": {},
+     "message": {
+      "en": "Device Match Node - UNKNOWN DEVICE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "e67c7e43-f360-42e4-9e81-0ccc87c53040": {
+     "_id": "e67c7e43-f360-42e4-9e81-0ccc87c53040",
+     "_rev": "231293063",
+     "nodes": [
+      {
+       "_id": "5104c15b-f5fb-4b10-9957-529f6e9b289e",
+       "nodeType": "ValidatedUsernameNode",
+       "displayName": "Platform Username"
+      },
+      {
+       "_id": "c1de05f1-24a6-40cd-a242-895c95889323",
+       "nodeType": "ValidatedPasswordNode",
+       "displayName": "Platform Password"
+      }
+     ],
+     "pageDescription": {
+      "en": "Verify Device Profile Collector, Device Profile Save, and Device Profile Match Nodes"
+     },
+     "pageHeader": {
+      "en": "Test Device Profile Nodes"
+     },
+     "_type": {
+      "_id": "PageNode",
+      "name": "Page Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "c1de05f1-24a6-40cd-a242-895c95889323-outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "b6bc2100-f939-4162-a84b-a690fec40edb": {
+     "_id": "b6bc2100-f939-4162-a84b-a690fec40edb",
+     "_rev": "2003562694",
+     "_type": {
+      "_id": "DataStoreDecisionNode",
+      "name": "Data Store Decision",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "6d7e5278-f1d5-46de-a8fa-e43360b920d3": {
+     "_id": "6d7e5278-f1d5-46de-a8fa-e43360b920d3",
+     "_rev": "2012208485",
+     "acceptableVariance": 0,
+     "expiration": 30,
+     "useScript": false,
+     "_type": {
+      "_id": "DeviceMatchNode",
+      "name": "Device Match",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      },
+      {
+       "id": "unknownDevice",
+       "displayName": "Unknown Device"
+      }
+     ]
+    },
+    "26ff03b3-2f46-48c3-80df-f3b5ab194147": {
+     "_id": "26ff03b3-2f46-48c3-80df-f3b5ab194147",
+     "_rev": "1101556966",
+     "maximumSize": "3",
+     "deviceLocation": false,
+     "deviceMetadata": true,
+     "message": {
+      "en": "Collecting device profile...."
+     },
+     "_type": {
+      "_id": "DeviceProfileCollectorNode",
+      "name": "Device Profile Collector",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "a80b41d2-9cba-465c-ad3f-e70b860b90cd": {
+     "_id": "a80b41d2-9cba-465c-ad3f-e70b860b90cd",
+     "_rev": "660751550",
+     "maxSavedProfiles": 5,
+     "saveDeviceMetadata": true,
+     "saveDeviceLocation": false,
+     "variableName": "",
+     "_type": {
+      "_id": "DeviceSaveNode",
+      "name": "Device Profile Save",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "f5324bcd-9725-43fe-9eec-2a7b22d8b907": {
+     "_id": "f5324bcd-9725-43fe-9eec-2a7b22d8b907",
+     "_rev": "722793415",
+     "messageYes": {},
+     "message": {
+      "en": "Device Match Node - FALSE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "27b50a6d-7b9a-49eb-b6db-0d8352be6239": {
+     "_id": "27b50a6d-7b9a-49eb-b6db-0d8352be6239",
+     "_rev": "2094602651",
+     "messageYes": {},
+     "message": {
+      "en": "Device Match Node - TRUE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    }
+   },
+   "innerNodes": {
+    "5104c15b-f5fb-4b10-9957-529f6e9b289e": {
+     "_id": "5104c15b-f5fb-4b10-9957-529f6e9b289e",
+     "_rev": "1374254252",
+     "usernameAttribute": "userName",
+     "validateInput": false,
+     "autocompleteValues": [],
+     "_type": {
+      "_id": "ValidatedUsernameNode",
+      "name": "Platform Username",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "c1de05f1-24a6-40cd-a242-895c95889323": {
+     "_id": "c1de05f1-24a6-40cd-a242-895c95889323",
+     "_rev": "814239190",
+     "validateInput": false,
+     "passwordAttribute": "password",
+     "_type": {
+      "_id": "ValidatedPasswordNode",
+      "name": "Platform Password",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    }
+   },
+   "scripts": {},
+   "emailTemplates": {},
+   "socialIdentityProviders": {},
+   "themes": [],
+   "saml2Entities": {},
+   "circlesOfTrust": {}
+  }
+ }
+}

@@ -1,0 +1,491 @@
+{
+ "meta": {
+  "origin": "https://openam-ui-rc-16sep26.forgeblocks.com/platform/?realm=alpha#/journeys/QA%20-%20Device%20Profile%20Test",
+  "exportedBy": "oneustroieva@pingidentity.com",
+  "exportDate": "2026-11-05T01:58:23.755Z",
+  "exportTool": "platform-admin ui tree export",
+  "exportToolVersion": "1.1",
+  "treesSelectedForExport": [
+   "QA - Device Profile Location"
+  ],
+  "innerTreesIncluded": []
+ },
+ "trees": {
+  "QA - Device Profile Location": {
+   "tree": {
+    "_id": "QA - Device Profile Location",
+    "_rev": "1809519939",
+    "identityResource": "identity_resource",
+    "entryNodeId": "f333fadb-ff71-4af7-b1d1-96a4b3b60748",
+    "innerTreeOnly": false,
+    "noSession": false,
+    "mustRun": false,
+    "enabled": true,
+    "transactionalOnly": false,
+    "uiConfig": {
+     "categories": "[]"
+    },
+    "nodes": {
+     "61fafb7b-2550-4fcd-b41a-361e8d44dd65": {
+      "x": 762,
+      "y": 565.015625,
+      "connections": {
+       "true": "4bda2812-e00b-4ada-97ae-fd4273848fad",
+       "false": "4bda2812-e00b-4ada-97ae-fd4273848fad"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     },
+     "f333fadb-ff71-4af7-b1d1-96a4b3b60748": {
+      "x": 66,
+      "y": 370.015625,
+      "connections": {
+       "outcome": "cb23f63a-3c8c-4f31-81b8-88fee58e2d58"
+      },
+      "nodeType": "PageNode",
+      "displayName": "Page Node"
+     },
+     "cb23f63a-3c8c-4f31-81b8-88fee58e2d58": {
+      "x": 110,
+      "y": 673.015625,
+      "connections": {
+       "true": "9a3779f4-ee5d-4911-9d4f-bbfd68266ff2",
+       "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+      },
+      "nodeType": "DataStoreDecisionNode",
+      "displayName": "Data Store Decision"
+     },
+     "34941f72-e80a-4d6f-96ec-82d55743a1bf": {
+      "x": 578,
+      "y": 353.015625,
+      "connections": {
+       "true": "f5e8c980-b9eb-4639-a53f-885a9d5dd64e",
+       "false": "eae79edb-8edd-4c52-be9d-637aa7bce3dd",
+       "unknownDevice": "61fafb7b-2550-4fcd-b41a-361e8d44dd65"
+      },
+      "nodeType": "DeviceMatchNode",
+      "displayName": "Device Match"
+     },
+     "9a3779f4-ee5d-4911-9d4f-bbfd68266ff2": {
+      "x": 408,
+      "y": 879.015625,
+      "connections": {
+       "outcome": "34941f72-e80a-4d6f-96ec-82d55743a1bf"
+      },
+      "nodeType": "DeviceProfileCollectorNode",
+      "displayName": "Device Profile Collector"
+     },
+     "4bda2812-e00b-4ada-97ae-fd4273848fad": {
+      "x": 1090,
+      "y": 745.015625,
+      "connections": {
+       "outcome": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+      },
+      "nodeType": "DeviceSaveNode",
+      "displayName": "Device Profile Save"
+     },
+     "eae79edb-8edd-4c52-be9d-637aa7bce3dd": {
+      "x": 926,
+      "y": 410.015625,
+      "connections": {
+       "false": "e301438c-0bd0-429c-ab0c-66126501069a",
+       "true": "e301438c-0bd0-429c-ab0c-66126501069a"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     },
+     "c7a848f4-edb2-41fe-b229-5fa3465d24ef": {
+      "x": 862,
+      "y": 229.015625,
+      "connections": {
+       "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+       "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     },
+     "34cf5b21-def1-4af8-a9b7-8ab04960cc99": {
+      "x": 1072.5,
+      "y": 169.015625,
+      "connections": {
+       "true": "ded687b2-34e5-4068-b93a-afa1e78ba457",
+       "false": "c37f4e30-5c7a-4c9e-ad8c-3e4bbbb96f69",
+       "unknownDevice": "c37f4e30-5c7a-4c9e-ad8c-3e4bbbb96f69"
+      },
+      "nodeType": "DeviceLocationMatchNode",
+      "displayName": "Device Location Match"
+     },
+     "f5e8c980-b9eb-4639-a53f-885a9d5dd64e": {
+      "x": 749,
+      "y": 302.515625,
+      "connections": {
+       "outcome": "34cf5b21-def1-4af8-a9b7-8ab04960cc99"
+      },
+      "nodeType": "DeviceProfileCollectorNode",
+      "displayName": "Device Profile Collector"
+     },
+     "ded687b2-34e5-4068-b93a-afa1e78ba457": {
+      "x": 1400.5,
+      "y": 185.515625,
+      "connections": {
+       "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+       "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     },
+     "c37f4e30-5c7a-4c9e-ad8c-3e4bbbb96f69": {
+      "x": 1585.5,
+      "y": 370.515625,
+      "connections": {
+       "true": "e301438c-0bd0-429c-ab0c-66126501069a",
+       "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+      },
+      "nodeType": "MessageNode",
+      "displayName": "Message Node"
+     }
+    },
+    "staticNodes": {
+     "startNode": {
+      "x": 50,
+      "y": 250
+     },
+     "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+      "x": 1394,
+      "y": 74
+     },
+     "e301438c-0bd0-429c-ab0c-66126501069a": {
+      "x": 1657,
+      "y": 644
+     }
+    }
+   },
+   "nodes": {
+    "61fafb7b-2550-4fcd-b41a-361e8d44dd65": {
+     "_id": "61fafb7b-2550-4fcd-b41a-361e8d44dd65",
+     "_rev": "961303312",
+     "messageYes": {},
+     "message": {
+      "en": "Device Match Node - UNKNOWN DEVICE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "f333fadb-ff71-4af7-b1d1-96a4b3b60748": {
+     "_id": "f333fadb-ff71-4af7-b1d1-96a4b3b60748",
+     "_rev": "231293063",
+     "nodes": [
+      {
+       "_id": "13e18ceb-eeb3-4289-ad04-496634b66420",
+       "nodeType": "ValidatedUsernameNode",
+       "displayName": "Platform Username"
+      },
+      {
+       "_id": "a2c5ad00-7ef1-4d7b-b640-0f2b5796c6ac",
+       "nodeType": "ValidatedPasswordNode",
+       "displayName": "Platform Password"
+      }
+     ],
+     "pageDescription": {
+      "en": "Verify Device Profile Collector, Device Profile Save, and Device Profile Match Nodes"
+     },
+     "pageHeader": {
+      "en": "Test Device Profile Nodes"
+     },
+     "_type": {
+      "_id": "PageNode",
+      "name": "Page Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "a2c5ad00-7ef1-4d7b-b640-0f2b5796c6ac-outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "cb23f63a-3c8c-4f31-81b8-88fee58e2d58": {
+     "_id": "cb23f63a-3c8c-4f31-81b8-88fee58e2d58",
+     "_rev": "2003562694",
+     "_type": {
+      "_id": "DataStoreDecisionNode",
+      "name": "Data Store Decision",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "34941f72-e80a-4d6f-96ec-82d55743a1bf": {
+     "_id": "34941f72-e80a-4d6f-96ec-82d55743a1bf",
+     "_rev": "2012208485",
+     "acceptableVariance": 0,
+     "expiration": 30,
+     "useScript": false,
+     "_type": {
+      "_id": "DeviceMatchNode",
+      "name": "Device Match",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      },
+      {
+       "id": "unknownDevice",
+       "displayName": "Unknown Device"
+      }
+     ]
+    },
+    "9a3779f4-ee5d-4911-9d4f-bbfd68266ff2": {
+     "_id": "9a3779f4-ee5d-4911-9d4f-bbfd68266ff2",
+     "_rev": "1101556966",
+     "maximumSize": "3",
+     "deviceLocation": true,
+     "deviceMetadata": true,
+     "message": {
+      "en": "Collecting device profile...."
+     },
+     "_type": {
+      "_id": "DeviceProfileCollectorNode",
+      "name": "Device Profile Collector",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "4bda2812-e00b-4ada-97ae-fd4273848fad": {
+     "_id": "4bda2812-e00b-4ada-97ae-fd4273848fad",
+     "_rev": "660751550",
+     "maxSavedProfiles": 5,
+     "saveDeviceMetadata": true,
+     "saveDeviceLocation": true,
+     "variableName": "",
+     "_type": {
+      "_id": "DeviceSaveNode",
+      "name": "Device Profile Save",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "eae79edb-8edd-4c52-be9d-637aa7bce3dd": {
+     "_id": "eae79edb-8edd-4c52-be9d-637aa7bce3dd",
+     "_rev": "722793415",
+     "messageYes": {},
+     "message": {
+      "en": "Device Match Node - FALSE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "c7a848f4-edb2-41fe-b229-5fa3465d24ef": {
+     "_id": "c7a848f4-edb2-41fe-b229-5fa3465d24ef",
+     "_rev": "2094602651",
+     "messageYes": {},
+     "message": {
+      "en": "Device Match Node - TRUE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "34cf5b21-def1-4af8-a9b7-8ab04960cc99": {
+     "_id": "34cf5b21-def1-4af8-a9b7-8ab04960cc99",
+     "_rev": "-948743522",
+     "distance": "10",
+     "_type": {
+      "_id": "DeviceLocationMatchNode",
+      "name": "Device Location Match",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      },
+      {
+       "id": "unknownDevice",
+       "displayName": "Unknown Device"
+      }
+     ]
+    },
+    "f5e8c980-b9eb-4639-a53f-885a9d5dd64e": {
+     "_id": "f5e8c980-b9eb-4639-a53f-885a9d5dd64e",
+     "_rev": "-1481791609",
+     "maximumSize": "3",
+     "deviceLocation": true,
+     "deviceMetadata": false,
+     "message": {},
+     "_type": {
+      "_id": "DeviceProfileCollectorNode",
+      "name": "Device Profile Collector",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "ded687b2-34e5-4068-b93a-afa1e78ba457": {
+     "_id": "ded687b2-34e5-4068-b93a-afa1e78ba457",
+     "_rev": "152072383",
+     "messageYes": {},
+     "message": {
+      "en": "Device Location Match Node - TRUE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    },
+    "c37f4e30-5c7a-4c9e-ad8c-3e4bbbb96f69": {
+     "_id": "c37f4e30-5c7a-4c9e-ad8c-3e4bbbb96f69",
+     "_rev": "791380414",
+     "messageYes": {},
+     "message": {
+      "en": "Device Location Match Node - FALSE outcome"
+     },
+     "messageNo": {},
+     "_type": {
+      "_id": "MessageNode",
+      "name": "Message Node",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "true",
+       "displayName": "True"
+      },
+      {
+       "id": "false",
+       "displayName": "False"
+      }
+     ]
+    }
+   },
+   "innerNodes": {
+    "13e18ceb-eeb3-4289-ad04-496634b66420": {
+     "_id": "13e18ceb-eeb3-4289-ad04-496634b66420",
+     "_rev": "1374254252",
+     "usernameAttribute": "userName",
+     "validateInput": false,
+     "autocompleteValues": [],
+     "_type": {
+      "_id": "ValidatedUsernameNode",
+      "name": "Platform Username",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    },
+    "a2c5ad00-7ef1-4d7b-b640-0f2b5796c6ac": {
+     "_id": "a2c5ad00-7ef1-4d7b-b640-0f2b5796c6ac",
+     "_rev": "814239190",
+     "validateInput": false,
+     "passwordAttribute": "password",
+     "_type": {
+      "_id": "ValidatedPasswordNode",
+      "name": "Platform Password",
+      "collection": true
+     },
+     "_outcomes": [
+      {
+       "id": "outcome",
+       "displayName": "Outcome"
+      }
+     ]
+    }
+   },
+   "scripts": {},
+   "emailTemplates": {},
+   "socialIdentityProviders": {},
+   "themes": [],
+   "saml2Entities": {},
+   "circlesOfTrust": {}
+  }
+ }
+}

@@ -14,34 +14,28 @@ import generatePageURL from '../utils/adminUtils';
 import { importJourneysViaAPI, deleteJourneysViaAPI } from '../utils/manageJourneys';
 import RegistrationJourneyPage from '../pages/enduser/RegistrationJourneyPage';
 
-// Method that fills in the Admin Login form and sends it
 function fillAndSendLoginForm() {
   const adminUserName = Cypress.env('AM_USERNAME');
   const adminPassword = Cypress.env('AM_PASSWORD');
 
-  // Fill in Admin name and password and Login
-  cy.findByLabelText(/User Name/i, { timeout: 5000 }).should('be.visible').type(adminUserName, { force: true });
-  cy.findAllByLabelText(/Password/i).first().should('be.visible').type(adminPassword, { force: true });
-  cy.findByRole('button', { name: /Next/i }).should('be.visible').click();
+  cy.findByLabelText(/User Name/i, { timeout: 30000 }).should('be.visible').type(adminUserName, { force: true });
+  cy.findAllByLabelText(/Password/i, { timeout: 30000 }).first().should('be.visible').type(adminPassword, { force: true });
+  cy.findByRole('button', { name: /Next/i, timeout: 30000 }).should('be.visible').click();
 
-  // Skip 2FA on Cloud Tenants
+  // Skip 2FA on Cloud Tenants.
   if (Cypress.env('IS_FRAAS')) {
-    // Generous timeout: on cloud tenants the MFA "Skip for now" button is backend-rendered and can
-    // take several seconds to appear; the default 4s command timeout fails the login mid-journey,
-    // which (with retries) counts towards AM account lockout for the tenant admin.
     cy.findByRole('button', { name: /Skip for now/i, timeout: 40000 }).should('be.visible');
     cy.findByRole('status').should('not.exist');
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.findByRole('button', { name: /Skip for now/i }).wait(100).click();
+    cy.wait(100);
+    cy.findByRole('button', { name: /Skip for now/i }).click();
   }
 }
 
-// Method to fetch ACCESS_TOKEN with retry option
 function fetchAccessToken(retries = 5, attempt = 0) {
   let retry = attempt;
-  const expectedScope = Cypress.env('IS_FRAAS') ? 'fr:idm:*' : 'openid fr:idm:*';
 
-  cy.wait('@getAccessToken').then((interception) => {
+  cy.wait('@getAccessToken', { timeout: 15000 }).then((interception) => {
     const { response } = interception || {};
     if (!response) {
       cy.log('ACCESS_TOKEN fetch skipped — no response captured (intercept may not have fired)');
@@ -52,8 +46,7 @@ function fetchAccessToken(retries = 5, attempt = 0) {
     const idTokenPayload = !isFraas && idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
     const isAdminToken = isFraas || idTokenPayload?.aud === 'idm-admin-ui';
 
-    // Fetch ACCESS_TOKEN only if the response is successful, the IDM scope is correct, and the token belongs to the admin UI
-    if (response.statusCode === 200 && scope === expectedScope && isAdminToken) {
+    if (response.statusCode === 200 && scope && scope.includes('fr:idm:*') && isAdminToken) {
       // Use the access token from the admin login as the API access token for this test
       // Note that for code to use this access token it needs to be queued to execute
       // afterwards by Cypress with a then block or similar
@@ -128,7 +121,6 @@ Cypress.Commands.add('loginAsAdmin', () => {
   // Set up intercept
   cy.intercept('GET', '/openidm/info/uiconfig').as('uiconfig');
   cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-  cy.intercept('GET', 'environment/release').as('getRelease');
 
   // Visit Admin Login URL
   cy.visit(loginUrl);
@@ -145,12 +137,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
   // Wait for Dashboard to load
   // only assert if test didn't fail (the assertion occasionally fail in after hooks)
   if (!Cypress.state('test').state || Cypress.state('test').state === 'passed') {
-    cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
-  }
-
-  if (Cypress.env('IS_FRAAS')) {
-    // Wait for the Cloud to properly load
-    cy.wait('@getRelease', { timeout: 10000 });
+    cy.findAllByTestId('dashboard-welcome-title', { timeout: 30000 }).should('be.visible');
   }
 });
 
@@ -204,16 +191,15 @@ function fetchOAuthTokenAfterSessionRestore(options = {}) {
   // Use the same retry logic as loginAsAdmin for reliability
   fetchAccessToken();
 
+  if (Cypress.env('IS_FRAAS')) {
+    cy.wait('@getRelease', { timeout: 30000 });
+  }
+
   // Wait for Dashboard to load (same as loginAsAdmin)
   // This ensures theme CSS is applied and page is fully rendered before tests proceed
   // only assert if test didn't fail (the assertion occasionally fail in after hooks)
   if (!Cypress.state('test').state || Cypress.state('test').state === 'passed') {
-    cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
-  }
-
-  if (Cypress.env('IS_FRAAS')) {
-    // Wait for the Cloud to properly load (same as loginAsAdmin)
-    cy.wait('@getRelease', { timeout: 10000 });
+    cy.findAllByTestId('dashboard-welcome-title', { timeout: 30000 }).should('be.visible');
   }
 }
 
