@@ -128,9 +128,11 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import agentConstants from '@forgerock/platform-shared/src/views/Governance/Agents/utils/agentConstants';
+import { resolveAgentIcon, useAgentConfig } from '@forgerock/platform-shared/src/views/Governance/Agents/utils/useAgentConfig';
 import i18n from '@/i18n';
 
 const router = useRouter();
+const { agentTemplateIcons, agentTemplateSources, loadConfig } = useAgentConfig();
 const currentPage = ref(1);
 const entriesPerPage = ref(10);
 const totalPagedResults = ref(0);
@@ -221,8 +223,12 @@ async function search(page = null) {
       const processedItem = {
         ...item,
       };
-      const applicationIcon = item?.application?.icon || getApplicationLogo(item.application);
-      if (applicationIcon) processedItem.application.icon = applicationIcon;
+      const applicationIcon = resolveAgentIcon(
+        item?.application,
+        agentTemplateIcons.value,
+        agentTemplateSources.value,
+      ) || getApplicationLogo(item.application);
+      if (applicationIcon && processedItem.application) processedItem.application.icon = applicationIcon;
       processedItem.displayName = processedItem?.descriptor?.idx?.['/account']?.displayName || blankValueIndicator;
       processedItem.type = capitalize(agentConstants.ACCOUNT_TYPES.MACHINE);
       processedItem.description = item.account.description || blankValueIndicator;
@@ -283,7 +289,7 @@ function pageSizeChange(pageSize) {
 }
 
 onMounted(async () => {
-  await loadAppTemplates();
+  await Promise.all([loadConfig(), loadAppTemplates()]);
   search();
 });
 

@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import * as AgentApi from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import { useRouter } from 'vue-router';
 import Agents from './Agents';
 
@@ -116,6 +117,9 @@ describe('Agents Unit', () => {
     setupTestPinia({ user: { userId: 'testId' } });
     AccountApi.getAccounts = jest.fn()
       .mockResolvedValue({ data: { result: sampleData, totalCount: 2 } });
+    // Reject like the real axios mock does on un-mocked calls, so the component
+    // keeps its static fallback templates without console-error snapshot noise.
+    AgentApi.getAgentConfig = jest.fn().mockRejectedValue(new Error('config unavailable'));
   });
 
   it('Agents load on mount', async () => {
@@ -141,5 +145,19 @@ describe('Agents Unit', () => {
     expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({
       params: expect.objectContaining({ agentId: 'system/Target/User/103', tab: 'details' }),
     }));
+  });
+
+  it('derives the application icon from the agent template config when the application has none', async () => {
+    AgentApi.getAgentConfig = jest.fn().mockResolvedValue({
+      data: { templates: [{ id: 'aws.bedrock', resources: [], icon: '/img/bedrock.svg' }] },
+    });
+    const agentWithoutIcon = { ...sampleData[0], application: { name: 'app name', templateName: 'aws.bedrock' } };
+    AccountApi.getAccounts = jest.fn()
+      .mockResolvedValue({ data: { result: [agentWithoutIcon], totalCount: 1 } });
+
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    expect(wrapper.vm.agents[0].application.icon).toBe('/img/bedrock.svg');
   });
 });

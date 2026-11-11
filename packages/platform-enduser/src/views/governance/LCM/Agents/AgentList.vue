@@ -313,7 +313,7 @@ import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/Per
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import agentConstants from '@forgerock/platform-shared/src/views/Governance/Agents/utils/agentConstants';
 import { getAgentDisplayName, getAgentTemplateLabel } from '@forgerock/platform-shared/src/views/Governance/Agents/utils/agentUtility';
-import { useAgentConfig } from '@forgerock/platform-shared/src/views/Governance/Agents/utils/useAgentConfig';
+import { resolveAgentIcon, useAgentConfig } from '@forgerock/platform-shared/src/views/Governance/Agents/utils/useAgentConfig';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrAddAgentModal from './Add/AddAgentModal';
 import FrDeleteAgentModal from './Delete/DeleteAgentModal';
@@ -322,7 +322,7 @@ import i18n from '@/i18n';
 const router = useRouter();
 const { bvModal } = useBvModal();
 const { userId } = useUserStore();
-const { loadConfig } = useAgentConfig();
+const { agentTemplateIcons, agentTemplateSources, loadConfig } = useAgentConfig();
 const store = useStore();
 // Agent create/delete are dev-only until the LCM write flows ship in a full release
 const governanceDevEnabled = computed(() => (store?.state?.SharedStore?.governanceDevEnabled ?? false));
@@ -521,8 +521,12 @@ async function search(page = null) {
     const { data } = agentResults[selectedTab.value];
     agents.value = (data?.result || []).map((item) => {
       const processedItem = { ...item };
-      const applicationIcon = item?.application?.icon || getApplicationLogo(item.application);
-      if (applicationIcon) processedItem.application.icon = applicationIcon;
+      const applicationIcon = resolveAgentIcon(
+        item?.application,
+        agentTemplateIcons.value,
+        agentTemplateSources.value,
+      ) || getApplicationLogo(item.application);
+      if (applicationIcon && processedItem.application) processedItem.application.icon = applicationIcon;
       processedItem.displayName = getAgentDisplayName(processedItem);
       processedItem.description = item.account?.description || blankValueIndicator;
       processedItem.type = capitalize(processedItem?.glossary?.idx?.['/account']?.accountType || agentConstants.ACCOUNT_TYPES.DEFAULT);

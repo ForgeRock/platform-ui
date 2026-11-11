@@ -97,6 +97,7 @@ describe('AgentList Unit', () => {
       agentApplicationProps: ref({}),
       agentMappings: ref({}),
       agentTemplateSources: ref({}),
+      agentTemplateIcons: ref({}),
       agentSources: ref(null),
       loadConfig: jest.fn().mockResolvedValue({
         agentTemplates: ['aws.bedrock'],
@@ -184,5 +185,30 @@ describe('AgentList Unit', () => {
       name: 'AdministerAgentDetails',
       params: { agentId: 'id-0', tab: 'details' },
     });
+  });
+
+  it('derives the application icon from the agent template config when the application has none', async () => {
+    const agentWithoutIcon = sampleAgent('id-0');
+    delete agentWithoutIcon.application.icon;
+    UseAgentConfig.useAgentConfig = jest.fn().mockReturnValue({
+      agentTemplates: ref(['aws.bedrock']),
+      agentApplicationProps: ref({}),
+      agentMappings: ref({}),
+      agentTemplateSources: ref({}),
+      agentTemplateIcons: ref({ 'aws.bedrock': '/img/bedrock.svg' }),
+      agentSources: ref(null),
+      loadConfig: jest.fn().mockResolvedValue({
+        agentTemplates: ['aws.bedrock'],
+        agentTemplateSources: {},
+        agentTemplateDisplayNames: {},
+      }),
+    });
+
+    const wrapper = mountComponent();
+    AgentApi.getAgents = jest.fn()
+      .mockResolvedValue({ data: { result: [agentWithoutIcon], totalCount: 1 } });
+    await flushPromises();
+
+    expect(wrapper.vm.agents[0].application.icon).toBe('/img/bedrock.svg');
   });
 });
