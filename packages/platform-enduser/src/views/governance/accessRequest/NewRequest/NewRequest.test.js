@@ -174,7 +174,7 @@ describe('NewRequest', () => {
     expect(wrapper.vm.requestCartItems).toStrictEqual([]);
 
     await wrapper.setData({ isTesting: true });
-    const catalogItemRequestButton = wrapper.findAll('span[class="hover-underline color-blue"]')[0];
+    const catalogItemRequestButton = wrapper.findAll('.card-footer button')[0];
     expect(catalogItemRequestButton.exists()).toBe(true);
     catalogItemRequestButton.trigger('click');
     await flushPromises();

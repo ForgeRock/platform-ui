@@ -1,13 +1,12 @@
 /**
- * Copyright 2023 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import RequestItemsList from './index';
 
@@ -145,6 +144,52 @@ describe('RequestItemsList', () => {
       const requestItemList = findByTestId(wrapper, 'request-item-list');
       requestItemList.trigger('click');
       expect(wrapper.emitted('requested-item-click')).toBeTruthy();
+    });
+
+    it('renders the request item as a button only when row clicks are enabled', () => {
+      const inactiveWrapper = setup();
+      expect(findByTestId(inactiveWrapper, 'request-item-list').element.tagName).toBe('DIV');
+
+      const activeWrapper = setup({
+        props: {
+          requestItems: entitlementRequestStub,
+          frHover: true,
+        },
+      });
+      expect(findByTestId(activeWrapper, 'request-item-list').element.tagName).toBe('BUTTON');
+      expect(findByTestId(activeWrapper, 'request-item-list').attributes('aria-label')).toEqual('Application Architecture Director');
+    });
+
+    it('labels the delete button with the item name', () => {
+      const wrapper = setup();
+      const removeItemButton = findByTestId(wrapper, 'remove-requested-item-button');
+      expect(removeItemButton.attributes('aria-label')).toEqual('Remove Application Architecture Director');
+    });
+  });
+
+  describe('@a11y', () => {
+    it('should have no accessibility violations in empty state', async () => {
+      const wrapper = setup({
+        props: {
+          requestItems: [],
+        },
+      });
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no accessibility violations in non-interactive state', async () => {
+      const wrapper = setup();
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no accessibility violations when rendered as buttons', async () => {
+      const wrapper = setup({
+        props: {
+          requestItems: entitlementRequestStub,
+          frHover: true,
+        },
+      });
+      await runA11yTest(wrapper);
     });
   });
 });

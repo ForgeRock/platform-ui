@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,11 +13,11 @@ of the MIT license. See the LICENSE file for details. -->
         v-for="(item, index) in requestItems"
         :key="index">
         <BListGroupItem
-          button
-          :aria-label="item.name"
+          :button="frHover"
+          :aria-label="frHover ? item.name : undefined"
           class="d-flex align-items-center px-3 "
           data-testid="request-item-list"
-          :class="{'cursor-pointer fr-hover-item': frHover}"
+          :class="{'fr-hover-item': frHover}"
           :style="context === 'accessItem' ? 'min-height: 100px' : ''"
           @click="frHover ? $emit('requested-item-click', item.id) : ''">
           <BMedia
@@ -69,9 +69,10 @@ of the MIT license. See the LICENSE file for details. -->
               class="text-dark p-0"
               variant="link"
               data-testid="remove-requested-item-button"
+              :aria-label="$t('common.removeObject', { object: item.name })"
               @click.stop="$emit('remove-requested-item', context, item.id)">
               <FrIcon
-                icon-class="mr-2"
+                icon-class="m-1"
                 name="delete" />
             </BButton>
           </BMedia>
@@ -154,7 +155,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .fr-hover-item:hover {
+  .fr-hover-item:hover,
+  .fr-hover-item:focus {
     background-color: $gray-100;
   }
 </style>

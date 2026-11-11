@@ -5,9 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 import RequestCart from './index';
@@ -94,6 +94,25 @@ describe('RequestCart', () => {
         accessModifier: 'add',
         priority: 'low',
       }]]);
+    });
+  });
+
+  describe('@a11y', () => {
+    it('should have no accessibility violations in empty state', async () => {
+      const wrapper = setup();
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no accessibility violations with a populated cart', async () => {
+      const wrapper = setup({
+        props: {
+          requestCartUsers: requestCartUsersStub,
+          requestCartItems: requestCartItemsStub,
+        },
+      });
+      await flushPromises();
+      await runA11yTest(wrapper);
     });
   });
 });

@@ -229,16 +229,16 @@ of the MIT license. See the LICENSE file for details. -->
                               {{ $t('governance.accessRequest.newRequest.nonRequestable') }}
                             </FrIcon>
                           </template>
-                          <span
+                          <BButton
                             v-else
-                            class="hover-underline color-blue"
+                            variant="link"
                             @click="openItemDetails(item)">
                             <FrIcon
                               icon-class="mr-2"
                               name="add">
                               {{ $t('governance.accessRequest.newRequest.request') }}
                             </FrIcon>
-                          </span>
+                          </BButton>
                         </BCardFooter>
                       </BCard>
                     </BCol>
