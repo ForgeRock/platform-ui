@@ -811,16 +811,22 @@ export default {
       return parts.length ? parts.join(' and ') : undefined;
     },
     getList() {
+      const sortByColumn = this.getSortBy();
       const params = {
         pageNumber: this.currentPage - 1,
         pageSize: this.pageSize,
-        sortBy: this.getSortBy(),
-        sortDesc: this.sortDesc,
+        sortBy: sortByColumn,
       };
       if (this.usingNewListApi) {
+        // ES-backed endpoint takes a sortDir asc/desc string (a boolean
+        // sortDesc is ignored) and sorts dates lexically unless told the
+        // field is a date
+        params.sortDir = this.sortDesc ? 'desc' : 'asc';
+        if (sortByColumn === 'startDate' || sortByColumn === 'deadline') params.sortType = 'date';
         const queryFilter = this.buildQueryFilter();
         if (queryFilter) params._queryFilter = queryFilter;
       } else {
+        params.sortDesc = this.sortDesc;
         params.status = this.statusSort.param;
         params.queryString = this.searchQuery;
       }
@@ -1105,17 +1111,20 @@ export default {
         this.isExporting = true;
         if (rows === 'all') {
           const pageSize = format === 'pdf' ? 1000 : 10000;
+          const sortByColumn = this.getSortBy();
           const params = {
-            sortBy: this.getSortBy(),
-            sortDesc: this.sortDesc,
+            sortBy: sortByColumn,
             pageSize,
           };
           if (this.usingNewListApi) {
+            params.sortDir = this.sortDesc ? 'desc' : 'asc';
+            if (sortByColumn === 'startDate' || sortByColumn === 'deadline') params.sortType = 'date';
             const queryFilter = this.buildQueryFilter();
             if (queryFilter) params._queryFilter = queryFilter;
             const { data } = await getCertificationList(params);
             items = this.mapExportResults(data);
           } else {
+            params.sortDesc = this.sortDesc;
             params.status = this.statusSort.param;
             params.queryString = this.searchQuery;
             const { data } = await getAdminCertificationItems(params);

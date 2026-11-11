@@ -127,7 +127,7 @@ describe('Campaigns', () => {
       pageNumber: 0,
       pageSize: 10,
       sortBy: 'name',
-      sortDesc: false,
+      sortDir: 'asc',
       _queryFilter: "(status eq 'active' or status eq 'in-progress' or status eq 'creating')",
     });
   });
@@ -139,7 +139,7 @@ describe('Campaigns', () => {
       pageNumber: 0,
       pageSize: 10,
       sortBy: 'name',
-      sortDesc: false,
+      sortDir: 'asc',
       _queryFilter: "name co 'test campaign' and (status eq 'active' or status eq 'in-progress' or status eq 'creating')",
     });
   });
@@ -151,7 +151,7 @@ describe('Campaigns', () => {
       pageNumber: 0,
       pageSize: 10,
       sortBy: 'name',
-      sortDesc: false,
+      sortDir: 'asc',
       _queryFilter: "(status eq 'complete' or status eq 'signed-off')",
     });
   });
@@ -163,7 +163,7 @@ describe('Campaigns', () => {
       pageNumber: 0,
       pageSize: 10,
       sortBy: 'name',
-      sortDesc: false,
+      sortDir: 'asc',
       _queryFilter: "(status eq 'active' or status eq 'in-progress' or status eq 'creating' or status eq 'complete' or status eq 'signed-off')",
     });
   });
@@ -180,7 +180,7 @@ describe('Campaigns', () => {
       pageNumber: 0,
       pageSize: 10,
       sortBy: 'name',
-      sortDesc: false,
+      sortDir: 'asc',
     });
   });
 
@@ -191,9 +191,42 @@ describe('Campaigns', () => {
       pageNumber: 0,
       pageSize: 10,
       sortBy: 'name',
-      sortDesc: false,
+      sortDir: 'asc',
       _queryFilter: "name co 'foo' and (status eq 'active' or status eq 'in-progress' or status eq 'creating' or status eq 'staging')",
     });
+  });
+
+  it('getList sends sortType date when sorting by startDate or deadline, and not for other columns', async () => {
+    await wrapper.setData({ sortBy: 'formattedStartDate' });
+    wrapper.vm.getList();
+    expect(CertificationApi.getCertificationList).toHaveBeenCalledWith(expect.objectContaining({
+      sortBy: 'startDate',
+      sortType: 'date',
+    }));
+
+    await wrapper.setData({ sortBy: 'formattedDeadline' });
+    wrapper.vm.getList();
+    expect(CertificationApi.getCertificationList).toHaveBeenCalledWith(expect.objectContaining({
+      sortBy: 'deadline',
+      sortType: 'date',
+    }));
+
+    await wrapper.setData({ sortBy: 'name' });
+    wrapper.vm.getList();
+    expect(CertificationApi.getCertificationList).toHaveBeenCalledWith(expect.objectContaining({
+      sortBy: 'name',
+    }));
+    expect(CertificationApi.getCertificationList.mock.calls.at(-1)[0].sortType).toBeUndefined();
+  });
+
+  it('export all rows sends sortType date when sorted by a date column', async () => {
+    await wrapper.setData({ sortBy: 'formattedDeadline' });
+    await wrapper.vm.exportItemsToFile({ format: 'csv', rows: 'all' });
+    expect(CertificationApi.getCertificationList).toHaveBeenCalledWith(expect.objectContaining({
+      sortBy: 'deadline',
+      sortType: 'date',
+      pageSize: 10000,
+    }));
   });
 
   it('getList filters by owner and campaign type', async () => {
@@ -206,7 +239,7 @@ describe('Campaigns', () => {
       pageNumber: 0,
       pageSize: 10,
       sortBy: 'name',
-      sortDesc: false,
+      sortDir: 'asc',
       _queryFilter: "ownerId co 'owner-id' and certificationType eq 'identity' and (status eq 'active' or status eq 'in-progress' or status eq 'creating')",
     });
   });
@@ -271,11 +304,11 @@ describe('Campaigns', () => {
     const certTable = wrapper.find('.table');
     certTable.find('th').trigger('click');
     expect(CertificationApi.getCertificationList).toHaveBeenCalledWith(
-      expect.objectContaining({ sortBy: 'name', sortDesc: false }),
+      expect.objectContaining({ sortBy: 'name', sortDir: 'asc' }),
     );
     certTable.find('th').trigger('click');
     expect(CertificationApi.getCertificationList).toHaveBeenCalledWith(
-      expect.objectContaining({ sortBy: 'name', sortDesc: true }),
+      expect.objectContaining({ sortBy: 'name', sortDir: 'desc' }),
     );
   });
 
