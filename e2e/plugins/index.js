@@ -138,6 +138,20 @@ module.exports = async (on, config) => {
     },
   });
 
+  // Overrides the cucumber preprocessor's after:spec handler (last registration wins) — safe while no cucumber reports are enabled
+  on('after:spec', async (spec, results) => {
+    if (results?.video) {
+      // Only keep videos of failures; a retried test always has a FAILED attempt, so it is kept
+      const hasFailedAttempt = (results.tests || []).some(
+        (test) => test.attempts.some((attempt) => attempt.state?.toLowerCase() === 'failed'),
+      );
+      // Keep the video for spec-level errors (e.g. browser crash) — it may be the only evidence
+      if (!hasFailedAttempt && !results.error && !results.stats?.failures) {
+        await fs.unlink(results.video).catch(() => {});
+      }
+    }
+  });
+
   install(on);
 
   on('before:browser:launch', (browser = {}, launchOptions) => {
