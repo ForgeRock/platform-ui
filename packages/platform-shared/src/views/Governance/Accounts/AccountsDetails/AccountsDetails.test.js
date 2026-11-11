@@ -18,7 +18,6 @@ import * as resourceUtil from '@forgerock/platform-shared/src/utils/governance/r
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import * as AccountsApi from '@/api/governance/AccountApi';
-import store from '@/store';
 import AccountsDetails from './AccountsDetails';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
@@ -68,7 +67,7 @@ const testAccount = {
   },
 };
 
-function mountComponent(accountType, props = {}, isAdmin = false, governanceDevEnabled = true) {
+function mountComponent(accountType, props = {}, isAdmin = false) {
   const account = cloneDeep(testAccount);
   if (accountType === 'orphan') {
     delete account.user;
@@ -91,7 +90,6 @@ function mountComponent(accountType, props = {}, isAdmin = false, governanceDevE
 
   mockModal();
   setupTestPinia(isAdmin ? { user: { idmRoles: ['adminUser'], idmUIAdminRoles: ['adminUser'] } } : undefined);
-  store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
   wrapper = mount(AccountsDetails, {
     global: {
       plugins: [Notifications],
@@ -227,34 +225,6 @@ describe('AccountsDetails', () => {
 
     expect(wrapper.vm.tabIndex).toBe(0);
     expect(wrapper.find('.tabs').text()).not.toContain('governance.accounts.details.tabs.objectProperties');
-  });
-
-  it('deep links to the Object Properties tab when the flag is off', async () => {
-    mockRouter({ params: { accountId: testAccount.id, tab: 'objectProperties' } });
-    mountComponent(undefined, {}, false, false);
-    await flushPromises();
-
-    expect(wrapper.vm.tabIndex).toBe(1);
-    expect(wrapper.find('.tabs').text()).toContain('governance.accounts.details.tabs.objectProperties');
-  });
-
-  it('renders a separate Object Properties tab when the flag is off', async () => {
-    mountComponent(undefined, {}, false, false);
-    await flushPromises();
-
-    const tabs = wrapper.find('.tabs').findAll('li');
-    expect(tabs.length).toBe(3);
-    expect(tabs.map((tab) => tab.text())).toContain('governance.accounts.details.tabs.objectProperties');
-
-    const objectProperties = wrapper.findComponent({ name: 'ObjectProperties' });
-    expect(objectProperties.props('enableCollapse')).toBe(false);
-  });
-
-  it('hides the Delete Account panel when the flag is off', async () => {
-    mountComponent(undefined, { isEndUser: false }, true, false);
-    await flushPromises();
-
-    expect(wrapper.find('[data-testid="account-detail-delete"]').exists()).toBe(false);
   });
 
   it('shows the Activity tab for admin users', async () => {
@@ -616,7 +586,6 @@ describe('AccountsDetails', () => {
     AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockResolvedValue({});
     CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({});
     setupTestPinia();
-    store.state.SharedStore.governanceDevEnabled = true;
     wrapper = mount(AccountsDetails, {
       global: { plugins: [Notifications], mocks: { $t: (t) => t } },
     });
@@ -637,7 +606,6 @@ describe('AccountsDetails', () => {
     AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockResolvedValue({});
     CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({});
     setupTestPinia();
-    store.state.SharedStore.governanceDevEnabled = true;
     wrapper = mount(AccountsDetails, {
       global: { plugins: [Notifications], mocks: { $t: (t) => t } },
     });

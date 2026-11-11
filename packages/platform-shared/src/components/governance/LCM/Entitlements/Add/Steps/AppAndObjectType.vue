@@ -117,7 +117,7 @@ function optionFunction(resource) {
  * @param {Object} query - The query search term.
  */
 function queryParamFunction(query) {
-  const filters = [];
+  const filters = ['!(application.authoritative eq "true")'];
   if (props.filterByAccountAttribute) filters.push('application.objectTypes.accountAttribute co ""');
   if (props.excludeDisconnected) filters.push('!(application.isDisconnected eq "true")');
   if (query) filters.unshift(`application.name co "${query}"`);
@@ -125,7 +125,7 @@ function queryParamFunction(query) {
     // GovResourceSelect does not paginate, so fetch a large page to keep the
     // full application list reachable in the dropdown
     pageSize: 100,
-    queryFilter: filters.length ? filters.join(' and ') : 'true',
+    queryFilter: filters.join(' and '),
   };
 }
 

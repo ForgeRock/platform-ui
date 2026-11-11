@@ -13,7 +13,6 @@ import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
-import store from '@/store';
 import RequestFormManager from './RequestFormManager';
 import i18n from '@/i18n';
 
@@ -71,7 +70,7 @@ SchemaApi.getSchema.mockImplementation(() => Promise.resolve({
 jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockResolvedValue({ data: { result: [] } });
 
 describe('RequestFormManager', () => {
-  const setup = (propsData = {}, governanceDevEnabled = true) => {
+  const setup = (propsData = {}) => {
     const props = {
       request: {
         decision: {
@@ -89,7 +88,6 @@ describe('RequestFormManager', () => {
     };
 
     setupTestPinia(undefined, false);
-    store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
     return mount(RequestFormManager, {
       global: {
         plugins: [i18n],
@@ -358,29 +356,6 @@ describe('RequestFormManager', () => {
           glossary: { location: 'oslo' },
         },
       });
-    });
-
-    it('treats an account request as a plain custom request when the flag is off', async () => {
-      const applicationAssignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment');
-      const requestTypeSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType')
-        .mockResolvedValue({ data: { result: [] } });
-      const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm');
-      // spies in this suite persist across tests — start with clean history
-      applicationAssignmentSpy.mockClear();
-      formSpy.mockClear();
-      requestTypeSpy.mockClear();
-
-      const wrapper = setup({ request: accountRequestItem }, false);
-      await flushPromises();
-
-      expect(applicationAssignmentSpy).not.toHaveBeenCalled();
-      expect(formSpy).not.toHaveBeenCalled();
-      // flag-off falls back to the plain custom-request form lookup (master behavior)
-      expect(requestTypeSpy).toHaveBeenCalledWith('createAccount');
-      // no account merge on save — the flag-off default custom-request payload wins
-      wrapper.vm.formValue = { object: { userName: 'changed.user' } };
-      await wrapper.vm.handleSave();
-      expect(wrapper.emitted('save')[0][0]).toEqual({ object: { userName: 'changed.user' } });
     });
   });
 

@@ -69,15 +69,13 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrDefaultFormManager from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/DefaultFormManager';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import { BCard, BCol, BRow } from 'bootstrap-vue';
-import store from '@/store';
 
 const { schema, setSchema } = useGovernanceStore();
 const emit = defineEmits(['save', 'formResolved']);
 
 // account LCM requests resolve their form through the application/object-type
 // assignment (application/{id}/{objectType}/{operation}) rather than the
-// request-type assignment used by other custom request types. Gated behind the
-// governanceDevEnabled flag — the flag-off path treats them as plain custom requests.
+// request-type assignment used by other custom request types.
 const accountLcmRequestTypes = ['createAccount', 'modifyAccount'];
 
 const props = defineProps({
@@ -119,9 +117,7 @@ const showDefaultForm = ref(false);
 // computed
 const phaseId = computed(() => props.request.phases?.[0]?.name);
 const requestType = computed(() => props.request.requestType || '');
-const isAccountLcmRequest = computed(() => (
-  store.state.SharedStore.governanceDevEnabled && accountLcmRequestTypes.includes(requestType.value)
-));
+const isAccountLcmRequest = computed(() => accountLcmRequestTypes.includes(requestType.value));
 const displayData = computed(() => props.request._displayData || {});
 const isCustomRequestType = computed(() => !isSupportedRequestType(requestType.value));
 const showSaveButton = computed(() => (

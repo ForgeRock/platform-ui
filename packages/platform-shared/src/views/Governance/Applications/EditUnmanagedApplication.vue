@@ -36,6 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
 
         <BTabs
           v-model="activeTabIndex"
+          @activate-tab="onActivateTab"
           nav-class="fr-tabs"
           lazy>
           <BTab
@@ -231,22 +232,46 @@ const roleResourceName = ref('role');
 const orgResourceName = ref('organization');
 const relationshipProperty = ref(null);
 const parentResource = ref('managed/application');
+// Rich owner objects (with display fields) as of the last load/save — the revert
+// target when unsaved owner selections are discarded on tab-away.
+const savedOwners = ref([]);
 
 const logoSource = computed(() => applicationDetails.value?.icon || resolveImage('custom.svg'));
 
 function updateModel({ value, path }) {
   if (!applicationDetails.value) return;
   if (path === 'ownerIds' && Array.isArray(value)) {
-    // RelationshipEdit emits full relationship objects; keep them in sync on the property
-    // and store the plain IDs on applicationDetails for the save payload
-    relationshipProperty.value = { ...relationshipProperty.value, value };
+    // RelationshipEdit emits bare { _ref, _refProperties } entries — including a
+    // mount-time echo when the lazy Details tab remounts. Merge back the display
+    // fields already fetched per owner so tab switches don't blank the tags.
+    const previousOwners = relationshipProperty.value?.value || [];
+    const mergedOwners = value.map((owner) => {
+      const previous = previousOwners.find(({ _ref }) => _ref === owner._ref);
+      return previous ? { ...previous, ...owner } : owner;
+    });
+    relationshipProperty.value = { ...relationshipProperty.value, value: mergedOwners };
     applicationDetails.value = {
       ...applicationDetails.value,
-      ownerIds: value.map(({ _ref }) => _ref.split('/').slice(2).join('/')),
+      ownerIds: mergedOwners.map(({ _ref }) => _ref.split('/').slice(2).join('/')),
     };
   } else {
     applicationDetails.value = { ...applicationDetails.value, [path]: value };
   }
+}
+
+/**
+ * Discards unsaved owner selections when the user leaves the Details tab. New picks
+ * have no fetched display fields, so the lazy remount would render them as blank tags;
+ * reverting to the owners as of the last load/save keeps the remounted view consistent
+ * with what is persisted. Only ownerIds is reverted — other unsaved field edits stay.
+ * @param {Number} newTabIndex index of the tab being activated
+ * @param {Number} previousTabIndex index of the tab being left
+ */
+function onActivateTab(newTabIndex, previousTabIndex) {
+  if (previousTabIndex !== 0 || newTabIndex === previousTabIndex || !relationshipProperty.value) return;
+  if (JSON.stringify(applicationDetails.value?.ownerIds || []) === JSON.stringify(savedApplication.value?.ownerIds || [])) return;
+  relationshipProperty.value = { ...relationshipProperty.value, value: savedOwners.value };
+  applicationDetails.value = { ...applicationDetails.value, ownerIds: savedApplication.value.ownerIds || [] };
 }
 
 function updateGlossaryModel(data) {
@@ -284,42 +309,10 @@ function updateApplicationDetails(appPayload) {
   }
 }
 
-async function saveApp() {
-  isSaving.value = true;
-  try {
-    const { metadata, ...appPayload } = applicationDetails.value;
-    const savePromises = [updateApplication(props.applicationId, appPayload)];
-    if (glossaryData.value !== null) {
-      // Reset inside .then() so the flag only clears on success; a failed POST
-      // leaves it true so the next save retries with POST rather than PUT.
-      const glossarySave = isGlossaryCreate.value
-        ? saveGlossaryAttributesByAppId(props.applicationId, glossaryData.value).then(() => { isGlossaryCreate.value = false; })
-        : updateGlossaryAttributesByAppId(props.applicationId, glossaryData.value);
-      savePromises.push(glossarySave);
-    }
-    await Promise.all(savePromises);
-    // Promote the just-saved state so the object-type editor's Details save
-    // starts from it and never re-persists an older snapshot.
-    savedApplication.value = { ...appPayload };
-    displayNotification('success', i18n.global.t('applications.edit.messages.updateSuccess'));
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('applications.edit.messages.updateFail'));
-  } finally {
-    isSaving.value = false;
-  }
-}
-
-async function deleteApp() {
-  isDeleting.value = true;
-  try {
-    await deleteUnmanagedApplication(props.applicationId);
-    router.push('/applications');
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('applications.edit.listApps.deleteAppFail'));
-    isDeleting.value = false;
-  }
-}
-
+/**
+ * Rebuilds the owners relationship property (with fetched display fields) for the
+ * given ownerIds and stashes the result as the tab-away revert target.
+ */
 async function loadOwnerRelationshipProperty(currentOwnerIds) {
   try {
     const { data } = await getConfig('managed');
@@ -361,8 +354,48 @@ async function loadOwnerRelationshipProperty(currentOwnerIds) {
       key: 'owners',
       options: [],
     };
+    savedOwners.value = owners;
   } catch {
     // Non-fatal: owners field will simply not render
+  }
+}
+
+async function saveApp() {
+  isSaving.value = true;
+  try {
+    const { metadata, ...appPayload } = applicationDetails.value;
+    const savePromises = [updateApplication(props.applicationId, appPayload)];
+    if (glossaryData.value !== null) {
+      // Reset inside .then() so the flag only clears on success; a failed POST
+      // leaves it true so the next save retries with POST rather than PUT.
+      const glossarySave = isGlossaryCreate.value
+        ? saveGlossaryAttributesByAppId(props.applicationId, glossaryData.value).then(() => { isGlossaryCreate.value = false; })
+        : updateGlossaryAttributesByAppId(props.applicationId, glossaryData.value);
+      savePromises.push(glossarySave);
+    }
+    await Promise.all(savePromises);
+    // Promote the just-saved state so the object-type editor's Details save
+    // starts from it and never re-persists an older snapshot.
+    savedApplication.value = { ...appPayload };
+    // Refetch owner display data: newly picked owners reach the parent as bare
+    // refs, so without this they would render as blank tags after a tab switch.
+    await loadOwnerRelationshipProperty(appPayload.ownerIds);
+    displayNotification('success', i18n.global.t('applications.edit.messages.updateSuccess'));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('applications.edit.messages.updateFail'));
+  } finally {
+    isSaving.value = false;
+  }
+}
+
+async function deleteApp() {
+  isDeleting.value = true;
+  try {
+    await deleteUnmanagedApplication(props.applicationId);
+    router.push('/applications');
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('applications.edit.listApps.deleteAppFail'));
+    isDeleting.value = false;
   }
 }
 

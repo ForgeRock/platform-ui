@@ -25,31 +25,16 @@ of the MIT license. See the LICENSE file for details. -->
           :active="tabIndex === 0"
           lazy>
           <FrDetailsTab
-            v-if="governanceDevEnabled"
             @toggle-collapse="isVisible.details = !isVisible.details"
             enable-collapse
             :is-collapsed="!isVisible.details"
             :account="account"
             :read-only="readOnly" />
-          <FrDetailsTab
-            v-else
-            :account="account"
-            :read-only="readOnly" />
           <FrAccountObjectProperties
-            v-if="governanceDevEnabled"
             class="mt-3"
             @toggle-collapse="isVisible.properties = !isVisible.properties"
             enable-collapse
             :is-collapsed="!isVisible.properties"
-            :object-properties="objectProperties"
-            :schema="accountSchema" />
-        </BTab>
-        <BTab
-          v-if="!governanceDevEnabled"
-          :title="$t('governance.accounts.details.tabs.objectProperties')"
-          key="objectProps"
-          lazy>
-          <FrAccountObjectProperties
             :object-properties="objectProperties"
             :schema="accountSchema" />
         </BTab>
@@ -91,7 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BTabs>
       <!-- Delete panel -->
       <BCard
-        v-if="isAdmin && governanceDevEnabled && Object.keys(account).length > 0"
+        v-if="isAdmin && Object.keys(account).length > 0"
         class="mb-5 mt-3"
         data-testid="account-detail-delete">
         <h3 class="h5 card-title">
@@ -107,19 +92,17 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </BCard>
     </div>
-    <template v-if="governanceDevEnabled">
-      <FrDeleteModal
-        id="deleteAccountModal"
-        :is-deleting="isDeleting"
-        :is-testing="isTesting"
-        :translated-item-type="$t('common.account')"
-        @delete-item="deleteAccount" />
-      <FrRequestSubmitSuccessModal
-        modal-id="delete-account-success"
-        :request-id="requestId"
-        :router-path="props.isEndUser ? 'MachineAccounts' : 'Accounts'"
-        :success-text="$t('governance.accounts.deleteAccount.success')" />
-    </template>
+    <FrDeleteModal
+      id="deleteAccountModal"
+      :is-deleting="isDeleting"
+      :is-testing="isTesting"
+      :translated-item-type="$t('common.account')"
+      @delete-item="deleteAccount" />
+    <FrRequestSubmitSuccessModal
+      modal-id="delete-account-success"
+      :request-id="requestId"
+      :router-path="props.isEndUser ? 'MachineAccounts' : 'Accounts'"
+      :success-text="$t('governance.accounts.deleteAccount.success')" />
   </BContainer>
 </template>
 
@@ -187,7 +170,6 @@ const entitlementList = ref([]);
 const entitlementTotalCount = ref(0);
 const id = route.params.accountId;
 const isAdmin = computed(() => userStore.adminUser);
-const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 const isCorrelated = computed(() => account.value.user);
 const isDisconnected = computed(() => account.value.application?.isDisconnected);
 const savingGovernanceResourcesStatus = ref('');
@@ -195,7 +177,6 @@ const entitlements = ref([]);
 const requireRequestJustification = ref(false);
 const tabs = computed(() => [
   'details',
-  ...(!governanceDevEnabled.value ? ['objectProperties'] : []),
   ...((isCorrelated.value || isDisconnected.value) ? ['entitlements'] : []),
   ...(!props.isEndUser ? ['activity'] : []),
 ]);

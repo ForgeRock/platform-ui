@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <template v-if="selectedTab === index">
                   <BCardHeader class="p-0">
                     <div
-                      v-if="isAdmin && governanceDevEnabled"
+                      v-if="isAdmin"
                       class="w-100">
                       <BButton
                         class="ml-3 mr-3 mt-2"
@@ -68,7 +68,6 @@ of the MIT license. See the LICENSE file for details. -->
                           :application-search-results="applicationSearchResults" />
                       </div>
                       <FrSearchInput
-                        :class="{ 'ml-auto': !governanceDevEnabled }"
                         v-model="searchQuery"
                         :placeholder="i18n.global.t('common.search')"
                         @clear="clear"
@@ -157,7 +156,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <template #cell(actions)="{ item }">
                       <FrActionsCell
                         :divider="false"
-                        :delete-option="isAdmin && governanceDevEnabled"
+                        :delete-option="isAdmin"
                         :edit-option="false"
                         @delete-clicked="showDeleteConfirmModal(item)">
                         <template #custom-top-actions>
@@ -171,7 +170,7 @@ of the MIT license. See the LICENSE file for details. -->
                             </template>
                           </BDropdownItem>
                           <BDropdownItem
-                            v-if="isAdmin && governanceDevEnabled"
+                            v-if="isAdmin"
                             @click="showEditAccountModal(item)">
                             <FrIcon
                               icon-class="mr-2"
@@ -216,22 +215,20 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <FrExtendRequestModal
       :current-item="itemToExtendRequest" />
-    <template v-if="governanceDevEnabled">
-      <FrAddAccountModal @account-saved="search" />
-      <FrEditAccountModal
-        :current-item="itemToEdit"
-        @account-saved="search" />
-      <FrDeleteModal
-        id="deleteAccountModal"
-        :is-deleting="isDeleting"
-        :translated-item-type="$t('common.account')"
-        @hidden="hideDeleteConfirmModal"
-        @delete-item="deleteAccountItem" />
-      <FrRequestSubmitSuccessModal
-        modal-id="delete-account-success"
-        :request-id="deleteRequestId"
-        :success-text="$t('governance.accounts.deleteAccount.success')" />
-    </template>
+    <FrAddAccountModal @account-saved="search" />
+    <FrEditAccountModal
+      :current-item="itemToEdit"
+      @account-saved="search" />
+    <FrDeleteModal
+      id="deleteAccountModal"
+      :is-deleting="isDeleting"
+      :translated-item-type="$t('common.account')"
+      @hidden="hideDeleteConfirmModal"
+      @delete-item="deleteAccountItem" />
+    <FrRequestSubmitSuccessModal
+      modal-id="delete-account-success"
+      :request-id="deleteRequestId"
+      :success-text="$t('governance.accounts.deleteAccount.success')" />
   </BContainer>
 </template>
 
@@ -280,7 +277,6 @@ import FrAddAccountModal from '@forgerock/platform-shared/src/components/governa
 import FrEditAccountModal from '@forgerock/platform-shared/src/components/governance/LCM/Accounts/Edit/EditAccountModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import store from '@/store';
 import accountConstants from './utils/accountConstants';
 import { getAccountTypeVariant, getAccountDisplayName } from './utils/accountUtility';
 import i18n from '@/i18n';
@@ -334,7 +330,6 @@ const isDeleting = ref(false);
 const deleteRequestId = ref('');
 const userStore = useUserStore();
 const isAdmin = computed(() => userStore.adminUser);
-const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 const { bvModal } = useBvModal();
 
 const fields = computed(() => {

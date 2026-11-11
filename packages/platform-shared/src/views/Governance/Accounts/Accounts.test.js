@@ -13,7 +13,6 @@ import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHel
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import store from '@/store';
 import Accounts from './Accounts';
 
 const mockRouterPush = jest.fn();
@@ -71,14 +70,13 @@ const createData = (params = {}, totalCount = 100) => {
 };
 
 describe('Accounts Unit', () => {
-  function mountComponent({ admin = true, governanceDevEnabled = true } = {}) {
+  function mountComponent({ admin = true } = {}) {
     mockModal();
     setupTestPinia({
       user: admin
         ? { idmRoles: ['adminUser'], idmUIAdminRoles: ['adminUser'] }
         : { idmRoles: [], idmUIAdminRoles: [] },
     });
-    store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
     // #app is the teleport target of the row actions menu (ActionsMenu)
     const container = createAppContainer();
     const wrapper = mount(Accounts, {
@@ -448,32 +446,9 @@ describe('Accounts Unit', () => {
     });
   });
 
-  describe('governanceDevEnabled flag off', () => {
-    it('hides the New Account button, Edit action, and delete option; keeps search alignment', async () => {
-      const wrapper = mountComponent({ governanceDevEnabled: false });
-      standardAccountMocks();
-      await flushPromises();
-
-      const newAccountButton = wrapper.findAll('button').find((button) => button.text().includes('governance.accounts.newAccount.button'));
-      expect(newAccountButton).toBeUndefined();
-
-      const actionsCell = wrapper.findComponent({ name: 'ActionsCell' });
-      expect(actionsCell.props('deleteOption')).toBe(false);
-
-      const searchInput = wrapper.findComponent({ name: 'SearchInput' });
-      expect(searchInput.classes()).toContain('ml-auto');
-    });
-
-    it('does not render the account LCM modals', () => {
-      const wrapper = mountComponent({ governanceDevEnabled: false });
-      expect(wrapper.findComponent({ name: 'AddAccountModal' }).exists()).toBe(false);
-      expect(wrapper.findComponent({ name: 'EditAccountModal' }).exists()).toBe(false);
-    });
-
-    it('renders the account LCM modals when the flag is on', () => {
-      const wrapper = mountComponent({ governanceDevEnabled: true });
-      expect(wrapper.findComponent({ name: 'AddAccountModal' }).exists()).toBe(true);
-      expect(wrapper.findComponent({ name: 'EditAccountModal' }).exists()).toBe(true);
-    });
+  it('renders the account LCM modals for admins', () => {
+    const wrapper = mountComponent();
+    expect(wrapper.findComponent({ name: 'AddAccountModal' }).exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'EditAccountModal' }).exists()).toBe(true);
   });
 });

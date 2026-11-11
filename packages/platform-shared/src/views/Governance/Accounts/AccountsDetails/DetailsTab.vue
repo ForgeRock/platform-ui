@@ -148,43 +148,9 @@ of the MIT license. See the LICENSE file for details. -->
     </BCard>
   </template>
   <FrEditAccountModal
-    v-if="governanceDevEnabled"
     :current-item="account"
     :is-testing="isTesting"
     @account-saved="getGlossary" />
-  <BModal
-    v-else
-    id="UpdateAccountModal"
-    no-close-on-backdrop
-    size="lg"
-    title-class="h5"
-    title-tag="h2"
-    :static="isTesting"
-    :title="$t('governance.accounts.modal.title')">
-    <div class="mb-4 d-block">
-      {{ $t('governance.accounts.modal.updateDescription') }}
-    </div>
-    <FrGlossaryEditForm
-      :display-data="displayData"
-      :glossary-schema="updateSchema"
-      :model-value="glossaryValues"
-      user-resource-name="alpha_user"
-      @update:modelValue="updateGlossaryValues" />
-    <template #modal-footer>
-      <div class="d-flex justify-content-end">
-        <BButton
-          variant="link"
-          @click="closeModal()">
-          {{ $t('common.cancel') }}
-        </BButton>
-        <FrButtonWithSpinner
-          class="d-block ml-auto"
-          :show-spinner="saving"
-          :disabled="loading"
-          @click="save()" />
-      </div>
-    </template>
-  </BModal>
 </template>
 
 <script setup>
@@ -192,28 +158,25 @@ import {
   onMounted, ref, computed,
 } from 'vue';
 import {
-  capitalize, cloneDeep, find,
+  capitalize, find,
 } from 'lodash';
 import {
-  BButton, BCard, BCollapse, BModal, BRow, BCol, BBadge,
+  BButton, BCard, BCollapse, BRow, BCol, BBadge,
 } from 'bootstrap-vue';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrUserDetails from '@forgerock/platform-shared/src/components/governance/UserDetails';
-import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrEditAccountModal from '@forgerock/platform-shared/src/components/governance/LCM/Accounts/Edit/EditAccountModal';
-import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
-import { getAccountGlossaryAttributesData, saveAccountGlossaryAttributesData } from '@forgerock/platform-shared/src/api/governance/AccountApi';
-import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { getAccountGlossaryAttributesData } from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
-import { getAccountTypeVariant, adjustAccountGlossaryForDisplay } from '../utils/accountUtility';
+import { getAccountTypeVariant } from '../utils/accountUtility';
 import accountConstants from '../utils/accountConstants';
-import store from '@/store';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -247,19 +210,15 @@ const emit = defineEmits(['toggle-collapse']);
 const { bvModal } = useBvModal();
 const glossarySchema = ref([]);
 const glossaryValues = ref({});
-const displayData = ref({});
 const accountType = ref('Default');
 const accountSubType = ref(null);
 const actors = ref([]);
 const displayPairs = ref([]);
 const loading = ref(true);
 const accountSubTypeObject = ref({});
-const saving = ref(false);
 
-const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 const isCorrelated = computed(() => props.account?.user);
 const isMachine = computed(() => accountType.value.toLowerCase() === accountConstants.ACCOUNT_TYPES.MACHINE);
-const updateSchema = computed(() => adjustAccountGlossaryForDisplay(glossaryValues.value.accountType || accountType.value, glossarySchema.value));
 
 /**
  * Returns display friendly values for glossary attributes
@@ -312,7 +271,6 @@ async function getGlossaryValues() {
     }
     const { data } = await getAccountGlossaryAttributesData(props.account?.keys?.accountId);
     const { _displayData, ...glossaryData } = data;
-    displayData.value = _displayData || {};
     return glossaryData;
   } catch (error) {
     if (error.response && error.response.status !== 404) {
@@ -376,43 +334,8 @@ async function getGlossary() {
   loading.value = false;
 }
 
-/**
- * Updates glossary values from form
- * @param value New glossary values
- */
-function updateGlossaryValues(value) {
-  glossaryValues.value = value;
-}
-
 function editAccountDetails() {
-  if (governanceDevEnabled.value) {
-    bvModal.value.show('editAccountModal');
-  } else {
-    bvModal.value.show('UpdateAccountModal');
-  }
-}
-
-function closeModal() {
-  bvModal.value.hide('UpdateAccountModal');
-}
-
-async function save() {
-  saving.value = true;
-  try {
-    const payload = cloneDeep(glossaryValues.value);
-    if (payload.accountType !== accountConstants.ACCOUNT_TYPES.MACHINE) {
-      // Currently subtype should only be persisted for machine accounts
-      delete payload.accountSubtype;
-    }
-    await saveAccountGlossaryAttributesData(props.account?.keys?.accountId, payload);
-    displayNotification('success', i18n.global.t('governance.accounts.details.detailsTab.accountSaved'));
-    await getGlossary();
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.accounts.details.detailsTab.accountSaveErrorMessage'));
-  } finally {
-    closeModal();
-    saving.value = false;
-  }
+  bvModal.value.show('editAccountModal');
 }
 
 onMounted(() => {

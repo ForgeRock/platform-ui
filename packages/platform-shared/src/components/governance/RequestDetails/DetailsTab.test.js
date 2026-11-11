@@ -20,7 +20,6 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import store from '@/store';
 import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
 
@@ -185,9 +184,8 @@ jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockReso
 
 describe('DetailsTab', () => {
   let routerPush;
-  const setup = (propsData = {}, governanceDevEnabled = true) => {
+  const setup = (propsData = {}) => {
     routerPush = mockRouter().routerPush;
-    store.state.SharedStore.governanceDevEnabled = governanceDevEnabled;
     const props = {
       item: {
         details: {
@@ -628,28 +626,6 @@ describe('DetailsTab', () => {
 
       const accountDetails = wrapper.findComponent({ name: 'RequestAccountDetails' });
       expect(accountDetails.props('readOnly')).toBe(true);
-    });
-
-    it('renders no account branch when the flag is off', async () => {
-      ApplicationsApi.getApplication.mockClear();
-      const wrapper = setup({
-        item: {
-          details: {},
-          rawData: {
-            requestType: 'createAccount',
-            request: {
-              account: {
-                accountId: 'account-1', applicationId: 'app-1', objectType: 'User',
-              },
-            },
-          },
-        },
-      }, false);
-      await flushPromises();
-
-      expect(wrapper.findComponent({ name: 'RequestAccountDetails' }).exists()).toBe(false);
-      expect(wrapper.findComponent({ name: 'RequestedItemCard' }).exists()).toBe(false);
-      expect(ApplicationsApi.getApplication).not.toHaveBeenCalled();
     });
 
     it.each(['createAccount', 'modifyAccount'])('shows only the assigned custom form for a %s request when one exists', async (accountRequestType) => {

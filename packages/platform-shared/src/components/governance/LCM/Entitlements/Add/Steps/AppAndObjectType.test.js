@@ -61,7 +61,7 @@ describe('AppAndObjectType', () => {
       'application',
       {
         pageSize: 100,
-        queryFilter: 'application.objectTypes.accountAttribute co ""',
+        queryFilter: '!(application.authoritative eq "true") and application.objectTypes.accountAttribute co ""',
       },
       false,
     );
@@ -78,7 +78,7 @@ describe('AppAndObjectType', () => {
       'application',
       {
         pageSize: 100,
-        queryFilter: 'application.objectTypes.accountAttribute co "" and !(application.isDisconnected eq "true")',
+        queryFilter: '!(application.authoritative eq "true") and application.objectTypes.accountAttribute co "" and !(application.isDisconnected eq "true")',
       },
       false,
     );
@@ -95,7 +95,7 @@ describe('AppAndObjectType', () => {
       'application',
       {
         pageSize: 100,
-        queryFilter: 'application.objectTypes.accountAttribute co ""',
+        queryFilter: '!(application.authoritative eq "true") and application.objectTypes.accountAttribute co ""',
       },
       true,
     );
@@ -112,7 +112,7 @@ describe('AppAndObjectType', () => {
       'application',
       {
         pageSize: 100,
-        queryFilter: 'true',
+        queryFilter: '!(application.authoritative eq "true")',
       },
       false,
     );
@@ -126,7 +126,7 @@ describe('AppAndObjectType', () => {
 
     expect(wrapper.vm.queryParamFunction('acme')).toEqual({
       pageSize: 100,
-      queryFilter: 'application.name co "acme"',
+      queryFilter: 'application.name co "acme" and !(application.authoritative eq "true")',
     });
   });
 
@@ -138,7 +138,7 @@ describe('AppAndObjectType', () => {
 
     expect(wrapper.vm.queryParamFunction('acme')).toEqual({
       pageSize: 100,
-      queryFilter: 'application.name co "acme" and !(application.isDisconnected eq "true")',
+      queryFilter: 'application.name co "acme" and !(application.authoritative eq "true") and !(application.isDisconnected eq "true")',
     });
   });
 

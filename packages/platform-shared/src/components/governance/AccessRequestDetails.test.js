@@ -10,7 +10,6 @@ import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/t
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
-import store from '@/store';
 import i18n from '@/i18n';
 import AccessRequestDetails from './AccessRequestDetails';
 
@@ -46,7 +45,6 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
 describe('AccessRequestDetails', () => {
   const setup = (props = { requestId: '1' }) => {
     setupTestPinia({ user: { userId: '1234' } });
-    store.state.SharedStore.governanceDevEnabled = true;
     return mount(AccessRequestDetails, {
       global: {
         plugins: [i18n],

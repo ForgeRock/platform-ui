@@ -352,6 +352,146 @@ describe('EditUnmanagedApplication', () => {
       expect(wrapper.vm.relationshipProperty.value[0]._ref).toBe('managed/alpha_user/user-2');
     });
 
+    it('updateModel preserves fetched display fields when RelationshipEdit echoes bare refs back', async () => {
+      ConfigApi.getConfig.mockResolvedValue({
+        data: {
+          objects: [
+            { name: 'alpha_application', schema: { properties: { owners: {} } } },
+            { name: 'alpha_user' },
+          ],
+        },
+      });
+      ManagedResourceApi.getManagedResourceList.mockResolvedValue({
+        data: {
+          result: [{
+            _id: 'user-1', userName: 'jdoe', givenName: 'Jane', sn: 'Doe',
+          }],
+        },
+      });
+
+      const wrapper = setup();
+      await flushPromises();
+
+      // what RelationshipEdit emits on remount: bare ref objects with no display fields
+      wrapper.vm.updateModel({
+        path: 'ownerIds',
+        value: [{
+          _ref: 'managed/alpha_user/user-1',
+          _refResourceCollection: 'managed/alpha_user',
+          _refResourceId: 'user-1',
+          _refProperties: {},
+        }],
+      });
+
+      const [owner] = wrapper.vm.relationshipProperty.value;
+      expect(owner.userName).toBe('jdoe');
+      expect(owner.givenName).toBe('Jane');
+      expect(owner.sn).toBe('Doe');
+      expect(wrapper.vm.applicationDetails.ownerIds).toEqual(['user-1']);
+    });
+
+    it('onActivateTab discards unsaved owner additions and restores saved owners with display fields', async () => {
+      ConfigApi.getConfig.mockResolvedValue({
+        data: {
+          objects: [
+            { name: 'alpha_application', schema: { properties: { owners: {} } } },
+            { name: 'alpha_user' },
+          ],
+        },
+      });
+      ManagedResourceApi.getManagedResourceList.mockResolvedValue({
+        data: {
+          result: [{
+            _id: 'user-1', userName: 'jdoe', givenName: 'Jane', sn: 'Doe',
+          }],
+        },
+      });
+
+      const wrapper = setup();
+      await flushPromises();
+
+      // user adds a new owner, then leaves the Details tab without saving
+      wrapper.vm.updateModel({
+        path: 'ownerIds',
+        value: [
+          {
+            _ref: 'managed/alpha_user/user-1',
+            _refResourceCollection: 'managed/alpha_user',
+            _refResourceId: 'user-1',
+            _refProperties: {},
+          },
+          {
+            _ref: 'managed/alpha_user/user-9',
+            _refResourceCollection: 'managed/alpha_user',
+            _refResourceId: 'user-9',
+            _refProperties: {},
+          },
+        ],
+      });
+      expect(wrapper.vm.applicationDetails.ownerIds).toEqual(['user-1', 'user-9']);
+
+      wrapper.vm.onActivateTab(1, 0);
+
+      expect(wrapper.vm.applicationDetails.ownerIds).toEqual(['user-1']);
+      expect(wrapper.vm.relationshipProperty.value).toHaveLength(1);
+      expect(wrapper.vm.relationshipProperty.value[0].userName).toBe('jdoe');
+    });
+
+    it('onActivateTab keeps owners that were saved before tabbing away', async () => {
+      ConfigApi.getConfig.mockResolvedValue({
+        data: {
+          objects: [
+            { name: 'alpha_application', schema: { properties: { owners: {} } } },
+            { name: 'alpha_user' },
+          ],
+        },
+      });
+      ManagedResourceApi.getManagedResourceList.mockResolvedValue({
+        data: {
+          result: [{
+            _id: 'user-1', userName: 'jdoe', givenName: 'Jane', sn: 'Doe',
+          }, {
+            _id: 'user-2', userName: 'asmith', givenName: 'Alice', sn: 'Smith',
+          }],
+        },
+      });
+
+      const wrapper = setup();
+      await flushPromises();
+
+      wrapper.vm.updateModel({
+        path: 'ownerIds',
+        value: [
+          {
+            _ref: 'managed/alpha_user/user-1',
+            _refResourceCollection: 'managed/alpha_user',
+            _refResourceId: 'user-1',
+            _refProperties: {},
+          },
+          {
+            _ref: 'managed/alpha_user/user-2',
+            _refResourceCollection: 'managed/alpha_user',
+            _refResourceId: 'user-2',
+            _refProperties: {},
+          },
+        ],
+      });
+      await wrapper.vm.saveApp();
+      await flushPromises();
+      wrapper.vm.onActivateTab(1, 0);
+
+      expect(wrapper.vm.applicationDetails.ownerIds).toEqual(['user-1', 'user-2']);
+      expect(wrapper.vm.relationshipProperty.value.map(({ userName }) => userName)).toEqual(['jdoe', 'asmith']);
+    });
+
+    it('onActivateTab is a no-op when the owners schema is unavailable', async () => {
+      const wrapper = setup();
+      await flushPromises();
+
+      expect(() => wrapper.vm.onActivateTab(1, 0)).not.toThrow();
+      expect(wrapper.vm.relationshipProperty).toBeNull();
+    });
+
     it('saveApp sends ownerIds as plain IDs in the payload', async () => {
       const wrapper = setup();
       await flushPromises();

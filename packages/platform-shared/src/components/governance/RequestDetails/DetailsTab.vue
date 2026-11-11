@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     :item="props.item || {}"
     :request="props.item?.rawData || {}"
     :read-only="props.readOnly" />
-  <template v-else-if="isAccountRequestType && governanceDevEnabled && props.item?.rawData">
+  <template v-else-if="isAccountRequestType && props.item?.rawData">
     <BRow
       class="mb-2">
       <BCol
@@ -146,12 +146,10 @@ import FrUserInfoCard from '@forgerock/platform-shared/src/components/governance
 import FrRequestFormManager from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestFormManager';
 import FrRequestRoleDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestRoleDetails';
 import FrRequestAccountDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestAccountDetails';
-import store from '@/store';
 import i18n from '@/i18n';
 
 const router = useRouter();
 const userStore = useUserStore();
-const governanceDevEnabled = computed(() => store.state.SharedStore.governanceDevEnabled);
 
 const props = defineProps({
   isApproval: {
@@ -359,7 +357,7 @@ onMounted(async () => {
     await getSchemaData();
     isInitialized.value = true;
   }
-  if (isAccountRequestType.value && governanceDevEnabled.value) {
+  if (isAccountRequestType.value) {
     await loadAccountApplication();
   }
 });
@@ -370,7 +368,7 @@ onMounted(async () => {
 watch(
   [() => props.item?.rawData?.requestType, () => props.item?.rawData?.request?.account?.applicationId],
   ([newRequestType, applicationId]) => {
-    if (governanceDevEnabled.value && ['createAccount', 'modifyAccount', 'deleteAccount'].includes(newRequestType) && applicationId) {
+    if (['createAccount', 'modifyAccount', 'deleteAccount'].includes(newRequestType) && applicationId) {
       loadAccountApplication();
     }
   },
