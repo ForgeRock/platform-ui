@@ -7,6 +7,24 @@
 
 import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 
+/**
+ * The policy list has two display modes: legacy (met policies get fr-valid +
+ * opacity-50 on the li) and checkmark (met policies render the green "check"
+ * material icon inside the li). The default Registration journey enables
+ * checkmark mode while other journeys keep the legacy list, so accept both.
+ * should() with a callback retries until the panel reflects the last input.
+ * @param {String} policy policy text as shown in the policy list
+ * @param {Boolean} fulfilled whether the policy is expected to be met
+ */
+function assertPolicyFulfilled(policy, fulfilled) {
+  cy.findByText(policy).parent('li').should(($li) => {
+    const legacyMet = $li.hasClass('fr-valid');
+    const checkmarkMet = $li.find('.text-success').text() === 'check';
+    const met = legacyMet || checkmarkMet;
+    expect(met, `${policy} is${fulfilled ? '' : ' not'} fulfilled`).to.equal(fulfilled);
+  });
+}
+
 When('user fills security question {string} with answer {string}', (question, answer) => {
   cy.findAllByRole('combobox', { name: 'Select a security question' }).first().type(`${question}{enter}`);
   cy.findByLabelText(`Answer for: ${question}`).clear().type(answer);
@@ -28,22 +46,22 @@ Then('the registration confirmation email is sent', () => {
 
 Then('following password policies are not fulfilled', (dataTable) => {
   dataTable.raw().forEach((policy) => {
-    cy.findByText(policy[0]).parent('li').should('not.have.class', 'fr-valid').and('not.have.class', 'opacity-50');
+    assertPolicyFulfilled(policy[0], false);
   });
 });
 
 Then('password policy {string} is not fulfilled', (policy) => {
-  cy.findByText(policy).parent('li').should('not.have.class', 'fr-valid').and('not.have.class', 'opacity-50');
+  assertPolicyFulfilled(policy, false);
 });
 
 Then('following password policies are fulfilled', (dataTable) => {
   dataTable.raw().forEach((policy) => {
-    cy.findByText(policy[0]).parent('li').should('have.class', 'fr-valid').and('have.class', 'opacity-50');
+    assertPolicyFulfilled(policy[0], true);
   });
 });
 
 Then('password policy {string} is fulfilled', (policy) => {
-  cy.findByText(policy).parent('li').should('have.class', 'fr-valid').and('have.class', 'opacity-50');
+  assertPolicyFulfilled(policy, true);
 });
 
 Then('password field value is visible', () => {
