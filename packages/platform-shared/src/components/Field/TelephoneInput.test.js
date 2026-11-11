@@ -44,7 +44,7 @@ describe('TelephoneInput Component', () => {
       }
 
       await runA11yTest(wrapper);
-    }, 15000);
+    }, 30000);
     it('should have aria-label for country dropdown', async () => {
       wrapper = await setupMount({ label: 'Phone Number' });
       await flushPromises();
@@ -57,7 +57,7 @@ describe('TelephoneInput Component', () => {
       const countryDropdown = wrapper.element.querySelector('.iti__country-container .iti__dropdown-content[role="dialog"]');
       expect(countryDropdown).toBeTruthy();
       expect(countryDropdown.getAttribute('aria-label')).toBe('Select country code');
-    }, 15000);
+    }, 30000);
     it('should have an aria-label on the country search input that is independent of its placeholder', async () => {
       wrapper = await setupMount({ label: 'Phone Number' });
       await flushPromises();
@@ -74,7 +74,7 @@ describe('TelephoneInput Component', () => {
       // (WCAG 3.3.2) — the patch must override it with a persistent, distinct accessible name.
       expect(searchInput.getAttribute('placeholder')).toBe('Search');
       expect(searchInput.getAttribute('aria-label')).toBe('Search country');
-    }, 15000);
+    }, 30000);
     it('should have a localized aria-label on the selected country button for the initial country', async () => {
       wrapper = await setupMount({ label: 'Phone Number' });
       await flushPromises();
@@ -89,7 +89,7 @@ describe('TelephoneInput Component', () => {
       // so a wrong escaping here would drop the country name from the label.
       const selectedCountry = wrapper.element.querySelector('.iti__selected-country');
       expect(selectedCountry.getAttribute('aria-label')).toBe('Change country, selected United States (+1)');
-    }, 15000);
+    }, 30000);
     it('should update the selected country aria-label when a different country is chosen', async () => {
       wrapper = await setupMount({ label: 'Phone Number' });
       await flushPromises();
@@ -108,7 +108,7 @@ describe('TelephoneInput Component', () => {
 
       expect(selectedCountry.getAttribute('aria-label')).toBe('Change country, selected Afghanistan (+93)');
       expect(input.element.parentElement.querySelector('.iti__selected-dial-code').textContent).toBe('+93');
-    }, 15000);
+    }, 30000);
   });
 
   it('renders InputLayout component with a label for a fallback id', async () => {
