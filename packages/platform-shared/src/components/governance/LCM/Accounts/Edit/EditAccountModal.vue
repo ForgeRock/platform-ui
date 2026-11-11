@@ -154,8 +154,9 @@ function resetModal() {
   objectType.value = '';
   glossarySchema.value = [];
   glossaryValues.value = {};
-  requestId.value = '';
   isSaving.value = false;
+  // requestId survives the reset: the success modal is shown after this modal
+  // hides and still needs it — it is cleared when the edit modal next opens
   setDefaultFormValues();
 }
 
@@ -230,6 +231,8 @@ async function loadAssignedForm() {
  */
 async function initializeModal(item) {
   if (!item) return;
+  // the previous submission's request id is stale — clear it before the new load
+  requestId.value = '';
   isLoading.value = true;
   try {
     const { data } = await getAccountById(item.id);

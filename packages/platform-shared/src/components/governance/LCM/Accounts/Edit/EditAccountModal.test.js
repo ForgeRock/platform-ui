@@ -210,6 +210,36 @@ describe('EditAccountModal', () => {
     expect(routerPush).toHaveBeenCalledWith({ name: 'RequestDetails', params: { requestId: 'request-1' } });
   });
 
+  it('keeps the View Request link when the edit modal hides after submission', async () => {
+    const wrapper = mountComponent();
+    await wrapper.vm.initializeModal(testAccount);
+    await flushPromises();
+
+    await wrapper.vm.saveAccountEdits();
+    // hiding the edit modal after a successful save fires `hidden` -> resetModal();
+    // the success modal is shown at that point and must still have its request id
+    await wrapper.findComponent({ name: 'BModal' }).vm.$emit('hidden');
+    await flushPromises();
+
+    expect(wrapper.vm.requestId).toBe('request-1');
+    const successContent = wrapper.findComponent({ name: 'RequestSubmitSuccess' });
+    const viewRequestButton = successContent.findAll('button').find((b) => b.text() === 'common.viewRequest');
+    expect(viewRequestButton).toBeTruthy();
+  });
+
+  it('clears the previous request id when the edit modal is opened again', async () => {
+    const wrapper = mountComponent();
+    await wrapper.vm.initializeModal(testAccount);
+    await flushPromises();
+    await wrapper.vm.saveAccountEdits();
+    await flushPromises();
+
+    await wrapper.vm.initializeModal(testAccount);
+    await flushPromises();
+
+    expect(wrapper.vm.requestId).toBe('');
+  });
+
   it('falls back to the property key as the label when the schema has no displayName', async () => {
     ApplicationsApi.getObjectTypeSchema.mockResolvedValue({
       data: {
