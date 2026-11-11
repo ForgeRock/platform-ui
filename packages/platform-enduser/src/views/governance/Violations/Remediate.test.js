@@ -6,6 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
@@ -16,6 +17,29 @@ import EntitlementsSearchableList from '@/components/governance/EntitlementsCart
 import * as store from '@/store';
 
 const notification = mockNotification();
+
+// Platform/ariaNotify feature detection reads navigator.platform and document.ariaNotify;
+// tests that simulate other platforms must restore both so later tests are not polluted
+function withPlatform(platform, fn) {
+  const originalPlatform = Object.getOwnPropertyDescriptor(Navigator.prototype, 'platform')
+    ? navigator.platform
+    : '';
+  const hadAriaNotify = typeof document.ariaNotify === 'function';
+  const originalAriaNotify = document.ariaNotify;
+  Object.defineProperty(navigator, 'platform', { value: platform, configurable: true });
+
+  return Promise.resolve(fn()).finally(() => {
+    Object.defineProperty(navigator, 'platform', {
+      value: originalPlatform,
+      configurable: true,
+    });
+    if (hadAriaNotify) {
+      document.ariaNotify = originalAriaNotify;
+    } else {
+      delete document.ariaNotify;
+    }
+  });
+}
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {
@@ -409,6 +433,62 @@ describe('Remediate', () => {
     const revokeButton = wrapper.find('.btn-primary');
 
     expect(revokeButton.attributes('disabled')).toBe('');
+  });
+
+  it('announces the loading state via a persistent status live region', async () => {
+    const violation = createViolationMock();
+    ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
+
+    const wrapper = setup();
+
+    await flushPromises();
+
+    // The region must exist at page load, empty, for the later change to be announced (WCAG 4.1.3)
+    const liveRegion = wrapper.find('[role="status"]');
+    expect(liveRegion.exists()).toBe(true);
+    expect(liveRegion.text()).toBe('');
+
+    // Announcement is populated on a separate tick from the loading DOM changes (VoiceOver workaround)
+    wrapper.vm.isLoading = true;
+    await nextTick();
+    await flushPromises();
+    expect(liveRegion.text()).toBe('Revoking entitlements...');
+  });
+
+  it('hides the loading spinner from assistive technology while the live region announces it', async () => {
+    const violation = createViolationMock();
+    ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
+
+    const wrapper = setup();
+
+    await flushPromises();
+
+    wrapper.vm.isLoading = true;
+    await flushPromises();
+
+    const spinner = wrapper.find('.h-100.w-100.d-flex.justify-content-center.align-items-center');
+    expect(spinner.exists()).toBe(true);
+    expect(spinner.attributes('aria-hidden')).toBe('true');
+  });
+
+  it('keeps the live region as the only channel on non-Apple platforms', async () => {
+    const violation = createViolationMock();
+    ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
+
+    const wrapper = setup();
+
+    await flushPromises();
+
+    const ariaNotifySpy = jest.fn();
+    await withPlatform('Win32', () => {
+      document.ariaNotify = ariaNotifySpy;
+
+      wrapper.vm.isLoading = true;
+      return nextTick().then(nextTick).then(flushPromises);
+    });
+
+    expect(ariaNotifySpy).not.toHaveBeenCalled();
+    expect(wrapper.find('[role="status"]').text()).toBe('Revoking entitlements...');
   });
 
   it('should show error message if the violation cannot be revoked', async () => {

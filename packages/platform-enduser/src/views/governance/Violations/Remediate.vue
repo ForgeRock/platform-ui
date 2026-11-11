@@ -30,9 +30,20 @@ of the MIT license. See the LICENSE file for details. -->
         id="contentWrapper"
         class="w-100"
         :class="{ 'cart-open cart-open-lg': cartExpanded }">
+        <!-- Persistent live region: screen readers only announce content added to a region that exists at page load (WCAG 4.1.3).
+             Chrome 141+ on Apple platforms announces via document.ariaNotify() instead (see announceStatus);
+             other browser/SR pairs use the text change here. -->
+        <div
+          class="sr-only"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true">
+          {{ loadingAnnouncement }}
+        </div>
         <!-- Loading spinner -->
         <div
           v-if="isLoading"
+          aria-hidden="true"
           class="h-100 w-100 d-flex justify-content-center align-items-center">
           <div>
             <FrSpinner class="mb-4" />
@@ -199,7 +210,7 @@ import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
-import { ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { useRoute, useRouter } from 'vue-router';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
@@ -227,6 +238,34 @@ const selectedEntitlements = ref([]);
 const justification = ref('');
 const isLoading = ref(false);
 const isError = ref(false);
+// Populated on a separate tick from the loading DOM changes: VoiceOver drops polite live-region
+// updates that coincide with focus loss and large same-cycle DOM mutations
+const loadingAnnouncement = ref('');
+
+/**
+ * Announce a status message, one channel per screen reader: ariaNotify() on Apple platforms
+ * (the only channel VoiceOver honors), the persistent live region elsewhere.
+ * @param {String} message text to announce
+ */
+function announceStatus(message) {
+  // userAgentData is the current signal (navigator.platform is deprecated but still returned
+  // by all browsers, so it serves as the fallback); empty string in non-browser test environments
+  const platform = navigator.userAgentData?.platform || navigator.platform || '';
+  const isApplePlatform = /^mac|^iphone|^ipad/i.test(platform);
+  if (message && isApplePlatform && typeof document.ariaNotify === 'function') {
+    document.ariaNotify(message);
+  } else if (!isApplePlatform) {
+    nextTick(() => {
+      loadingAnnouncement.value = message;
+    });
+  }
+}
+
+watch(isLoading, (loading) => {
+  if (loading) {
+    announceStatus(i18n.global.t('governance.violations.remediate.revoking'));
+  }
+});
 
 // calculates the breadcrumb path and title depending on the route name,
 // violation list page redirects to ViolationRemediate route and violation edit page redirects to ViolartionEditRemediate route,
@@ -310,6 +349,12 @@ getViolationData().then((data) => {
 </script>
 
 <style lang="scss" scoped>
+// VoiceOver mishandles the legacy clip() hiding in some browser combinations; the modern
+// clip-path form keeps the region reliably in the accessibility tree
+.sr-only[role='status'] {
+  clip-path: inset(50%);
+}
+
 #contentWrapper {
   padding-right: 0;
   height: calc(100vh - 72px);
