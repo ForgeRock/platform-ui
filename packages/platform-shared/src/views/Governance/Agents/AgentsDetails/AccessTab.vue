@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
           :total-count="accountTotalCount"
           add-event="open-add-account"
           allow-add
+          external-view-details
           @load-data="queryAccountGrants"
           @open-add-account="openAddAccountsModal"
           @row-clicked="openAccountModal" />

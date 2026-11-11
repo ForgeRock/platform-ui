@@ -620,6 +620,17 @@ describe('GovResourceTable', () => {
       expect(wrapper.vm.$bvModal.show).not.toHaveBeenCalled();
     });
 
+    it('emits row-clicked instead of opening the account modal when externalViewDetails is set', async () => {
+      const { wrapper } = await mountComponent({ showViewDetails: true, externalViewDetails: true, items: [mockAccountRow] });
+      await flushPromises();
+
+      wrapper.vm.onRowClicked(wrapper.vm.itemsWithAssignment[0], 0, {});
+
+      expect(wrapper.vm.accountModalGrant).toBeNull();
+      expect(wrapper.vm.$bvModal.show).not.toHaveBeenCalled();
+      expect(wrapper.emitted('row-clicked')).toEqual([[wrapper.vm.itemsWithAssignment[0]]]);
+    });
+
     it('opens the entitlement details modal when an entitlement row is clicked', async () => {
       const { wrapper } = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
       await wrapper.setProps({ items: mockItems });
