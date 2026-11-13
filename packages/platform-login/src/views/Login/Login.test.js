@@ -1708,6 +1708,29 @@ describe('Login.vue', () => {
     });
   });
 
+  describe('backendScriptsHandler', () => {
+    // HiddenValueCallback mounts emit { ref, callback } pairs; the handler must
+    // push each ref's value into its OWN callback — no id matching — then submit.
+    it('sets each ref value on its paired callback and calls nextStep', () => {
+      const nextStepSpy = jest.spyOn(wrapper.vm, 'nextStep').mockImplementation(() => {});
+      const callbackA = { setInputValue: jest.fn() };
+      const callbackB = { setInputValue: jest.fn() };
+      wrapper.setData({
+        hiddenValueCallbacksRefs: [
+          { ref: { value: 'value-a' }, callback: callbackA },
+          { ref: { value: 'value-b' }, callback: callbackB },
+        ],
+      });
+
+      wrapper.vm.backendScriptsHandler();
+
+      expect(callbackA.setInputValue).toHaveBeenCalledWith('value-a');
+      expect(callbackB.setInputValue).toHaveBeenCalledWith('value-b');
+      expect(nextStepSpy).toHaveBeenCalledTimes(1);
+      nextStepSpy.mockRestore();
+    });
+  });
+
   describe('loading guard in nextStep', () => {
     it('does nothing when a trusted user event fires while an SDK call is already in flight (double-submit race prevention)', () => {
       // Let the first call set this.submitting = true and hang on the SDK call.

@@ -20,6 +20,7 @@ describe('HiddenValueCallback', () => {
         callback: {
           getInputValue: () => 'a',
           setInputValue: jest.fn(),
+          getOutputByName: (name, fallback) => (name === 'id' ? 'myCallbackId' : fallback),
         },
         index: 5,
       },
@@ -27,13 +28,28 @@ describe('HiddenValueCallback', () => {
     wrapper.vm.$props.callback.setInputValue.mockReset();
   });
 
-  it('Sets name, and value data and emits ref', () => {
+  it('Sets name, and value data and emits ref with callback', () => {
     expect(wrapper.vm.$data.name).toEqual('callback_5');
     expect(wrapper.vm.$data.value).toEqual('a');
 
     const emitted = wrapper.emitted()['hidden-value-callback-ref'].pop();
     expect(emitted.length).toBe(1);
-    expect(emitted).toEqual([expect.any(Element)]);
+    expect(emitted[0].ref).toEqual(expect.any(Element));
+    expect(emitted[0].callback).toEqual(wrapper.vm.$props.callback);
+  });
+
+  it('Freezes dom id to callback id output, not input value', () => {
+    expect(wrapper.vm.domId).toEqual('myCallbackId');
+    expect(wrapper.find('input').attributes('id')).toEqual('myCallbackId');
+
+    return wrapper.vm.$nextTick().then(() => {
+      wrapper.vm.$data.value = 'changed_value';
+      // Re-render before asserting so a reverted value-bound id template would fail here
+      return wrapper.vm.$nextTick();
+    }).then(() => {
+      expect(wrapper.vm.domId).toEqual('myCallbackId');
+      expect(wrapper.find('input').attributes('id')).toEqual('myCallbackId');
+    });
   });
 
   it('Sets value value for callback', async () => {

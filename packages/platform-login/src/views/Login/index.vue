@@ -981,15 +981,11 @@ export default {
      * the hiddenValue elements values are added to the callback data structure since
      * that is what will be sent with the request
      * this function iterates through the hiddenValue dom refs to accomplish that
+     * refs carry their callback object, so no id matching against step callbacks is needed
      */
     backendScriptsHandler() {
-      this.hiddenValueCallbacksRefs.forEach((ref) => {
-        const refId = ref.id;
-        const refValue = ref.value;
-        this.step
-          .getCallbacksOfType(this.FrCallbackType.HiddenValueCallback)
-          .find((x) => x.getOutputByName('id', '') === refId)
-          .setInputValue(refValue);
+      this.hiddenValueCallbacksRefs.forEach(({ ref, callback }) => {
+        callback.setInputValue(ref.value);
       });
       this.nextStep();
     },
@@ -1378,8 +1374,8 @@ export default {
         'hide-next-button': (bool) => {
           this.nextButtonVisible = !bool;
         },
-        'hidden-value-callback-ref': (ref) => {
-          this.hiddenValueCallbacksRefs.push(ref);
+        'hidden-value-callback-ref': (payload) => {
+          this.hiddenValueCallbacksRefs.push(payload);
         },
         'next-step-callback': (cb) => {
           this.nextStepCallbacks.push(cb);

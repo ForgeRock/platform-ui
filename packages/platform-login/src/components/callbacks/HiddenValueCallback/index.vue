@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       type="hidden"
       :name="name"
       :ref="`callback_${this.index}`"
-      :id="callback.getInputValue()"
+      :id="domId"
       :value="value"
       @input="onChange">
   </div>
@@ -27,10 +27,14 @@ export default {
       default: 0,
     },
   },
+  created() {
+    // Non-reactive on purpose: the DOM id must stay frozen even if the callback value changes.
+    this.domId = this.callback.getOutputByName('id', `callback_${this.index}`);
+  },
   mounted() {
     this.name = `callback_${this.index}`;
     this.value = this.callback.getInputValue();
-    this.$emit('hidden-value-callback-ref', this.$refs[this.name]);
+    this.$emit('hidden-value-callback-ref', { ref: this.$refs[this.name], callback: this.callback });
   },
   data() {
     return {
