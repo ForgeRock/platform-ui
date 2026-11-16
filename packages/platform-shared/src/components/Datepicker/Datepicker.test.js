@@ -66,6 +66,18 @@ describe('Datepicker Component', () => {
     expect(wrapper.find('.input-has-value').exists()).toBe(true);
   });
 
+  it('does not expose role="group" on the wrapper', async () => {
+    wrapper = setupMount({
+      name: 'datepicker',
+      placeholder: 'test',
+      value: '2024-06-15',
+    });
+    await flushPromises();
+
+    const datepicker = findByTestId(wrapper, 'datepicker');
+    expect(datepicker.attributes('role')).toBeUndefined();
+  });
+
   it('generates a name when the name property is empty', async () => {
     const uuidValue = 'b5fa8ea0-a8bc-4285-b34d-8ad4c6cec7d6';
     uuid.mockImplementation(() => uuidValue);

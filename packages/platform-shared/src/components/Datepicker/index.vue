@@ -147,6 +147,14 @@ export default {
       this.fixDatePickerDialogLabel();
       this.activateFocusTrap();
     },
+    removeWrapperRole() {
+      // bootstrap-vue hardcodes role="group" on the wrapper div, which is unnecessary
+      // and can confuse assistive technology — strip it if the library re-applies it.
+      const pickerEl = this.$refs.datePicker?.$el;
+      if (pickerEl?.getAttribute?.('role') === 'group') {
+        pickerEl.removeAttribute('role');
+      }
+    },
     fixDatePickerDialogLabel() {
       this.$nextTick(() => {
         this.$nextTick(() => {
@@ -166,7 +174,11 @@ export default {
     // The dialog div is rendered at mount (hidden via CSS until opened), so label it now.
     // bootstrap-vue focuses the menu *before* emitting `shown`, so fixing only on @shown
     // would let focus land on an unnamed dialog on first open.
+    this.removeWrapperRole();
     this.fixDatePickerDialogLabel();
+  },
+  updated() {
+    this.removeWrapperRole();
   },
   watch: {
     inputValue(newValue) {
