@@ -10,6 +10,7 @@ import AdminsApiSteps from './api/AdminsApiSteps';
 import AIAgentApiSteps from './api/AIAgentApiSteps';
 import ApplicationApiSteps from './api/ApplicationApiSteps';
 import AssignmentApiSteps from './api/AssignmentApiSteps';
+import AssertionServersApiSteps from './api/AssertionServersApiSteps';
 import AuthenticationMethodsApiSteps from './api/AuthenticationMethodsApiSteps';
 import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import CspApiSteps from './api/CspApiSteps';
@@ -49,6 +50,7 @@ export default {
   aiAgents: AIAgentApiSteps,
   application: ApplicationApiSteps,
   applications: ApplicationApiSteps,
+  assertionServers: AssertionServersApiSteps,
   assignments: AssignmentApiSteps,
   authenticationMethods: AuthenticationMethodsApiSteps,
   authScripts: AuthScriptApiSteps,
