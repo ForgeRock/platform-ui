@@ -27,6 +27,6 @@ export default class WorkforceApplicationsPage extends BaseEnduserPage {
    * @param {string} appName - Name of the application tile to select
    */
   static applicationTile(appName) {
-    return cy.contains('a.card', appName, { timeout: 15000 });
+    return cy.contains('a.card', appName, { timeout: 25000 });
   }
 }

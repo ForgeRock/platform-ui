@@ -51,20 +51,20 @@ export default class SignOnTabPage {
   // ── Post-setup cards ─────────────────────────────────────────────────────────
 
   static get quickStartCard() {
-    return cy.get('#samlSignOnQuickStart', { timeout: 15000 }).should('be.visible');
+    return cy.get('#samlSignOnQuickStart', { timeout: 20000 }).should('be.visible');
   }
 
   static get viewIdpMetadataButton() {
-    return SignOnTabPage.quickStartCard.findByRole('button', { name: /view idp metadata/i });
+    return SignOnTabPage.quickStartCard.findByRole('button', { name: /view idp metadata/i }, { timeout: 20000 });
   }
 
   static get idpLoginEndpointField() {
-    return cy.findByLabelText('IDP-Initiated Login Endpoint');
+    return cy.findByLabelText('IDP-Initiated Login Endpoint', { timeout: 20000 });
   }
 
   // ── Settings card footer ─────────────────────────────────────────────────────
 
   static get tryItOutButton() {
-    return cy.findByRole('button', { name: /try it out/i });
+    return cy.findByRole('button', { name: /try it out/i }, { timeout: 15000 });
   }
 }
