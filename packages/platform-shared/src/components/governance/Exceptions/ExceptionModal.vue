@@ -78,17 +78,17 @@ of the MIT license. See the LICENSE file for details. -->
       </BFormGroup>
 
       <template #modal-footer="{ cancel }">
-        <div class="d-flex flex-row-reverse">
+        <div class="d-flex justify-content-end">
+          <BButton
+            variant="link"
+            @click="cancel()">
+            {{ $t('common.cancel') }}
+          </BButton>
           <BButton
             variant="primary"
             :disabled="!valid"
             @click="exceptionAction">
             {{ componentComputed.okButton }}
-          </BButton>
-          <BButton
-            variant="link"
-            @click="cancel()">
-            {{ $t('common.cancel') }}
           </BButton>
         </div>
       </template>

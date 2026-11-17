@@ -49,14 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </div>
     <div
-      class="d-flex flex-row-reverse justify-content-between">
-      <BButton
-        variant="primary"
-        @click="$emit('next-step')"
-        data-testid="btn-recovery-codes-next-step"
-      >
-        {{ $t('common.done') }}
-      </BButton>
+      class="d-flex justify-content-between">
       <div>
         <BButton
           :autofocus="autofocus"
@@ -74,6 +67,13 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.print') }}
         </BButton>
       </div>
+      <BButton
+        variant="primary"
+        @click="$emit('next-step')"
+        data-testid="btn-recovery-codes-next-step"
+      >
+        {{ $t('common.done') }}
+      </BButton>
     </div>
   </div>
 </template>

@@ -49,17 +49,17 @@ of the MIT license. See the LICENSE file for details. -->
         :label="valueLabel"
         :name="valueLabel" />
     </BFormGroup>
-    <div class="d-flex flex-row-reverse">
+    <div class="d-flex justify-content-end">
+      <BButton
+        @click.stop="$emit('cancel')"
+        variant="link">
+        {{ $t('common.cancel') }}
+      </BButton>
       <BButton
         @click.stop="saveKeyValue"
         :disabled="!valid"
         variant="outline-primary">
         {{ $t('common.done') }}
-      </BButton>
-      <BButton
-        @click.stop="$emit('cancel')"
-        variant="link">
-        {{ $t('common.cancel') }}
       </BButton>
     </div>
   </VeeForm>

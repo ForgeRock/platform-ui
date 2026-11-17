@@ -79,12 +79,12 @@ of the MIT license. See the LICENSE file for details. -->
         class="d-flex w-100"
         :class="modalProps.footerClass">
         <BButton
-          :disabled="currentStep === 1 && !isValidForm"
+          v-if="modalProps.isRequested"
           :variant="modalProps.okVariant"
           @click="changeStep(ok, 1)">
           <FrIcon
-            :icon-class="modalProps.isRequested ? 'mr-2' : ''"
-            :name="modalProps.isRequested ? 'remove' : ''">
+            icon-class="mr-2"
+            name="remove">
             {{ modalProps.okTitle }}
           </FrIcon>
         </BButton>
@@ -93,6 +93,16 @@ of the MIT license. See the LICENSE file for details. -->
           @click="cancel()">
           {{ modalProps.cancelTitle }}
         </BButton>
+        <BButton
+          v-if="!modalProps.isRequested"
+          :disabled="currentStep === 1 && !isValidForm"
+          :variant="modalProps.okVariant"
+          @click="changeStep(ok, 1)">
+          <FrIcon
+            :name="''">
+            {{ modalProps.okTitle }}
+          </FrIcon>
+        </BButton>
       </div>
     </template>
   </BModal>
@@ -100,7 +110,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 /**
- * Modal component to show glossary atributes of access request catalog items
+ * Modal component to show glossary attributes of access request catalog items
  */
 import {
   capitalize,
@@ -168,7 +178,7 @@ const modalProps = computed(() => {
   const okVariant = isRequested ? 'outline-danger' : 'primary';
   const cancelVariant = isRequested ? 'outline-primary' : 'link';
   const cancelTitle = isRequested ? i18n.global.t('common.done') : i18n.global.t('common.cancel');
-  const footerClass = isRequested ? 'justify-content-between' : 'flex-row-reverse';
+  const footerClass = isRequested ? 'justify-content-between' : 'justify-content-end';
   return {
     cancelTitle,
     cancelVariant,
