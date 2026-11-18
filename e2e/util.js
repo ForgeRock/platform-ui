@@ -7,33 +7,6 @@
  */
 
 /**
- * Filter Cypress tests based on a given tag or tags. If no tags are present, run tests.
- * Also applies tags to the wrapped tests for @cypress/grep compatibility, enabling
- * pipeline-level filtering via CYPRESS_grepTags (e.g. "@cloud+-@skip").
- *
- * @param {Array} definedTags An array of tags
- * @param {Function} runTest All tests captured within a Cypress run
- * @example cypress open --env TAGS=forgeops
- * @example cypress open --env TAGS=forgeops/cloud
- */
-export const filterTests = (definedTags, runTest) => {
-  describe('', { tags: definedTags }, () => {
-    let executed = false;
-    if (Cypress.env('TAGS')) {
-      const orTagsGroups = Cypress.env('TAGS').split(' or ');
-      orTagsGroups.forEach((andTagsGroup) => {
-        if (andTagsGroup.split(' and ').every((tag) => definedTags.includes(tag)) && !executed) {
-          runTest();
-          executed = true;
-        }
-      });
-    } else {
-      runTest();
-    }
-  });
-};
-
-/**
  * This is a wrapper function over Cypress's beforeEach. Cypress does not
  * retry when a test fails within the beforeEach block normally, and this
  * allows retries. As suggested by: https://github.com/cypress-io/cypress/issues/19458

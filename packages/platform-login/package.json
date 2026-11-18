@@ -5,8 +5,8 @@
   "scripts": {
     "build": "vue-cli-service build --no-module",
     "dev": "vue-cli-service serve",
-    "e2e": "../../e2e/passwords.sh cypress run --env TAGS=forgeops",
-    "e2e:open": "../../e2e/passwords.sh cypress open --e2e --env TAGS=forgeops",
+    "e2e": "../../e2e/passwords.sh cypress run",
+    "e2e:open": "../../e2e/passwords.sh cypress open --e2e",
     "e2e:remote": "../../e2e/set_remote_environment_variables.sh cypress run",
     "e2e:remote:chrome": "../../e2e/set_remote_environment_variables.sh cypress run --browser chrome",
     "e2e:remote:chromium": "../../e2e/set_remote_environment_variables.sh cypress run --browser chromium",

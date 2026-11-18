@@ -10,6 +10,9 @@ export CYPRESS_FQDN=`kubectl --namespace $kubernetes_namespace get configmaps pl
 export CYPRESS_BASE_URL="https://$CYPRESS_FQDN"
 export CYPRESS_MENUS_FILE="menus.platform"
 export CYPRESS_ROUTES_FILE="routes.platform"
+# ${VAR:-default} so a caller can override; excludes nightly-tagged tests
+export CYPRESS_TAGS="${CYPRESS_TAGS:-@forgeops and not @skip and not @nightly}"
+export CYPRESS_grepTags="${CYPRESS_grepTags:-@forgeops+-@skip+-@nightly}"
 export TZ="Europe/London"
 
 $@

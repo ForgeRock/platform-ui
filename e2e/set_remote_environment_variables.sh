@@ -67,14 +67,15 @@ then
   export CYPRESS_MENUS_FILE="menus.platform"
   export CYPRESS_ROUTES_FILE="routes.platform"
   export CYPRESS_IS_FRAAS="false"
-  export CYPRESS_TAGS="@forgeops"
-  export CYPRESS_grepTags="@forgeops+-@skip"
+  # ${VAR:-default} so a nightly-lane run can opt in by pre-setting the vars
+  export CYPRESS_TAGS="${CYPRESS_TAGS:-@forgeops and not @skip and not @nightly}"
+  export CYPRESS_grepTags="${CYPRESS_grepTags:-@forgeops+-@skip+-@nightly}"
 else
   export CYPRESS_MENUS_FILE="menus.idcloud"
   export CYPRESS_ROUTES_FILE="routes.idcloud"
   export CYPRESS_IS_FRAAS="true"
-  export CYPRESS_TAGS="@cloud"
-  export CYPRESS_grepTags="@cloud+-@skip"
+  export CYPRESS_TAGS="${CYPRESS_TAGS:-@cloud and not @skip and not @nightly}"
+  export CYPRESS_grepTags="${CYPRESS_grepTags:-@cloud+-@skip+-@nightly}"
 fi
 
 # Allow cypress-har-generator to run in electron browser
