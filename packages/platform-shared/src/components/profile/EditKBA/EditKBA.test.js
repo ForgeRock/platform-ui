@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -99,6 +99,50 @@ describe('EditKBA.vue', () => {
       await wrapper.setProps({ processingRequest: false });
 
       expect(wrapper.vm.showKBAResetForm).toBe(false);
+    });
+  });
+
+  describe('@actions', () => {
+    const kbaDataWithQuestions = {
+      ...kbaData,
+      questions: {
+        1: { en: 'Question 1?' },
+        2: { en: 'Question 2?' },
+        3: { en: 'Question 3?' },
+      },
+    };
+
+    let selectWrapper;
+
+    afterEach(() => {
+      if (selectWrapper) {
+        selectWrapper.unmount();
+        selectWrapper = null;
+      }
+    });
+
+    async function chooseQuestion(questionText) {
+      await selectWrapper.find('.multiselect__tags').trigger('mousedown');
+      await flushPromises();
+      const option = selectWrapper.findAll('.multiselect__option').find((el) => el.text() === questionText);
+      await option.trigger('click');
+      await flushPromises();
+    }
+
+    it('keeps the newly selected question when a different question is chosen after a previous selection', async () => {
+      selectWrapper = mount(EditKBA, {
+        attachTo: document.body,
+        global: { plugins: [i18n] },
+        props: { kbaData: kbaDataWithQuestions },
+      });
+      selectWrapper.vm.initializeForm(1);
+      await flushPromises();
+
+      await chooseQuestion('Question 1?');
+      expect(selectWrapper.vm.kbaChoices[0].selected).toBe('1');
+
+      await chooseQuestion('Question 2?');
+      expect(selectWrapper.vm.kbaChoices[0].selected).toBe('2');
     });
   });
 });

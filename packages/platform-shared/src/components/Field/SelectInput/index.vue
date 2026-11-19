@@ -410,7 +410,7 @@ export default {
         const synced = processValue(props.value, inputValue.value);
         if (!isEqual(inputValue.value, synced)) inputValue.value = synced;
       }
-    });
+    }, { flush: 'post' });
 
     // Unwraps the internal {value, text} option object before emitting, applies float-label state,
     // and guards edge cases inherited from SelectInputDeprecated's contract:
