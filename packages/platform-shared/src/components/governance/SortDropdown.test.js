@@ -104,7 +104,10 @@ describe('SortDropdown', () => {
     it('closes when Escape is pressed inside the dropdown', async () => {
       const wrapper = mountComponent();
       await wrapper.find('button.dropdown-toggle').trigger('click');
+      // bootstrap-vue defers opening behind requestAnimationFrame; wait for it to land
+      await new Promise((resolve) => requestAnimationFrame(resolve));
       await flushPromises();
+      expect(wrapper.find('.dropdown-menu').classes()).toContain('show');
 
       await wrapper.find('.dropdown-menu').trigger('keydown', { keyCode: 27 });
       await flushPromises();
