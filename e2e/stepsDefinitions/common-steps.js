@@ -180,7 +180,16 @@ When('admin/enduser logs out', () => {
 When('user clicks on {string} {role}', (name, role) => {
   const isSaveButton = role === 'button' && /^save$/i.test(name);
   const isAddButton = role === 'button' && /^add(\s|$)/i.test(name);
-  const findControl = () => cy.findByRole(role, { name: new RegExp(name, 'i') });
+  const findControl = (options) => cy.findByRole(role, { name: new RegExp(name, 'i'), ...options });
+
+  if (role === 'tab') {
+    // Tabs often render after their panel's data request resolves (application edit
+    // page, ESV lists, theme settings); the default command timeout races that load.
+    // click() itself retries until the tab is visible and actionable, so one timeout
+    // on click covers both; the timeout option on findByRole covers late rendering.
+    findControl({ timeout: 15000 }).click({ timeout: 15000 });
+    return;
+  }
 
   if (isSaveButton) {
     // Stability check: verify button is enabled and remains enabled
@@ -222,7 +231,11 @@ When('user clicks on {string} {role}', (name, role) => {
  * @param {string} role - The ARIA role of the element to find
  */
 When('user clicks on {string} {role} with exact accessible name', (name, role) => {
-  cy.findByRole(role, { name }).click();
+  // Same rationale as the fuzzy variant: tabs can render late, so give both the
+  // query and the click a generous timeout
+  const findOptions = role === 'tab' ? { timeout: 15000 } : {};
+  const clickOptions = role === 'tab' ? { timeout: 15000 } : undefined;
+  cy.findByRole(role, { name, ...findOptions }).click(clickOptions);
 });
 
 When('user fills the following fields', (dataTable) => {
@@ -246,7 +259,11 @@ When('user clicks on {string} cell on table', (cellToClick) => {
 });
 
 When('user searches {string} on search box', (searchString) => {
-  cy.findByRole('searchbox', { name: 'Search' }).clear().type(`${Cypress.env(searchString) ? Cypress.env(searchString) : searchString}{enter}`);
+  // The search box only renders once the table has rows; API-seeded rows can lag the page
+  // load on tenants with replication delay, so give the lookup a generous timeout
+  cy.findByRole('searchbox', { name: 'Search', timeout: 15000 })
+    .clear()
+    .type(`${Cypress.env(searchString) ? Cypress.env(searchString) : searchString}{enter}`);
 });
 
 When('user focus field {string}', (field) => {
@@ -408,7 +425,7 @@ When('user hovers {string} {role}', (name, role) => {
 });
 
 When('user clicks on option button {string} from more actions menu for item {string}', (option, item) => {
-  cy.contains('tr, .card-header', item)
+  cy.contains('tr, .card-header', Cypress.env(item) ? Cypress.env(item) : item)
     .as('targetRow')
     .within(() => {
       cy.get('button[aria-label="More Actions"], .dropdown-toggle')
@@ -422,6 +439,14 @@ When('user clicks on option button {string} from more actions menu for item {str
       cy.contains('[role="menuitem"], .dropdown-item', new RegExp(option, 'i'))
         .click({ force: true });
     });
+
+  if (/^edit$/i.test(option)) {
+    // Edit either routes to the item's edit page or opens its edit modal; waiting
+    // for the dropdown to close confirms the click registered before the next step
+    cy.get('ul[role="menu"], .dropdown-menu')
+      .filter(':visible')
+      .should('not.exist');
+  }
 
   if (/set to active version/i.test(option)) {
     cy.findByRole('alert', { name: /set version to 'Active'/i, timeout: 15000 }).should('be.visible');
@@ -803,6 +828,11 @@ Then('page title is {string}', (title) => {
     .should('be.visible');
 });
 
+Then('page title is the stored value of {string}', (storedDataName) => {
+  cy.findByRole('heading', { name: Cypress.env(storedDataName), timeout: 10000 })
+    .should('be.visible');
+});
+
 Then('page title is {string} after user is idle for {int} seconds', (title, seconds) => {
   cy.findByRole('heading', { name: title, timeout: seconds * 1000 })
     .should('be.visible');
@@ -853,11 +883,11 @@ Then('the following values have been populated into fields:', (dataTable) => {
 
 Then('the item {string} does not exist in the current table', (itemName) => {
   cy.get('[aria-busy="true"]', { timeout: 15000 }).should('not.exist');
-  cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('not.exist');
+  cy.findByRole('cell', { name: Cypress.env(itemName) ? Cypress.env(itemName) : itemName, timeout: 5000 }).should('not.exist');
 });
 
 Then('the item {string} is visible in the current table', (itemName) => {
-  cy.findByRole('cell', { name: itemName, timeout: 5000 }).scrollIntoView().should('be.visible');
+  cy.findByRole('cell', { name: Cypress.env(itemName) ? Cypress.env(itemName) : itemName, timeout: 5000 }).scrollIntoView().should('be.visible');
 });
 
 Then('the following items do not exist in the current table:', (dataTable) => {

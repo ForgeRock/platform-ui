@@ -42,7 +42,9 @@ export default class AdminsPage {
   }
 
   static resendInviteMenuItem() {
-    return cy.findByRole('menuitem', { name: /resend email invite/i });
+    // The dropdown animation delays the menuitem's attachment; default 4s timeout
+    // is too tight right after opening the actions menu
+    return cy.findByRole('menuitem', { name: /resend email invite/i }, { timeout: 10000 });
   }
 
   static deleteMenuItem() {
