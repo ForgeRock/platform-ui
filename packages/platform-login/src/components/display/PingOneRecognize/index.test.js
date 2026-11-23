@@ -268,8 +268,43 @@ describe('FrPingOneRecognizeCallback', () => {
 
       expect(wrapper.vm.currentStep).toBe('error');
       expect(wrapper.vm.errorCode).toBe('SERVER_INVALID_REQUEST');
+      expect(wrapper.vm.sdkMessage).toBe('SERVER_ERROR');
+      expect(wrapper.vm.sdkCauseMessage).toBe('SERVER_INVALID_REQUEST');
       expect(callback.setInputValue).toHaveBeenCalledWith('SERVER_ERROR', /clientError$/);
       expect(callback.setInputValue).toHaveBeenCalledWith(500, /clientErrorCode/);
+    });
+
+    it('SDK error without a cause clears the displayed SDK codes', async () => {
+      const callback = makeCallback();
+      const wrapper = mountComponent({ callback });
+      await flushPromises();
+
+      mockClient.trigger.error({
+        error: { message: 'SERVER_ERROR', code: 500 },
+      });
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentStep).toBe('error');
+      expect(wrapper.vm.errorCode).toBe('SERVER_ERROR');
+      expect(wrapper.vm.sdkMessage).toBe('SERVER_ERROR');
+      expect(wrapper.vm.sdkCauseMessage).toBe('');
+      expect(callback.setInputValue).toHaveBeenCalledWith('SERVER_ERROR', /clientError$/);
+      expect(callback.setInputValue).toHaveBeenCalledWith(500, /clientErrorCode/);
+    });
+
+    it('SDK failure without an error detail clears the displayed SDK codes', async () => {
+      const callback = makeCallback();
+      const wrapper = mountComponent({ callback });
+      await flushPromises();
+
+      mockClient.trigger.error(new Error('generic failure'));
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentStep).toBe('error');
+      expect(wrapper.vm.sdkMessage).toBe('');
+      expect(wrapper.vm.sdkCauseMessage).toBe('');
+      expect(callback.setInputValue).toHaveBeenCalledWith('SDK_ERROR', /clientError$/);
+      expect(callback.setInputValue).toHaveBeenCalledWith(1000, /clientErrorCode/);
     });
 
     it('SDK complete sets currentStep to done', async () => {

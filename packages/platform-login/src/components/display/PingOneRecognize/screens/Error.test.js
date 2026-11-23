@@ -52,6 +52,38 @@ describe('Error', () => {
       const wrapper = mountWith({ isEnrolment: true, errorCode: 'CLIENT_ERROR' });
       expect(wrapper.find('.fr-recognize-screen__body').exists()).toBe(true);
     });
+
+    it('shows the SDK message when provided', () => {
+      const wrapper = mountWith({ isEnrolment: true, errorCode: 'SERVER_ERROR', sdkMessage: 'SERVER_ERROR' });
+      expect(wrapper.text()).toContain('Error:');
+      expect(wrapper.find('.fr-recognize-alert__detail code').text()).toBe('SERVER_ERROR');
+    });
+
+    it('shows the SDK cause message when provided', () => {
+      const wrapper = mountWith({
+        isEnrolment: true,
+        errorCode: 'SERVER_ERROR',
+        sdkMessage: 'SERVER_ERROR',
+        sdkCauseMessage: 'SERVER_INVALID_REQUEST',
+      });
+      const details = wrapper.findAll('.fr-recognize-alert__detail');
+      expect(details).toHaveLength(2);
+      expect(details[0].text()).toContain('SERVER_ERROR');
+      expect(details[1].text()).toContain('Error Cause:');
+      expect(details[1].find('code').text()).toBe('SERVER_INVALID_REQUEST');
+    });
+
+    it('hides the SDK detail lines when no SDK message is available', () => {
+      const wrapper = mountWith({ isEnrolment: true, errorCode: '' });
+      expect(wrapper.findAll('.fr-recognize-alert__detail')).toHaveLength(0);
+    });
+
+    it('shows the cause line alone when only the cause is available', () => {
+      const wrapper = mountWith({ isEnrolment: false, errorCode: 'SERVER_ERROR', sdkCauseMessage: 'SESSION_MEDIA_STREAM_TIMEOUT' });
+      const details = wrapper.findAll('.fr-recognize-alert__detail');
+      expect(details).toHaveLength(1);
+      expect(details[0].text()).toContain('SESSION_MEDIA_STREAM_TIMEOUT');
+    });
   });
 
   describe('@actions', () => {

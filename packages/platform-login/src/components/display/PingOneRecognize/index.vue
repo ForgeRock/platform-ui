@@ -38,6 +38,8 @@ of the MIT license. See the LICENSE file for details. -->
       :is-enrolment="isEnrolment"
       :error-message="errorMessage"
       :error-code="errorCode"
+      :sdk-message="sdkMessage"
+      :sdk-cause-message="sdkCauseMessage"
       @continue="onErrorContinue" />
     <CameraPermission
       ref="screenCameraPermission"
@@ -120,6 +122,8 @@ const currentStep = ref('bootstrap');
 const doneTimer = ref(null);
 const errorCode = ref('');
 const errorMessage = ref('');
+const sdkMessage = ref('');
+const sdkCauseMessage = ref('');
 const permissionProbeStream = ref(null);
 const permissionRequestPending = ref(false);
 const permissionTimer = ref(null);
@@ -212,6 +216,8 @@ function handleSdkError(err) {
     // message is the public enum key (e.g. 'SERVER_ERROR'); cause.message is the
     // SDK-internal code (e.g. 'SERVER_INVALID_REQUEST') which is more specific.
     const causeMessage = detail.cause?.message;
+    sdkMessage.value = detail.message;
+    sdkCauseMessage.value = causeMessage || '';
     errorCode.value = causeMessage || detail.message;
     const i18nKey = [causeMessage, detail.message].find((k) => k && te(`login.pingOneRecognize.errors.${k}`));
     errorMessage.value = i18nKey
@@ -222,6 +228,8 @@ function handleSdkError(err) {
     props.callback.setInputValue(detail.code, /clientErrorCode/);
   } else {
     errorCode.value = '';
+    sdkMessage.value = '';
+    sdkCauseMessage.value = '';
     errorMessage.value = t('login.pingOneRecognize.errors.default');
     reportSdkFailure();
   }

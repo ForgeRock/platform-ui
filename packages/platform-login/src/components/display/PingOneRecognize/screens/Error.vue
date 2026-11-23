@@ -14,7 +14,19 @@ of the MIT license. See the LICENSE file for details. -->
       :show="true"
       :dismissible="false"
       variant="danger">
-      {{ errorMessage || $t(`login.pingOneRecognize.error.${isEnrolment ? 'enroll' : 'auth'}AlertBody`) }}
+      <div class="fr-recognize-alert__content">
+        <div>{{ errorMessage || $t(`login.pingOneRecognize.error.${isEnrolment ? 'enroll' : 'auth'}AlertBody`) }}</div>
+        <div
+          v-if="sdkMessage"
+          class="fr-recognize-alert__detail">
+          {{ $t('login.pingOneRecognize.error.errorLabel') }} <code>{{ sdkMessage }}</code>
+        </div>
+        <div
+          v-if="sdkCauseMessage"
+          class="fr-recognize-alert__detail">
+          {{ $t('login.pingOneRecognize.error.errorCauseLabel') }} <code>{{ sdkCauseMessage }}</code>
+        </div>
+      </div>
     </FrAlert>
     <p
       v-if="!errorCode.startsWith('SERVER_') && !errorCode.startsWith('CORE_')"
@@ -44,6 +56,14 @@ defineProps({
     default: '',
   },
   errorCode: {
+    type: String,
+    default: '',
+  },
+  sdkMessage: {
+    type: String,
+    default: '',
+  },
+  sdkCauseMessage: {
     type: String,
     default: '',
   },

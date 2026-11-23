@@ -74,6 +74,8 @@
         "enrollAlertBody": "We were unable to complete enrollment. Please try again.",
         "authBody": "Make sure your face is well-lit and centered. If the problem persists, contact support.",
         "enrollBody": "Make sure your face is well-lit and centered. If the problem persists, contact support.",
+        "errorLabel": "Error:",
+        "errorCauseLabel": "Error Cause:",
         "continue": "Continue"
       },
       "errors": {

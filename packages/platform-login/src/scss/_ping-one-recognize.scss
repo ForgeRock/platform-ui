@@ -62,6 +62,23 @@
   text-align: center;
 }
 
+.fr-recognize-alert__content {
+  min-width: 0;
+}
+
+.fr-recognize-alert__detail {
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  text-align: left;
+
+  code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
 .fr-recognize-spinner .spinner-large {
   width: 10rem !important;
   height: 10rem !important;
