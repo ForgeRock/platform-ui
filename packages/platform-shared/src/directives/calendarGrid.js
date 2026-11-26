@@ -18,6 +18,17 @@ const GRID_SELECTOR = '.b-calendar-grid';
 const GRID_COLUMN_COUNT = 7;
 
 /**
+ * Today's date in BCalendar's `data-date` format (YYYY-MM-DD, local time).
+ * @returns {string} today's YMD string
+ */
+export function getTodayYMD() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
+/**
  * Applies ARIA grid semantics to the calendar grid inside a container.
  * Idempotent — safe to run after every re-render.
  *
@@ -32,6 +43,7 @@ function applyGridSemantics(container) {
 
   const body = grid.querySelector('.b-calendar-grid-body');
   const bodyRows = body ? Array.from(body.children) : [];
+  const todayYMD = getTodayYMD();
 
   grid.setAttribute('role', 'grid');
   grid.setAttribute('aria-colcount', String(GRID_COLUMN_COUNT));
@@ -83,6 +95,14 @@ function applyGridSemantics(container) {
         // Already set by BootstrapVue, keep as-is
       } else {
         cell.setAttribute('aria-disabled', 'false');
+      }
+      // BootstrapVue sets aria-current="date" on the *selected* cell
+      // (calendar.js), but the token means "today's date" per ARIA. Move it
+      // to the cell matching today's date, if visible in the grid.
+      if (cell.dataset.date === todayYMD) {
+        cell.setAttribute('aria-current', 'date');
+      } else {
+        cell.removeAttribute('aria-current');
       }
     });
   });

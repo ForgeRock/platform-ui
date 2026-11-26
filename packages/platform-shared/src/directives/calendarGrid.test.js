@@ -8,7 +8,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { BootstrapVue } from 'bootstrap-vue';
 import { axe } from 'jest-axe';
-import calendarGrid from './calendarGrid';
+import calendarGrid, { getTodayYMD } from './calendarGrid';
 
 /**
  * Build a BCalendar-like DOM structure mirroring the markup the directive
@@ -151,9 +151,44 @@ describe('calendarGrid directive', () => {
     // Selected cell
     expect(cells[0].getAttribute('aria-label')).toBe('September 6, 2026');
     expect(cells[0].getAttribute('aria-selected')).toBe('true');
-    expect(cells[0].getAttribute('aria-current')).toBe('date');
     // Non-selected cell gets aria-selected="false" for consistent state
     expect(cells[1].getAttribute('aria-selected')).toBe('false');
+  });
+
+  it('moves aria-current="date" from the selected cell to today\'s cell', () => {
+    const container = createTestCalendar();
+    calendarGrid.mounted(container);
+
+    const cells = container.querySelectorAll('[role="gridcell"]');
+    // BootstrapVue marks the selected cell with aria-current="date"; the
+    // directive strips it because the cell is not today's date.
+    expect(cells[0].getAttribute('aria-current')).toBeNull();
+    expect(cells[1].getAttribute('aria-current')).toBeNull();
+  });
+
+  it('sets aria-current="date" on today\'s cell and keeps it across re-renders', () => {
+    const container = createTestCalendar();
+    calendarGrid.mounted(container);
+
+    // Add a cell whose data-date is today, as BCalendar would render
+    const body = container.querySelector('.b-calendar-grid-body');
+    const firstRow = body.querySelector('.row');
+    const todayCell = document.createElement('div');
+    todayCell.className = 'col p-0';
+    todayCell.setAttribute('data-date', getTodayYMD());
+    todayCell.setAttribute('aria-selected', 'false');
+    todayCell.innerHTML = '<span class="btn">T</span>';
+    firstRow.appendChild(todayCell);
+
+    calendarGrid.updated(container);
+
+    const cells = container.querySelectorAll('[role="gridcell"]');
+    const todayCells = Array.from(cells).filter((cell) => cell.getAttribute('aria-current') === 'date');
+    expect(todayCells).toHaveLength(1);
+    expect(todayCells[0].dataset.date).toBe(getTodayYMD());
+    // Still exactly one today cell after the directive runs again (idempotent)
+    calendarGrid.updated(container);
+    expect(container.querySelectorAll('[aria-current="date"]')).toHaveLength(1);
   });
 
   it('sets aria-disabled consistently on all cells', () => {
